@@ -103,16 +103,12 @@ int get_remaining_periods(TeacherClass * list, Class class, int disc){
 	// Get first how many periods of that discipline the class needs
 	for(int i = 0; class.disciplines[i] >= 0; i++){
 		if(class.disciplines[i] == disc){
-			printf("++: class %s discip %d equals %d \n", class.name, i,class.disciplines[i]);
 			remaining++;
 		}
 	}
-	printf("partial remaining %d\n", remaining );
 	for(int i = 0; list[i].idTeacher >= 0; i++){
-		printf("looping. List<%d> is Teacher %d Disc %d Class %d Period %d.\n", i, list[i].idTeacher, list[i].discipline, list[i].idClass, list[i].period);
 		if( list[i].discipline == disc && list[i].idClass == class.id){
 			remaining--;
-			printf("remaining --\n");
 		}
 	}
 	return remaining;
@@ -179,7 +175,6 @@ TeacherClass* schedule(Teacher * teach, Class * class, int * periods, int nteach
 				int remaining = get_remaining_periods(sched,
 						get_class_by_id(class, nclass,avclasses[iclass]),
 						get_teacher_by_id(teach, nteach, avteachers[iteach]).disciplines[0]);
-			    printf("Remaining periods: %d\n", remaining);
 				if(0 < remaining){
 					sched[nsched].idClass = avclasses[iclass];
 					sched[nsched].idTeacher = avteachers[iteach];
