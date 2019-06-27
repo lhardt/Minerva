@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 
@@ -27,6 +28,71 @@ typedef struct TeacherClass {
 	int discipline;
 } TeacherClass;
 
+/* Calculates the result of P!/(P-T)! */
+uint64_t factorial_division(uint64_t p, uint64_t t){
+	uint64_t i = p;
+	uint64_t total = 1;
+	while(i > t){
+		total *= i;
+		i--;
+	}
+	return total;
+}
+
+/* Calculates the result of N! */
+uint64_t factorial(uint64_t n){
+	uint64_t r = 1;
+	while( n > 0){
+		r = r*n;
+		n--;
+	}
+	return r;
+}
+
+/* Gets one combination of K elements, based on its index.
+ *
+ * Example:
+ *   With the numbers {1,2,3,4,5},
+ *   we can form the combinations (in order):
+ *     1- 12345
+ *     2- 12354
+ *     3- 12435
+ *     ...
+ *     120- 54321
+ *	So when I = 3 and K = 5, we have {1,2,4,3,5} as a result.
+ */
+uint64_t * decompose(uint64_t combination, uint64_t n){
+	uint64_t * decomposition = calloc(n, sizeof(uint64_t));
+	int i = 0, j = n-1;
+
+	while(j >= 0){
+		decomposition[i] = 1+ combination/factorial(j);
+		combination %= factorial(j);
+		j--;
+		i++;
+	}
+	// Correction of indexes
+	bool * used_numbers = calloc(n, sizeof(bool));
+	for(i = 0; i < n; i++){
+		used_numbers[i] = false;
+	}
+	for(i = 0; i < n; i++){
+		while(used_numbers[ decomposition[i] ] == true){
+			decomposition[i]++;
+		}
+		used_numbers[ decomposition[i] ] = true;
+		for(j = i+1; j < n; j++){
+			if(decomposition[i] <= decomposition[j]){
+				decomposition[j]++;
+			}
+		}
+	}
+	free(used_numbers);
+
+	return decomposition;
+}
+
+
 
 void print_int_list(int * list){
 	int i = 0;
@@ -37,7 +103,6 @@ void print_int_list(int * list){
 	}
 	printf("];\n");
 }
-
 
 /* Removes the ith elements from the list */
 int * remove_from_list(int * list, int i){
@@ -175,7 +240,7 @@ TeacherClass* schedule(Teacher * teach, Class * class, int * periods, int nteach
 				int remaining = get_remaining_periods(sched,
 						get_class_by_id(class, nclass,avclasses[iclass]),
 						get_teacher_by_id(teach, nteach, avteachers[iteach]).disciplines[0]);
-				if(0 < remaining){
+				if( 0 < remaining){
 					sched[nsched].idClass = avclasses[iclass];
 					sched[nsched].idTeacher = avteachers[iteach];
 					sched[nsched].period  = periods[iper];
@@ -195,31 +260,32 @@ TeacherClass* schedule(Teacher * teach, Class * class, int * periods, int nteach
 }
 
 int main(){
-	int all_periods[] = {1,2,3,4 -1};
-
-	int p1[] = {1,2,3,4, -1};
-	int p2[] = {1,2,3,4, -1};
-	int p3[] = {1,2,3,4, -1};
-
-	int dclasses[] = {1,2,3,4, -1};
-
-	int d1[]= {1};
-	int d2[]= {2};
-	int d3[]= {3};
-	int d4[]= {4};
-	// Ids altos pra saber se confundi com índices
-	Class classes[] = {
-		{.id=11, .name="DS1", .periodList=p1, .disciplines=dclasses},
-		{.id=12, .name="EL1", .periodList=p2, .disciplines=dclasses},
-		{.id=13, .name="AD1", .periodList=p3, .disciplines=dclasses},
-	};
-	Teacher teachers[] = {
-		{.id=10, .name="Adão", .periodList=p1, .disciplines=d1},
-		{.id=20, .name="Beto", .periodList=p2, .disciplines=d2},
-		{.id=30, .name="Cris", .periodList=p3, .disciplines=d3},
-		{.id=40, .name="Cris", .periodList=p3, .disciplines=d4},
-	};
-	TeacherClass * sched = schedule(teachers, classes, all_periods, 4, 3, 4);
-	print_teacher_class_list(sched);
+	test_decompose();
+	// int all_periods[] = {1,2,3,4 -1};
+	//
+	// int p1[] = {1,2,3,4, -1};
+	// int p2[] = {1,2,3,4, -1};
+	// int p3[] = {1,2,3,4, -1};
+	//
+	// int dclasses[] = {1,2,3,4, -1};
+	//
+	// int d1[]= {1};
+	// int d2[]= {2};
+	// int d3[]= {3};
+	// int d4[]= {4};
+	// // Ids altos pra saber se confundi com índices
+	// Class classes[] = {
+	// 	{.id=11, .name="DS1", .periodList=p1, .disciplines=dclasses},
+	// 	{.id=12, .name="EL1", .periodList=p2, .disciplines=dclasses},
+	// 	{.id=13, .name="AD1", .periodList=p3, .disciplines=dclasses},
+	// };
+	// Teacher teachers[] = {
+	// 	{.id=10, .name="Adão", .periodList=p1, .disciplines=d1},
+	// 	{.id=20, .name="Beto", .periodList=p2, .disciplines=d2},
+	// 	{.id=30, .name="Cris", .periodList=p3, .disciplines=d3},
+	// 	{.id=40, .name="Cris", .periodList=p3, .disciplines=d4},
+	// };
+	// TeacherClass * sched = schedule(teachers, classes, all_periods, 4, 3, 4);
+	// print_teacher_class_list(sched);
 	return 0;
 }
