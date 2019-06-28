@@ -92,7 +92,64 @@ uint64_t * decompose(uint64_t combination, uint64_t n){
 	return decomposition;
 }
 
+void order_elements_desc(uint64_t * list, size_t size){
+	uint64_t max = 0, tmp = 0;
+	int i, j, iMax = 0;
+	for(i = 0; i < size; i++){
+		for(j = i; j < size; j++){
+			if(list[j] > max){
+				max = list[j];
+				iMax = j;
+			}
+		}
+		tmp = list[i];
+		list[i] = max;
+		list[iMax] = tmp;
+		max = 0;
+	}
+}
 
+void order_elements_asc(uint64_t * list, size_t size){
+	uint64_t min = -1, tmp = 0;
+	int i, j, iMin = 0;
+	for(i = 0; i < size; i++){
+		for(j = i; j < size; j++){
+			if(list[j] < min){
+				min = list[j];
+				iMin = j;
+			}
+		}
+		tmp = list[i];
+		list[i] = min;
+		list[iMin] = tmp;
+		min = -1;
+	}
+}
+
+uint64_t * get_next_order(uint64_t * order, size_t size){
+	int i = size-2, j = 0;
+	// While it' a descending list, it's good.
+	while( i >= 0 && order[1+i] < order[i]){
+		i--;
+	}
+	if(i >= 0){
+		/* We need to swap the ith element */
+		uint64_t next_element = -1;
+		size_t next_el_index = i+1;
+		// Calculating what is the next element in the list.
+		// It's the smallest number bigger than next[i-1]
+		for(int j = i+2; j < size; j++){
+			if( order[i] < order[j] && order[j] <= order[next_el_index]){
+				next_el_index = j;
+			}
+		}
+		uint64_t tmp = order[i];
+		order[i] = order[next_el_index];
+		order[next_el_index] = tmp;
+		order_elements_asc(&order[i+1], size-i-1);
+	}
+	return order;
+}
 
 void print_int_list(int * list){
 	int i = 0;
@@ -260,32 +317,30 @@ TeacherClass* schedule(Teacher * teach, Class * class, int * periods, int nteach
 }
 
 int main(){
-	test_decompose();
-	// int all_periods[] = {1,2,3,4 -1};
-	//
-	// int p1[] = {1,2,3,4, -1};
-	// int p2[] = {1,2,3,4, -1};
-	// int p3[] = {1,2,3,4, -1};
-	//
-	// int dclasses[] = {1,2,3,4, -1};
-	//
-	// int d1[]= {1};
-	// int d2[]= {2};
-	// int d3[]= {3};
-	// int d4[]= {4};
-	// // Ids altos pra saber se confundi com índices
-	// Class classes[] = {
-	// 	{.id=11, .name="DS1", .periodList=p1, .disciplines=dclasses},
-	// 	{.id=12, .name="EL1", .periodList=p2, .disciplines=dclasses},
-	// 	{.id=13, .name="AD1", .periodList=p3, .disciplines=dclasses},
-	// };
-	// Teacher teachers[] = {
-	// 	{.id=10, .name="Adão", .periodList=p1, .disciplines=d1},
-	// 	{.id=20, .name="Beto", .periodList=p2, .disciplines=d2},
-	// 	{.id=30, .name="Cris", .periodList=p3, .disciplines=d3},
-	// 	{.id=40, .name="Cris", .periodList=p3, .disciplines=d4},
-	// };
-	// TeacherClass * sched = schedule(teachers, classes, all_periods, 4, 3, 4);
-	// print_teacher_class_list(sched);
+	int all_periods[] = {1,2,3,4 -1};
+	int p1[] = {1,2,3,4, -1};
+	int p2[] = {1,2,3,4, -1};
+	int p3[] = {1,2,3,4, -1};
+
+	int dclasses[] = {1,2,3,4, -1};
+
+	int d1[]= {1};
+	int d2[]= {2};
+	int d3[]= {3};
+	int d4[]= {4};
+	// Ids altos pra saber se confundi com índices
+	Class classes[] = {
+		{.id=11, .name="DS1", .periodList=p1, .disciplines=dclasses},
+		{.id=12, .name="EL1", .periodList=p2, .disciplines=dclasses},
+		{.id=13, .name="AD1", .periodList=p3, .disciplines=dclasses},
+	};
+	Teacher teachers[] = {
+		{.id=10, .name="Adão", .periodList=p1, .disciplines=d1},
+		{.id=20, .name="Beto", .periodList=p2, .disciplines=d2},
+		{.id=30, .name="Cris", .periodList=p3, .disciplines=d3},
+		{.id=40, .name="Cris", .periodList=p3, .disciplines=d4},
+	};
+	TeacherClass * sched = schedule(teachers, classes, all_periods, 4, 3, 4);
+	print_teacher_class_list(sched);
 	return 0;
 }
