@@ -1,8 +1,7 @@
-
-/* 
- * Trying a version without periods. The solution would be
- * assigning teachers to classes before the program could
- * run.
+/*
+ * Project Германия.
+ *
+ * Copyright (C) Léo H. 2019.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +9,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+// --------------------------------------------------------------
 
 /* Calculates the result of P!/(P-T)! */
 uint64_t factorial_division(uint64_t p, uint64_t t){
@@ -75,6 +77,7 @@ uint64_t * decompose(uint64_t combination, uint64_t n){
 	return decomposition;
 }
 
+/* Orders elements of a list descendingly */
 void order_elements_desc(uint64_t * list, size_t size){
 	uint64_t max = 0, tmp = 0;
 	int i, j, iMax = 0;
@@ -92,6 +95,7 @@ void order_elements_desc(uint64_t * list, size_t size){
 	}
 }
 
+/* Orders elements of a list ascendingly */
 void order_elements_asc(uint64_t * list, size_t size){
 	uint64_t min = -1, tmp = 0;
 	int i, j, iMin = 0;
@@ -109,6 +113,45 @@ void order_elements_asc(uint64_t * list, size_t size){
 	}
 }
 
+/* Jumps to the next possible order of those elements.
+ *
+ * Imagine that you have a particular list of numbers.
+ *
+ * The corresponding set has a list of (nummerable) possible orders,
+ * so the list [1,2,3,4,5] has these possible orders:
+ *
+ * [[1,2,3,4,5], [1,2,3,5,4], [1,2,4,3,5], ... [5,4,3,2,1]]
+ *
+ * What this function does is that it jumps from one in the
+ * above list to the next.
+ *
+ * When we have the last element on that list, say, [3,2,1],
+ * this function just doesn't alter anything.
+ */
+uint64_t * get_first_order(size_t size){
+	uint64_t * list = calloc(size, sizeof(uint64_t));
+	for(int i = 0; i < size; i++){
+		list[i] = i;
+	}
+	return list;
+}
+
+
+/* Jumps to the next possible order of those elements.
+ *
+ * Imagine that you have a particular list of numbers.
+ *
+ * The corresponding set has a list of (nummerable) possible orders,
+ * so the list [1,2,3,4,5] has these possible orders:
+ *
+ * [[1,2,3,4,5], [1,2,3,5,4], [1,2,4,3,5], ... [5,4,3,2,1]]
+ *
+ * What this function does is that it jumps from one in the
+ * above list to the next.
+ *
+ * When we have the last element on that list, say, [3,2,1],
+ * this function just doesn't alter anything.
+ */
 uint64_t * get_next_order(uint64_t * order, size_t size){
 	int i = size-2, j = 0;
 	// While it' a descending list, it's good.
@@ -130,112 +173,214 @@ uint64_t * get_next_order(uint64_t * order, size_t size){
 		order[i] = order[next_el_index];
 		order[next_el_index] = tmp;
 		order_elements_asc(&order[i+1], size-i-1);
-	}
+	} else return NULL;
 	return order;
 }
 
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+// --------------------------------------------------------------
 
-typedef struct Teacher{
+typedef struct {
 	char * name;
-	int * period_list;
+	int  * periods;
 } Teacher;
 
-typedef struct Class{
-	char * name;
-	struct TeacherQuantity{
-		Teacher t;
-		int n;
-	} * teachers;
-	int teachers_size;
-} Class ;
+typedef struct {
+	Teacher * teacher;
+	int		  quantity;
+} TeacherQuantity;
 
-typedef struct Meeting{
-	Teacher t;
-	Class c;
-	int p;
+typedef struct {
+	TeacherQuantity * teachers;
+	uint64_t  teachers_size;
+	char    * name;
+} Class;
+
+typedef struct {
+	Teacher * teacher;
+	Class   * class;
+	int 	  period;
 } Meeting;
 
-int count_all_classes(Class * c, int nclasses){
-	int total = 0;
-	for(int i = 0; i < nclasses; i++){
-		for(int j = 0; j < c[i].teachers_size; j++){
-			total += c[i].teachers[j].n;
+/* If the last item of the list violates no constraint,
+ * considering the other elements.
+ */
+bool check_last_item_consistency(
+			  Meeting  * schedule,
+		 	  uint64_t i_last,
+		 	  uint64_t n_turmas,
+			  uint64_t n_prof,
+		   	  uint64_t n_period){
+	Meeting last = schedule[i_last];
+	uint64_t given_lectures = 0;
+	// TODO: be careful comparing references.
+	// For the other tuples
+	for(int i = 0; i < i_last; i++){
+		if(last.teacher == schedule[i].teacher){
+			// If the teacher is omnipresent
+			if(last.period == schedule[i].period)
+				return false;
+			// If the number of classes exceeds
+			if(last.class == schedule[i].class)
+				given_lectures++;
+		}
+		if(last.class == schedule[i].class){
+			// If the class has 2 teachers at the same time
+			if(last.period == schedule[i].period)
+				return false;
 		}
 	}
-	return total;
-}
-
-int int_list_size(int * list){
-	int sz = 0;
-	while(list[sz] >= 0) {
-		sz++;
-	}
-	return sz;
-}
-
-int*** get_possible_meetings(Teacher * teachers, Class * classes, int nteach, int nclasses, int nperiods){
-	Meeting * meetings = calloc( count_all_classes(classes, nclasses), sizeof(Meeting) );
-	int *** possible_meetings = calloc(nclasses, sizeof(int**));
-			
-	printf("\ninf\n");
-	for(int i  = 0; i < nclasses; i++){
-		possible_meetings[i] = calloc(classes[i].teachers_size, sizeof(int*));
-		for(int j = 0; j < classes[i].teachers_size; j++){
-			Teacher t  = classes[i].teachers[j].t;
-			int sz = int_list_size(t.period_list) + 1;
-			possible_meetings[i][j] = calloc(sz, sizeof(int));
-			
-			for(int k = 0; k < sz; k++){
-				possible_meetings[i][j][k] = t.period_list[k];
-				
-
-			}
+	// If the number of given lectures does not exceed
+	uint64_t last_quantity = 0;
+	for(int i = 0; i < last.class->teachers_size; i++){
+		if(last.class->teachers[i].teacher == last.teacher){
+			last_quantity = last.class->teachers[i].quantity;
 		}
 	}
+	// Otherwise they would have too many lectures;
+	return last_quantity >= given_lectures;
 }
 
-void print_possible_meetings(int *** possible, Teacher * teachers, Class * classes, int nteach, int nclasses, int nperiods){
-	for(int i = 0; i < nclasses; i++){
-		for(int j = 0; j < classes[i].teachers_size; j++){
-			printf("Possible meetings for class %s and %s (needed: %d) are [",
-				 classes[i].name, classes[i].teachers[j].t.name, classes[i].teachers[j].n );
-			for(int k = 0; possible_meetings[i][j][k] > 0; k++){
-				printf("%d, ", possible_meetings[i][j][k]);
+// get_avalible_teachers_for_those_classes(Class * classes){
+//
+// }
+
+
+Meeting* solve(
+			  Teacher * teachers,
+			  Class * classes,
+			  uint64_t n_classes,
+			  uint64_t n_teach,
+		  	  uint64_t n_per){
+
+	uint64_t n_sol = n_per * n_classes * n_teach;
+
+	int i_sol = 0, i_per = 0, i_class = 0;
+
+	Meeting * solution = calloc(n_sol, sizeof(Meeting));
+	// possibility of backtracking
+	uint64_t ** orders = calloc(n_per, sizeof(uint64_t *));
+	// REMEMBER! We don't copy, as we compare by reference
+	Teacher ** avalible_teachers = calloc(n_teach, sizeof(Teacher*));
+	while(i_per < n_per){
+		if(i_per < 0){
+			//  If it backtracked all the way.
+			printf("impossible to solve.\n");
+			break;
+		}
+		// TODO: if n_teach > n_classes (and it almost certainly is),
+		// getting the next order gives more redundancy
+		// Which makes a already terrible algorithm into a worse one
+		if(orders[i_per] == NULL){
+			orders[i_per] = get_first_order(n_teach);
+		} else {
+			// Backtracking mechanism
+			uint64_t * tmp = get_next_order(orders[i_per], n_teach);
+			// If it needs to backtrack further;
+			if(tmp != NULL){
+				orders[i_per] = tmp;
+			} else{
+				free(orders[i_per]);
+				i_per--;
+				i_sol -= n_classes;
+				continue;
 			}
-			printf("];\n");
-		}	
-		printf("\n\n");
+		}
+		// All the next orders must be nullified if we are to start over
+		for(int i = i_per+1; i < n_per; i++){
+			if(orders[i]){
+				free(orders[i]);
+				orders[i] = NULL;
+			} else break;
+		}
+		// Assignment of that order to the corresponding variables;
+		bool accepted = true;
+		for(i_class = 0; i_class < n_classes; i_class++){
+			solution[i_sol].class = &classes[i_class];
+			solution[i_sol].period = i_per;
+			solution[i_sol].teacher = &teachers[ orders[i_per][i_class] ];
+			if(!check_last_item_consistency(solution, i_sol, n_classes, n_teach, n_per)){
+				accepted = false;
+				break;
+			}
+			i_sol++;
+		}
+		if(accepted){
+			i_per++;
+		} else {
+			i_per--;
+			i_sol -= n_classes;
+		}
+	}
+	return solution;
+}
+
+void print_solution(Meeting * solution, uint64_t n_sol, uint64_t n_per){
+	// ---
+	// decent version
+	// ---
+	// for(int i = 0; i < n_per; i++){
+	// 	printf("\n\nIn the period %d: \n", i);
+	// 	for(int j = 0; j < n_sol; j++){
+	// 		if(solution[j].period == i){
+				// if(solution[j].teacher == NULL)
+				// 	printf("0 ");
+				// else printf("%s ", solution[j].teacher->name);
+				// if(solution[j].class == NULL)
+				// 	printf("0\n");
+				// else printf("%s \n", solution[j].class->name);
+	//
+	// 			//printf("%s %s\n", solution[j].teacher->name, solution[j].class->name);
+	// 		}
+	// 	}
+	// }
+
+	// debug version
+	for(int i = 0; i < n_sol; i++){
+		if(solution[i].teacher == NULL)
+			printf("         0");
+		else printf("%10s", solution[i].teacher->name);
+		if(solution[i].class == NULL)
+			printf("         0");
+		else printf("%10s", solution[i].class->name);
+		printf("%10d\n", solution[i].period);
 	}
 }
 
-int main(int argc, char ** argv){
 
-	int p1[] = {1,2,3,4, -1};
-	int p2[] = {1,2,3,4, -1};
-	int p3[] = {1,2,3,4, -1};
+int main(){
+	uint64_t n_turmas = 3;
+	uint64_t n_prof   = 3;
+	uint64_t n_period = 3;
 
-	int dclasses[] = {1,2,3,4, -1};
+	int p[3] = {0,1,2};
 
-	Teacher teachers[] = {
-		{.name="Adão", .period_list=p1},
-		{.name="Beto", .period_list=p2},
-		{.name="Cris", .period_list=p3},
-		{.name="Cris", .period_list=p3},
+	Teacher t[3] = {
+		{.name="Alexander", .periods=p},
+		{.name="Basile", .periods=p},
+		{.name="Karkov", .periods=p}
 	};
-	
-	struct TeacherQuantity tc1[] = {
-		{.t=teachers[0], .n=2}, {.t=teachers[2], .n=1},
-		{.t=teachers[1], .n=1}, {.t=teachers[3], .n=1}	};
-
-	struct TeacherQuantity tc2[] = {
-		{.t=teachers[0], .n=1}, {.t=teachers[2], .n=1},
-		{.t=teachers[1], .n=1}, {.t=teachers[3], .n=1}	};
-	Class classes[] = {
-		{.name="DS1", .teachers_size=4, .teachers=tc2},
-		{.name="EL1", .teachers_size=4, .teachers=tc2},
-		{.name="AD1", .teachers_size=4, .teachers=tc1},
+	TeacherQuantity tq1[3] = {
+		{.teacher=(&t[0]),.quantity=1},
+		{.teacher=(&t[1]),.quantity=1},
+		{.teacher=(&t[2]),.quantity=1},
 	};
-	
-	Meeting * sched = solve(teachers, classes, 4, 3, 4);
+	Class c[3] = {
+		{.teachers=tq1, .teachers_size=3, .name="DS3"},
+		{.teachers=tq1, .teachers_size=3, .name="EL3"},
+		{.teachers=tq1, .teachers_size=3, .name="AD3"}
+	};
+
+	 print_solution(solve(t,c,3,3,3), 9, 3);
+	// Possible schedule
+	//        1   2   3
+	// T1:    p1  p2  p3
+	// T2:    p2  p3  p1
+	// T3:    p3  p1  p2
+
+	//solve(n_turmas, n_prof, n_period, aval_prof);
+	//test_decompose();
+	//test_fact_div();
 	return 0;
 }
