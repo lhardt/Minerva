@@ -9,10 +9,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
-// --------------------------------------------------------------
-
 /* Calculates the result of P!/(P-T)! */
 uint64_t factorial_division(uint64_t p, uint64_t t){
 	uint64_t i = p;
@@ -136,7 +132,6 @@ uint64_t * get_first_order(size_t size){
 	return list;
 }
 
-
 /* Jumps to the next possible order of those elements.
  *
  * Imagine that you have a particular list of numbers.
@@ -177,10 +172,6 @@ uint64_t * get_next_order(uint64_t * order, size_t size){
 	return order;
 }
 
-// --------------------------------------------------------------
-// --------------------------------------------------------------
-// --------------------------------------------------------------
-
 typedef struct {
 	char * name;
 	int  * periods;
@@ -203,49 +194,65 @@ typedef struct {
 	int 	  period;
 } Meeting;
 
-/* If the last item of the list violates no constraint,
+void print_solution(Meeting * solution, uint64_t n_sol, uint64_t n_per){
+	if(solution != NULL){
+		for(int i = 0; i < n_per; i++){
+			printf("\nIn the period %d: \n", i);
+			for(int j = 0; j < n_sol; j++){
+				if(solution[j].period == i){
+					printf("%s ", solution[j].teacher->name);
+					printf("%s \n", solution[j].class->name);
+				}
+			}
+		}
+		// debug version
+
+		// 	for(int i = 0; i < n_sol; i++){
+		// 		printf(" %9s", solution[i].teacher->name);
+		// 		printf(" %9s", solution[i].class->name);
+		// 		printf(" %9d\n", solution[i].period);
+		// 	}
+	} else {
+		printf("Impossible to solve;\n");
+	}
+}
+
+/* If the addition of the last item of the list violates no constraint,
  * considering the other elements.
  */
-bool check_last_item_consistency(
+bool is_last_item_consistent(
 			  Meeting  * schedule,
 		 	  uint64_t i_last,
 		 	  uint64_t n_turmas,
 			  uint64_t n_prof,
 		   	  uint64_t n_period){
 	Meeting last = schedule[i_last];
-	uint64_t given_lectures = 0;
-	// TODO: be careful comparing references.
-	// For the other tuples
-	for(int i = 0; i < i_last; i++){
-		if(last.teacher == schedule[i].teacher){
-			// If the teacher is omnipresent
-			if(last.period == schedule[i].period)
-				return false;
-			// If the number of classes exceeds
-			if(last.class == schedule[i].class)
-				given_lectures++;
-		}
-		if(last.class == schedule[i].class){
-			// If the class has 2 teachers at the same time
-			if(last.period == schedule[i].period)
-				return false;
-		}
-	}
-	// If the number of given lectures does not exceed
-	uint64_t last_quantity = 0;
+	uint64_t last_quantity = -1;
+	uint64_t given_lectures = 1;
+	// Finding the corresponding teacher-class pair.
 	for(int i = 0; i < last.class->teachers_size; i++){
 		if(last.class->teachers[i].teacher == last.teacher){
 			last_quantity = last.class->teachers[i].quantity;
+			break;
 		}
 	}
-	// Otherwise they would have too many lectures;
-	return last_quantity >= given_lectures;
+	if(last_quantity != -1){
+		for(int i = 0; i < i_last; i++){
+			bool sameTeacher = last.teacher == schedule[i].teacher;
+			bool sameClass   = last.class == schedule[i].class;
+			bool samePeriod  = last.period == schedule[i].period;
+
+			if((sameClass || sameTeacher) && samePeriod){
+				return false;
+			}
+			if(sameTeacher && sameClass){
+				given_lectures++;
+			}
+		}
+		return last_quantity >= given_lectures;
+	}
+	return false;
 }
-
-// get_avalible_teachers_for_those_classes(Class * classes){
-//
-// }
-
 
 Meeting* solve(
 			  Teacher * teachers,
@@ -254,21 +261,10 @@ Meeting* solve(
 			  uint64_t n_teach,
 		  	  uint64_t n_per){
 
-	uint64_t n_sol = n_per * n_classes * n_teach;
-
-	int i_sol = 0, i_per = 0, i_class = 0;
-
-	Meeting * solution = calloc(n_sol, sizeof(Meeting));
-	// possibility of backtracking
+	int i_meet = 0, i_per = 0, i_class = 0;
+	Meeting * solution = calloc(n_per * n_classes * n_teach, sizeof(Meeting));
 	uint64_t ** orders = calloc(n_per, sizeof(uint64_t *));
-	// REMEMBER! We don't copy, as we compare by reference
-	Teacher ** avalible_teachers = calloc(n_teach, sizeof(Teacher*));
-	while(i_per < n_per){
-		if(i_per < 0){
-			//  If it backtracked all the way.
-			printf("impossible to solve.\n");
-			break;
-		}
+	while(i_per < n_per && i_per >= 0){
 		// TODO: if n_teach > n_classes (and it almost certainly is),
 		// getting the next order gives more redundancy
 		// Which makes a already terrible algorithm into a worse one
@@ -282,105 +278,44 @@ Meeting* solve(
 				orders[i_per] = tmp;
 			} else{
 				free(orders[i_per]);
+				orders[i_per] = NULL;
 				i_per--;
-				i_sol -= n_classes;
+				i_meet -= n_classes;
+				for(int i = 0; i < n_classes; i++){
+					solution[i_meet + i].class= 0;
+					solution[i_meet + i].teacher = 0;
+					solution[i_meet + i].period = 0;
+				}
 				continue;
 			}
 		}
-		// All the next orders must be nullified if we are to start over
-		for(int i = i_per+1; i < n_per; i++){
-			if(orders[i]){
-				free(orders[i]);
-				orders[i] = NULL;
-			} else break;
-		}
 		// Assignment of that order to the corresponding variables;
-		bool accepted = true;
 		for(i_class = 0; i_class < n_classes; i_class++){
-			solution[i_sol].class = &classes[i_class];
-			solution[i_sol].period = i_per;
-			solution[i_sol].teacher = &teachers[ orders[i_per][i_class] ];
-			if(!check_last_item_consistency(solution, i_sol, n_classes, n_teach, n_per)){
+			solution[i_meet + i_class].class   = &classes[i_class];
+			solution[i_meet + i_class].teacher = &teachers[ orders[i_per][i_class] ];
+			solution[i_meet + i_class].period  = i_per;
+		}
+		bool accepted = true;
+		for(i_class = n_classes-1; i_class >= 0; i_class--){
+			if(!is_last_item_consistent(solution, i_meet+i_class, n_classes, n_teach, n_per)){
 				accepted = false;
 				break;
 			}
-			i_sol++;
 		}
 		if(accepted){
+			i_meet += n_classes;
 			i_per++;
-		} else {
-			i_per--;
-			i_sol -= n_classes;
 		}
 	}
-	return solution;
-}
 
-void print_solution(Meeting * solution, uint64_t n_sol, uint64_t n_per){
-	// ---
-	// decent version
-	// ---
-	// for(int i = 0; i < n_per; i++){
-	// 	printf("\n\nIn the period %d: \n", i);
-	// 	for(int j = 0; j < n_sol; j++){
-	// 		if(solution[j].period == i){
-				// if(solution[j].teacher == NULL)
-				// 	printf("0 ");
-				// else printf("%s ", solution[j].teacher->name);
-				// if(solution[j].class == NULL)
-				// 	printf("0\n");
-				// else printf("%s \n", solution[j].class->name);
-	//
-	// 			//printf("%s %s\n", solution[j].teacher->name, solution[j].class->name);
-	// 		}
-	// 	}
-	// }
-
-	// debug version
-	for(int i = 0; i < n_sol; i++){
-		if(solution[i].teacher == NULL)
-			printf("         0");
-		else printf("%10s", solution[i].teacher->name);
-		if(solution[i].class == NULL)
-			printf("         0");
-		else printf("%10s", solution[i].class->name);
-		printf("%10d\n", solution[i].period);
+	if(orders[0] != NULL){
+		free(orders[0]);
 	}
-}
-
-
-int main(){
-	uint64_t n_turmas = 3;
-	uint64_t n_prof   = 3;
-	uint64_t n_period = 3;
-
-	int p[3] = {0,1,2};
-
-	Teacher t[3] = {
-		{.name="Alexander", .periods=p},
-		{.name="Basile", .periods=p},
-		{.name="Karkov", .periods=p}
-	};
-	TeacherQuantity tq1[3] = {
-		{.teacher=(&t[0]),.quantity=1},
-		{.teacher=(&t[1]),.quantity=1},
-		{.teacher=(&t[2]),.quantity=1},
-	};
-	Class c[3] = {
-		{.teachers=tq1, .teachers_size=3, .name="DS3"},
-		{.teachers=tq1, .teachers_size=3, .name="EL3"},
-		{.teachers=tq1, .teachers_size=3, .name="AD3"}
-	};
-
-	 print_solution(solve(t,c,3,3,3), 9, 3);
-	// Possible schedule
-	//        1   2   3
-	// T1:    p1  p2  p3
-	// T2:    p2  p3  p1
-	// T3:    p3  p1  p2
-
-	//solve(n_turmas, n_prof, n_period, aval_prof);
-	//test_decompose();
-	//test_fact_div();
-	return 0;
+	free(orders);
+	if(i_per < 0){
+		//  If it backtracked all the way.
+		free(solution);
+		return NULL;
+	}
+	return solution;
 }
