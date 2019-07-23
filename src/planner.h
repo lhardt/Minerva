@@ -45,15 +45,8 @@ void print_solution(Meeting * solution, uint64_t n_sol, uint64_t n_per){
 			}
 			printf("\n");
 		}
-		// debug version
-
-		// 	for(int i = 0; i < n_sol; i++){
-		// 		printf(" %9s", solution[i].teacher->name);
-		// 		printf(" %9s", solution[i].class->name);
-		// 		printf(" %9d\n", solution[i].period);
-		// 	}
 	} else {
-		printf("Impossible to solve;\n");
+		printf("Cannot print null solution;\n");
 	}
 }
 
@@ -94,6 +87,46 @@ bool is_last_item_consistent(
 	return false;
 }
 
+/* Checks if each and every class has no more
+ * required classes than periods avalible.
+ *
+ * Similarly for teachers.
+ */
+bool check_sanity(
+			  Teacher * teachers,
+			  Class * classes,
+			  uint64_t n_classes,
+			  uint64_t n_teach,
+		  	  uint64_t n_per){
+	int i_class = 0, i_cteach=0, class_sum=0, i_teach = 0;
+	// Quantity of periods each teacher will have to attend.
+	int * teacher_sum = calloc(n_teach, sizeof(Teacher));
+	for(i_class = 0; i_class < n_classes; i_class++){
+		class_sum = 0;
+		for(i_cteach = 0; i_cteach < classes[i_class].teachers_size; i_cteach++){
+			// The sum of periods for this particular class.
+			class_sum += classes[i_class].teachers[i_cteach].quantity;
+			// Pointer arithmetic: as we know, all teachers are in the teachers vector.
+			// So it must be the case that any TeacherQuantity has a pointer to an item
+			// of that list. So we can find the index subtracting pointers.
+			i_teach = ((Teacher*)classes[i_class].teachers[i_cteach].teacher)-teachers;
+			// The sum of periods for this particular teacher.
+			teacher_sum[i_teach] += classes[i_class].teachers[i_cteach].quantity;
+		}
+		// If this class has more periods with teachers than in the school
+		if(class_sum > n_per){
+			return false;
+		}
+	}
+	for(i_teach = 0; i_teach < n_teach; i_teach++){
+		if(teacher_sum	[i_teach] > n_per){
+			return false;
+		}
+	}
+	free(teacher_sum);
+	return true;
+}
+
 Meeting* solve(
 			  Teacher * teachers,
 			  Class * classes,
@@ -101,62 +134,67 @@ Meeting* solve(
 			  uint64_t n_teach,
 		  	  uint64_t n_per){
 
-	int i_meet = 0, i_per = 0, i_class = 0;
-	Meeting * solution = calloc(n_per * n_classes * n_teach, sizeof(Meeting));
-	uint64_t ** orders = calloc(n_per, sizeof(uint64_t *));
-	while(i_per < n_per && i_per >= 0){
-		// TODO: if n_teach > n_classes (and it almost certainly is),
-		// getting the next order gives more redundancy
-		// Which makes a already terrible algorithm into a worse one
-		if(orders[i_per] == NULL){
-			orders[i_per] = get_first_order(n_teach);
-		} else {
-			// Backtracking mechanism
-			uint64_t * tmp = get_next_order(orders[i_per], n_teach);
-			// If it needs to backtrack further;
-			if(tmp != NULL){
-				orders[i_per] = tmp;
-			} else{
-				free(orders[i_per]);
-				orders[i_per] = NULL;
-				i_per--;
-				i_meet -= n_classes;
-				for(int i = 0; i < n_classes; i++){
-					solution[i_meet + i].class= 0;
-					solution[i_meet + i].teacher = 0;
-					solution[i_meet + i].period = 0;
+	bool sane = check_sanity(teachers, classes, n_classes, n_teach, n_per);
+	if(sane){
+		int i_meet = 0, i_per = 0, i_class = 0;
+		Meeting * solution = calloc(n_per * n_classes * n_teach, sizeof(Meeting));
+		uint64_t ** orders = calloc(n_per, sizeof(uint64_t *));
+		while(i_per < n_per && i_per >= 0){
+			// TODO: if n_teach > n_classes (and it almost certainly is),
+			// getting the next order gives more redundancy
+			// Which makes a already terrible algorithm into a worse one
+			if(orders[i_per] == NULL){
+				orders[i_per] = get_first_order(n_teach);
+			} else {
+				// Backtracking mechanism
+				uint64_t * tmp = get_next_order(orders[i_per], n_teach);
+				// If it needs to backtrack further;
+				if(tmp != NULL){
+					orders[i_per] = tmp;
+				} else{
+					free(orders[i_per]);
+					orders[i_per] = NULL;
+					i_per--;
+					i_meet -= n_classes;
+					for(int i = 0; i < n_classes; i++){
+						solution[i_meet + i].class= 0;
+						solution[i_meet + i].teacher = 0;
+						solution[i_meet + i].period = 0;
+					}
+					continue;
 				}
-				continue;
+			}
+			// Assignment of that order to the corresponding variables;
+			for(i_class = 0; i_class < n_classes; i_class++){
+				solution[i_meet + i_class].class   = &classes[i_class];
+				solution[i_meet + i_class].teacher = &teachers[ orders[i_per][i_class] ];
+				solution[i_meet + i_class].period  = i_per;
+			}
+			bool accepted = true;
+			for(i_class = n_classes-1; i_class >= 0; i_class--){
+				if(!is_last_item_consistent(solution, i_meet+i_class, n_classes, n_teach, n_per)){
+					accepted = false;
+					break;
+				}
+			}
+			if(accepted){
+				i_meet += n_classes;
+				i_per++;
 			}
 		}
-		// Assignment of that order to the corresponding variables;
-		for(i_class = 0; i_class < n_classes; i_class++){
-			solution[i_meet + i_class].class   = &classes[i_class];
-			solution[i_meet + i_class].teacher = &teachers[ orders[i_per][i_class] ];
-			solution[i_meet + i_class].period  = i_per;
+		if(orders[0] != NULL){
+			free(orders[0]);
 		}
-		bool accepted = true;
-		for(i_class = n_classes-1; i_class >= 0; i_class--){
-			if(!is_last_item_consistent(solution, i_meet+i_class, n_classes, n_teach, n_per)){
-				accepted = false;
-				break;
-			}
+		free(orders);
+		if(i_per < 0){
+			//  If it backtracked all the way.
+			free(solution);
+			return NULL;
 		}
-		if(accepted){
-			i_meet += n_classes;
-			i_per++;
-		}
-	}
-
-	if(orders[0] != NULL){
-		free(orders[0]);
-	}
-	free(orders);
-	if(i_per < 0){
-		//  If it backtracked all the way.
-		free(solution);
+		return solution;
+	} else {
+		printf("It's insane!\n");
 		return NULL;
 	}
-	printf("i_per = %d\n", i_per);
-	return solution;
+
 }
