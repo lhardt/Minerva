@@ -118,7 +118,93 @@ void solving_test_1(){
 	print_solution(solve(t,c,3,3,3), 9, 3);
 }
 
+void solving_test_2(){
+	Teacher * teachers = calloc(2,sizeof(Teacher));
+	Class * classes = calloc(2, sizeof(Class));
+	// In this school, there are 3 periods per day.
+	int periods[15] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+	// Teacher of the 1st year.
+	teachers[0].name = "Aline";
+	teachers[0].periods = periods;
+	// Teacher of the 2nd year.
+	teachers[1].name = "Carla";
+	teachers[1].periods = periods;
+
+
+	classes[0].name = "Primário";
+	TeacherQuantity tPrimary;
+	tPrimary.quantity = 3 * 5;
+	tPrimary.teacher = &teachers[0];
+	classes[0].teachers = &tPrimary;
+	classes[0].teachers_size++;
+
+	classes[1].name = "Secundário";
+	TeacherQuantity tSecondary;
+	tSecondary.quantity = 3 * 5;
+	tSecondary.teacher = &teachers[1];
+	classes[1].teachers = &tSecondary;
+	classes[1].teachers_size++;
+
+	Meeting * solution = solve(teachers,classes,2,2,3*5);
+	if(solution != NULL){
+		print_solution(solution, 2*5*3 , 3* 5);
+		free(solution);
+	} else {
+		printf("Impossible to solve.");
+	}
+	free(classes);
+	free(teachers);
+}
+
+void solving_test_3(){
+	Teacher * teachers = calloc(3,sizeof(Teacher));
+	Class * classes = calloc(3, sizeof(Class));
+	// In this school, there are 4 periods per day.
+	int * periods = get_first_order_int(4 * 5);
+	// Teacher of English.
+	teachers[0].name = "Eng";
+	teachers[0].periods = periods;
+	// Teacher of Spanish.
+	teachers[1].name = "Spa";
+	teachers[1].periods = periods;
+
+	// Teacher of Mathematics. -- Cannot stay for the last period
+	int p_euler[15] = {0,1,2,4,5,6,8,9,10,12,13,14,16,17,18};
+	teachers[2].name = "Mat";
+	teachers[2].periods = periods;
+
+	TeacherQuantity teacherQuantity[3] = {
+		{.teacher=&teachers[0], .quantity=10},
+		{.teacher=&teachers[1], .quantity=5},
+		{.teacher=&teachers[2], .quantity=5}
+	};
+
+	classes[0].name = "Turma A";
+	classes[0].teachers = teacherQuantity;
+	classes[0].teachers_size = 3;
+
+	classes[1].name = "Turma B";
+	classes[1].teachers = teacherQuantity;
+	classes[1].teachers_size = 3;
+
+	Meeting * solution = solve(teachers,classes,2,3,4*5);
+	if(solution != NULL){
+		print_solution(solution, 40, 20);
+		free(solution);
+	} else {
+		printf("Impossible to solve.");
+	}
+	free(periods);
+	free(classes);
+	free(teachers);
+}
+
+void solving_test_4(){
+	
+}
+
+
 int main(){
-	solving_test_1();
+	solving_test_3();
 	return 0;
 }
