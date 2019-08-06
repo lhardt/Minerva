@@ -62,14 +62,16 @@ se baseia num problema NP-Complete.
 
 	// se é válido até tal período
 	bool is_valid();
+	// retorna a i-ésima ordenação de n elementos.
+	int* ith_combination(int i, int n);
 
 	smarter_bruteforce(P,H,T,PH,TH,PT){
 		returnVal[len(H)];
 		for(i in H){
 			bool is_solvable = false;
 			for(j in len(P)!)
-				returnVal[i] = ith_combination(j)
-				if(is_valid(returnVal)){
+				returnVal[i] = j
+				if(is_valid(ith_combination(returnVal))){
 					is_solvable = true;
 					break;
 				}

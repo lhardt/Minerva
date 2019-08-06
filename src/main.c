@@ -175,7 +175,7 @@ void solving_test_3(){
 
 	TeacherQuantity teacherQuantity[3] = {
 		{.teacher=&teachers[0], .quantity=10},
-		{.teacher=&teachers[1], .quantity=15},
+		{.teacher=&teachers[1], .quantity=5},
 		{.teacher=&teachers[2], .quantity=5}
 	};
 
