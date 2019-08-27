@@ -11,23 +11,23 @@
 
  /* Calculates the result of P!/(P-T)! */
  uint64_t factorial_division(uint64_t p, uint64_t t){
- 	uint64_t i = p;
- 	uint64_t total = 1;
- 	while(i > t){
- 		total *= i;
- 		i--;
- 	}
- 	return total;
+	uint64_t i = p;
+	uint64_t total = 1;
+	while(i > t){
+		total *= i;
+		i--;
+	}
+	return total;
  }
 
  /* Calculates the result of N! */
  uint64_t factorial(uint64_t n){
- 	uint64_t r = 1;
- 	while( n > 0){
- 		r = r*n;
- 		n--;
- 	}
- 	return r;
+	uint64_t r = 1;
+	while( n > 0){
+		r = r*n;
+		n--;
+	}
+	return r;
  }
 
  /* Gets one combination of K elements, based on its index.
@@ -43,70 +43,70 @@
   *	So when I = 3 and K = 5, we have {1,2,4,3,5} as a result.
   */
  uint64_t * decompose(uint64_t combination, uint64_t n){
- 	uint64_t * decomposition = calloc(n, sizeof(uint64_t));
- 	int i = 0, j = n-1;
+	uint64_t * decomposition = calloc(n, sizeof(uint64_t));
+	int i = 0, j = n-1;
 
- 	while(j >= 0){
- 		decomposition[i] = 1+ combination/factorial(j);
- 		combination %= factorial(j);
- 		j--;
- 		i++;
- 	}
- 	// Correction of indexes
- 	bool * used_numbers = calloc(n, sizeof(bool));
- 	for(i = 0; i < n; i++){
- 		used_numbers[i] = false;
- 	}
- 	for(i = 0; i < n; i++){
- 		while(used_numbers[ decomposition[i] ] == true){
- 			decomposition[i]++;
- 		}
- 		used_numbers[ decomposition[i] ] = true;
- 		for(j = i+1; j < n; j++){
- 			if(decomposition[i] <= decomposition[j]){
- 				decomposition[j]++;
- 			}
- 		}
- 	}
- 	free(used_numbers);
+	while(j >= 0){
+		decomposition[i] = 1+ combination/factorial(j);
+		combination %= factorial(j);
+		j--;
+		i++;
+	}
+	// Correction of indexes
+	bool * used_numbers = calloc(n, sizeof(bool));
+	for(i = 0; i < n; i++){
+		used_numbers[i] = false;
+	}
+	for(i = 0; i < n; i++){
+		while(used_numbers[ decomposition[i] ] == true){
+			decomposition[i]++;
+		}
+		used_numbers[ decomposition[i] ] = true;
+		for(j = i+1; j < n; j++){
+			if(decomposition[i] <= decomposition[j]){
+				decomposition[j]++;
+			}
+		}
+	}
+	free(used_numbers);
 
- 	return decomposition;
+	return decomposition;
  }
 
  /* Orders elements of a list descendingly */
  void order_elements_desc(uint64_t * list, size_t size){
- 	uint64_t max = 0, tmp = 0;
- 	int i, j, iMax = 0;
- 	for(i = 0; i < size; i++){
- 		for(j = i; j < size; j++){
- 			if(list[j] > max){
- 				max = list[j];
- 				iMax = j;
- 			}
- 		}
- 		tmp = list[i];
- 		list[i] = max;
- 		list[iMax] = tmp;
- 		max = 0;
- 	}
+	uint64_t max = 0, tmp = 0;
+	int i, j, iMax = 0;
+	for(i = 0; i < size; i++){
+		for(j = i; j < size; j++){
+			if(list[j] > max){
+				max = list[j];
+				iMax = j;
+			}
+		}
+		tmp = list[i];
+		list[i] = max;
+		list[iMax] = tmp;
+		max = 0;
+	}
  }
 
  /* Orders elements of a list ascendingly */
  void order_elements_asc(uint64_t * list, size_t size){
- 	uint64_t min = -1, tmp = 0;
- 	int i, j, iMin = 0;
- 	for(i = 0; i < size; i++){
- 		for(j = i; j < size; j++){
- 			if(list[j] < min){
- 				min = list[j];
- 				iMin = j;
- 			}
- 		}
- 		tmp = list[i];
- 		list[i] = min;
- 		list[iMin] = tmp;
- 		min = -1;
- 	}
+	uint64_t min = -1, tmp = 0;
+	int i, j, iMin = 0;
+	for(i = 0; i < size; i++){
+		for(j = i; j < size; j++){
+			if(list[j] < min){
+				min = list[j];
+				iMin = j;
+			}
+		}
+		tmp = list[i];
+		list[i] = min;
+		list[iMin] = tmp;
+		min = -1;
+	}
  }
 
  /* Jumps to the next possible order of those elements.
@@ -125,18 +125,20 @@
   * this function just doesn't alter anything.
   */
  uint64_t * get_first_order(size_t size){
- 	uint64_t * list = calloc(size, sizeof(uint64_t));
- 	for(size_t i = 0; i < size; i++){
- 		list[i] = i;
- 	}
- 	return list;
+	uint64_t * list = calloc(size + 1, sizeof(uint64_t));
+	for(size_t i = 0; i < size; i++){
+		list[i] = i;
+	}
+	list[size] = -1;
+	return list;
  }
  int * get_first_order_int(int size){
-   int * list = calloc(size, sizeof(int));
-   for(int i = 0; i < size; i++){
-	   list[i] = i;
-   }
-   return list;
+	int * list = calloc(size + 1, sizeof(int));
+	for(int i = 0; i < size; i++){
+		list[i] = i;
+	}
+	list[size] = -1;
+	return list;
  }
 
  /* Jumps to the next possible order of those elements.
@@ -154,27 +156,29 @@
   * When we have the last element on that list, say, [3,2,1],
   * this function just doesn't alter anything.
   */
- uint64_t * get_next_order(uint64_t * order, size_t size){
- 	int i = size-2, j = 0;
- 	// While it' a descending list, it's good.
- 	while( i >= 0 && order[1+i] < order[i]){
- 		i--;
- 	}
- 	if(i >= 0){
- 		/* We need to swap the ith element */
- 		uint64_t next_element = -1;
- 		size_t next_el_index = i+1;
- 		// Calculating what is the next element in the list.
- 		// It's the smallest number bigger than next[i-1]
- 		for(int j = i+2; j < size; j++){
- 			if( order[i] < order[j] && order[j] <= order[next_el_index]){
- 				next_el_index = j;
- 			}
- 		}
- 		uint64_t tmp = order[i];
- 		order[i] = order[next_el_index];
- 		order[next_el_index] = tmp;
- 		order_elements_asc(&order[i+1], size-i-1);
- 	} else return NULL;
- 	return order;
+bool get_next_order(uint64_t * order, size_t size){
+	int i = size-2, j = 0;
+	// While it' a descending list, it's good.
+	while( i >= 0 && order[1+i] < order[i]){
+		i--;
+	}
+	if(i >= 0){
+		/* We need to swap the ith element */
+		uint64_t next_element = -1;
+		size_t next_el_index = i+1;
+		// Calculating what is the next element in the list.
+		// It's the smallest number bigger than next[i-1]
+		for(int j = i+2; j < size; j++){
+			if( order[i] < order[j] && order[j] <= order[next_el_index]){
+				next_el_index = j;
+			}
+		}
+		uint64_t tmp = order[i];
+		order[i] = order[next_el_index];
+		order[next_el_index] = tmp;
+		order_elements_asc(&order[i+1], size-i-1);
+	} else {
+		return false;
+	}
+	return true;
  }

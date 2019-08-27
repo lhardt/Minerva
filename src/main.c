@@ -151,7 +151,7 @@ void solving_test_2(){
 		free(solution);
 	} else {
 		printf("Impossible to solve.");
-	}
+	} 
 	free(classes);
 	free(teachers);
 }
@@ -169,9 +169,9 @@ void solving_test_3(){
 	teachers[1].periods = periods;
 
 	// Teacher of Mathematics. -- Cannot stay for the last period
-	int p_euler[15] = {0,1,2,4,5,6,8,9,10,12,13,14,16,17,18};
+	int p_euler[16] = {0,1,2,4,5,6,8,9,10,12,13,14,16,17,18, -1};
 	teachers[2].name = "Mat";
-	teachers[2].periods = periods;
+	teachers[2].periods = p_euler;
 
 	TeacherQuantity teacherQuantity[3] = {
 		{.teacher=&teachers[0], .quantity=10},

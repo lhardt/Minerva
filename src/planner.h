@@ -60,6 +60,7 @@ bool is_last_item_consistent(
 			  uint64_t n_prof,
 		   	  uint64_t n_period){
 	Meeting last = schedule[i_last];
+	int * disponibility = NULL;
 	uint64_t last_quantity = -1;
 	uint64_t given_lectures = 1;
 	// Finding the corresponding teacher-class pair.
@@ -69,11 +70,19 @@ bool is_last_item_consistent(
 			break;
 		}
 	}
-	if(last_quantity != -1){
+	// Finding if the teacher was free in that period
+	bool avalible = false;
+	for(int i = 0; last.teacher->periods[i] >= 0; i++){
+		if(last.teacher->periods[i] == last.period){
+			avalible = true;
+			break;
+		}
+	}
+	if(avalible && last_quantity != -1){
 		for(int i = 0; i < i_last; i++){
-			bool sameTeacher = last.teacher == schedule[i].teacher;
-			bool sameClass   = last.class == schedule[i].class;
-			bool samePeriod  = last.period == schedule[i].period;
+			bool sameTeacher = (last.teacher == schedule[i].teacher);
+			bool sameClass   = (last.class == schedule[i].class);
+			bool samePeriod  = (last.period == schedule[i].period);
 
 			if((sameClass || sameTeacher) && samePeriod){
 				return false;
@@ -101,6 +110,7 @@ bool check_sanity(
 	int i_class = 0, i_cteach=0, class_sum=0, i_teach = 0;
 	// Quantity of periods each teacher will have to attend.
 	int * teacher_sum = calloc(n_teach, sizeof(Teacher));
+	bool sane = true;
 	for(i_class = 0; i_class < n_classes; i_class++){
 		class_sum = 0;
 		for(i_cteach = 0; i_cteach < classes[i_class].teachers_size; i_cteach++){
@@ -115,16 +125,18 @@ bool check_sanity(
 		}
 		// If this class has more periods with teachers than in the school
 		if(class_sum > n_per){
-			return false;
+			sane = false;
+			break;
 		}
 	}
 	for(i_teach = 0; i_teach < n_teach; i_teach++){
 		if(teacher_sum	[i_teach] > n_per){
-			return false;
+			sane = false;
+			break;
 		}
 	}
 	free(teacher_sum);
-	return true;
+	return sane;
 }
 
 Meeting* solve(
@@ -133,7 +145,6 @@ Meeting* solve(
 			  uint64_t n_classes,
 			  uint64_t n_teach,
 		  	  uint64_t n_per){
-
 	bool sane = check_sanity(teachers, classes, n_classes, n_teach, n_per);
 	if(sane){
 		int i_meet = 0, i_per = 0, i_class = 0;
@@ -147,11 +158,9 @@ Meeting* solve(
 				orders[i_per] = get_first_order(n_teach);
 			} else {
 				// Backtracking mechanism
-				uint64_t * tmp = get_next_order(orders[i_per], n_teach);
+				bool hasNext = get_next_order(orders[i_per], n_teach);
 				// If it needs to backtrack further;
-				if(tmp != NULL){
-					orders[i_per] = tmp;
-				} else{
+				if(! hasNext){
 					free(orders[i_per]);
 					orders[i_per] = NULL;
 					i_per--;
@@ -188,7 +197,6 @@ Meeting* solve(
 		free(orders);
 		if(i_per < 0){
 			//  If it backtracked all the way.
-			free(solution);
 			return NULL;
 		}
 		return solution;
