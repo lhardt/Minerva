@@ -151,7 +151,7 @@ void solving_test_2(){
 		free(solution);
 	} else {
 		printf("Impossible to solve.");
-	} 
+	}
 	free(classes);
 	free(teachers);
 }
@@ -169,9 +169,9 @@ void solving_test_3(){
 	teachers[1].periods = periods;
 
 	// Teacher of Mathematics. -- Cannot stay for the last period
-	int p_euler[16] = {0,1,2,4,5,6,8,9,10,12,13,14,16,17,18, -1};
+	int p_euler[15] = {0,1,2,4,5,6,8,9,10,12,13,14,16,17,18};
 	teachers[2].name = "Mat";
-	teachers[2].periods = p_euler;
+	teachers[2].periods = periods;
 
 	TeacherQuantity teacherQuantity[3] = {
 		{.teacher=&teachers[0], .quantity=10},
@@ -203,8 +203,36 @@ void solving_test_4(){
 
 }
 
+void initializing_test_1(){
+	int p1[4] = {0,1,2,-1};
+	int p2[4] = {0,1,3,-1};
+
+	Teacher t[3] = {
+		{.name="Alexander", .periods=p1},
+		{.name="Basile", .periods=p2},
+		{.name="Karkov", .periods=p1}
+	};
+	TeacherQuantity tq1[3] = {
+		{.teacher=(&t[0]),.quantity=2},
+		{.teacher=(&t[1]),.quantity=2},
+		{.teacher=(&t[2]),.quantity=1},
+	};
+	Class c[3] = {
+		{.teachers=tq1, .teachers_size=3, .name="DS3"},
+		{.teachers=tq1, .teachers_size=3, .name="EL3"},
+		{.teachers=tq1, .teachers_size=3, .name="AD3"}
+	};
+
+	see_options(t, c, 3, 3, 3);
+	// Meeting * meetings = initialize_all_meetings(t,c,3);
+	// for(int i = 0; meetings[i].teacher != NULL; i++){
+		// printf("Meeting %d: %s  %-10s  %d\n", i, meetings[i].class->name, meetings[i].teacher->name, meetings[i].period);
+	// }
+}
+
+
 
 int main(){
-	solving_test_3();
+	initializing_test_1();
 	return 0;
 }
