@@ -9,6 +9,8 @@
  #include <stdint.h>
  #include <stdbool.h>
 
+#include "definitions.h"
+
  /* Calculates the result of P!/(P-T)! */
  uint64_t factorial_division(uint64_t p, uint64_t t){
  	uint64_t i = p;
@@ -37,13 +39,13 @@
   *     120- 54321
   *	So when I = 3 and K = 5, we have {1,2,4,3,5} as a result.
   */
- uint64_t * decompose(uint64_t combination, uint64_t n){
+ uint64_t * decompose(uint64_t elements, uint64_t n){
  	uint64_t * decomposition = calloc(n, sizeof(uint64_t));
  	int i = 0, j = n-1;
 
  	while(j >= 0){
- 		decomposition[i] = 1+ combination/factorial(j);
- 		combination %= factorial(j);
+ 		decomposition[i] = 1+ elements/factorial(j);
+ 		elements %= factorial(j);
  		j--;
  		i++;
  	}
@@ -194,14 +196,14 @@ uint64_t * get_next_subset(uint64_t * list, size_t size){
 			max = list[i];
 	}
 	printf("Max> %d ", max);
-	uint64_t * tmp = get_next_order(list,max);
-	if(tmp == NULL){
+	bool hasNext = get_next_order(list,max);
+	if(hasNext){
 		// count which elements we have until now
 		printf("nottul\n");
 		for(int i = 0; i <= max + 1; i++){
 			list[i] = i;
 		}
 		return list;
-	} else return tmp;
+	} else return NULL;
 
 }

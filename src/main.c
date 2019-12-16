@@ -23,7 +23,7 @@ void consistency_test_2(){
 		{.teacher=(&t[1]),.quantity=1},
 		{.teacher=(&t[2]),.quantity=1},
 	};
-	Class c[3] = {
+	ExtendedClass c[3] = {
 		{.teachers=tq1, .teachers_size=3, .name="DS3"},
 		{.teachers=tq1, .teachers_size=3, .name="EL3"},
 		{.teachers=tq1, .teachers_size=3, .name="AD3"}
@@ -60,7 +60,7 @@ void consistency_test_1(){
 		{.teacher=(&t[1]),.quantity=1},
 		{.teacher=(&t[2]),.quantity=1},
 	};
-	Class c[3] = {
+	ExtendedClass c[3] = {
 		{.teachers=tq1, .teachers_size=3, .name="DS3"},
 		{.teachers=tq1, .teachers_size=3, .name="EL3"},
 		{.teachers=tq1, .teachers_size=3, .name="AD3"}
@@ -110,7 +110,7 @@ void solving_test_1(){
 		{.teacher=(&t[1]),.quantity=1},
 		{.teacher=(&t[2]),.quantity=1},
 	};
-	Class c[3] = {
+	ExtendedClass c[3] = {
 		{.teachers=tq1, .teachers_size=3, .name="DS3"},
 		{.teachers=tq1, .teachers_size=3, .name="EL3"},
 		{.teachers=tq1, .teachers_size=3, .name="AD3"}
@@ -120,7 +120,7 @@ void solving_test_1(){
 
 void solving_test_2(){
 	Teacher * teachers = calloc(2,sizeof(Teacher));
-	Class * classes = calloc(2, sizeof(Class));
+	ExtendedClass * classes = calloc(2, sizeof(ExtendedClass));
 	// In this school, there are 3 periods per day.
 	int periods[15] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 	// Teacher of the 1st year.
@@ -158,7 +158,7 @@ void solving_test_2(){
 
 void solving_test_3(){
 	Teacher * teachers = calloc(3,sizeof(Teacher));
-	Class * classes = calloc(3, sizeof(Class));
+	ExtendedClass * classes = calloc(3, sizeof(ExtendedClass));
 	// In this school, there are 4 periods per day.
 	int * periods = get_first_order_int(4 * 5);
 	// Teacher of English.
@@ -217,7 +217,7 @@ void initializing_test_1(){
 		{.teacher=(&t[1]),.quantity=2},
 		{.teacher=(&t[2]),.quantity=1},
 	};
-	Class c[3] = {
+	ExtendedClass c[3] = {
 		{.teachers=tq1, .teachers_size=3, .name="DS3"},
 		{.teachers=tq1, .teachers_size=3, .name="EL3"},
 		{.teachers=tq1, .teachers_size=3, .name="AD3"}

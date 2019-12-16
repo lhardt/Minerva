@@ -1,0 +1,66 @@
+
+\documentclass{article}
+\usepackage[a4paper, top=3cm, left=3cm, right=2cm, bottom=2cm]{geometry}
+\begin{document}
+
+\vspace{0.3cm}\hrule\vspace{0.3cm}
+\large{\bf{Sobre o Problema do Escalonamento de Professores}} \par
+Léo H.
+\vspace{0.4cm}\hrule\vspace{0.4cm}
+
+\section{Condições para a aplicação no Ensino Fundamental}
+
+\subsection{Particularidades do Ensino Fundamental Brasileiro}
+
+1. A semana (um ciclo da agenda) será dividida em 5 dias, subdivididos em 5 períodos, sendo que entre o terceiro e o quarto há um intervalo.
+
+2. É sempre pré-decidido quais períodos uma turma
+
+
+\subsection{"Hard Constraints"}
+
+1. Não há um mesmo período em que duas turmas tem aula com um mesmo professor.
+
+2. Não há um mesmo período em que dois professores dão aula para uma mesma turma.
+
+3. O número de vezes que um professor se encontra com uma turma é dado.
+
+
+
+\section{Desenvolvimento Diário}
+
+\subsubsection{30 Oct 2019}
+
+Me parece que trabalhar na perspectiva do professor parece bem prudente. Ao invés de desenvolver na ordem Teacher - TeacherQuantity - Class, acredito que o contrário seja mais prudente. Como os horarios dos professores são infinitamente mais limitados, há muito maior possibilidade de propagação de constraint.
+
+\subsubsection{31 Oct 2019}
+
+Talvez trabalhar com os dois aspectos ao mesmo tempo seja mais proveitoso. Só ainda não sei como aproveitar isso.
+
+\subsubsection{21 Nov 2019}
+
+\par A ideia da Command Line Interface foi maaais ou meeenos colocada no lugar. O ponto é que podemos escolher duas coisas:
+
+1. Fazer constraint propagation e sugestões pra quem tiver montando. E dai uma interface bem completinha ajudaria na solução do problema.
+
+2. Tentar deduzir por heurística de uma vez só uma agenda. Tem menos chance de sucesso, no sentido que demora mais e dá menos controle para o usuário. Além disso, é pior para fazer um fact-check e descobrir se está boa a agenda.
+
+\par O que eu vejo é que a primeira opção é melhor, mas menos comum na indústria. É só que o esforço teria que ser maior na parte
+de interface gráfica. Então se tivermos uma CLI robusta o suficiente, podemos ter uma GUI que só se utiliza de CLI.
+
+\par Logo, para tudo funcionar bem, precisamos de funcionalidades como:
+
+-     ADD  (professor, aluno, turma, disciplina, cronograma);
+
+- ```SELECT (professor, aluno, turma, disciplina, cronograma);```
+
+- ```DELETE (professor, aluno, turma, disciplina, cronograma);```
+
+- ```UNDO (bem importante para desfazer merdas);```
+
+- ```REDUCE cronograma;```
+
+
+
+
+\end{document}

@@ -3,35 +3,18 @@
  *
  * Copyright (C) Léo H. 2019.
  */
+#ifndef PLANNER_H
+#define PLANNER_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "definitions.h"
 #include "combinatorics.h"
 
-typedef struct {
-	char * name;
-	int  * periods;
-} Teacher;
-
-typedef struct {
-	Teacher * teacher;
-	int		  quantity;
-} TeacherQuantity;
-
-typedef struct {
-	TeacherQuantity * teachers;
-	uint64_t  teachers_size;
-	char    * name;
-} Class;
-
-typedef struct {
-	Teacher * teacher;
-	Class   * class;
-	int 	  period;
-} Meeting;
 
 void print_solution(Meeting * solution, uint64_t n_sol, uint64_t n_per){
 	if(solution != NULL){
@@ -49,6 +32,8 @@ void print_solution(Meeting * solution, uint64_t n_sol, uint64_t n_per){
 		printf("Cannot print null solution;\n");
 	}
 }
+
+uint64_t get_number_of_meetings(){}
 
 // TODO: Test and substitute the next function for a call to this one.
 bool is_meeting_consistent(Meeting m, Meeting * schedule){
@@ -135,7 +120,7 @@ bool is_last_item_consistent(
  */
 bool check_sanity(
 			  Teacher * teachers,
-			  Class * classes,
+			  ExtendedClass * classes,
 			  uint64_t n_classes,
 			  uint64_t n_teach,
 		  	  uint64_t n_per){
@@ -173,7 +158,7 @@ bool check_sanity(
 
 Meeting* solve(
 			  Teacher * teachers,
-			  Class * classes,
+			  ExtendedClass * classes,
 			  uint64_t n_classes,
 			  uint64_t n_teach,
 		  	  uint64_t n_per){
@@ -241,7 +226,7 @@ Meeting* solve(
 
 Meeting * initialize_all_meetings(
 			  Teacher * teachers,
-			  Class * classes,
+			  ExtendedClass * classes,
 			  uint64_t n_classes){
     uint64_t i_class = 0, i_teach = 0;
 	uint64_t i_meeting = 0, i_quant = 0;
@@ -287,7 +272,7 @@ void print_int_list(int * list){
 // Without considering other classes with the same teacher
 void see_options_1(
 			  Teacher * teachers,
-			  Class * classes,
+			  ExtendedClass * classes,
 			  uint64_t n_classes,
 			  uint64_t n_teach,
 		  	  uint64_t n_per){
@@ -303,7 +288,7 @@ void see_options_1(
 
 void see_options(
 			  Teacher * teachers,
-			  Class * classes,
+			  ExtendedClass * classes,
 			  uint64_t n_classes,
 			  uint64_t n_teach,
 		  	  uint64_t n_per){
@@ -339,3 +324,5 @@ void see_options(
 		}
 	}
 }
+
+#endif /* PLANNER_H */
