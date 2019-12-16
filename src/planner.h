@@ -280,7 +280,7 @@ void see_options_1(
 	Meeting * met = initialize_all_meetings(teachers,classes,n_classes);
 	int ** periods  = copy_teacher_periods(teachers,n_teach,n_per);
 	for(i_met = 0; met[i_met].teacher != NULL; i_met++){
-		printf("Meeting %2d: %s  %-9s %d ", i_met, met[i_met].class->name, met[i_met].teacher->name, met[i_met].period);
+		printf("Meeting %2d: %s  %-9s %d", i_met, met[i_met].class->name, met[i_met].teacher->name, met[i_met].period);
 		int teacher_index = (met[i_met].teacher) - teachers;
 		print_int_list(periods[teacher_index]);
 	}
@@ -299,7 +299,7 @@ void see_options(
 
 	int ** periods  = copy_teacher_periods(teachers,n_teach,n_per);
 	for(i_met = 0; met[i_met].teacher != NULL; i_met++){
-		printf("Meeting %2d: %s  %-9s ", i_met, met[i_met].class->name, met[i_met].teacher->name, met[i_met].period);
+		printf("Meeting %2d: %s  %-9s ", i_met, met[i_met].class->name, met[i_met].teacher->name);
 		// TODO: if(period  == -1 ) then show avalible. else, show the period.
 		if(met[i_met].period != -1){
 			printf("%d\n", met[i_met].period);
