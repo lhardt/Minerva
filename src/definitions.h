@@ -6,13 +6,13 @@
 
 typedef struct Teacher{
 	char * name;
-	int ** periods;
+	int * periods;
 } Teacher;
 
 
 typedef struct Class{
 	char * name;
-	int ** periods;
+	int  * periods;
 } Class;
 
 
@@ -30,14 +30,14 @@ typedef struct ClassQuantity{
 
 typedef struct ExtendedClass{
 	TeacherQuantity * teachers;
-	uint64_t  teachers_size;
+	int * periods;
 	char    * name;
 } ExtendedClass;
 
 
 typedef struct ExtendedTeacher{
 	ClassQuantity * classes;
-	uint64_t classes_size;
+	int * periods;
 	char * name;
 } ExtendedTeacher;
 
@@ -46,6 +46,10 @@ typedef struct Meeting{
 	Teacher * teacher;
 	ExtendedClass   * class;
 	int 	  period;
+	/* In the case that period = -1, possiblePeriods is a list of
+	 * possible periods that this meeting can be in.
+	 */
+	int * 	  possible_periods;
 } Meeting;
 
 

@@ -11,6 +11,7 @@
 
 #include "definitions.h"
 
+
  /* Calculates the result of P!/(P-T)! */
  uint64_t factorial_division(uint64_t p, uint64_t t){
  	uint64_t i = p;
@@ -206,4 +207,31 @@ uint64_t * get_next_subset(uint64_t * list, size_t size){
 		return list;
 	} else return NULL;
 
+}
+
+/* Calculates how both the teacher and the class like, for every period,
+ * that their meeting be on that period*/
+int * get_meeting_score(int * teacher_score, int * class_score){
+	int i, *meeting_score, list_size = 63;
+
+	meeting_score = calloc(64, sizeof(int));
+
+	for(i = 0; teacher_score[i] != -1 && class_score[i] != -1; i++){
+		// Nullify the score in case one of them is not avalible.
+		if(teacher_score[i] == 0 || class_score[i] == 0){
+			meeting_score[i] = 0;
+		} else {
+			// TODO: rethink this scoring system.
+			// I want it to be fair both to the teacher and class
+			// scores for that period, but maybe more dispersed.
+			// The -1 is because both are larger than 1.
+			meeting_score[i] = teacher_score[i] + class_score[i] -1;
+		}
+		if(i == list_size-1){
+			list_size += 64;
+			meeting_score = realloc(meeting_score,list_size * sizeof(int));
+		}
+	}
+	meeting_score[i] = -1;
+	return meeting_score;
 }

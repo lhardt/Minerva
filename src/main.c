@@ -8,6 +8,7 @@
 #include <stdio.h>
 
 #include "definitions.h"
+#include "combinatorics.h"
 #include "logic.h"
 
 Universe new_universe(){
@@ -53,15 +54,27 @@ Universe new_universe(){
 
 void test_init_meetings(){
 
-	int t1_per[3] = {1,1,1};
+	int t1_per[4] = {1,1,3, -1};
+	int t2_per[4] = {1,3,1, -1};
+	int t3_per[4] = {3,1,1, -1};
+
+	int c1_per[4] = {1,5,0, -1};
+	int c2_per[4] = {1,1,1, -1};
+	int c3_per[4] = {1,1,1, -1};
 
 
 	Teacher teachers[] = {
 		{
 			.name="Adolf",
+			.periods=t1_per
 		},
 		{
 			.name="Joseph",
+			.periods=t2_per
+		},
+		{
+			.name="Winston",
+			.periods=t3_per
 		}
 	};
 
@@ -74,38 +87,57 @@ void test_init_meetings(){
 			.teacher = (&teachers[1]),
 			.quantity = 2
 		},
+		{
+			.teacher = (&teachers[2]),
+			.quantity = 1
+		},
+		{
+			.teacher = NULL,
+			.quantity = 0
+		}
 	};
 
 	TeacherQuantity c2_tq[] = {
 		{
-			.teacher = (&teachers[1]),
+			.teacher = (&teachers[0]),
 			.quantity = 1
 		},
 		{
-			.teacher = (&teachers[0]),
+			.teacher = (&teachers[1]),
 			.quantity = 3
 		},
+		{
+			.teacher = (&teachers[2]),
+			.quantity = 1
+		},
+		{
+			.teacher = NULL,
+			.quantity = 0
+		}
 	};
 
 	ExtendedClass classes[] = {
 		{
 			.name="DS1",
-			.teachers_size = 2,
-			.teachers = c1_tq
+			.teachers = c1_tq,
+			.periods = c1_per
 		},
 		{
 			.name="DS2",
-			.teachers_size = 2,
-			.teachers = c2_tq
+			.teachers = c2_tq,
+			.periods = c2_per
 		},
 		{
 			.name="DS3",
-			.teachers_size = 1,
-			.teachers = c1_tq
+			.teachers = c2_tq,
+			.periods = c3_per
+		},
+		{
+			.name=NULL
 		}
 	};
 
-	Meeting * meets = initialize_all_meetings(classes,3);
+	Meeting * meets = initialize_all_meetings(classes);
 	// printf("N_Meetings: %d\n", n_meet);
 	print_meeting_list(meets);
 
@@ -113,7 +145,8 @@ void test_init_meetings(){
 
 int main(){
 	Universe u = new_universe();
-
 	test_init_meetings();
+
+
 	return 0;
 }
