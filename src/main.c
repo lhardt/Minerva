@@ -58,7 +58,7 @@ void test_init_meetings(){
 	int t2_per[4] = {1,3,1, -1};
 	int t3_per[4] = {3,1,1, -1};
 
-	int c1_per[4] = {1,5,0, -1};
+	int c1_per[4] = {1,1,1, -1};
 	int c2_per[4] = {1,1,1, -1};
 	int c3_per[4] = {1,1,1, -1};
 
@@ -68,14 +68,15 @@ void test_init_meetings(){
 			.name="Adolf",
 			.periods=t1_per
 		},
-		{
-			.name="Joseph",
-			.periods=t2_per
-		},
-		{
-			.name="Winston",
-			.periods=t3_per
-		}
+		// {
+		// 	.name="Joseph",
+		// 	.periods=t2_per
+		// },
+		// {
+		// 	.name="Winston",
+		// 	.periods=t3_per
+		// },
+		NULL
 	};
 
 	TeacherQuantity c1_tq[] = {
@@ -83,14 +84,14 @@ void test_init_meetings(){
 			.teacher = (&teachers[0]),
 			.quantity = 3
 		},
-		{
-			.teacher = (&teachers[1]),
-			.quantity = 2
-		},
-		{
-			.teacher = (&teachers[2]),
-			.quantity = 1
-		},
+		// {
+		// 	.teacher = (&teachers[1]),
+		// 	.quantity = 2
+		// },
+		// {
+		// 	.teacher = (&teachers[2]),
+		// 	.quantity = 1
+		// },
 		{
 			.teacher = NULL,
 			.quantity = 0
@@ -116,37 +117,59 @@ void test_init_meetings(){
 		}
 	};
 
+	TeacherQuantity c3_tq[] = {
+		{
+			.teacher = (&teachers[0]),
+			.quantity = 1
+		},
+		{
+			.teacher = (&teachers[1]),
+			.quantity = 3
+		},
+		{
+			.teacher = (&teachers[2]),
+			.quantity = 1
+		},
+		{
+			.teacher = NULL,
+			.quantity = 0
+		}
+	};
+
 	ExtendedClass classes[] = {
 		{
 			.name="DS1",
 			.teachers = c1_tq,
 			.periods = c1_per
 		},
-		{
-			.name="DS2",
-			.teachers = c2_tq,
-			.periods = c2_per
-		},
-		{
-			.name="DS3",
-			.teachers = c2_tq,
-			.periods = c3_per
-		},
+		// {
+		// 	.name="DS2",
+		// 	.teachers = c2_tq,
+		// 	.periods = c2_per
+		// },
+		// {
+		// 	.name="DS3",
+		// 	.teachers = c3_tq,
+		// 	.periods = c3_per
+		// },
 		{
 			.name=NULL
 		}
 	};
 
 	Meeting * meets = initialize_all_meetings(classes);
-	// printf("N_Meetings: %d\n", n_meet);
 	print_meeting_list(meets);
 
 }
 
 int main(){
+
+	int l1[] = {1,2,3,4,5,-1};
+
+	// int index = find_last_positive(l1);
+	// printf("Last Positive Index:%d\n", index);
+
 	Universe u = new_universe();
 	test_init_meetings();
-
-
 	return 0;
 }

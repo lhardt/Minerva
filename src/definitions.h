@@ -78,11 +78,5 @@ typedef struct Universe {
 	Meeting * all_meetings;
 } Universe;
 
-int list_len(const char * const list[]){
-	int len = 0;
-	while(list[len] != NULL)
-		len ++;
-	return len;
-}
 
 #endif /* DEFINITIONS_H */

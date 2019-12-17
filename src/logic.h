@@ -22,6 +22,117 @@ int get_number_of_meetings(ExtendedClass * ex){
 	return n_meetings;
 }
 
+
+/* Calculates how both the teacher and the class like, for every period,
+ * that their meeting be on that period*/
+int * get_preliminary_meeting_score(int * teacher_score, int * class_score){
+	int i, *meeting_score, list_size = 63;
+
+	meeting_score = calloc(64, sizeof(int));
+
+	for(i = 0; teacher_score[i] != -1 && class_score[i] != -1; i++){
+		// Nullify the score in case one of them is not avalible.
+		if(teacher_score[i] == 0 || class_score[i] == 0){
+			meeting_score[i] = 0;
+		} else {
+			// TODO: rethink this scoring system.
+			// I want it to be fair both to the teacher and class
+			// scores for that period, but maybe more dispersed.
+			// The -1 is because both are larger than 1.
+			meeting_score[i] = teacher_score[i] + class_score[i] -1;
+		}
+		if(i == list_size-1){
+			list_size += 64;
+			meeting_score = realloc(meeting_score,list_size * sizeof(int));
+		}
+	}
+	meeting_score[i] = -1;
+	return meeting_score;
+}
+
+int find_first_positive(int * list){
+	int index = 0;
+	while(list[index] == 0){
+		index++;
+	}
+	if(list[index] == -1){
+		return -1;
+	} else {
+		return index;
+	}
+}
+
+int find_last_positive(int * list){
+	int index = 0;
+	while(list[index] != -1){
+		index++;
+	}
+	// the current value was -1;
+	index--;
+	while(list[index] == 0 && index >= 0) {
+		index--;
+	}
+	// may return -1 in case of error.
+	return index;
+}
+/* If the same teacher has two meetings with the same class,
+ * all of them in the periods [1,2,3], we know that the second
+ * can't be in the period 1 because they must coexist.
+ */
+void eliminate_left_clone_meeting_period_options(Meeting * meetings) {
+	int i_met, j_met, first_possible;
+
+	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+		first_possible = find_first_positive(meetings[i_met].possible_periods);
+		if(first_possible == -1)
+			continue;
+		// no clone meeting can be in the 1st period of meetings[i] of
+		// this meeting
+		for(j_met = i_met+1; meetings[j_met].teacher != NULL; j_met++){
+			bool is_clone =
+				   (meetings[i_met].teacher == meetings[j_met].teacher)
+				&& (meetings[i_met].class   == meetings[j_met].class  );
+			if(is_clone){
+				meetings[j_met].possible_periods[first_possible] = 0;
+			}
+		}
+	}
+}
+
+/* If the same teacher has two meetings with the same class,
+ * all of them in the periods [1,2,3], we know that the
+ * first can't be in the period 3, because they must coexist.
+ */
+void eliminate_right_clone_meeting_period_options(Meeting * meetings) {
+	int n_met, i_met, j_met, last_possible;
+
+	for(n_met = 0; meetings[n_met].teacher != NULL; n_met++){
+	}
+	for(i_met = n_met -1; i_met > 0; i_met--){
+		last_possible = find_last_positive(meetings[i_met].possible_periods);
+		if(last_possible == -1)
+			continue;
+		// no clone meeting can be in the 1st period of meetings[i] of
+		// this meeting
+		for(j_met = i_met-1; j_met >= 0; j_met--){
+			bool is_clone =
+				(meetings[i_met].teacher == meetings[j_met].teacher)
+				&& (meetings[i_met].class   == meetings[j_met].class  );
+			if(is_clone){
+				meetings[j_met].possible_periods[last_possible] = 0;
+			}
+		}
+	}
+}
+
+void eliminate_clone_meeting_period_options(Meeting * meetings) {
+	eliminate_left_clone_meeting_period_options(meetings);
+	eliminate_right_clone_meeting_period_options(meetings);
+}
+
+
+
+/* Initialization of the list of meetings, including the possibility list. */
 Meeting * initialize_all_meetings(ExtendedClass * classes){
  	int i_class = 0, i_teach = 0;
 	int i_meeting = 0, i_quant = 0;
@@ -34,15 +145,12 @@ Meeting * initialize_all_meetings(ExtendedClass * classes){
 				meetings[i_meeting].teacher = tq.teacher;
 				meetings[i_meeting].class   = &classes[i_class];
 				meetings[i_meeting].period = -1;
-				/* Orders likeableness of this period based on the least
-				 * score of the teacher and the class.
-				 */
 				meetings[i_meeting].possible_periods =
-					get_meeting_score(
+					get_preliminary_meeting_score(
 						meetings[i_meeting].teacher->periods,
 						meetings[i_meeting].class->periods
 				);
-
+				eliminate_clone_meeting_period_options(meetings);
 				i_meeting++;
 			}
 		}
