@@ -61,6 +61,35 @@ de interface gráfica. Então se tivermos uma CLI robusta o suficiente, podemos 
 - ```REDUCE cronograma;```
 
 
+\subsection{15 Dec 2019}
+
+\par Começando a pensar que é overkill fazer uma CLI inteira.
+Aprender com o Stockfish sobre a análise de movimentos futuros e notas:
+
+- Transposition Table.
+
+- Multicore.
+
+De qualquer forma, acho prudente distinguir a parte lógica e a parte que
+"chuta" do programa. O problema vai ser como elas se comunicam.
+
+\subsection{18 Dec 2019}
+
+\par Uma coisa que tem ocupado minha cabeça hoje é que se um professor
+precisa dar 5 aulas para uma mesma turma, isso gerará 5 meetings. E assim
+como no problema de 0 <= a <= b <= c <= d <= 5,  a meeting 2 não pode acontecer
+antes da meeting 1 nem depois da meeting 3. Isso faz com que propagar
+constrains seja fundamentalmente mais fácil, já que há menos possibilidades.
+
+\par O problema é que se eu tentar fazer isso e depois inserir uma meeting
+fixa, digamos, no período 2, qual vai ser a meeting que vai receber? Não
+pode haver uma ordem clara entre elas enquanto o usuário ainda puder digitar
+alterações.
+
+\par É necessário então um algorítmo que primeiro faça uma cópia da lista de
+meetings, faça essa eliminação [...] a <= b [...], calcule os resultados disso
+(quem sabe até uma meeting fixa) e depois retorne para o estado desordenado.
+
 
 
 \end{document}

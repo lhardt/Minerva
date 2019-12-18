@@ -155,14 +155,13 @@
   * this function just doesn't alter anything.
   */
 bool get_next_order(uint64_t * order, size_t size){
- 	int i = size-2, j = 0;
+ 	int i = size-2;
  	// While it' a descending list, it's good.
  	while( i >= 0 && order[1+i] < order[i]){
  		i--;
  	}
  	if(i >= 0){
  		/* We need to swap the ith element */
- 		uint64_t next_element = -1;
  		size_t next_el_index = i+1;
  		// Calculating what is the next element in the list.
  		// It's the smallest number bigger than next[i-1]
@@ -196,11 +195,9 @@ uint64_t * get_next_subset(uint64_t * list, size_t size){
 		if(list[i] >= max)
 			max = list[i];
 	}
-	printf("Max> %d ", max);
 	bool hasNext = get_next_order(list,max);
 	if(hasNext){
 		// count which elements we have until now
-		printf("nottul\n");
 		for(int i = 0; i <= max + 1; i++){
 			list[i] = i;
 		}
@@ -249,4 +246,37 @@ bool equal_lists(int * a, int * b){
 		i++;
 	}
 	return a[i] == b[i];
+}
+
+
+/* Returns the index of the first positive integer in a list terminated
+ * by -1.
+ */
+int find_first_positive(int * list){
+	int index = 0;
+	while(list[index] == 0){
+		index++;
+	}
+	if(list[index] == -1){
+		return -1;
+	} else {
+		return index;
+	}
+}
+
+/* Returns the index of the last positive integer in a list terminated
+ * by -1.
+ */
+int find_last_positive(int * list){
+	int index = 0;
+	while(list[index] != -1){
+		index++;
+	}
+	// the current value was -1;
+	index--;
+	while(list[index] == 0 && index >= 0) {
+		index--;
+	}
+	// may return -1 in case of error.
+	return index;
 }

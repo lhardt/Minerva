@@ -8,7 +8,9 @@
 #include "definitions.h"
 
 
-
+/* Returns the number of meetings this list of classes
+ *  will have in total.
+ */
 int get_number_of_meetings(ExtendedClass * ex){
 	int n_meetings = 0, i_class = 0, i_tq = 0;
 	ExtendedClass * c;
@@ -25,7 +27,8 @@ int get_number_of_meetings(ExtendedClass * ex){
 
 
 /* Calculates how both the teacher and the class like, for every period,
- * that their meeting be on that period*/
+ * that their meeting be on that period
+ */
 int * get_preliminary_meeting_score(int * teacher_score, int * class_score){
 	int i, *meeting_score, list_size = 63;
 
@@ -51,31 +54,6 @@ int * get_preliminary_meeting_score(int * teacher_score, int * class_score){
 	return meeting_score;
 }
 
-int find_first_positive(int * list){
-	int index = 0;
-	while(list[index] == 0){
-		index++;
-	}
-	if(list[index] == -1){
-		return -1;
-	} else {
-		return index;
-	}
-}
-
-int find_last_positive(int * list){
-	int index = 0;
-	while(list[index] != -1){
-		index++;
-	}
-	// the current value was -1;
-	index--;
-	while(list[index] == 0 && index >= 0) {
-		index--;
-	}
-	// may return -1 in case of error.
-	return index;
-}
 /* If the same teacher has two meetings with the same class,
  * all of them in the periods [1,2,3], we know that the second
  * can't be in the period 1 because they must coexist.
@@ -94,8 +72,9 @@ bool eliminate_left_clone_meeting_period_options(Meeting * meetings) {
 			bool is_clone =
 				   (meetings[i_met].teacher == meetings[j_met].teacher)
 				&& (meetings[i_met].class   == meetings[j_met].class  );
-			if(is_clone){
-				changed_something = meetings[j_met].possible_periods[first_possible] = 0;
+			if(is_clone && meetings[j_met].possible_periods[first_possible] != 0){
+				changed_something = true;
+				meetings[j_met].possible_periods[first_possible] = 0;
 			}
 		}
 	}
@@ -122,14 +101,20 @@ bool eliminate_right_clone_meeting_period_options(Meeting * meetings) {
 			bool is_clone =
 				(meetings[i_met].teacher == meetings[j_met].teacher)
 				&& (meetings[i_met].class   == meetings[j_met].class  );
-			if(is_clone){
-				changed_something = meetings[j_met].possible_periods[last_possible] = 0;
+			if(is_clone && meetings[j_met].possible_periods[last_possible] != 0){
+				changed_something = true;
+				meetings[j_met].possible_periods[last_possible] = 0;
 			}
 		}
 	}
 	return changed_something;
 }
 
+/* If the same teacher has two meetings with the same class,
+ * all of them in the periods [1,2,3], we know that the
+ * first can't be in the period 3, and the third can't be in the period 1
+ * because they must coexist.
+ */
 bool eliminate_clone_meeting_period_options(Meeting * meetings) {
 	bool changed_something = false;
 	changed_something |= eliminate_left_clone_meeting_period_options(meetings);
@@ -137,6 +122,10 @@ bool eliminate_clone_meeting_period_options(Meeting * meetings) {
 	return changed_something;
 }
 
+/* If we just fixed that a meeting with class A and teacher P will
+ * happen, we know that neither P nor A can be in another meeting
+ * at the same time.
+ */
 bool propagate_meeting_fixation(Meeting * meetings, int i_fixed){
 	int i_met;
 	bool changed_something = false;
@@ -159,6 +148,9 @@ bool propagate_meeting_fixation(Meeting * meetings, int i_fixed){
 	return changed_something;
 }
 
+/* Checks if there are meetings with just one possible period
+ * and sets it to be. Also propagates meeting fixation.
+ */
 bool check_for_fixed_meetings(Meeting * meetings){
 	int i_met = 0, length = 0, changed_something = false;
 	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
@@ -176,9 +168,11 @@ bool check_for_fixed_meetings(Meeting * meetings){
 	return changed_something;
 }
 
-
-
-/* Initialization of the list of meetings, including the possibility list. */
+/* Based on a list of classes, generates the list of all meetings
+ * that must happen with those classes. That includes the possible
+ * periods that the meeting can happen, with some minor constraint
+ * propagation.
+ */
 Meeting * initialize_all_meetings(ExtendedClass * classes){
  	int i_class = 0, i_teach = 0;
 	int i_meeting = 0, i_quant = 0;
@@ -209,24 +203,80 @@ Meeting * initialize_all_meetings(ExtendedClass * classes){
 	return meetings;
 }
 
-void print_meeting_list(Meeting * meetings){
-	int i = 0;
-	while(meetings[i].teacher != NULL){
-		printf("Meeting %2d: %-5s %-9s ", i, meetings[i].class->name, meetings[i].teacher->name, meetings[i].period);
-		if(meetings[i].period != -1){
-			printf("%d\n", meetings[i].period);
-		} else {
-			printf("[");
-			for(int j = 0; meetings[i].possible_periods[j] >= 0; j++){
-				printf("%d, ", meetings[i].possible_periods[j]);
-			}
-			printf("]\n");
-		}
-
-		i++;
+/* Creates an identical copy of the meetings list given,
+ * while still retaining the original teacher and class pointers.
+ */
+Meeting * make_meetings_copy(const Meeting * const meetings){
+	Meeting * copy;
+	int n_met, i_met, i_per;
+	for(n_met = 0; meetings[n_met].teacher != NULL; n_met++){
 	}
+
+	copy = calloc(n_met + 1, sizeof(Meeting));
+
+	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+		copy[i_met].teacher = meetings[i_met].teacher;
+		copy[i_met].class   = meetings[i_met].class;
+		copy[i_met].period = meetings[i_met].period;
+		copy[i_met].possible_periods = calloc(1+int_list_len(meetings[i_met].possible_periods), sizeof(int));
+		for(i_per =0; meetings[i_met].possible_periods[i_per] >= 0; i_per ++ ){
+			copy[i_met].possible_periods[i_per] = meetings[i_met].possible_periods[i_per];
+		}
+		copy[i_met].possible_periods[i_per] = meetings[i_met].possible_periods[i_per];
+
+	}
+	return copy;
 }
 
+void destroy_meetings(Meeting * meetings){
+	int i_met;
+	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+		free(meetings[i_met].possible_periods);
+	}
+	free(meetings);
+}
 
+/* Makes a quick check to see if this meeting list
+ * is immediately contradictory.
+ *
+ * That is, provided that the meetings list was
+ * created right,
+ * - there is no teacher or class that has two meetings
+ *   at the same time;
+ * - there is no yet blank meeting with no possibility
+ */
+bool is_immediately_impossible(Meeting * meetings){
+	int i_met = 0, j_met = 0;
+	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+		/* Return true if there is another meeting at the same time
+		 * wih the same class or teacher
+		 */
+		for(j_met = i_met+1; meetings[j_met].teacher != NULL; j_met++){
+			bool same_teach = meetings[i_met].teacher == meetings[j_met].teacher;
+			bool same_class = meetings[i_met].class   == meetings[j_met].class;
+			int per_i = meetings[i_met].period;
+			int per_j = meetings[j_met].period;
+			if((same_teach || same_class) && (per_i != -1) && (per_i == per_j)){
+				return true;
+			}
+		}
+		/* Return true if there is no option for that period. */
+		if(meetings[i_met].period == -1
+			&& find_first_positive(meetings[i_met].possible_periods) == -1){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool seems_solved(Meeting * meetings){
+	int i_met = 0;
+	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+		if(meetings[i_met].period == -1)
+			return false;
+	}
+	return true;
+}
 
 #endif /* LOGIC_H */

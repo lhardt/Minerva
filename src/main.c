@@ -11,6 +11,25 @@
 #include "combinatorics.h"
 #include "logic.h"
 
+void print_meeting_list(Meeting * meetings){
+	int i = 0;
+	while(meetings[i].teacher != NULL){
+		printf("Meeting %2d: %-5s %-9s ", i, meetings[i].class->name, meetings[i].teacher->name);
+		if(meetings[i].period != -1){
+			printf("%d\n", meetings[i].period);
+		} else {
+			printf("[");
+			for(int j = 0; meetings[i].possible_periods[j] >= 0; j++){
+				printf("%d, ", meetings[i].possible_periods[j]);
+			}
+			printf("]\n");
+		}
+
+		i++;
+	}
+}
+
+
 Universe new_universe(){
 	const char * const days[] = {
 		"Mon",
@@ -38,14 +57,14 @@ Universe new_universe(){
 
 	u.days = calloc(8, sizeof(char *));
 	int days_len = str_list_len(days);
-	for(int i = 0; i < days_len; i++){
+	for(i = 0; i < days_len; i++){
 		u.days[i] = calloc(1+ strlen(days[i]), sizeof(char));
 		strcpy(u.days[i],days[i]);
 	}
 
 	u.periods = calloc(7, sizeof(char *));
 	int periods_len = str_list_len(periods);
-	for(int i = 0; i < periods_len; i++){
+	for(i = 0; i < periods_len; i++){
 		u.periods[i] = calloc(1 + strlen(periods[i]), sizeof(char));
 		strcpy(u.periods[i],periods[i]);
 	}
@@ -54,9 +73,9 @@ Universe new_universe(){
 
 void test_init_meetings(){
 
-	int t1_per[] = {1,1,3,-1,1, -1};
-	int t2_per[] = {1,3,1,1,1, -1};
-	int t3_per[] = {3,1,1,1,1, -1};
+	int t1_per[] = {1,1,1,1,1, -1};
+	int t2_per[] = {1,1,1,0,1, -1};
+	int t3_per[] = {1,1,1,1,1, -1};
 
 	int c1_per[] = {1,1,1,1,1, -1};
 	int c2_per[] = {1,1,1,1,1, -1};
@@ -86,7 +105,7 @@ void test_init_meetings(){
 		},
 		{
 			.teacher = (&teachers[1]),
-			.quantity = 2
+			.quantity = 1
 		},
 		{
 			.teacher = (&teachers[2]),
@@ -105,11 +124,11 @@ void test_init_meetings(){
 		},
 		{
 			.teacher = (&teachers[1]),
-			.quantity = 3
+			.quantity = 1
 		},
 		{
 			.teacher = (&teachers[2]),
-			.quantity = 1
+			.quantity = 3
 		},
 		{
 			.teacher = NULL,
@@ -142,34 +161,42 @@ void test_init_meetings(){
 			.teachers = c1_tq,
 			.periods = c1_per
 		},
-		// {
-		// 	.name="DS2",
-		// 	.teachers = c2_tq,
-		// 	.periods = c2_per
-		// },
-		// {
-		// 	.name="DS3",
-		// 	.teachers = c3_tq,
-		// 	.periods = c3_per
-		// },
+		{
+			.name="DS2",
+			.teachers = c2_tq,
+			.periods = c2_per
+		},
+		{
+			.name="DS3",
+			.teachers = c3_tq,
+			.periods = c3_per
+		},
 		{
 			.name=NULL
 		}
 	};
 
 	Meeting * meets = initialize_all_meetings(classes);
+
+	Meeting * meet2 = make_meetings_copy(meets);
+	destroy_meetings(meet2);
+	meet2 = make_meetings_copy(meets);
+	destroy_meetings(meet2);
+	meet2 = make_meetings_copy(meets);
+	destroy_meetings(meet2);
+	meet2 = make_meetings_copy(meets);
+	destroy_meetings(meet2);
+
+
+
 	print_meeting_list(meets);
+	printf("Seems immediately impossible? %s.\n", (is_immediately_impossible(meets))?("Yes"):("No"));
+	printf("Seems solved? %s.\n", (seems_solved(meets))?("Yes"):("No"));
+	destroy_meetings(meets);
 
 }
 
 int main(){
-
-	int l1[] = {1,2,3,4,5,-1};
-
-	// int index = find_last_positive(l1);
-	// printf("Last Positive Index:%d\n", index);
-
-	Universe u = new_universe();
 	test_init_meetings();
 	return 0;
 }
