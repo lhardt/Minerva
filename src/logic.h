@@ -8,6 +8,7 @@
 #include "definitions.h"
 
 
+
 int get_number_of_meetings(ExtendedClass * ex){
 	int n_meetings = 0, i_class = 0, i_tq = 0;
 	ExtendedClass * c;
@@ -79,8 +80,9 @@ int find_last_positive(int * list){
  * all of them in the periods [1,2,3], we know that the second
  * can't be in the period 1 because they must coexist.
  */
-void eliminate_left_clone_meeting_period_options(Meeting * meetings) {
+bool eliminate_left_clone_meeting_period_options(Meeting * meetings) {
 	int i_met, j_met, first_possible;
+	bool changed_something = false;
 
 	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
 		first_possible = find_first_positive(meetings[i_met].possible_periods);
@@ -93,18 +95,20 @@ void eliminate_left_clone_meeting_period_options(Meeting * meetings) {
 				   (meetings[i_met].teacher == meetings[j_met].teacher)
 				&& (meetings[i_met].class   == meetings[j_met].class  );
 			if(is_clone){
-				meetings[j_met].possible_periods[first_possible] = 0;
+				changed_something = meetings[j_met].possible_periods[first_possible] = 0;
 			}
 		}
 	}
+	return changed_something;
 }
 
 /* If the same teacher has two meetings with the same class,
  * all of them in the periods [1,2,3], we know that the
  * first can't be in the period 3, because they must coexist.
  */
-void eliminate_right_clone_meeting_period_options(Meeting * meetings) {
+bool eliminate_right_clone_meeting_period_options(Meeting * meetings) {
 	int n_met, i_met, j_met, last_possible;
+	bool changed_something = false;
 
 	for(n_met = 0; meetings[n_met].teacher != NULL; n_met++){
 	}
@@ -119,15 +123,56 @@ void eliminate_right_clone_meeting_period_options(Meeting * meetings) {
 				(meetings[i_met].teacher == meetings[j_met].teacher)
 				&& (meetings[i_met].class   == meetings[j_met].class  );
 			if(is_clone){
-				meetings[j_met].possible_periods[last_possible] = 0;
+				changed_something = meetings[j_met].possible_periods[last_possible] = 0;
 			}
 		}
 	}
+	return changed_something;
 }
 
-void eliminate_clone_meeting_period_options(Meeting * meetings) {
-	eliminate_left_clone_meeting_period_options(meetings);
-	eliminate_right_clone_meeting_period_options(meetings);
+bool eliminate_clone_meeting_period_options(Meeting * meetings) {
+	bool changed_something = false;
+	changed_something |= eliminate_left_clone_meeting_period_options(meetings);
+	changed_something |= eliminate_right_clone_meeting_period_options(meetings);
+	return changed_something;
+}
+
+bool propagate_meeting_fixation(Meeting * meetings, int i_fixed){
+	int i_met;
+	bool changed_something = false;
+	Meeting fixed_meeting = meetings[i_fixed];
+	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+		// if the teacher is already allocated, no need to check anything
+		if(i_met == i_fixed || meetings[i_met].period != -1){
+			continue;
+		} else {
+			if( meetings[i_met].teacher == fixed_meeting.teacher
+				|| meetings[i_met].class   == fixed_meeting.class
+			){
+				// Then the teacher doesn't have that period avalible
+				// anymore.
+				changed_something = true;
+				meetings[i_met].possible_periods[ fixed_meeting.period ] = 0;
+			}
+		}
+	}
+	return changed_something;
+}
+
+bool check_for_fixed_meetings(Meeting * meetings){
+	int i_met = 0, length = 0, changed_something = false;
+	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+		length = not_null_int_list_len(meetings[i_met].possible_periods);
+		if(length == 1){
+			changed_something = true;
+			meetings[i_met].period = find_first_positive(meetings[i_met].possible_periods);
+			propagate_meeting_fixation(meetings, i_met);
+		} else if(length == 0){
+			printf("It's not possible to make this meeting.\n");
+			return false;
+		}
+	}
+	return changed_something;
 }
 
 
@@ -150,10 +195,15 @@ Meeting * initialize_all_meetings(ExtendedClass * classes){
 						meetings[i_meeting].teacher->periods,
 						meetings[i_meeting].class->periods
 				);
-				eliminate_clone_meeting_period_options(meetings);
 				i_meeting++;
 			}
 		}
+	}
+	bool change = true;
+	while(change){
+		change = false;
+		change |= eliminate_clone_meeting_period_options(meetings);
+		change |= check_for_fixed_meetings(meetings);
 	}
 	return meetings;
 }

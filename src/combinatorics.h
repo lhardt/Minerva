@@ -210,11 +210,37 @@ uint64_t * get_next_subset(uint64_t * list, size_t size){
 }
 
 
-int list_len(const char * const list[]){
+int str_list_len(const char * const list[]){
 	int len = 0;
 	while(list[len] != NULL)
 		len ++;
 	return len;
+}
+
+int int_list_len(const int * const list){
+	int len = 0;
+	while(list[len] != -1)
+		len ++;
+	return len;
+}
+
+int not_null_int_list_len(const int * const list){
+	int i = 0, len = 0;
+	while(list[i] != -1){
+		if(list[i] > 0){
+			len++;
+		}
+		i ++;
+	}
+	return len;
+}
+
+void print_int_list(const int * const list){
+	int i = 0;
+	while(list[i] != -1){
+		printf("List[%d]: %d\n", i, list[i]);
+		i++;
+	}
 }
 
 bool equal_lists(int * a, int * b){

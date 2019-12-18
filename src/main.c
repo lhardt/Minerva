@@ -37,14 +37,14 @@ Universe new_universe(){
 	int i = 0;
 
 	u.days = calloc(8, sizeof(char *));
-	int days_len = list_len(days);
+	int days_len = str_list_len(days);
 	for(int i = 0; i < days_len; i++){
 		u.days[i] = calloc(1+ strlen(days[i]), sizeof(char));
 		strcpy(u.days[i],days[i]);
 	}
 
 	u.periods = calloc(7, sizeof(char *));
-	int periods_len = list_len(periods);
+	int periods_len = str_list_len(periods);
 	for(int i = 0; i < periods_len; i++){
 		u.periods[i] = calloc(1 + strlen(periods[i]), sizeof(char));
 		strcpy(u.periods[i],periods[i]);
@@ -54,13 +54,13 @@ Universe new_universe(){
 
 void test_init_meetings(){
 
-	int t1_per[4] = {1,1,3, -1};
-	int t2_per[4] = {1,3,1, -1};
-	int t3_per[4] = {3,1,1, -1};
+	int t1_per[] = {1,1,3,-1,1, -1};
+	int t2_per[] = {1,3,1,1,1, -1};
+	int t3_per[] = {3,1,1,1,1, -1};
 
-	int c1_per[4] = {1,1,1, -1};
-	int c2_per[4] = {1,1,1, -1};
-	int c3_per[4] = {1,1,1, -1};
+	int c1_per[] = {1,1,1,1,1, -1};
+	int c2_per[] = {1,1,1,1,1, -1};
+	int c3_per[] = {1,1,1,1,1, -1};
 
 
 	Teacher teachers[] = {
@@ -68,14 +68,14 @@ void test_init_meetings(){
 			.name="Adolf",
 			.periods=t1_per
 		},
-		// {
-		// 	.name="Joseph",
-		// 	.periods=t2_per
-		// },
-		// {
-		// 	.name="Winston",
-		// 	.periods=t3_per
-		// },
+		{
+			.name="Joseph",
+			.periods=t2_per
+		},
+		{
+			.name="Winston",
+			.periods=t3_per
+		},
 		NULL
 	};
 
@@ -84,14 +84,14 @@ void test_init_meetings(){
 			.teacher = (&teachers[0]),
 			.quantity = 3
 		},
-		// {
-		// 	.teacher = (&teachers[1]),
-		// 	.quantity = 2
-		// },
-		// {
-		// 	.teacher = (&teachers[2]),
-		// 	.quantity = 1
-		// },
+		{
+			.teacher = (&teachers[1]),
+			.quantity = 2
+		},
+		{
+			.teacher = (&teachers[2]),
+			.quantity = 1
+		},
 		{
 			.teacher = NULL,
 			.quantity = 0
