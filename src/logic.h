@@ -162,14 +162,15 @@ bool propagate_meeting_fixation(Meeting * meetings, int i_fixed){
 bool check_for_fixed_meetings(Meeting * meetings){
 	int i_met = 0, length = 0, changed_something = false;
 	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
-		length = not_null_int_list_len(meetings[i_met].possible_periods);
-		if(length == 1){
-			changed_something = true;
-			meetings[i_met].period = find_first_positive(meetings[i_met].possible_periods);
-			propagate_meeting_fixation(meetings, i_met);
-		} else if(length == 0){
-			printf("It's not possible to make this meeting.\n");
-			return false;
+		if(meetings[i_met].period == -1){
+			length = not_null_int_list_len(meetings[i_met].possible_periods);
+			if(length == 1){
+				changed_something = true;
+				meetings[i_met].period = find_first_positive(meetings[i_met].possible_periods);
+				propagate_meeting_fixation(meetings, i_met);
+			} else if(length == 0){
+				printf("It's not possible to make this meeting.\n");
+			}
 		}
 	}
 	return changed_something;
