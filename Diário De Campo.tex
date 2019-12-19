@@ -90,6 +90,18 @@ alterações.
 meetings, faça essa eliminação [...] a <= b [...], calcule os resultados disso
 (quem sabe até uma meeting fixa) e depois retorne para o estado desordenado.
 
+\par TEOREMA: a função order\_by\_score\_discrepancy nunca retornará um número
+menor que zero. PROVA: $max >= a_k$ para qualquer $k$. $max >= media$. $max \times n >= media \times n$
+logo $max \times n - soma\_total >= 0$. A igualdade só ocorre quando $a_1 = a_2 = a_3 = ...=  a_n$.
 
+\par Order by score discrepancy operacional. Não bem testada, mas operacional.
+Como todo o programa envolve pequenas escolhas com grandes implicações, pensei
+que fazer essas escolhas de forma 100\% aleatória não ajudaria em muita coisa.
+Além disso, queria fazê-las de uma forma econômica. Então pensei que fazer
+primeiro todas as que estivessem com o score\_discrepancy mais alto seria mais
+prudente, já que essas envolvem menos opções.
+
+\par Seria possível elimiar a função check\_for\_fixed\_meetings? Ela é só uma
+versão mais eespecífica da nova de score discrepancy.
 
 \end{document}

@@ -30,9 +30,9 @@ int get_number_of_meetings(ExtendedClass * ex){
  * that their meeting be on that period
  */
 int * get_preliminary_meeting_score(int * teacher_score, int * class_score){
-	int i, *meeting_score, list_size = 63;
+	int i, *meeting_score, list_size = 31;
 
-	meeting_score = calloc(64, sizeof(int));
+	meeting_score = calloc(32, sizeof(int));
 
 	for(i = 0; teacher_score[i] != -1 && class_score[i] != -1; i++){
 		// Nullify the score in case one of them is not avalible.
@@ -46,7 +46,7 @@ int * get_preliminary_meeting_score(int * teacher_score, int * class_score){
 			meeting_score[i] = teacher_score[i] + class_score[i] -1;
 		}
 		if(i == list_size-1){
-			list_size += 64;
+			list_size += 32;
 			meeting_score = realloc(meeting_score,list_size * sizeof(int));
 		}
 	}
@@ -168,6 +168,16 @@ bool check_for_fixed_meetings(Meeting * meetings){
 	return changed_something;
 }
 
+bool explore_consequences(Meeting * meetings){
+	bool change = true;
+	eliminate_clone_meeting_period_options(meetings);
+	while(change){
+		change = false;
+		change |= check_for_fixed_meetings(meetings);
+	}
+	return change;
+}
+
 /* Based on a list of classes, generates the list of all meetings
  * that must happen with those classes. That includes the possible
  * periods that the meeting can happen, with some minor constraint
@@ -194,12 +204,7 @@ Meeting * initialize_all_meetings(ExtendedClass * classes){
 			}
 		}
 	}
-	bool change = true;
-	while(change){
-		change = false;
-		change |= eliminate_clone_meeting_period_options(meetings);
-		change |= check_for_fixed_meetings(meetings);
-	}
+	explore_consequences(meetings);
 	return meetings;
 }
 
@@ -228,6 +233,9 @@ Meeting * make_meetings_copy(const Meeting * const meetings){
 	return copy;
 }
 
+/* Frees the memory used both by make_meetings_copy or by
+ * initialize_all_meetings.
+ */
 void destroy_meetings(Meeting * meetings){
 	int i_met;
 	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
@@ -270,6 +278,10 @@ bool is_immediately_impossible(Meeting * meetings){
 	return false;
 }
 
+/* Returns true if all meetings have a fixed period.
+ *
+ * Pressuposes that every choice made was valid.
+ */
 bool seems_solved(Meeting * meetings){
 	int i_met = 0;
 	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){

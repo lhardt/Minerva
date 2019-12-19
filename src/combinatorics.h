@@ -234,10 +234,15 @@ int not_null_int_list_len(const int * const list){
 
 void print_int_list(const int * const list){
 	int i = 0;
+	printf("[");
 	while(list[i] != -1){
-		printf("List[%d]: %d\n", i, list[i]);
+		printf("%2d", list[i]);
+		if(list[i+1] != -1){
+			printf(", ");
+		}
 		i++;
 	}
+	printf("]\n");
 }
 
 bool equal_lists(int * a, int * b){
@@ -279,4 +284,37 @@ int find_last_positive(int * list){
 	}
 	// may return -1 in case of error.
 	return index;
+}
+
+
+int find_max_int(int * list){
+	int index = 0, max = -1;
+
+	while(list[index] != -1){
+		if(max < list[index])
+			max = list[index];
+		index++;
+	}
+
+	return max;
+}
+
+void order_by_rank(int * list, int * rank){
+	int i = 0, j = 0, k = 0, n, max = -1, i_list = 0;
+	for(n = 0; rank[n] >= 0; n++){}
+	bool * used = calloc(n , sizeof(bool));
+	for(i = 0; i < n - j; i++){
+		max = n;
+		for(k = 0; k < n; k++){
+			if(used[k])
+				continue;
+			if(rank[k] > rank[max]){
+				max = k;
+			}
+		}
+		used[max] = true;
+		list[i_list] = max;
+		i_list++;
+	}
+	list[n] = -1;
 }

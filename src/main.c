@@ -10,6 +10,7 @@
 #include "definitions.h"
 #include "combinatorics.h"
 #include "logic.h"
+#include "guesswork.h"
 
 void print_meeting_list(Meeting * meetings){
 	int i = 0;
@@ -74,7 +75,7 @@ Universe new_universe(){
 void test_init_meetings(){
 
 	int t1_per[] = {1,1,1,1,1, -1};
-	int t2_per[] = {1,1,1,0,1, -1};
+	int t2_per[] = {2,1,1,0,1, -1};
 	int t3_per[] = {1,1,1,1,1, -1};
 
 	int c1_per[] = {1,1,1,1,1, -1};
@@ -178,25 +179,24 @@ void test_init_meetings(){
 
 	Meeting * meets = initialize_all_meetings(classes);
 
-	Meeting * meet2 = make_meetings_copy(meets);
-	destroy_meetings(meet2);
-	meet2 = make_meetings_copy(meets);
-	destroy_meetings(meet2);
-	meet2 = make_meetings_copy(meets);
-	destroy_meetings(meet2);
-	meet2 = make_meetings_copy(meets);
-	destroy_meetings(meet2);
-
-
-
 	print_meeting_list(meets);
 	printf("Seems immediately impossible? %s.\n", (is_immediately_impossible(meets))?("Yes"):("No"));
 	printf("Seems solved? %s.\n", (seems_solved(meets))?("Yes"):("No"));
+
+	order_by_score_discrepancy(meets);
+
 	destroy_meetings(meets);
 
 }
 
 int main(){
 	test_init_meetings();
+	// int rank[] = {1,-1};
+	// int list[] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+	// order_by_rank(list,rank);
+	// printf("Rank: ");
+	// print_int_list(rank);
+	// printf("List: ");
+	// print_int_list(list);
 	return 0;
 }
