@@ -126,11 +126,11 @@ void test_init_meetings(){
 		},
 		{
 			.teacher = (&teachers[1]),
-			.quantity = 1
+			.quantity = 3
 		},
 		{
 			.teacher = (&teachers[2]),
-			.quantity = 3
+			.quantity = 1
 		},
 		{
 			.teacher = NULL,
@@ -145,11 +145,11 @@ void test_init_meetings(){
 		},
 		{
 			.teacher = (&teachers[1]),
-			.quantity = 3
+			.quantity = 1
 		},
 		{
 			.teacher = (&teachers[2]),
-			.quantity = 1
+			.quantity = 5
 		},
 		{
 			.teacher = NULL,
@@ -168,11 +168,11 @@ void test_init_meetings(){
 			.teachers = c2_tq,
 			.periods = c2_per
 		},
-		// {
-		// 	.name="DS3",
-		// 	.teachers = c3_tq,
-		// 	.periods = c3_per
-		// },
+		{
+			.name="DS3",
+			.teachers = c3_tq,
+			.periods = c3_per
+		},
 		{
 			.name=NULL
 		}
@@ -185,7 +185,7 @@ void test_init_meetings(){
 	int descent_list[50] = {-1};
 	int descent_i = 0;
 
-	while(! current_node->solved ) {
+	while(current_node != NULL && ! current_node->solved ) {
 		bool go_further = make_guess(current_node);
 		if(go_further){
 			descent_list[descent_i]++;
@@ -200,37 +200,14 @@ void test_init_meetings(){
 			current_node = current_node->parent;
 		}
 	}
-	printf("-----------------------------\n%21s\n-----------------------------\n", "SOLUTION NODE");
-	print_meeting_list(current_node->conclusion);
+	if(current_node == NULL){
+		printf("Impossible to solve\n");
+	} else {
+		printf("-----------------------------\n%21s\n-----------------------------\n", "SOLUTION NODE");
+		print_meeting_list(current_node->conclusion);
 
-	// printf("--------------------------\nPARENT MEETING LIST\n--------------------------\n");
-	// print_meeting_list(parent_node->conclusion);
-	// printf("--------------------------\nCHILD1 MEETING LIST\n--------------------------\n");
-	// make_guess(parent_node);
-	// for(int i = 0; i < 4; i++){
-	// 	propagate_meeting_fixation(parent_node->children[0].conclusion, i);
-	// 	parent_node->children[0].score_order = order_by_score_discrepancy(parent_node->children[0].conclusion);
-	//
-	// }
-	// print_meeting_list(parent_node->children[0].conclusion);
-	// printf("--------------------------\nCHILD2 MEETING LIST\n--------------------------\n");
-	// make_guess(&parent_node->children[0]);
-	// print_meeting_list(parent_node->children[0].children[0].conclusion);
-	// printf("--------------------------\nCHILD3 MEETING LIST\n--------------------------\n");
-	// make_guess(&parent_node->children[0].children[0]);
-	// print_meeting_list(parent_node->children[0].children[0].children[0].conclusion);
-
-	// Meeting * meets = initialize_all_meetings(classes);
-	// printf("Solved?. %s \n", (current_node->solved)?("Yes"):("No"));
-
-
-	// printf("Seems immediately impossible? %s.\n", (is_immediately_impossible(meets))?("Yes"):("No"));
-	// printf("Seems solved? %s.\n", (seems_solved(meets))?("Yes"):("No"));
-	//
-	// order_by_score_discrepancy(meets);
-
-	// destroy_meetings(meets);
-
+	}
+	destroy_node_tree(parent_node);
 }
 
 int main(){

@@ -99,6 +99,28 @@ GuessNode * init_guess_tree(ExtendedClass * classes){
 	return initial_node;
 }
 
+void destroy_node(GuessNode * node){
+	int i_child = 0;
+	if(node->children != NULL){
+		for(i_child = 0; node->children[i_child].id > 0; i_child++){
+			destroy_node(&node->children[i_child]);
+		}
+		free(node->children);
+		if(node->score_order != NULL){
+			free(node->score_order);
+		}
+		if(node->conclusion != NULL){
+			destroy_meeting_list(node->conclusion);
+		}
+	}
+}
+
+void destroy_node_tree(GuessNode * node){
+	destroy_node(node);
+	free(node);
+
+}
+
 /* Makes a guess and stores it on [children].
  * Returns true if it was possible to make the guess;
  * same node.
@@ -112,7 +134,7 @@ bool make_guess(GuessNode * node){
 	// TODO: make so that we can backtrack earlier.
 	// If we made all guesses possible, backtrack:
 	if(n_guesses >= int_list_len(node->score_order)){
-		printf("Can't make another guess. Backtrack or analyze another node.\n");
+		//printf("Can't make another guess. Backtrack or analyze another node.\n");
 		return false;
 	} else {
 		GuessNode * new_node = &node->children[n_guesses];
@@ -152,6 +174,7 @@ bool make_guess(GuessNode * node){
 			// score_order that we find the best timetables
 			explore_consequences(node->conclusion);
 			node->solved	 = seems_solved(node->conclusion);
+			free(node->score_order);
 			node->score_order = order_by_score_discrepancy(node->conclusion);
 
 		} else if(new_node->solved) {

@@ -279,7 +279,7 @@ int find_last_positive(int * list){
 	}
 	// the current value was -1;
 	index--;
-	while(list[index] == 0 && index >= 0) {
+	while( index >= 0 && list[index] == 0) {
 		index--;
 	}
 	// may return -1 in case of error.
@@ -338,7 +338,7 @@ void order_by_rank_not_null(int * list, int * rank){
 	bool * used;
 	for(n = 0; rank[n] >= 0; n++){
 	}
-	used = calloc(n , sizeof(bool));
+	used = calloc(n+1 , sizeof(bool));
 	for(i = 0; rank[i] >= 0; i++){
 		if(rank[i] == 0){
 			used[i] = true;
@@ -365,5 +365,6 @@ void order_by_rank_not_null(int * list, int * rank){
 			break;
 		}
 	}
+	free(used);
 	list[n] = -1;
 }

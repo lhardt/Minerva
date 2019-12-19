@@ -166,7 +166,7 @@ bool check_for_fixed_meetings(Meeting * meetings){
 				meetings[i_met].period = find_first_positive(meetings[i_met].possible_periods);
 				propagate_meeting_fixation(meetings, i_met);
 			} else if(length == 0){
-				printf("It's not possible to make this meeting.\n");
+	//			printf("It's not possible to make this meeting.\n");
 			}
 		}
 	}
@@ -241,7 +241,7 @@ Meeting * make_meetings_copy(const Meeting * const meetings){
 /* Frees the memory used both by make_meetings_copy or by
  * initialize_all_meetings.
  */
-void destroy_meetings(Meeting * meetings){
+void destroy_meeting_list(Meeting * meetings){
 	int i_met;
 	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
 		free(meetings[i_met].possible_periods);
