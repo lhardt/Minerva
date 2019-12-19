@@ -76,7 +76,7 @@ Universe new_universe(){
 void test_init_meetings(){
 
 	int t1_per[] = {1,1,1,1,1, -1};
-	int t2_per[] = {1,1,1,1,1, -1};
+	int t2_per[] = {1,1,1,0,1, -1};
 	int t3_per[] = {1,1,1,1,1, -1};
 
 	int c1_per[] = {1,1,1,1,1, -1};
@@ -126,7 +126,7 @@ void test_init_meetings(){
 		},
 		{
 			.teacher = (&teachers[1]),
-			.quantity = 3
+			.quantity = 2
 		},
 		{
 			.teacher = (&teachers[2]),
@@ -149,7 +149,7 @@ void test_init_meetings(){
 		},
 		{
 			.teacher = (&teachers[2]),
-			.quantity = 5
+			.quantity = 2
 		},
 		{
 			.teacher = NULL,
@@ -208,6 +208,8 @@ void test_init_meetings(){
 
 	}
 	destroy_node_tree(parent_node);
+
+	printf("Number of guesses created: %d\n", g_CURRENT_ID);
 }
 
 int main(){

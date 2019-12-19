@@ -30,7 +30,13 @@ struct GuessNode{
 /* If we are to guess, it's better if we guess at Acchiles hells.
  * My best guess for where they are is the following:
  *
- * Get every meeting a score
+ * Get every meeting a score, based on the possible_periods list.
+ * - if there is an item with high priority, then the score gets higher.
+ * - if there are less meetings with high scores, then the overall score
+ *   gets lower.
+ *
+ * So [1,1,1,0,0] would have a better score than [1,1,0,0,0]
+ * and [3,2,0,0,0] would have a higher score than [2,2,0,0,0].
  */
 int * order_by_score_discrepancy(Meeting * meetings){
 	int i_met, j_met, i_ord, j_ord, max, n_met, i_per, n_per;
@@ -64,20 +70,7 @@ int * order_by_score_discrepancy(Meeting * meetings){
 	return order;
 }
 
-void print_node_status(GuessNode * node){
-	if(node->solved){
-		printf("[GuessWork] Node (%d) solves the problem.\n", node->id);
-	} else if(node->contradiction) {
-		printf("[GuessWork] Node (%d) can't solve the problem.\n", node->id);
-	} else {
-		int parent_id = -1;
-		if(node->parent != NULL){
-			parent_id = node->parent->id;
-		}
-		printf("[GuessWork] Non-ending node (%d) with parent (%d).\n", node->id, parent_id);
-	}
-}
-
+/* Starts a guess tree with a class list. */
 GuessNode * init_guess_tree(ExtendedClass * classes){
 	GuessNode * initial_node = calloc(1, sizeof(GuessNode));
 	initial_node->id = ++g_CURRENT_ID;
@@ -92,13 +85,11 @@ GuessNode * init_guess_tree(ExtendedClass * classes){
 	initial_node->score_order = order_by_score_discrepancy(initial_node->conclusion);
 	initial_node->children = calloc(32, sizeof(GuessNode));
 	initial_node->children_alloc_sz = 31;
-	// printf("[GuessWork] Creating initial node with id %d.\n", initial_node->id);
-
-	// print_node_status(initial_node);
 
 	return initial_node;
 }
 
+/* Destroys a prevoious allocation of a node. */
 void destroy_node(GuessNode * node){
 	int i_child = 0;
 	if(node->children != NULL){
@@ -115,17 +106,16 @@ void destroy_node(GuessNode * node){
 	}
 }
 
+/* Destroys a previous allocation of a node tree. */
 void destroy_node_tree(GuessNode * node){
 	destroy_node(node);
 	free(node);
 
 }
 
-/* Makes a guess and stores it on [children].
+/* Makes a guess and stores it on node.children.
  * Returns true if it was possible to make the guess;
- * same node.
  */
-
 bool make_guess(GuessNode * node){
 	int i = 0, n_guesses = 0;
 	// Initialization.
@@ -184,11 +174,6 @@ bool make_guess(GuessNode * node){
 	}
 
 	// Initialize new_node->score_order
-}
-
-
-void go_by_score_order(){
-
 }
 
 #endif /* GUESSWORK_H */
