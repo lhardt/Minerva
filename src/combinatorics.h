@@ -299,6 +299,20 @@ int find_max_int(int * list){
 	return max;
 }
 
+int find_max_int_index(int * list){
+	int index = 0, max = -1, max_ind;
+
+	while(list[index] != -1){
+		if(max < list[index]){
+			max = list[index];
+			max_ind = index;
+		}
+		index++;
+	}
+
+	return max_ind;
+}
+
 void order_by_rank(int * list, int * rank){
 	int i = 0, j = 0, k = 0, n, max = -1, i_list = 0;
 	for(n = 0; rank[n] >= 0; n++){}
@@ -315,6 +329,41 @@ void order_by_rank(int * list, int * rank){
 		used[max] = true;
 		list[i_list] = max;
 		i_list++;
+	}
+	list[n] = -1;
+}
+
+void order_by_rank_not_null(int * list, int * rank){
+	int i = 0, k = 0, n, max = -1, i_list = 0;
+	bool * used;
+	for(n = 0; rank[n] >= 0; n++){
+	}
+	used = calloc(n , sizeof(bool));
+	for(i = 0; rank[i] >= 0; i++){
+		if(rank[i] == 0){
+			used[i] = true;
+		} else {
+			used[i] = false;
+		}
+	}
+	for(i = 0; i < n; i++){
+		max = n;
+		for(k = 0; k < n; k++){
+			if(used[k])
+				continue;
+			if(rank[k] > rank[max]){
+				max = k;
+			}
+		}
+		used[max] = true;
+		list[i_list] = max;
+		i_list++;
+	}
+	for(i = 0; i < n; i++){
+		if(list[i] == n){
+			list[i] = -1;
+			break;
+		}
 	}
 	list[n] = -1;
 }

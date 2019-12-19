@@ -104,4 +104,20 @@ prudente, já que essas envolvem menos opções.
 \par Seria possível elimiar a função check\_for\_fixed\_meetings? Ela é só uma
 versão mais eespecífica da nova de score discrepancy.
 
+\subsection{19 Dec 2019}
+
+\par Não esquecer de comentar na documentação que toda lista nesse programa é
+uma "invalid-terminated list". Que nem as null-terminated strings padrões do C.
+
+\par TO DO: make a function like propagate\_meeting\_annihilation(),
+ that works well on this case. explore\_consequences() does not
+ work well here. I don't know fully well the consequences of it.
+ One thing that I know it does is that if there is only one option
+ remaining in the possible\_periods now, it will collapse to
+ period.
+
+\par TO DO: figure out a way of rewarding the school preferences inside
+ node->score. Ideally, it would be stricly in the order computed by
+ score\_order that we find the best timetables
+
 \end{document}

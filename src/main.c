@@ -17,14 +17,15 @@ void print_meeting_list(Meeting * meetings){
 	while(meetings[i].teacher != NULL){
 		printf("Meeting %2d: %-5s %-9s ", i, meetings[i].class->name, meetings[i].teacher->name);
 		if(meetings[i].period != -1){
-			printf("%d\n", meetings[i].period);
+			printf("%d", meetings[i].period);
 		} else {
 			printf("[");
 			for(int j = 0; meetings[i].possible_periods[j] >= 0; j++){
 				printf("%d, ", meetings[i].possible_periods[j]);
 			}
-			printf("]\n");
+			printf("]");
 		}
+		printf("\n");
 
 		i++;
 	}
@@ -75,7 +76,7 @@ Universe new_universe(){
 void test_init_meetings(){
 
 	int t1_per[] = {1,1,1,1,1, -1};
-	int t2_per[] = {2,1,1,0,1, -1};
+	int t2_per[] = {1,1,1,1,1, -1};
 	int t3_per[] = {1,1,1,1,1, -1};
 
 	int c1_per[] = {1,1,1,1,1, -1};
@@ -167,33 +168,76 @@ void test_init_meetings(){
 			.teachers = c2_tq,
 			.periods = c2_per
 		},
-		{
-			.name="DS3",
-			.teachers = c3_tq,
-			.periods = c3_per
-		},
+		// {
+		// 	.name="DS3",
+		// 	.teachers = c3_tq,
+		// 	.periods = c3_per
+		// },
 		{
 			.name=NULL
 		}
 	};
 
-	Meeting * meets = initialize_all_meetings(classes);
 
-	print_meeting_list(meets);
-	printf("Seems immediately impossible? %s.\n", (is_immediately_impossible(meets))?("Yes"):("No"));
-	printf("Seems solved? %s.\n", (seems_solved(meets))?("Yes"):("No"));
+	GuessNode * parent_node = init_guess_tree(classes);
+	GuessNode * current_node;
+	current_node = parent_node;
+	int descent_list[50] = {-1};
+	int descent_i = 0;
 
-	order_by_score_discrepancy(meets);
+	while(! current_node->solved ) {
+		bool go_further = make_guess(current_node);
+		if(go_further){
+			descent_list[descent_i]++;
+			descent_i++;
+			current_node = &current_node->children[descent_list[descent_i]];
+		} else {
+			if(descent_i == 0){
+				printf("Impossible to solve\n");
+				break;
+			}
+			descent_i--;
+			current_node = current_node->parent;
+		}
+	}
+	printf("-----------------------------\n%21s\n-----------------------------\n", "SOLUTION NODE");
+	print_meeting_list(current_node->conclusion);
 
-	destroy_meetings(meets);
+	// printf("--------------------------\nPARENT MEETING LIST\n--------------------------\n");
+	// print_meeting_list(parent_node->conclusion);
+	// printf("--------------------------\nCHILD1 MEETING LIST\n--------------------------\n");
+	// make_guess(parent_node);
+	// for(int i = 0; i < 4; i++){
+	// 	propagate_meeting_fixation(parent_node->children[0].conclusion, i);
+	// 	parent_node->children[0].score_order = order_by_score_discrepancy(parent_node->children[0].conclusion);
+	//
+	// }
+	// print_meeting_list(parent_node->children[0].conclusion);
+	// printf("--------------------------\nCHILD2 MEETING LIST\n--------------------------\n");
+	// make_guess(&parent_node->children[0]);
+	// print_meeting_list(parent_node->children[0].children[0].conclusion);
+	// printf("--------------------------\nCHILD3 MEETING LIST\n--------------------------\n");
+	// make_guess(&parent_node->children[0].children[0]);
+	// print_meeting_list(parent_node->children[0].children[0].children[0].conclusion);
+
+	// Meeting * meets = initialize_all_meetings(classes);
+	// printf("Solved?. %s \n", (current_node->solved)?("Yes"):("No"));
+
+
+	// printf("Seems immediately impossible? %s.\n", (is_immediately_impossible(meets))?("Yes"):("No"));
+	// printf("Seems solved? %s.\n", (seems_solved(meets))?("Yes"):("No"));
+	//
+	// order_by_score_discrepancy(meets);
+
+	// destroy_meetings(meets);
 
 }
 
 int main(){
 	test_init_meetings();
-	// int rank[] = {1,-1};
+	// int rank[] = {1,0,0,-1};
 	// int list[] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-	// order_by_rank(list,rank);
+	// order_by_rank_not_null(list,rank);
 	// printf("Rank: ");
 	// print_int_list(rank);
 	// printf("List: ");

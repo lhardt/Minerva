@@ -130,20 +130,25 @@ bool propagate_meeting_fixation(Meeting * meetings, int i_fixed){
 	int i_met;
 	bool changed_something = false;
 	Meeting fixed_meeting = meetings[i_fixed];
-	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
-		// if the teacher is already allocated, no need to check anything
-		if(i_met == i_fixed || meetings[i_met].period != -1){
-			continue;
-		} else {
-			if( meetings[i_met].teacher == fixed_meeting.teacher
-				|| meetings[i_met].class   == fixed_meeting.class
-			){
-				// Then the teacher doesn't have that period avalible
-				// anymore.
-				changed_something = true;
-				meetings[i_met].possible_periods[ fixed_meeting.period ] = 0;
+	/* Just garantee that this function was not called by accident; */
+	if(fixed_meeting.period != -1){
+		for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+			// if the teacher is already allocated, no need to check anything
+			if(i_met == i_fixed || meetings[i_met].period != -1){
+				continue;
+			} else {
+				if( meetings[i_met].teacher == fixed_meeting.teacher
+					|| meetings[i_met].class   == fixed_meeting.class
+				){
+					// Then the teacher doesn't have that period avalible
+					// anymore.
+					changed_something = true;
+					meetings[i_met].possible_periods[ fixed_meeting.period ] = 0;
+				}
 			}
 		}
+	} else {
+		printf("propagate_meeting_fixation called by accident!\n");
 	}
 	return changed_something;
 }
