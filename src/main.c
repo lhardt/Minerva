@@ -75,13 +75,13 @@ Universe new_universe(){
 
 void test_init_meetings(){
 
-	int t1_per[] = {1,1,1,1,1, -1};
-	int t2_per[] = {1,1,1,0,1, -1};
-	int t3_per[] = {1,1,1,1,1, -1};
+	int t1_per[] = {3,1,1,1,1,5, -1};
+	int t2_per[] = {3,1,1,0,1,5, -1};
+	int t3_per[] = {3,1,1,1,1,5, -1};
 
-	int c1_per[] = {1,1,1,1,1, -1};
-	int c2_per[] = {1,1,1,1,1, -1};
-	int c3_per[] = {1,1,1,1,1, -1};
+	int c1_per[] = {3,1,1,1,1,5, -1};
+	int c2_per[] = {3,1,1,1,1,5, -1};
+	int c3_per[] = {3,1,1,1,1,5, -1};
 
 
 	Teacher teachers[] = {
@@ -209,7 +209,7 @@ void test_init_meetings(){
 	}
 	destroy_node_tree(parent_node);
 
-	printf("Number of guesses created: %d\n", g_CURRENT_ID);
+	printf("\nNumber of guesses created: %d\n", g_CURRENT_ID);
 }
 
 int main(){

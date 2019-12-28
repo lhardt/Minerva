@@ -55,19 +55,19 @@ int * get_preliminary_meeting_score(int * teacher_score, int * class_score){
 }
 
 /* If the same teacher has two meetings with the same class,
- * all of them in the periods [1,2,3], we know that the second
- * can't be in the period 1 because they must coexist.
+ * all of them in the periods [1,2,3], we know that the
+ * first can't be in the period 3, and the third can't be in the period 1
+ * because they must coexist.
  */
-bool eliminate_left_clone_meeting_period_options(Meeting * meetings) {
-	int i_met, j_met, first_possible;
+bool eliminate_clone_meeting_period_options(Meeting * meetings) {
+	int i_met, j_met, first_possible, n_met, last_possible;
 	bool changed_something = false;
 
+	/* Searching for left clones */
 	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
 		first_possible = find_first_positive(meetings[i_met].possible_periods);
 		if(first_possible == -1)
 			continue;
-		// no clone meeting can be in the 1st period of meetings[i] of
-		// this meeting
 		for(j_met = i_met+1; meetings[j_met].teacher != NULL; j_met++){
 			bool is_clone =
 				   (meetings[i_met].teacher == meetings[j_met].teacher)
@@ -78,25 +78,13 @@ bool eliminate_left_clone_meeting_period_options(Meeting * meetings) {
 			}
 		}
 	}
-	return changed_something;
-}
-
-/* If the same teacher has two meetings with the same class,
- * all of them in the periods [1,2,3], we know that the
- * first can't be in the period 3, because they must coexist.
- */
-bool eliminate_right_clone_meeting_period_options(Meeting * meetings) {
-	int n_met, i_met, j_met, last_possible;
-	bool changed_something = false;
-
-	for(n_met = 0; meetings[n_met].teacher != NULL; n_met++){
-	}
+	/* Now that we ran through the whole list, we know its size. */
+	n_met = i_met;
+	/* Searching for right clones */
 	for(i_met = n_met -1; i_met > 0; i_met--){
 		last_possible = find_last_positive(meetings[i_met].possible_periods);
 		if(last_possible == -1)
 			continue;
-		// no clone meeting can be in the 1st period of meetings[i] of
-		// this meeting
 		for(j_met = i_met-1; j_met >= 0; j_met--){
 			bool is_clone =
 				(meetings[i_met].teacher == meetings[j_met].teacher)
@@ -107,18 +95,6 @@ bool eliminate_right_clone_meeting_period_options(Meeting * meetings) {
 			}
 		}
 	}
-	return changed_something;
-}
-
-/* If the same teacher has two meetings with the same class,
- * all of them in the periods [1,2,3], we know that the
- * first can't be in the period 3, and the third can't be in the period 1
- * because they must coexist.
- */
-bool eliminate_clone_meeting_period_options(Meeting * meetings) {
-	bool changed_something = false;
-	changed_something |= eliminate_left_clone_meeting_period_options(meetings);
-	changed_something |= eliminate_right_clone_meeting_period_options(meetings);
 	return changed_something;
 }
 
