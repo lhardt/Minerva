@@ -214,12 +214,6 @@ void test_init_meetings(){
 
 int main(){
 	test_init_meetings();
-	// int rank[] = {1,0,0,-1};
-	// int list[] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-	// order_by_rank_not_null(list,rank);
-	// printf("Rank: ");
-	// print_int_list(rank);
-	// printf("List: ");
-	// print_int_list(list);
+
 	return 0;
 }

@@ -7,6 +7,7 @@
 typedef struct Teacher{
 	char * name;
 	int * periods;
+	int max_meetings_per_day;
 } Teacher;
 
 

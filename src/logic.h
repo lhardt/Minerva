@@ -7,24 +7,54 @@
 
 #include "definitions.h"
 
+/* Returns the number of meetings to be added, considering
+ * - the already present meeting list;
+ * - the specific teacher;
+ * - the specific class;
+ *
+ * In case of passing NULL, the search ignores the nullified parameter.
+ *
+ * WARNING: expects that iff class1 == class2, then &class1 = &class2;
+ * */
+int get_number_of_missing_meetings(ExtendedClass * ex, Meeting * meetings, Teacher * teacher, ExtendedClass * class){
+	int n_met = 0, i_met = 0, i_tq = 0, i_class = 0;
+	ExtendedClass * c_i;
+	Teacher * t_i;
 
-/* Returns the number of meetings this list of classes
- *  will have in total.
- */
-int get_number_of_meetings(ExtendedClass * ex){
-	int n_meetings = 0, i_class = 0, i_tq = 0;
-	ExtendedClass * c;
-
-	for(; ex[i_class].name != NULL; i_class++){
-		c = &(ex[i_class]);
-		for(i_tq = 0; c->teachers[i_tq].teacher != NULL; i_tq++){
-			n_meetings += c->teachers[i_tq].quantity;
+	if(ex == NULL){
+		return 0;
+	}
+	/* Count all required meetings */
+	for(i_class = 0; ex[i_class].name != NULL; i_class++){
+		c_i = &(ex[i_class]);
+		/* This class will only be counted if
+		 * is the same as the search asked for
+		 */
+		if(class == NULL || c_i == class){
+			for(i_tq = 0; c_i->teachers[i_tq].teacher != NULL; i_tq ++){
+				t_i = c_i->teachers[i_tq].teacher;
+				/* This teacher will only be counted if
+				 * is the same as the search asked for
+				 */
+				 if(teacher == NULL || t_i == teacher){
+					 n_met += c_i->teachers[i_tq].quantity;
+				}
+			}
 		}
 	}
+	/* Then discount all the already registered */
+	if(meetings != NULL){
+		for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+			c_i = (meetings[i_met].class);
+			t_i = (meetings[i_met].teacher);
 
-	return n_meetings;
+			if((class == NULL || c_i == class) && (teacher == NULL || t_i == teacher )){
+				n_met--;
+			}
+		}
+	}
+	return n_met;
 }
-
 
 /* Calculates how both the teacher and the class like, for every period,
  * that their meeting be on that period
@@ -142,7 +172,7 @@ bool check_for_fixed_meetings(Meeting * meetings){
 				meetings[i_met].period = find_first_positive(meetings[i_met].possible_periods);
 				propagate_meeting_fixation(meetings, i_met);
 			} else if(length == 0){
-	//			printf("It's not possible to make this meeting.\n");
+				// printf("It's not possible to make this meeting.\n");
 			}
 		}
 	}
@@ -159,19 +189,29 @@ bool explore_consequences(Meeting * meetings){
 	return change;
 }
 
+
 /* Based on a list of classes, generates the list of all meetings
  * that must happen with those classes. That includes the possible
  * periods that the meeting can happen, with some minor constraint
  * propagation.
  */
-Meeting * initialize_all_meetings(ExtendedClass * classes){
+Meeting * initialize_all_meetings(ExtendedClass * classes, Meeting * fixed_meetings){
  	int i_class = 0, i_teach = 0;
 	int i_meeting = 0, i_quant = 0;
-	int n_meeting = get_number_of_meetings(classes);
+	int n_meeting = get_number_of_missing_meetings(classes, NULL, NULL, NULL);
 	Meeting * meetings = calloc( n_meeting + 1, sizeof(Meeting));
+
+	if(fixed_meetings != NULL){
+		/* Copying the fixed meetings before. */
+		for(i_meeting = 0; fixed_meetings[i_meeting].teacher != NULL; i_meeting++){
+			meetings[i_meeting] = fixed_meetings[i_meeting];
+		}
+	}
+
 	for(i_class = 0; classes[i_class].name != NULL; i_class++){
 		for(i_teach = 0; classes[i_class].teachers[i_teach].teacher != NULL; i_teach++){
 			TeacherQuantity tq = classes[i_class].teachers[i_teach];
+			tq.quantity = get_number_of_missing_meetings(classes, meetings, tq.teacher, &classes[i_class]);
 			for(i_quant = 0; i_quant < tq.quantity; i_quant++){
 				meetings[i_meeting].teacher = tq.teacher;
 				meetings[i_meeting].class   = &classes[i_class];

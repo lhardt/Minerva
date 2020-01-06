@@ -79,7 +79,7 @@ GuessNode * init_guess_tree(ExtendedClass * classes){
 
 	initial_node->score = 0;
 
-	initial_node->conclusion = initialize_all_meetings(classes);
+	initial_node->conclusion = initialize_all_meetings(classes, NULL);
 	initial_node->solved = seems_solved(initial_node->conclusion);
 	initial_node->contradiction = is_immediately_impossible(initial_node->conclusion);
 	initial_node->score_order = order_by_score_discrepancy(initial_node->conclusion);
