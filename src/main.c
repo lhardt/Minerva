@@ -102,7 +102,7 @@ void test_init_meetings(){
 		},
 		{
 			.name=NULL,
-			.periods=NULL
+			.periods=NULL,
 		}
 	};
 

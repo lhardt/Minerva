@@ -57,18 +57,20 @@ typedef struct Meeting{
 typedef struct {
 	/* The name of the school. */
 	char * name;
+	/** Number of days that can have classes. */
+	int class_days;
 	/** All periods that may have classes. */
-	int  * class_periods;
-
 	int periods_per_day;
+	/** The classes in school */
+	ExtendedClass * classes;
+	/** The teachers in school*/
+	Teacher * teachers;
 	/** The maximum number of meetings a teacher can attend in one week. */
 	int max_meetings_teacher_per_week;
 	/** The maximum number of meetings a teacher can attend in one day. */
 	int max_meetings_teacher_per_day;
 	/** The maximum number of equal meetings in a row that can happen. */
 	int max_gemini_classes;
-	// /** Where the interval splits classes. */
-	ExtendedClass * classes;
 } School;
 
 

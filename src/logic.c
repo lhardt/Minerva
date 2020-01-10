@@ -13,6 +13,11 @@
 #include "logic.h"
 
 
+void print_meeting(Meeting meeting, int i_met){
+	printf("Meeting %d: T%s C%s P%d ", i_met, meeting.teacher->name, meeting.class->name, meeting.period);
+	print_int_list(meeting.possible_periods);
+}
+
 
 
 int get_number_of_missing_meetings(ExtendedClass * ex, Meeting * meetings, Teacher * teacher, ExtendedClass * class){
@@ -56,13 +61,11 @@ int get_number_of_missing_meetings(ExtendedClass * ex, Meeting * meetings, Teach
 }
 
 /* TODO: test. */
-int get_number_of_meetings_within(Meeting * meetings, Teacher * with_teacher, ExtendedClass * with_class, int per_start, int per_end){
+int get_number_of_meetings_within(Meeting * meetings, Teacher * with_teacher, ExtendedClass * with_class, int per_start, int per_end, int n_per){
 	int i_met, i_per, n_met = 0, ctr = 0;
 
 	if(per_end == -1){
-		for(per_end = 0; meetings[per_end].teacher != NULL; per_end++){
-			/* Makes per_end the index at the end of the list; */
-		}
+		per_end = n_per;
 	}
 	for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
 		if((with_teacher == NULL || with_teacher == meetings[i_met].teacher)
@@ -78,6 +81,7 @@ int get_number_of_meetings_within(Meeting * meetings, Teacher * with_teacher, Ex
 						continue;
 					}
 				}
+
 				for(i_per = per_end; meetings[i_met].possible_periods[i_per] >= 0; i_per++){
 					/* If that meeting is not inside the constraint*/
 					if(meetings[i_met].possible_periods[i_per] != 0){
@@ -170,40 +174,45 @@ bool eliminate_clone_meeting_period_options(Meeting * meetings) {
  */
  bool eliminate_clone_meeting_maximum_options(Meeting * meetings, Teacher * teachers,
 	 										  ExtendedClass * classes, int n_days, int n_periods_per_day){
-	int i_day = 0, i_teach = 0, i_class = 0, k = 0;
+	int i_day = 0, i_teach = 0, i_class = 0, i_met = 0, k = 0, i_per = 0, i_clone;
+	bool changed_something;
 	// just remembering that if we do the filtertering of
 	// possibilities in chronological order, we can do
 	// period = day1, then period = day2, etc. without worrying
 	// about past periods
-	for(i_day = 0; i_day < n_days; i_day++){
-		for(i_teach = 0; teachers[i_teach].name != NULL; i_teach++){
-			for(i_class = 0; classes[i_class].periods != NULL; i_class++){
-				k = get_number_of_meetings_within(meetings, &teachers[i_teach], &classes[i_class],
-									          (i_day)*n_periods_per_day,
-											  (i_day+1)*n_periods_per_day  );
+	for(i_teach = 0; teachers[i_teach].name != NULL; i_teach++){
+		for(i_class = 0; classes[i_class].periods != NULL; i_class++){
 
-				// Then what?
-				// TODO
+			k = get_number_of_meetings_within(meetings, &teachers[i_teach], &classes[i_class], 0, -1, n_days * n_periods_per_day);
+
+			i_day = 0;
+			while(k > teachers[i_teach].max_meetings_per_day){
+				k -= n_periods_per_day;
+				// K last *clone* meetings can't be in this day
+				// but there can be a fixed meeting out of order here,
+				// so we need to filter that too.
+				for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
+					if(meetings[i_met].teacher == &teachers[i_teach] &&
+					   meetings[i_met].class   == &classes[i_class] &&
+					   (meetings[i_met].period == -1 || meetings[i_met].period < (k))){
+						   i_clone++;
+					}
+
+					if(i_clone > k){
+						for(i_per = 0; i_per < n_periods_per_day; i_per++){
+							if(meetings[i_met].possible_periods[i_per] != 0){
+								meetings[i_met].possible_periods[i_per] = 0;
+								changed_something = true;
+								printf("changed something");
+							}
+						}
+					}
+				}
+				i_day++;
 			}
 		}
 	}
-
-
-	// If we know that eliminate_clone_meeting_period_options ran before,
-	// then it's easy:
-
-	// for each tuple of clone meetings
-		// for each day i
-			// take j where the jth meetings first possible period is on ma_periods_per_day on ith day
-			// then every meeting with index bigger than j, periods in the first day are impossible.
-
-
-	// if max_per_day < day_length (otherwise the above code would have catched it)
-		// Count number of required meetings per teacher per class
-		// if any value in that matrix is bigger than his max_per_day,
-		// then every meeting with index bigger than
-			// Count of every required meeting until that day included - max_per_day * i_day
-		// is impossible on the ith day
+	return changed_something;
 }
 
 /* If we just fixed that a meeting with class A and teacher P will

@@ -28,7 +28,7 @@ int get_number_of_missing_meetings(ExtendedClass * ex, Meeting * meetings, Teach
  * - those with the same teacher as with_teacher;
  * - those with the same class as with_class;
  */
-int get_number_of_meetings_within(Meeting * meetings, Teacher * with_teacher, ExtendedClass * with_class, int per_start, int per_end);
+int get_number_of_meetings_within(Meeting * meetings, Teacher * with_teacher, ExtendedClass * with_class, int per_start, int per_end, int n_per);
 
 /* Calculates how both the teacher and the class like, for every period,
  * that their meeting be on that period
