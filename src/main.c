@@ -87,17 +87,23 @@ void test_init_meetings(){
 	Teacher teachers[] = {
 		{
 			.name="Adolf",
-			.periods=t1_per
+			.periods=t1_per,
+			.max_meetings_per_day=5
 		},
 		{
 			.name="Joseph",
-			.periods=t2_per
+			.periods=t2_per,
+			.max_meetings_per_day=5
 		},
 		{
 			.name="Winston",
-			.periods=t3_per
+			.periods=t3_per,
+			.max_meetings_per_day=5
 		},
-		NULL
+		{
+			.name=NULL,
+			.periods=NULL
+		}
 	};
 
 	TeacherQuantity c1_tq[] = {
@@ -177,9 +183,10 @@ void test_init_meetings(){
 			.name=NULL
 		}
 	};
+	int number_of_days = 1;
+	int number_of_periods = 5;
 
-
-	GuessNode * parent_node = init_guess_tree(classes);
+	GuessNode * parent_node = init_guess_tree(classes, teachers,number_of_days, number_of_periods);
 	GuessNode * current_node;
 	current_node = parent_node;
 	int descent_list[50] = {-1};
@@ -214,6 +221,8 @@ void test_init_meetings(){
 
 int main(){
 	test_init_meetings();
+
+
 
 	return 0;
 }
