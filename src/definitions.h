@@ -58,9 +58,9 @@ typedef struct {
 	/* The name of the school. */
 	char * name;
 	/** Number of days that can have classes. */
-	int class_days;
+	int n_class_days;
 	/** All periods that may have classes. */
-	int periods_per_day;
+	int n_periods_per_day;
 	/** The classes in school */
 	ExtendedClass * classes;
 	/** The teachers in school*/

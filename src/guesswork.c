@@ -59,7 +59,7 @@ int * order_by_score_discrepancy(Meeting * meetings){
 }
 
 /* Starts a guess tree with a class list. */
-GuessNode * init_guess_tree(ExtendedClass * classes, Teacher * teachers, int number_of_days, int number_of_periods_per_day){
+GuessNode * init_guess_tree(School * school){
 	GuessNode * initial_node = calloc(1, sizeof(GuessNode));
 	initial_node->id = ++g_CURRENT_ID;
 	initial_node->parent   = NULL;
@@ -67,7 +67,7 @@ GuessNode * init_guess_tree(ExtendedClass * classes, Teacher * teachers, int num
 
 	initial_node->score = 0;
 
-	initial_node->conclusion = initialize_all_meetings(classes, teachers, NULL, number_of_days, number_of_periods_per_day);
+	initial_node->conclusion = initialize_all_meetings(school, NULL);
 	initial_node->solved = seems_solved(initial_node->conclusion);
 	initial_node->contradiction = is_immediately_impossible(initial_node->conclusion);
 	initial_node->score_order = order_by_score_discrepancy(initial_node->conclusion);
@@ -104,7 +104,7 @@ void destroy_node_tree(GuessNode * node){
 /* Makes a guess and stores it on node.children.
  * Returns true if it was possible to make the guess;
  */
-bool make_guess(GuessNode * node){
+bool make_guess(School * school, GuessNode * node){
 	int i = 0, n_guesses = 0;
 	// Initialization.
 	for(n_guesses = 0; node->children[n_guesses].id != 0; n_guesses ++){ }
@@ -127,7 +127,7 @@ bool make_guess(GuessNode * node){
 		guess_met->period = guess_val;
 		propagate_meeting_fixation(new_node->conclusion, node->score_order[n_guesses]);
 		// Check for consequences
-		explore_consequences(new_node->conclusion);
+		explore_consequences(school, new_node->conclusion);
 		new_node->contradiction = is_immediately_impossible(new_node->conclusion);
 		new_node->solved	 = seems_solved(new_node->conclusion);
 		new_node->score_order = order_by_score_discrepancy(new_node->conclusion);
@@ -150,7 +150,7 @@ bool make_guess(GuessNode * node){
 			// TODO: figure out a way of rewarding the school preferences inside
 			// node->score. Ideally, it would be stricly in the order computed by
 			// score_order that we find the best timetables
-			explore_consequences(node->conclusion);
+			explore_consequences(school,node->conclusion);
 			node->solved	 = seems_solved(node->conclusion);
 			free(node->score_order);
 			node->score_order = order_by_score_discrepancy(node->conclusion);

@@ -1,4 +1,4 @@
-/*
+g	/*
  * Project Германия.
  *
  * Copyright (C) Léo H. 2019.
@@ -19,6 +19,20 @@ void print_meeting(Meeting meeting, int i_met){
 }
 
 
+bool can_be_in_range(Meeting met, int range_start, int range_end){
+	int i_per;
+	/* If the period is already defined, it needs to be in the range */
+	if(met.period != -1 ){
+		return range_start <= met.period && range_end > met.period;
+	}
+	/* If the period is not defined, we check for any possibility of it being in range */
+	for(i_per = range_start; i_per < range_end; i_per++){
+		if(met.possible_periods[i_per] > 0){
+			return true;
+		}
+	}
+	return false;
+}
 
 int get_number_of_missing_meetings(ExtendedClass * ex, Meeting * meetings, Teacher * teacher, ExtendedClass * class){
 	int n_met = 0, i_met = 0, i_tq = 0, i_class = 0;
@@ -172,47 +186,59 @@ bool eliminate_clone_meeting_period_options(Meeting * meetings) {
  * clear, then, that he cannot attend to the meetings 5 and 6 in
  * his first day in office.
  */
- bool eliminate_clone_meeting_maximum_options(Meeting * meetings, Teacher * teachers,
-	 										  ExtendedClass * classes, int n_days, int n_periods_per_day){
-	int i_day = 0, i_teach = 0, i_class = 0, i_met = 0, k = 0, i_per = 0, i_clone;
-	bool changed_something;
-	// just remembering that if we do the filtertering of
-	// possibilities in chronological order, we can do
-	// period = day1, then period = day2, etc. without worrying
-	// about past periods
-	for(i_teach = 0; teachers[i_teach].name != NULL; i_teach++){
-		for(i_class = 0; classes[i_class].periods != NULL; i_class++){
-
-			k = get_number_of_meetings_within(meetings, &teachers[i_teach], &classes[i_class], 0, -1, n_days * n_periods_per_day);
-
-			i_day = 0;
-			while(k > teachers[i_teach].max_meetings_per_day){
-				k -= n_periods_per_day;
-				// K last *clone* meetings can't be in this day
-				// but there can be a fixed meeting out of order here,
-				// so we need to filter that too.
-				for(i_met = 0; meetings[i_met].teacher != NULL; i_met++){
-					if(meetings[i_met].teacher == &teachers[i_teach] &&
-					   meetings[i_met].class   == &classes[i_class] &&
-					   (meetings[i_met].period == -1 || meetings[i_met].period < (k))){
-						   i_clone++;
-					}
-
-					if(i_clone > k){
-						for(i_per = 0; i_per < n_periods_per_day; i_per++){
-							if(meetings[i_met].possible_periods[i_per] != 0){
-								meetings[i_met].possible_periods[i_per] = 0;
-								changed_something = true;
-								printf("changed something");
-							}
-						}
-					}
+ bool eliminate_clone_meeting_maximum_options(School * school, Meeting * meetings){
+	 // TODO: This algorithm DOES NOT cover all cases of max_meetings_teacher_per_day and max_gemini_classes
+	 // and so this application is NOT ready.
+	int i_teach = 0, i_class = 0, i_met = 0, k = 0, i_per = 0, i_day;
+	bool changed_something = false;
+	// TODO: use a counter for K values in teacher X class matrix
+	// instead of a for-for-for loop.
+	// TODO: make guard to not run the code if max_meetings_per_day == n_periods_per_day
+	for(i_teach = 0; school->teachers[i_teach].name != NULL; i_teach++){
+		for(i_class = 0; school->classes[i_class].name != NULL; i_class++){
+			k = 0;
+			for(i_met = 0; meetings[i_met].class != NULL; i_met++){
+				if( meetings[i_met].teacher == &school->teachers[i_teach]
+				 && meetings[i_met].class   == &school->classes[i_class] ){
+					 k++;
+					 i_day = 1;
+					 /* Explanation: If the number of clone meetings until this meeting (k)
+					  * is bigger than the number the possible number of he could have worked on,
+					  * this meeting can't happen on this period, by the pidgeonhole principle,
+					  */
+					  // TODO: in the first day, this makes sense.
+					  // in the second, however, we must add on the RHS
+					  // not max_meetings_per_day, but the maximum number
+					  // of times that these clones can happen. The former
+					  // number is bigger than the latter.
+		    		 while(k > (i_day)*(school->teachers[i_teach].max_meetings_per_day)){
+						 for(i_per = 0; i_per < i_day * (school->n_periods_per_day) ; i_per++ ){
+							 printf("Reduction happened. i_met: %d, i_per: %d", i_met, i_per);
+							 // TODO: stays implicit that every next one of the clones can't
+							 // be in these periods too, using the counter suggestion above
+							 meetings[i_met].possible_periods[i_per] = 0;
+						 }
+						i_day++;
+					 }
+					//  printf("\n\n\n");
 				}
-				i_day++;
 			}
 		}
 	}
 	return changed_something;
+}
+
+/* Probably the most expensive algorithm here.
+ * It is not merely to reduce the number of nodes used,
+ * but also to enforce in only one place the max_periods_per_day constraint
+ * and proceed with the motto that all nodes generated are valid.
+ */
+bool eliminate_meeting_maximum_options(School * school, Meeting * meetings){
+
+}
+
+bool eliminate_gemini_options(School * school, Meeting * meetings){
+
 }
 
 /* If we just fixed that a meeting with class A and teacher P will
@@ -266,11 +292,12 @@ bool check_for_fixed_meetings(Meeting * meetings){
 	return changed_something;
 }
 
-bool explore_consequences(Meeting * meetings){
+bool explore_consequences(School * school, Meeting * meetings){
 	bool change = true;
-	eliminate_clone_meeting_period_options(meetings);
 	while(change){
 		change = false;
+		change |= eliminate_clone_meeting_period_options(meetings);
+		change |= eliminate_clone_meeting_maximum_options(school, meetings);
 		change |= check_for_fixed_meetings(meetings);
 	}
 	return change;
@@ -281,10 +308,11 @@ bool explore_consequences(Meeting * meetings){
  * periods that the meeting can happen, with some minor constraint
  * propagation.
  */
-Meeting * initialize_all_meetings(ExtendedClass * classes, Teacher * teachers, Meeting * fixed_meetings, int n_days, int n_periods_per_day){
+Meeting * initialize_all_meetings(School * school, Meeting * fixed_meetings){
+		//ExtendedClass * classes, Teacher * teachers, Meeting * fixed_meetings, int n_days, int n_periods_per_day){
  	int i_class = 0, i_teach = 0;
 	int i_meeting = 0, i_quant = 0;
-	int n_meeting = get_number_of_missing_meetings(classes, NULL, NULL, NULL);
+	int n_meeting = get_number_of_missing_meetings(school->classes, NULL, NULL, NULL);
 	Meeting * meetings = calloc( n_meeting + 1, sizeof(Meeting));
 
 	if(fixed_meetings != NULL){
@@ -294,13 +322,13 @@ Meeting * initialize_all_meetings(ExtendedClass * classes, Teacher * teachers, M
 		}
 	}
 
-	for(i_class = 0; classes[i_class].name != NULL; i_class++){
-		for(i_teach = 0; classes[i_class].teachers[i_teach].teacher != NULL; i_teach++){
-			TeacherQuantity tq = classes[i_class].teachers[i_teach];
-			tq.quantity = get_number_of_missing_meetings(classes, meetings, tq.teacher, &classes[i_class]);
+	for(i_class = 0; school->classes[i_class].name != NULL; i_class++){
+		for(i_teach = 0; school->classes[i_class].teachers[i_teach].teacher != NULL; i_teach++){
+			TeacherQuantity tq = school->classes[i_class].teachers[i_teach];
+			tq.quantity = get_number_of_missing_meetings(school->classes, meetings, tq.teacher, &school->classes[i_class]);
 			for(i_quant = 0; i_quant < tq.quantity; i_quant++){
 				meetings[i_meeting].teacher = tq.teacher;
-				meetings[i_meeting].class   = &classes[i_class];
+				meetings[i_meeting].class   = &school->classes[i_class];
 				meetings[i_meeting].period = -1;
 				meetings[i_meeting].possible_periods =
 					get_preliminary_meeting_score(
@@ -311,9 +339,8 @@ Meeting * initialize_all_meetings(ExtendedClass * classes, Teacher * teachers, M
 			}
 		}
 	}
-	explore_consequences(meetings);
+	explore_consequences(school, meetings);
 
-	eliminate_clone_meeting_maximum_options(meetings, teachers,classes, n_days, n_periods_per_day);
 	return meetings;
 }
 

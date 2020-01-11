@@ -88,17 +88,17 @@ void test_init_meetings(){
 		{
 			.name="Adolf",
 			.periods=t1_per,
-			.max_meetings_per_day=5
+			.max_meetings_per_day=10
 		},
 		{
 			.name="Joseph",
 			.periods=t2_per,
-			.max_meetings_per_day=5
+			.max_meetings_per_day=10
 		},
 		{
 			.name="Winston",
 			.periods=t3_per,
-			.max_meetings_per_day=5
+			.max_meetings_per_day=10
 		},
 		{
 			.name=NULL,
@@ -183,17 +183,23 @@ void test_init_meetings(){
 			.name=NULL
 		}
 	};
-	int number_of_days = 1;
-	int number_of_periods = 5;
 
-	GuessNode * parent_node = init_guess_tree(classes, teachers,number_of_days, number_of_periods);
+	School school = {
+		.name = "E.E.E.F. Germannia",
+		.teachers = teachers,
+		.classes  = classes,
+		.n_class_days = 1,
+		.n_periods_per_day = 5
+	};
+
+	GuessNode * parent_node = init_guess_tree(&school);
 	GuessNode * current_node;
 	current_node = parent_node;
 	int descent_list[50] = {-1};
 	int descent_i = 0;
 
 	while(current_node != NULL && ! current_node->solved ) {
-		bool go_further = make_guess(current_node);
+		bool go_further = make_guess(&school,current_node);
 		if(go_further){
 			descent_list[descent_i]++;
 			descent_i++;

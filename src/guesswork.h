@@ -46,7 +46,7 @@ struct GuessNode{
 int * order_by_score_discrepancy(Meeting * meetings);
 
 /* Starts a guess tree with a class list. */
-GuessNode * init_guess_tree(ExtendedClass * classes, Teacher * teachers, int number_of_days, int number_of_periods_per_day);
+GuessNode * init_guess_tree(School * school);
 
 /* Destroys a prevoious allocation of a node. */
 void destroy_node(GuessNode * node);
@@ -57,6 +57,6 @@ void destroy_node_tree(GuessNode * node);
 /* Makes a guess and stores it on node.children.
  * Returns true if it was possible to make the guess;
  */
-bool make_guess(GuessNode * node);
+bool make_guess(School * school, GuessNode * node);
 
 #endif /* GUESSWORK_H */

@@ -47,7 +47,7 @@ bool eliminate_clone_meeting_period_options(Meeting * meetings);
  * clear, then, that he cannot attend to the meetings 5 and 6 in
  * his first day in office.
  */
-bool eliminate_clone_meeting_maximum_options(Meeting * meetings, Teacher * teachers, ExtendedClass * classes, int n_days, int n_periods_per_day);
+bool eliminate_clone_meeting_maximum_options(School * school, Meeting * meetings);
 
 /* If we just fixed that a meeting with class A and teacher P will
  * happen, we know that neither P nor A can be in another meeting
@@ -60,14 +60,14 @@ bool propagate_meeting_fixation(Meeting * meetings, int i_fixed);
  */
 bool check_for_fixed_meetings(Meeting * meetings);
 
-bool explore_consequences(Meeting * meetings);
+bool explore_consequences(School * school, Meeting * meetings);
 
 /* Based on a list of classes, generates the list of all meetings
  * that must happen with those classes. That includes the possible
  * periods that the meeting can happen, with some minor constraint
  * propagation.
  */
-Meeting * initialize_all_meetings(ExtendedClass * classes, Teacher * teachers, Meeting * fixed_meetings, int n_days, int n_periods_per_day);
+Meeting * initialize_all_meetings(School * school, Meeting * fixed_meetings);
 
 /* Makes a quick check to see if this meeting list
  * is immediately contradictory.
