@@ -11,6 +11,7 @@
  #include <stdbool.h>
 
 #include "combinatorics.h"
+#include "util.h"
 
  /* Calculates the result of P!/(P-T)! */
  uint64_t factorial_division(uint64_t p, uint64_t t){
@@ -230,19 +231,6 @@ int not_null_int_list_len(const int * const list){
 		i ++;
 	}
 	return len;
-}
-
-void print_int_list(const int * const list){
-	int i = 0;
-	printf("[");
-	while(list[i] != -1){
-		printf("%2d", list[i]);
-		if(list[i+1] != -1){
-			printf(", ");
-		}
-		i++;
-	}
-	printf("]\n");
 }
 
 bool equal_lists(int * a, int * b){

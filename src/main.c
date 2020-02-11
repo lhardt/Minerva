@@ -11,26 +11,8 @@
 #include "combinatorics.h"
 #include "logic.h"
 #include "guesswork.h"
-
-void print_meeting_list(Meeting * meetings){
-	int i = 0;
-	while(meetings[i].teacher != NULL){
-		printf("Meeting %2d: %-5s %-9s ", i, meetings[i].class->name, meetings[i].teacher->name);
-		if(meetings[i].period != -1){
-			printf("%d", meetings[i].period);
-		} else {
-			printf("[");
-			for(int j = 0; meetings[i].possible_periods[j] >= 0; j++){
-				printf("%d, ", meetings[i].possible_periods[j]);
-			}
-			printf("]");
-		}
-		printf("\n");
-
-		i++;
-	}
-}
-
+#include "data_saver.h"
+#include "util.h"
 
 Universe new_universe(){
 	const char * const days[] = {
@@ -226,9 +208,124 @@ void test_init_meetings(){
 }
 
 int main(){
-	test_init_meetings();
+	// test_init_meetings();
+	// database_execute("db/test.db", CREATE_SCHOOL_TABLE);
+	// database_execute("db/test.db", CREATE_TEACHER_TABLE);
+	// database_execute("db/test.db", CREATE_CLASS_TABLE);
+	// database_execute("db/test.db", CREATE_TEACHER_CLASS_TABLE);
 
 
+	int t1_per[] = {3,1,1,1,1,5, -1};
+	int t2_per[] = {3,1,1,0,1,5, -1};
+	int t3_per[] = {3,1,1,1,1,5, -1};
+
+	int c1_per[] = {3,1,1,1,1,5, -1};
+	int c2_per[] = {3,1,1,1,1,5, -1};
+	int c3_per[] = {3,1,1,1,1,5, -1};
+
+
+	Teacher teachers[] = {
+		{
+			.name="Adolf",
+			.periods=t1_per,
+			.max_meetings_per_day=10
+		},
+		{
+			.name="Joseph",
+			.periods=t2_per,
+			.max_meetings_per_day=10
+		},
+		{
+			.name="Winston",
+			.periods=t3_per,
+			.max_meetings_per_day=10
+		},
+		{
+			.name=NULL,
+			.periods=NULL,
+		}
+	};
+
+	TeacherQuantity c1_tq[] = {
+		{
+			.teacher = (&teachers[0]),
+			.quantity = 3
+		},
+		{
+			.teacher = (&teachers[1]),
+			.quantity = 1
+		},
+		{
+			.teacher = (&teachers[2]),
+			.quantity = 1
+		},
+		{
+			.teacher = NULL,
+			.quantity = 0
+		}
+	};
+
+	TeacherQuantity c2_tq[] = {
+		{
+			.teacher = (&teachers[0]),
+			.quantity = 1
+		},
+		{
+			.teacher = (&teachers[1]),
+			.quantity = 2
+		},
+		{
+			.teacher = (&teachers[2]),
+			.quantity = 1
+		},
+		{
+			.teacher = NULL,
+			.quantity = 0
+		}
+	};
+
+	TeacherQuantity c3_tq[] = {
+		{
+			.teacher = (&teachers[0]),
+			.quantity = 1
+		},
+		{
+			.teacher = (&teachers[1]),
+			.quantity = 1
+		},
+		{
+			.teacher = (&teachers[2]),
+			.quantity = 2
+		},
+		{
+			.teacher = NULL,
+			.quantity = 0
+		}
+	};
+
+	ExtendedClass classes[] = {
+		{
+			.name="DS1",
+			.teachers = c1_tq,
+			.periods = c1_per
+		},
+		{
+			.name="DS2",
+			.teachers = c2_tq,
+			.periods = c2_per
+		},
+		{
+			.name="DS3",
+			.teachers = c3_tq,
+			.periods = c3_per
+		},
+		{
+			.name=NULL
+		}
+	};
+
+	print_teacher(&teachers[1]);
+	print_ex_class(&classes[0]);
 
 	return 0;
 }

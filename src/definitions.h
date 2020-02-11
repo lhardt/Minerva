@@ -5,6 +5,7 @@
 
 
 typedef struct Teacher{
+	int id;
 	char * name;
 	int * periods;
 	int max_meetings_per_day;
@@ -12,6 +13,7 @@ typedef struct Teacher{
 
 
 typedef struct Class{
+	int id;
 	char * name;
 	int  * periods;
 } Class;
@@ -30,6 +32,7 @@ typedef struct ClassQuantity{
 
 
 typedef struct ExtendedClass{
+	int id;
 	TeacherQuantity * teachers;
 	int * periods;
 	char    * name;
@@ -37,6 +40,7 @@ typedef struct ExtendedClass{
 
 
 typedef struct ExtendedTeacher{
+	int id;
 	ClassQuantity * classes;
 	int * periods;
 	char * name;
@@ -55,6 +59,7 @@ typedef struct Meeting{
 
 
 typedef struct {
+	int id;
 	/* The name of the school. */
 	char * name;
 	/** Number of days that can have classes. */

@@ -85,8 +85,6 @@ int int_list_len(const int * const list);
 
 int not_null_int_list_len(const int * const list);
 
-void print_int_list(const int * const list);
-
 bool equal_lists(int * a, int * b);
 
 /* Returns the index of the first positive integer in a list terminated

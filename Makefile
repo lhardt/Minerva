@@ -5,9 +5,9 @@ OBJDIR := obj
 BINDIR := bin
 SRC := $(wildcard src/*.c)
 OBJ :=
-CFLAGS := -Wall
+LIB := -lsqlite3
 TARGET := build/main
-CFLAGS := -g
+CFLAGS := -Wall -g
 OBJ := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 
@@ -22,7 +22,7 @@ $(OBJ): $(SRC)
 	$(CC)  $(CFLAGS) -c $(@:$(OBJDIR)/%.o=$(SRCDIR)/%.c) -o $@
 
 $(TARGET) : $(OBJ)
-	$(CC) -o $(TARGET) $(OBJ)
+	$(CC) -o $(TARGET) $(OBJ) $(LIB)
 #
 #
 #

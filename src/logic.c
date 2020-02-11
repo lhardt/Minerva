@@ -1,4 +1,4 @@
-g	/*
+/*
  * Project Германия.
  *
  * Copyright (C) Léo H. 2019.
@@ -11,7 +11,7 @@ g	/*
 #include "combinatorics.h"
 #include "definitions.h"
 #include "logic.h"
-
+#include "util.h"
 
 void print_meeting(Meeting meeting, int i_met){
 	printf("Meeting %d: T%s C%s P%d ", i_met, meeting.teacher->name, meeting.class->name, meeting.period);
@@ -76,7 +76,7 @@ int get_number_of_missing_meetings(ExtendedClass * ex, Meeting * meetings, Teach
 
 /* TODO: test. */
 int get_number_of_meetings_within(Meeting * meetings, Teacher * with_teacher, ExtendedClass * with_class, int per_start, int per_end, int n_per){
-	int i_met, i_per, n_met = 0, ctr = 0;
+	int i_met, i_per, ctr = 0;
 
 	if(per_end == -1){
 		per_end = n_per;
@@ -85,19 +85,17 @@ int get_number_of_meetings_within(Meeting * meetings, Teacher * with_teacher, Ex
 		if((with_teacher == NULL || with_teacher == meetings[i_met].teacher)
 		   && ((with_class == NULL || with_class == meetings[i_met].class))){
 			if(meetings[i_met].period != -1){
-				if( per_start <= meetings[i_met].period && per_end > meetings[i_met].period){
+				if( per_start <= meetings[i_met].period && per_end >= meetings[i_met].period){
 					ctr++;
 				}
 			} else {
+				/* If that meeting is not inside the constraint, it must be before or after*/
 				for(i_per = 0; i_per < per_start; i_per++){
-					/* If that meeting is not inside the constraint*/
 					if(meetings[i_met].possible_periods[i_per] != 0){
 						continue;
 					}
 				}
-
 				for(i_per = per_end; meetings[i_met].possible_periods[i_per] >= 0; i_per++){
-					/* If that meeting is not inside the constraint*/
 					if(meetings[i_met].possible_periods[i_per] != 0){
 						continue;
 					}
@@ -233,12 +231,12 @@ bool eliminate_clone_meeting_period_options(Meeting * meetings) {
  * but also to enforce in only one place the max_periods_per_day constraint
  * and proceed with the motto that all nodes generated are valid.
  */
-bool eliminate_meeting_maximum_options(School * school, Meeting * meetings){
-
+bool eliminate_meeting_maximum_class_options(School * school, Meeting * meetings){
+	return false;
 }
 
 bool eliminate_gemini_options(School * school, Meeting * meetings){
-
+	return false;
 }
 
 /* If we just fixed that a meeting with class A and teacher P will
@@ -365,6 +363,7 @@ bool is_immediately_impossible(Meeting * meetings){
 			int per_i = meetings[i_met].period;
 			int per_j = meetings[j_met].period;
 			if((same_teach || same_class) && (per_i != -1) && (per_i == per_j)){
+				printf("Clause that seems unnecessary activated. \n");
 				return true;
 			}
 		}

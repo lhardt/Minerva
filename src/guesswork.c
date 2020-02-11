@@ -27,7 +27,7 @@ int g_CURRENT_ID = 0;
  * and [3,2,0,0,0] would have a higher score than [2,2,0,0,0].
  */
 int * order_by_score_discrepancy(Meeting * meetings){
-	int i_met, j_met, i_ord, j_ord, max, n_met, i_per, n_per;
+	int i_met, max, n_met, i_per;
 	int * scores;
 	int * order;
 
@@ -105,7 +105,7 @@ void destroy_node_tree(GuessNode * node){
  * Returns true if it was possible to make the guess;
  */
 bool make_guess(School * school, GuessNode * node){
-	int i = 0, n_guesses = 0;
+	int n_guesses = 0;
 	// Initialization.
 	for(n_guesses = 0; node->children[n_guesses].id != 0; n_guesses ++){ }
 
