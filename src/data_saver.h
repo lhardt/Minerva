@@ -17,5 +17,6 @@ extern const char * const CREATE_TEACHER_CLASS_TABLE;
 
 int database_execute(const char * filename, const char * const statement);
 
+void save_state(Universe * u);
 
 #endif /* DATA_SAVER_H */

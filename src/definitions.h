@@ -80,11 +80,15 @@ typedef struct {
 
 
 typedef struct Universe {
+	/* Current state */
 	char ** days;
 	char ** periods;
 	School  school;
 	Teacher * teachers;
 	Meeting * all_meetings;
+	/* Past states */
+	EditAction * all_actions;
+	int current_action_index;
 } Universe;
 
 
