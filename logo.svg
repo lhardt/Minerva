@@ -1,0 +1,9 @@
+<!-- Uma espécie de pré-logo. Nada conclusivo aqui. Nenhuma equação foi usada para descrever as curvas. Foi tudo "no chute". -->
+<svg width="300" height="300">
+	<!-- parte superior -->
+	<path d="M 60,215 C 50,90 250,10 270,30" fill="#090" stroke="#020" stroke-width="2" stroke-linecap="round"/>
+	<!-- parte inferior -->
+	<path d="M 60,215 C 100,210 130,250 270,30 M 60,215 60,215 S 150,70 270,30" fill="#070" stroke="#020" stroke-width="3" stroke-linecap="round"/>
+	<!-- caule -->
+	<path d="M 30,270 C 45,240 60,215 60,215 S 150,70 270,30" fill="transparent" stroke="#020" stroke-width="4" stroke-linecap="round"/>
+</svg>
