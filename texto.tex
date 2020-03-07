@@ -5,12 +5,24 @@
 \usepackage{lipsum} % lorem
 \usepackage{scrextend} % addmargin
 \usepackage{fontspec} % Arial
-\usepackage{makeidx} % Table of contents
-	\renewcommand\contentsname{} % no title table of contents
-	\renewcommand\listfigurename{} % no title table of figures
-	\renewcommand\listtablename{} % no title table of figures
+\usepackage[portuguese]{babel}
+\usepackage{makeidx} % Títulos das tabelas
+\usepackage[pagestyles]{titlesec} % titleformat
+\usepackage{geometry}
+% citestyle authoryear para citações anbt
+\usepackage[backend=biber,sorting=nty, style=abnt, citestyle=abnt-numeric]{biblatex}
+
+\addto\captionsportuguese{
+	\renewcommand{\contentsname}{ }
+	\renewcommand{\contentsname}{ }
+	\renewcommand{\listfigurename}{ }
+	\renewcommand{\listtablename}{ }
+}
+
 \usepackage[breaklinks=true]{hyperref}
 
+
+\title{MINERVA: UMA SOLUÇÃO INFORMATIZADA PARA O ESCALONAMENTO DE PROFESSORES NAS ESCOLAS BRASILEIRAS}
 \ifpdf
 	\hypersetup{
 		pdftitle    = Minerva,
@@ -18,26 +30,10 @@
 		pdfsubject  = TCC - Léo Hardt,
 		pdfcreator  = Léo Hardt,
 		pdfproducer = PDFLatex,
-		pdfkeywords = {Palavra-chave1, Palavra-chave2, Palavra-chave3}
+		pdfkeywords = {Software, Escola, Grade Horária}
 	}
 \fi
 
-\setmainfont{Arial}
-\setlength{\parindent}{12.5mm}
-% \setlength{\parskip}{1em}
-\renewcommand{\baselinestretch}{1.5}
-
-
-\usepackage[pagestyles]{titlesec} % titleformat
-\titleformat{\section}
-  {\normalfont\scshape\bfseries}{\thesection}{1em}{}
-\titleformat{\subsection}
-	{\normalfont\scshape}{\thesubsection}{1em}{}
-
-
-\newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
-
-\usepackage{geometry}
 \geometry{
 	a4paper,
 	left=30mm,
@@ -47,6 +43,19 @@
 }
 
 \pagestyle{myheadings}
+
+\addbibresource{texto.bib}
+
+\setmainfont{Arial}
+\setlength{\parindent}{12.5mm}
+\renewcommand{\baselinestretch}{1.5}
+
+\titleformat{\section}
+  {\normalfont\scshape\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+	{\normalfont\scshape}{\thesubsection}{1em}{}
+
+\newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
 
 \begin{document}
 
@@ -105,7 +114,7 @@
 		\setlength{\parindent}{0mm}
 		Trabalho de Conclusão de Curso apresentado como requisito parcial para obtenção do grau de Técnico em Desenvolvimento de Sistemas pelo Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Sul – Campus Canoas.\\
 
-		Prof. Orien tador\\
+		Prof. Gustavo Neuberger\\
 		Orientador
 
 	\end{addmargin}
@@ -150,7 +159,7 @@
 	\thispagestyle{empty}
 	\section*{ABSTRACT}
 
-	One crucial factor for a school's efficiency is its weekly timetable. Apart from being strenuous to make, it may cause unnecessary spending. With that in mind, various computer programs were designed to create school timetables, each for a specific school system. Thus, they are seldom compatible with the flexibility of some institutions. Furthermore, licenses for this kind of software are often too expensive for low-budget schools. Therefore, the present work aims at the creation of a public timetabling software which takes into account the demands of various brazilian schools. A brief description of the brazilian educational system is given, as well as the necessities of \textbf{N} schools, representing the larger group. For that, \textbf{X approach} was used.  \textbf{ -------------- Implementation -------------- }. After implementation, the system was tested in those same \textbf{N} schools. Finally, a survey was made available for the participants, with the aim of having a diverse analysis of the efficiency and possible improvements to the system.
+	One crucial factor for a school's efficiency is its weekly timetable. Apart from being impractical to make, it may cause unnecessary spending. With that in mind, various computer programs were designed to create school timetables, each for a specific school system. Thus, they are seldom compatible with the flexibility of some institutions. Furthermore, licenses for this kind of software are often too expensive for low-budget schools. Therefore, the present work aims at the creation of a public timetabling software which takes into account the demands of various brazilian schools. A brief description of the brazilian educational system is given, as well as the necessities of \textbf{N} schools, representing the larger group. For that, \textbf{X approach} was used.  \textbf{ -------------- Implementation -------------- }. After implementation, the system was tested in those same \textbf{N} schools. Finally, a survey was made available for the participants, with the aim of having a diverse analysis of the efficiency and possible improvements to the system.
 
 	\begingroup
 		\setlength{\parindent}{0mm}
@@ -166,7 +175,7 @@
 	\thispagestyle{empty}
 	\section*{ZUSAMMENFASSUNG}
 
-	Ein entscheidende Faktor für die Effizienz einer Schule ist seinen Zeitplan. 
+	Ein entscheidende Faktor für die Effizienz einer Schule ist seinen Zeitplan. Zusätzlich zu es
 
 	\lipsum[1]
 
@@ -199,6 +208,33 @@
 	\newpage
 
 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%      Lista de Siglas       %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\thispagestyle{empty}
+	\section*{LISTA DE ABREVIATURAS E SIGLAS}
+
+	\begin{tabular}{p{3cm} p{0.6\textwidth}}
+	  C & \textit{C Programming Language} \\
+	  IFRS & \textit{Instituto Federal de Educação, Ciência e Tecnologia} \\
+	  UML & \textit{Unified Modeling Language} \\
+	\end{tabular}\\
+
+
+	\newpage
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%     Lista de Algorítmos    %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\thispagestyle{empty}
+	\section*{LISTA DE ALGORÍTMOS}
+
+	% \listofalgorithms
+
+	\newpage
+
+
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%          Sumário           %%%%
@@ -219,8 +255,8 @@
 	%%%         Introdução         %%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{INTRODUÇÃO}
-em,
-		\lipsum[1]
+
+		O problema da criação da grade horária escolar é NP-Completo \cite{complexity}. Sendo assim, é um grande entrave no gerenciamento de escolas tanto públicas quanto privadas.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%      Solução Proposta      %%%%
@@ -252,7 +288,9 @@ em,
 	%%%   Fundamentação Teórica    %%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{FUNDAMENTAÇÃO TEÓRICA}
-		\lipsum[1]
+
+
+		Há,
 
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,7 +364,22 @@ em,
 	\section*{REFERÊNCIAS}
 	\addcontentsline{toc}{section}{REFERÊNCIAS}
 
-	\lipsum[1]
+	\printbibliography[heading=none]
+
+	\newpage
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%         Glossário          %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\section*{GLOSSÁRIO}
+	\addcontentsline{toc}{section}{GLOSSÁRIO}
+
+	\begin{tabular}{p{3cm} p{0.6\textwidth}}
+	  Software & \textit{Programa de Computador} [referenciar] \\
+	  Dolor & \textit{Instituto Federal de Educação, Ciência e Tecnologia} \\
+	  Sit Amet & \textit{Unified Modeling Language} \\
+	\end{tabular}\\
+
 
 	\newpage
 
