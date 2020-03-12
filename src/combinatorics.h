@@ -1,8 +1,9 @@
 /*
- * Project Германия.
+ * Project Minerva.
  *
- * Copyright (C) Léo H. 2019.
+ * Copyright (C) Léo H. 2019-2020.
  */
+
 #ifndef COMBINATORICS_H
 #define COMBINATORICS_H
 
@@ -12,7 +13,7 @@
  #include <stdint.h>
  #include <stdbool.h>
 
-#include "definitions.h"
+#include "types.h"
 
  /* Calculates the result of P!/(P-T)! */
  uint64_t factorial_division(uint64_t p, uint64_t t);

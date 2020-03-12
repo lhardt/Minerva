@@ -1,7 +1,13 @@
+/*
+ * Project Minerva.
+ *
+ * Copyright (C) Léo H. 2019-2020.
+ */
+
 #ifndef UTIL_H
 #define UTIL_H
 
-#include "definitions.h"
+#include "types.h"
 
 void print_int_list(const int * const list);
 

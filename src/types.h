@@ -1,35 +1,89 @@
+/*
+ * Project Minerva.
+ *
+ * Copyright (C) Léo H. 2019-2020.
+ */
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
+#define MAX_PERIODS_PER_DAY (32)
+#define MAX_PERIODS_PER_WEEK (1024)
+#define MAX_DAYS ((MAX_PERIODS_PER_WEEK)/(MAX_PERIODS_PER_DAY))
 
-typedef struct Teacher{
+typedef enum Period {
+	PER_NULL    = -2,
+	PER_NOT_SET = -1,
+} Period;
+
+typedef struct ClassQuantity ClassQuantity;
+typedef struct TeacherQuantity TeacherQuantity;
+typedef struct DisciplineQuantity DisciplineQuantity;
+
+typedef struct Discipline {
 	int id;
 	char * name;
-	int * periods;
-	int max_meetings_per_day;
+	char * short_name;
+
+	int gemini_score[MAX_PERIODS_PER_DAY];
+	int week_position_score[MAX_PERIODS_PER_WEEK];
+} Discipline;
+
+typedef struct DisciplineGroup {
+	int    id;
+	char * name;
+	char * short_name;
+
+	Discipline * disciplines;
+};
+
+typedef struct Teacher{
+	int    id;
+	char * name;
+	char * short_name;
+
+	int  * free_periods;
+	int    max_meetings_per_day;
+
+	Discipline    * teaches;
+	ClassQuantity * possible_classes;
+	ClassQuantity * classes;
+
+	int per_day_number_score[MAX_DAYS];
 } Teacher;
 
 
 typedef struct Class{
 	int id;
 	char * name;
-	int  * periods;
+	char * short_name;
+
+	int periods[MAX_PERIODS_PER_WEEK];
+	int entry_period;
+	int exit_period;
+	bool can_have_free_periods_flag;
+
+	DisciplineQuantity * needs;
 } Class;
 
 
-typedef struct TeacherQuantity{
+struct TeacherQuantity{
 	Teacher * teacher;
 	int		  quantity;
-} TeacherQuantity;
+};
 
 
-typedef struct ClassQuantity{
+struct ClassQuantity{
 	Class * class;
 	int 	quantity;
-} ClassQuantity;
+};
 
+typedef struct DisciplineQuantity{
+	Discipline * disc;
+	int			 quantity;
+};
 
 typedef struct ExtendedClass{
 	int id;
@@ -48,13 +102,11 @@ typedef struct ExtendedTeacher{
 
 
 typedef struct Meeting{
-	Teacher * teacher;
-	ExtendedClass   * class;
-	int 	  period;
-	/* In the case that period = -1, possiblePeriods is a list of
-	 * possible periods that this meeting can be in.
-	 */
-	int * 	  possible_periods;
+	Discipline * disc;
+	Teacher    * teacher;
+	Class      * class;
+	int 	     period;
+	int        * possible_periods;
 } Meeting;
 
 
@@ -66,6 +118,8 @@ typedef struct {
 	int n_class_days;
 	/** All periods that may have classes. */
 	int n_periods_per_day;
+	/** True or false value for if the school operates in that time or not */
+	bool periods[MAX_PERIODS_PER_WEEK];
 	/** The classes in school */
 	ExtendedClass * classes;
 	/** The teachers in school*/
@@ -79,6 +133,24 @@ typedef struct {
 } School;
 
 
+typedef enum EditActionActionType {
+	kTestEmptyEnum
+} EditActionActionType;
+
+typedef enum EditActionObjectType {
+	kTestEmptyEnum2
+} EditActionObjectType;
+
+typedef struct EditAction {
+	int id;
+
+	EditActionActionType action;
+	EditActionObjectType object;
+	void * data_before;
+	void * data_after;
+} EditAction;
+
+
 typedef struct Universe {
 	/* Current state */
 	char ** days;
@@ -90,6 +162,5 @@ typedef struct Universe {
 	EditAction * all_actions;
 	int current_action_index;
 } Universe;
-
 
 #endif /* DEFINITIONS_H */

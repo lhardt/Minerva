@@ -1,7 +1,7 @@
 /*
- * Project Германия.
+ * Project Minerva.
  *
- * Copyright (C) Léo H. 2019.
+ * Copyright (C) Léo H. 2019-2020.
  */
 
  #include <stdio.h>
