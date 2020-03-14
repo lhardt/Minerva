@@ -6,7 +6,7 @@ Uma solução informatizada para o escalonamento de professores nas escolas bras
 ## Dados Gerais
 
 - **Nome do Projeto**: Minerva;
-- **Aluno**: [Léo Marco de Assis Hardt](http://buscatextual.cnpq.br/buscatextual/visualizacv.do?id=K2463923J2);
+- **Aluno**: [Léo Hardt](http://buscatextual.cnpq.br/buscatextual/visualizacv.do?id=K2463923J2);
 - **Professor Orientador**: [Gustavo Neuberger](http://buscatextual.cnpq.br/buscatextual/visualizacv.do?id=K4764159Y6);
 - **Ano do Projeto**: 2020;
 - **Licença**: A definir.
