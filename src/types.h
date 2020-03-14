@@ -38,6 +38,7 @@ typedef struct Room {
 
 	/*this is not a list of fetures. Is rather a score given to all fetures, being 0 absent. */
 	int room_features[MAX_FEATURES];
+	int disponibility[MAX_PERIODS_PER_WEEK];
 } Room;
 
 typedef struct Subject {
@@ -170,8 +171,8 @@ typedef struct School {
 	char      ** period_per_day_names;
 
 	Class      * classes;
-	Teachers   * teachers;
-	Rooms      * rooms;
+	Teacher    * teachers;
+	Room       * rooms;
 	Meeting    * all_meetings;
 
 	int 		 n_periods;
