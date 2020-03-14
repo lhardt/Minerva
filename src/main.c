@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 #include "decisions.h"
-
+#include "util.h"
 
 int main(){
 	printf("Hello, world.\n");

@@ -1,0 +1,164 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{ifpdf} % configuraç
+\usepackage{lipsum} % lipsum
+\usepackage{scrextend} % addmargin
+\usepackage{fontspec} % Arial
+\usepackage[portuguese]{babel}
+\usepackage{makeidx} % Títulos das tabelas
+\usepackage[pagestyles]{titlesec} % titleformat
+\usepackage{geometry}
+\usepackage{graphicx} % resizebox
+% citestyle authoryear para citações anbt
+\usepackage[backend=biber,sorting=nty, style=abnt, citestyle=abnt-numeric]{biblatex}
+
+\addto\captionsportuguese{
+	\renewcommand{\contentsname}{ }
+	\renewcommand{\contentsname}{ }
+	\renewcommand{\listfigurename}{ }
+	\renewcommand{\listtablename}{ }
+}
+
+\usepackage[breaklinks=true]{hyperref}
+
+
+\title{MINERVA: UMA SOLUÇÃO INFORMATIZADA PARA O ESCALONAMENTO DE PROFESSORES NAS ESCOLAS BRASILEIRAS}
+\ifpdf
+	\hypersetup{
+		pdftitle    = Minerva,
+		pdfauthor   = {Léo Hardt, leom.hardt@gmail.com},
+		pdfsubject  = TCC - Léo Hardt,
+		pdfcreator  = Léo Hardt,
+		pdfproducer = PDFLatex,
+		pdfkeywords = {Software, Escola, Grade Horária}
+	}
+\fi
+
+\geometry{
+	a4paper,
+	left=30mm,
+	right=20mm,
+	top=30mm,
+	bottom=20mm
+}
+
+\pagestyle{myheadings}
+
+\setmainfont{Arial}
+\setlength{\parindent}{12.5mm}
+\renewcommand{\baselinestretch}{1.5}
+
+\titleformat{\section}
+  {\normalfont\scshape\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+	{\normalfont\scshape}{\thesubsection}{1em}{}
+
+\newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
+
+\begin{document}
+
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%            Capa            %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\thispagestyle{empty}
+
+	\begin{center}
+		INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO RIO GRANDE DO SUL - CAMPUS CANOAS \\
+		CURSO TÉCNICO DE DESENVOLVIMENTO DE SISTEMAS INTEGRADO AO ENSINO MÉDIO\\
+	\end{center}
+
+	\vskip 3cm
+
+	\begin{center}
+		LÉO MARCO DE ASSIS HARDT
+	\end{center}
+
+	\vskip 5cm
+
+	\begin{center}
+		\textbf{APÊNDICE II - MINERVA: UMA SOLUÇÃO INFORMATIZADA PARA O ESCALONAMENTO DE PROFESSORES NAS ESCOLAS BRASILEIRAS}
+	\end{center}
+
+	\vskip 5cm
+
+	\begin{center}
+		Orientador: Gustavo Neuberger
+	\end{center}
+
+
+
+	\begin{bottompar}
+		\begin{center}
+		CANOAS \\
+		2020
+		\end{center}
+	\end{bottompar}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%        Justificativa       %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \section{JUSTIFICATIVA DO PROJETO CIENTÍFICO}
+
+		\lipsum[1]
+
+		\subsection{DESCRIÇÃO DO PROBLEMA}
+
+			\lipsum[1]
+
+		\subsection{PROPOSTA DE SOLUÇÃO}
+
+			\lipsum[1]
+
+		\subsection{OBJETIVO}
+
+			\subsubsection{OBJETIVO GERAL}
+
+				\lipsum[1]
+
+			\subsubsection{OBJETIVOS ESPECÍFICOS}
+
+				\lipsum[1]
+
+	\section{TRABALHOS RELACIONADOS}
+
+		\lipsum[1]
+
+	\section{CRONOGRAMA}
+
+		\lipsum[1]
+		\scalebox{0.7}{
+			\begin{tabular}{| c | c *{10}{ c | c } c|}
+				\hline
+				Nome da Atividade
+				 & \multicolumn{2}{c}{Fev} & \multicolumn{2}{c}{Mar}
+				 & \multicolumn{2}{c}{Abr} & \multicolumn{2}{c}{Mai} & \multicolumn{2}{c}{Jun}
+				 & \multicolumn{2}{c}{Jul} & \multicolumn{2}{c}{Ago} & \multicolumn{2}{c}{Set}
+				 & \multicolumn{2}{c}{Out} & \multicolumn{2}{c}{Nov} & \multicolumn{2}{c|}{Dez} \\
+				 \hline
+				 % ATIVIDADE             % FV1 FV2 MR1 MR2 AB1 AB2 MA1 MA2 JN1 JN2 JL1 JL2 AG1 AG2 ST1 ST2 OC1 OC2 NV1 NV2 DZ1 DZ2  %
+			     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+				 Escolha do Tema 		   & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+				 Escolha do Orientador     & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+				 Elicitação de Requisitos  & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+				 Escolha das Tecnologias   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+				 Escolha das Ferramentas   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+				 Elaboração Apêndice II    &   &   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+				 Implementação             &   & X & X & X & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+				 Documentação              & X & X & X & X & X & X & X & X & X & X & X & X & X & X & X & X & X & X &   &   &   &   \\
+				 Apresentação na IFCITEC   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   &   &   &   \\
+				 Fase de Testes            & X & X & X &   &   &   &   & X & X & X & X & X & X & X & X & X &   &   &   &   &   &   \\
+				 Aprimoramento \/ Feedback & X & X & X &   &   &   &   &   & X & X & X & X & X & X & X & X & X & X &   &   &   &   \\
+				 Apresentação Final        & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X & X &   &   \\
+				 Entrega do Texto Final    &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X &   \\
+				 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%&
+				 \hline
+			\end{tabular}
+		}
+
+		\section{REFERÊNCIAS}
+
+			\lipsum[1]
+\end{document}

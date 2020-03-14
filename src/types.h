@@ -9,50 +9,75 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define MAX_PERIODS_PER_DAY (32)
-#define MAX_PERIODS_PER_WEEK (1024)
+#define MAX_FEATURES          (64)
+#define MAX_PERIODS_PER_DAY   (32)
+#define MAX_PERIODS_PER_WEEK  (1024)
 #define MAX_DAYS ((MAX_PERIODS_PER_WEEK)/(MAX_PERIODS_PER_DAY))
 
 typedef enum Period {
-	PER_NULL    = -2,
-	PER_NOT_SET = -1,
+	_NULL     = -1,
+	_PLANNING = -2,
+	_NOT_SET  = -3,
 } Period;
 
 typedef struct ClassQuantity ClassQuantity;
 typedef struct TeacherQuantity TeacherQuantity;
-typedef struct DisciplineQuantity DisciplineQuantity;
+typedef struct SubjectQuantity SubjectQuantity;
 
-typedef struct Discipline {
+typedef struct RoomFeature {
+	int id;
+	char * name;
+
+} RoomFeature;
+
+typedef struct Room {
+	int id;
+	char * name;
+
+	int size;
+
+	/*this is not a list of fetures. Is rather a score given to all fetures, being 0 absent. */
+	int room_features[MAX_FEATURES];
+} Room;
+
+typedef struct Subject {
 	int id;
 	char * name;
 	char * short_name;
 
 	int gemini_score[MAX_PERIODS_PER_DAY];
 	int week_position_score[MAX_PERIODS_PER_WEEK];
-} Discipline;
+} Subject;
 
-typedef struct DisciplineGroup {
+typedef struct SubjectGroup {
 	int    id;
 	char * name;
 	char * short_name;
 
-	Discipline * disciplines;
+	Subject * subjects;
 };
 
-typedef struct Teacher{
+typedef struct Teacher Teacher;
+struct Teacher{
 	int    id;
 	char * name;
 	char * short_name;
 
-	int  * free_periods;
+	int    periods[MAX_PERIODS_PER_WEEK];
 	int    max_meetings_per_day;
+	int    max_meetings_per_week;
+	int    num_planning_periods;
+	bool   one_day_planning_periods;
+	int	   preferred_planning_periods;
 
-	Discipline    * teaches;
+	Subject       * teaches;
 	ClassQuantity * possible_classes;
 	ClassQuantity * classes;
 
+	Teacher*      * subordinates;
+
 	int per_day_number_score[MAX_DAYS];
-} Teacher;
+};
 
 
 typedef struct Class{
@@ -61,11 +86,11 @@ typedef struct Class{
 	char * short_name;
 
 	int periods[MAX_PERIODS_PER_WEEK];
-	int entry_period;
-	int exit_period;
 	bool can_have_free_periods_flag;
+	int minimal_exit_period;
+	int maximal_entry_period;
 
-	DisciplineQuantity * needs;
+	SubjectQuantity * needs;
 } Class;
 
 
@@ -80,8 +105,8 @@ struct ClassQuantity{
 	int 	quantity;
 };
 
-typedef struct DisciplineQuantity{
-	Discipline * disc;
+typedef struct SubjectQuantity{
+	Subject    * disc;
 	int			 quantity;
 };
 
@@ -100,13 +125,22 @@ typedef struct ExtendedTeacher{
 	char * name;
 } ExtendedTeacher;
 
-
+/* TODO: The possible_* vectors create a significant overhead
+ * on the memory used by the tree.
+ */
 typedef struct Meeting{
-	Discipline * disc;
-	Teacher    * teacher;
+	/* Initially fixed */
 	Class      * class;
+	Subject    * disc;
+
+	Teacher    * teacher;
+	Room 	   * room;
 	int 	     period;
+
 	int        * possible_periods;
+	Room* 	   * possible_rooms;
+	Teacher*   * possible_teachers;
+
 } Meeting;
 
 
