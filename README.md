@@ -13,5 +13,5 @@ Uma solução informatizada para o escalonamento de professores nas escolas bras
 
 ## Links Rápidos
 
-- [Parte Escrita](texto.pdf);
+- [Parte Escrita](doc/texto.pdf);
 - [Wiki](https://github.com/lhardt/Minerva/wiki)

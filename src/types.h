@@ -3,8 +3,8 @@
  *
  * Copyright (C) Léo H. 2019-2020.
  */
-#ifndef DEFINITIONS_H
-#define DEFINITIONS_H
+#ifndef TYPES_H
+#define TYPES_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -85,6 +85,8 @@ typedef struct Class{
 	char * name;
 	char * short_name;
 
+	int size;
+
 	int periods[MAX_PERIODS_PER_WEEK];
 	bool can_have_free_periods_flag;
 	int minimal_exit_period;
@@ -131,7 +133,7 @@ typedef struct ExtendedTeacher{
 typedef struct Meeting{
 	/* Initially fixed */
 	Class      * class;
-	Subject    * disc;
+	Subject    * subj;
 
 	Teacher    * teacher;
 	Room 	   * room;
@@ -140,32 +142,7 @@ typedef struct Meeting{
 	int        * possible_periods;
 	Room* 	   * possible_rooms;
 	Teacher*   * possible_teachers;
-
 } Meeting;
-
-
-typedef struct {
-	int id;
-	/* The name of the school. */
-	char * name;
-	/** Number of days that can have classes. */
-	int n_class_days;
-	/** All periods that may have classes. */
-	int n_periods_per_day;
-	/** True or false value for if the school operates in that time or not */
-	bool periods[MAX_PERIODS_PER_WEEK];
-	/** The classes in school */
-	ExtendedClass * classes;
-	/** The teachers in school*/
-	Teacher * teachers;
-	/** The maximum number of meetings a teacher can attend in one week. */
-	int max_meetings_teacher_per_week;
-	/** The maximum number of meetings a teacher can attend in one day. */
-	int max_meetings_teacher_per_day;
-	/** The maximum number of equal meetings in a row that can happen. */
-	int max_gemini_classes;
-} School;
-
 
 typedef enum EditActionActionType {
 	kTestEmptyEnum
@@ -185,16 +162,31 @@ typedef struct EditAction {
 } EditAction;
 
 
-typedef struct Universe {
+typedef struct School {
 	/* Current state */
-	char ** days;
-	char ** periods;
-	School  school;
-	Teacher * teachers;
-	Meeting * all_meetings;
+	int 		 id;
+	char 	   * name;
+	char      ** day_names;
+	char      ** period_per_day_names;
+
+	Class      * classes;
+	Teachers   * teachers;
+	Rooms      * rooms;
+	Meeting    * all_meetings;
+
+	int 		 n_periods;
+	int 		 n_days;
+	int 		 n_periods_per_day;
+
+	bool 		 periods[MAX_PERIODS_PER_WEEK];
+
+	int		 	 max_meetings_teacher_per_week;
+	int 		 max_meetings_teacher_per_day;
+	int 		 max_gemini_classes;
+
 	/* Past states */
 	EditAction * all_actions;
-	int current_action_index;
-} Universe;
+	int 		 current_action_index;
+} School;
 
-#endif /* DEFINITIONS_H */
+#endif /* TYPES_H */
