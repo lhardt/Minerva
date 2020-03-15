@@ -33,6 +33,7 @@ typedef struct RoomFeature {
 typedef struct Room {
 	int id;
 	char * name;
+	char * short_name;
 
 	int size;
 
