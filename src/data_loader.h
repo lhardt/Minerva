@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+bool init_all_tables(FILE* console_out, char * db_filename);
+
 bool  load_school(char * db_filename, int id, School ** load_ptr);
 bool  load_all_schools(char * db_filename, School ** load_ptr);
 

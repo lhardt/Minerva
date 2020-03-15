@@ -10,8 +10,10 @@
 
 #include "decisions.h"
 #include "util.h"
+#include "data_loader.h"
 
 int main(){
-	printf("Hello, world.\n");
+	// printf("Hello, world.\n");
+	init_all_tables(stdout, "db/test.db");
 	return 0;
 }

@@ -34,9 +34,6 @@ typedef struct Room {
 	int id;
 	char * name;
 	char * short_name;
-
-	int size;
-
 	/*this is not a list of fetures. Is rather a score given to all fetures, being 0 absent. */
 	int room_features[MAX_FEATURES];
 	int disponibility[MAX_PERIODS_PER_WEEK];
@@ -57,20 +54,20 @@ typedef struct SubjectGroup {
 	char * short_name;
 
 	Subject * subjects;
-};
+} SubjectGroup;
 
 typedef struct Teacher Teacher;
 struct Teacher{
-	int    id;
-	char * name;
-	char * short_name;
+	int    			id;
+	char 		  * name;
+	char 		  * short_name;
 
-	int    periods[MAX_PERIODS_PER_WEEK];
-	int    max_meetings_per_day;
-	int    max_meetings_per_week;
-	int    num_planning_periods;
-	bool   one_day_planning_periods;
-	int	   preferred_planning_periods;
+	int    			periods[MAX_PERIODS_PER_WEEK];
+	int    			max_meetings_per_day;
+	int    			max_meetings_per_week;
+	int    			num_planning_periods;
+	// bool   			one_day_planning_periods; DEFAULT TO YES.
+	int	   			preferred_planning_periods;
 
 	Subject       * teaches;
 	ClassQuantity * possible_classes;
@@ -78,29 +75,31 @@ struct Teacher{
 
 	Teacher*      * subordinates;
 
-	int per_day_number_score[MAX_DAYS];
+	int 			per_day_number_score[MAX_DAYS];
+};
+
+typedef struct Class Class;
+struct Class{
+	int 			id;
+	char 		  * name;
+	char 		  * short_name;
+
+	int 			size;
+
+	int 			periods[MAX_PERIODS_PER_WEEK];
+	bool 			can_have_free_periods_flag;
+	int 			minimal_exit_period;
+	int 			maximal_entry_period;
+
+	Class *		  * subordinates;
+
+	SubjectQuantity * needs;
 };
 
 
-typedef struct Class{
-	int id;
-	char * name;
-	char * short_name;
-
-	int size;
-
-	int periods[MAX_PERIODS_PER_WEEK];
-	bool can_have_free_periods_flag;
-	int minimal_exit_period;
-	int maximal_entry_period;
-
-	SubjectQuantity * needs;
-} Class;
-
-
 struct TeacherQuantity{
-	Teacher * teacher;
-	int		  quantity;
+	Teacher * 		teacher;
+	int				quantity;
 };
 
 
@@ -109,24 +108,24 @@ struct ClassQuantity{
 	int 	quantity;
 };
 
-typedef struct SubjectQuantity{
-	Subject    * disc;
-	int			 quantity;
+struct SubjectQuantity{
+	Subject    	  * disc;
+	int			 	quantity;
 };
 
 typedef struct ExtendedClass{
-	int id;
+	int 			  id;
 	TeacherQuantity * teachers;
-	int * periods;
-	char    * name;
+	int 			* periods;
+	char    		* name;
 } ExtendedClass;
 
 
 typedef struct ExtendedTeacher{
-	int id;
+	int 			id;
 	ClassQuantity * classes;
-	int * periods;
-	char * name;
+	int 		  * periods;
+	char 		  * name;
 } ExtendedTeacher;
 
 /* TODO: The possible_* vectors create a significant overhead
@@ -134,16 +133,16 @@ typedef struct ExtendedTeacher{
  */
 typedef struct Meeting{
 	/* Initially fixed */
-	Class      * class;
-	Subject    * subj;
+	Class      	  * class;
+	Subject    	  * subj;
 
-	Teacher    * teacher;
-	Room 	   * room;
-	int 	     period;
+	Teacher    	  * teacher;
+	Room 	   	  * room;
+	int 	     	period;
 
-	int        * possible_periods;
-	Room* 	   * possible_rooms;
-	Teacher*   * possible_teachers;
+	int    	      * possible_periods;
+	Room * 	   	  * possible_rooms;
+	Teacher *  	  * possible_teachers;
 } Meeting;
 
 typedef enum EditActionActionType {
