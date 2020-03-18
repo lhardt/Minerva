@@ -10,6 +10,7 @@
 \usepackage{makeidx} % Títulos das tabelas
 \usepackage[pagestyles]{titlesec} % titleformat
 \usepackage{geometry}
+\usepackage{graphicx} % resizebox
 % citestyle authoryear para citações anbt
 \usepackage[backend=biber,sorting=nty, style=abnt, citestyle=abnt-numeric]{biblatex}
 
@@ -147,6 +148,7 @@
 
 	No presente trabalho, é estudado o problema da elaboração do cronograma semanal escolar. São catalogadas necessidades e preferências de escolas em relação ao horário final, bem como carências de métodos atualmente utilizados. São levadas em conta soluções anteriores, sejam elas computacionais ou não. É identificada, então, a necessidade das escolas brasileiras por um \textit{software} público e de fácil utilização para a elaboração do mesmo. Um software com esse fim é implementado utilizando uma abordagem de criação de horários semelhante à usada em motores de xadrez. Essa abordagem é comparada	computacional e utilitariamente com abordagens anteriores. O software final é testado e é feita uma pesquisa de satisfação com as escolas que participaram do teste. São listados possíveis trabalhos futuros na área.
 
+
 	\begingroup
 		\setlength{\parindent}{0mm}
 		\textbf{Palavras chave:} \textit{Software}; Escola; Grade Horária.
@@ -259,7 +261,22 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{INTRODUÇÃO}
 
-		O problema da criação da grade horária escolar é NP-Completo \cite{complexity}. Sendo assim, é um grande entrave no gerenciamento de escolas tanto públicas quanto privadas. Se mal projetado, pode gerar gastos desnecessários. Sendo assim, programas foram desenvolvidos para a construção da grade horária, cada um levando um conjunto de escolas-alvo em conta. Assim, eles raramente são compatíveis as particularidades de algumas instituições. Além disso, a licença de uso de um software deste ramo tende a ser financeiramente inviável para escolas de baixo orçamento. O presente trabalho visa, então, a criação de um \textit{software} público de escalonamento de professores que seja capaz de levar em conta as demandas de diversas instituições brasileiras. Uma breve descrição do sistema educacional brasileiro é dada, assim como as necessidades adicionais de \textbf{N} escolas, que representam o grupo como um todo. Para isso, foi utilizada uma abordagem \textbf{abordagem}, de tal forma. \textbf{ -------------- Implementação -------------- }. Após a implantação, o sistema foi testado nessas mesmas \textbf{N} escolas. Por fim, foi disponibilizado um questionário, a fim de obter uma análise diversificada quanto a eficiência e a possíveis melhorias no sistema.
+
+
+		\par Elaborar um cronograma é uma tarefa extraordinária. Mesmo nos casos mais simples, como nos cronogramas pessoais, há um grande número de possiblidades, restrições e preferências do usuário. Assim, a dificuldade de produzir um cronograma eficaz aumenta rapidamente conforme seu tamanho.
+
+		% Assim, a qualidade do cronograma depende não só das restrições seguidas, mas também do grau de satisfação dessas preferências.
+		\par Mesmo assim, eles são de vital importância para a rotina de indivíduos, escolas, indústrias, aeroportos, hospitais e eventos esportivos. Instituições de ensino, em particular, tem custos enormes com a elaboração de suas grades horárias: estima-se que elaborá-las manualmente pode demandar centenas de horas \cite{appleby} de um profissional. No entanto, esse processo é rotineiro: a cada mudança na docência, um novo cronograma pode ser necessário.
+
+		\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que esta faça um professor frequentar a escola em um dia a mais, ou que uma aula de física foi cortada ao meio pelo intervalo e seu rendimento foi reduzido. Ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo.
+
+		\par Processos de verificação extensiva para esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
+
+		% \par Até mesmo em instituições que o criam manualmente, um sistema computadorizado ainda pode filtrar possibilidades e auxiliar na visualização. Em outras, uma geração automatizada pode ser preferível. Em todo caso, pode-se tirar proveito de computadores.
+
+		\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas geminadas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita}.
+
+		\par O preço de um software que atende a essas considerações é maior, pois sua oferta é menor. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando novamente pela criação manual. Mesmo nas escolas que têm capital, o ideal seria invesí-lo na manutenção de infraestrutura, da docência, da merenda, melhorando assim, a qualidade de ensino.
 
 
 
@@ -268,7 +285,9 @@
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{SOLUÇÃO PROPOSTA}
 
-			\lipsum[1]
+			 \par A partir das considerações acima, constata-se a ausência de um software público \cite{publico} que supra as necessidades das escolas brasileiras e que seja de fácil utilização por professores de fora da área de informática. Tal software, então, deveria poderia ser implementado e utilizado em computadores da rede pública de ensino -- ou seja, compatível com os sistemas operacionais Windows, Ubuntu e Linux Educacional \cite{proinfo}.
+
+			 \par Em tal software, o professor responsável pela criação do horário escolar insere as necessidades programáticas de aula, as demandas subjetivas dos professores e os horários disponíveis para esses encontros. O sistema então, em constante interação com o usuário, cria o horário escolar.  Desta forma, são reduzidos custos em tempo e em dinheiro da escola que se propõe a utilizar o sistema.
 
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -276,7 +295,7 @@
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{OBJETIVOS GERAIS}
 
-			\lipsum[1]
+			\par Implementar um software público para a facilitação da criação e manutenção de cronograma escolar.
 
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,7 +303,18 @@
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{OBJETIVOS ESPECIFICOS}
 
-			\lipsum[1]
+			\begin{itemize}
+				\item Analisar a literatura existente em relação a softwares de escalonamento e \textit{timetabling};
+				\item Analistar a literatura existente em relação à criação de boas interfaces do usuário;
+				\item Realizar um levantamento de softwares da área, estabelecendo métricas de comparação tendo em vista a experiência do usuário final;
+				\item Definir os requisitos de uma grade horária de forma abrangente e precisa;
+				\item Definir os requisitos de um sistema que gere tais grades horárias;
+				\item Realizar a modelagem do sistema;
+				\item Implementar um sistema leve, eficiente e de fácil utilização para a criação de grades horárias escolares;
+				\item Testar o sistema, realizando \textit{benchmarking} e graduação do horário gerado, com\-pa\-ran\-do-o com soluções anteriores;
+				\item Publicar o software produzido no repositório de Software Público do governo brasileiro;
+				\item Documentar o processo.
+			\end{itemize}
 
 	\newpage
 
@@ -296,51 +326,21 @@
 
 		\par Parágrafo Introdutório.
 
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		%%%   Sistemas Educacionais    %%%%
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\subsection{SISTEMAS EDUCACIONAIS}
+		\subsection{DESCRIÇÃO FORMAL DAS RESTRIÇÕES DO CRONOGRAMA}
 
 			\lipsum[1]
 
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			%%%       S. E. Alemão         %%%%
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			\subsubsection{ALEMÃO}
-
-				\lipsum[1]
-
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			%%%   S. E. Estadounidense     %%%%
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			\subsubsection{ESTADOUNIDENSE}
-
-				\lipsum[1]
-
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			%%%      S. E. Italiano        %%%%
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			\subsubsection{ITALIANO}
-
-				\lipsum[1]
-
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			%%%      S. E. Brasileiro      %%%%
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			\subsubsection{BRASILEIRO}
-
-				\lipsum[1]
-
-
-		\subsection{ESTIMATIVAS UTILIZADAS}
+		\subsection{ALGORÍTMOS CORRENTEMENTE UTILIZADOS}
 
 			\lipsum[1]
 
-
-		\subsection{ALGORÍTMOS UTILIZADOS}
+		\subsection{MODELO PARA COMPARAÇÃO COM ALGORÍTMOS ANTERIORES}
 
 			\lipsum[1]
 
+		\subsection{MÉTRICAS PARA A AVALIAÇÃO DA EXPERIÊNCIA DO USUÁRIO}
+
+			\lipsum[1]
 	\newpage
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -348,50 +348,98 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{TRABALHOS RELACIONADOS}
 
-		\begin{tabular}{| c | c | c | c | c |}
-		  \hline
-		  Nome & Linguagens & Preço & Ativo &\\
-		  \hline\hline
-		  UniTime &  &    & &\\
-		  \hline
-		  Urânia &   &   & &\\
-		  \hline
-		  Benchmark Timetable \\
-		  \hline
-		  ASC Timetables \\
-		  \hline
-		  http://supertimetable.com/ \\
-		  \hline
-		  Untis \\
-		  \hline
-		  http://www.skool-master.com/ \\
-		  \hline
-		  https://lantiv.com/ \\
-		  \hline
-		  https://www.timetabler.com/ \\
-		  \hline
-		  Sims Nova T6 \\
-		  \hline
-		  Facility Scheduler \\
-		  \hline
-		  http://school-timetable.co.uk/ \\
-		  \hline
-		  https://www.parishsoft.com/parish/facility-scheduler/ para igrejas \\
-		  \hline
-		  https://web.archive.org/web/20190911010453/http://www.itimetable.org/ \\
-		  \hline
-		  https://www.timetableweb.com/index.php?lang=pt \\
-		  \hline
-		  http://www.makeyourtimetable.com/ \\
-		  \hline
-		  http://www.schoolsoftwares.com/timetable\_software\_overview.html \\
-		  \hline
-		  https://skoolmanager.com/ \\
-		  \hline
-		\end{tabular}\\
-
+		\scalebox{0.7}{
+			\begin{tabular}{| c | c | c | c | c |}
+				\hline
+				Nome & Linguagens & Preço & Ativo &\\
+				\hline\hline
+				UniTime &   &    &   &  \\
+				\hline
+				Urânia &   &   &   &  \\
+				\hline
+				Benchmark Timetable &   &    &   &  \\
+				\hline
+				ASC Timetables &   &    &   &  \\
+				\hline
+				http://supertimetable.com/ &   &    &   &  \\
+				\hline
+				Untis &   &    &   &  \\
+				\hline
+				http://www.skool-master.com/ &   &    &   &  \\
+				\hline
+				https://lantiv.com/ &   &    &   &  \\
+				\hline
+				https://www.timetabler.com/ &   &    &   &  \\
+				\hline
+				Sims Nova T6 &   &    &   &  \\
+				\hline
+				Facility Scheduler &   &    &   &  \\
+				\hline
+				http://school-timetable.co.uk/ &   &    &   &  \\
+				\hline
+				https://www.parishsoft.com/parish/facility-scheduler/ para igrejas &   &    &   &  \\
+				\hline
+				https://web.archive.org/web/20190911010453/http://www.itimetable.org/ &   &    &   &  \\
+				\hline
+				https://www.timetableweb.com/index.php?lang=pt &   &    &   &  \\
+				\hline
+				http://www.makeyourtimetable.com/ &   &    &   &  \\
+				\hline
+				http://www.schoolsoftwares.com/timetable\_software\_overview.html &   &    &   &  \\
+				\hline
+				https://skoolmanager.com/ &   &    &   &  \\
+				\hline
+			\end{tabular}\\
+		}
 
 	\newpage
+
+	\section{METODOLOGIA}
+
+		\subsection{TECNOLOGIAS ADOTADAS}
+
+			\lipsum[1]
+
+		\subsection{FERRAMENTAS ADOTADAS}
+
+			\lipsum[1]
+
+		\subsection{MODELAGEM DO SISTEMA}
+
+			\lipsum[1]
+
+
+			\subsubsection{CASOS DE USO}
+
+				\lipsum[1]
+
+			\subsubsection{BANCO DE DADOS}
+
+				\lipsum[1]
+
+			\subsubsection{ALGORÍTMOS}
+
+				\lipsum[1]
+
+	\section{RESULTADO}
+
+		\lipsum[1]
+
+		\subsection{PERFORMANCE}
+
+			\lipsum[1]
+
+		\subsection{COMPATIBILIDADE}
+
+			\lipsum[1]
+
+		\subsection{ACESSIBILIDADE}
+
+			\lipsum[1]
+
+		\subsection{USABILIDADE}
+
+			\lipsum[1]
 
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
