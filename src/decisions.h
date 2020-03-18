@@ -8,62 +8,47 @@
 
 #include "types.h"
 
-typedef struct PrimaryNode PrimaryNode;
-typedef struct PrimaryTree PrimaryTree;
+typedef enum NodeType {
+	NODE_ROOM,
+	NODE_TEACHER,
+	NODE_PERIOD
+} NodeType;
 
-struct PrimaryNode{
+typedef struct DecisionNode{
 	int id;
-	PrimaryNode * parent;
-	PrimaryTree * owner;
+	NodeType type;
+	Node * parent;
+	Tree * owner;
 
 	// TODO: threading.
 	// bool is_locked;
 	// thrd_t responsible;
 	// bool is_child_locked;
 
-	/* What decision was made. Is dthis field necessary? */
-	Meeting * affected;
-	/* The consequences of this arrangement */
-	Class * finalState;
+	/* What decision was made. Is this field necessary? */
+	Meeting * affected_meeting;
 	/* The meeting list computed afterwards. */
 	Meeting * conclusion;
 
 	double score;
-};
+} DecisionNode;
 
-struct PrimaryTree{
-	int id;
-
-	/* Nodes may be stored linearly at start[i] */
-	int alloc_sz;
-	int last_id;
-
-	PrimaryNode * start;
-};
-
-typedef struct SecondaryNode SecondaryNode;
-struct SecondaryNode{
-	int id;
-	SecondaryNode * parent;
-
-	Meeting * affected;
-	Meeting * meetings;
-};
-
-typedef struct SecondaryTree{
+typedef struct DecisionTree{
 	int id;
 	/* Nodes may be stored linearly at start[i] */
 	int alloc_sz;
 	int last_id;
 
-	SecondaryNode * start;
-} SecondaryTree;
+	Node * start;
+} DecisionNode;
 
-PrimaryTree * make_primary_tree(School * school);
+/* Generates a tree based on the initial data informed by user */
+DecisionTree * make_primary_tree(School * school);
+/* Tries to find solutions based on the current situation */
+void primary_search(DecisionNode * tree, int limit_sec);
 
-void primary_search(PrimaryTree * tree, int limit_sec);
+void explore_consequences(DecisionTree * tree, int limit_sec, Meeting * affected, Teacher * fixed_teacher, Class * fixed_class, int fixed_period);
 
-void secondary_search(PrimaryTree * tree, int limit_sec);
 
 
 #endif /* DECISIONS_H */

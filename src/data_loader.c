@@ -5,7 +5,8 @@
 
 /* Do not forget PRAGMA foreign_keys = on */
 
-const char * const CREATE_TABLE_SCHOOL = ("CREATE TABLE IF NOT EXISTS School("
+const char * const CREATE_TABLE_SCHOOL =
+			("CREATE TABLE IF NOT EXISTS School("
 				"id						integer primary key,"
 				"name					text,"
 				"num_per_per_day		integer,"
@@ -14,7 +15,8 @@ const char * const CREATE_TABLE_SCHOOL = ("CREATE TABLE IF NOT EXISTS School("
 				"max_doubling			integer"
 			")");
 
-const char * const CREATE_TABLE_DAILY_PERIOD = ("CREATE TABLE IF NOT EXISTS DailyPeriod("
+const char * const CREATE_TABLE_DAILY_PERIOD =
+			("CREATE TABLE IF NOT EXISTS DailyPeriod("
 				"id 					integer primary key,"
 				"name					text,"
 				"day_index				integer,"
@@ -22,7 +24,8 @@ const char * const CREATE_TABLE_DAILY_PERIOD = ("CREATE TABLE IF NOT EXISTS Dail
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
 
-const char * const CREATE_TABLE_DAY = ("CREATE TABLE IF NOT EXISTS Day("
+const char * const CREATE_TABLE_DAY =
+			("CREATE TABLE IF NOT EXISTS Day("
 				"id 					integer primary key,"
 				"name					text,"
 				"school_index			integer,"
@@ -30,7 +33,8 @@ const char * const CREATE_TABLE_DAY = ("CREATE TABLE IF NOT EXISTS Day("
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
 
-const char * const CREATE_TABLE_PERIOD = ("CREATE TABLE IF NOT EXISTS Period("
+const char * const CREATE_TABLE_PERIOD =
+			("CREATE TABLE IF NOT EXISTS Period("
 				"id						integer primary key,"
 				"name					text,"
 				"day_index				integer,"
@@ -40,7 +44,8 @@ const char * const CREATE_TABLE_PERIOD = ("CREATE TABLE IF NOT EXISTS Period("
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
 
-const char * const CREATE_TABLE_ROOM_AVALIBILITY = ("CREATE TABLE IF NOT EXISTS RoomAvalibility("
+const char * const CREATE_TABLE_ROOM_AVALIBILITY =
+			("CREATE TABLE IF NOT EXISTS RoomAvalibility("
 				"id						integer primary key,"
 				"room_id				integer,"
 				"period_id				integer,"
@@ -48,12 +53,14 @@ const char * const CREATE_TABLE_ROOM_AVALIBILITY = ("CREATE TABLE IF NOT EXISTS 
 				"FOREIGN KEY (period_id) REFERENCES Period(id)"
 			")");
 
-const char * const CREATE_TABLE_FEATURE = ("CREATE TABLE IF NOT EXISTS Feature("
+const char * const CREATE_TABLE_FEATURE =
+			("CREATE TABLE IF NOT EXISTS Feature("
 				"id 					integer primary key,"
 				"name 					text"
 			")");
 
-const char * const CREATE_TABLE_ROOM = ("CREATE TABLE IF NOT EXISTS Room("
+const char * const CREATE_TABLE_ROOM =
+			("CREATE TABLE IF NOT EXISTS Room("
 				"id 					integer primary key,"
 				"name 					text,"
 				"short_name 			text,"
@@ -61,7 +68,8 @@ const char * const CREATE_TABLE_ROOM = ("CREATE TABLE IF NOT EXISTS Room("
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
 
-const char * const CREATE_TABLE_ROOM_FEATURE = ("CREATE TABLE IF NOT EXISTS RoomFeature("
+const char * const CREATE_TABLE_ROOM_FEATURE =
+			("CREATE TABLE IF NOT EXISTS RoomFeature("
 				"id						integer primary key,"
 				"id_room				integer,"
 				"id_feature				integer,"
@@ -69,7 +77,8 @@ const char * const CREATE_TABLE_ROOM_FEATURE = ("CREATE TABLE IF NOT EXISTS Room
 				"FOREIGN KEY (id_feature) REFERENCES Feature(id)"
 			")");
 
-const char * const CREATE_TABLE_CLASS = ("CREATE TABLE IF NOT EXISTS Class("
+const char * const CREATE_TABLE_CLASS =
+			("CREATE TABLE IF NOT EXISTS Class("
 				"id 					integer primary key,"
 				"name 					text,"
 				"short_name 			text,"
@@ -79,7 +88,8 @@ const char * const CREATE_TABLE_CLASS = ("CREATE TABLE IF NOT EXISTS Class("
 				"per_min_exit 			integer"
 			")");
 
-const char * const CREATE_TABLE_CLASS_ATTENDANCE = ("CREATE TABLE IF NOT EXISTS ClassAttendance("
+const char * const CREATE_TABLE_CLASS_ATTENDANCE =
+			("CREATE TABLE IF NOT EXISTS ClassAttendance("
 				"id 					integer primary key,"
 				"id_class				integer,"
 				"id_period				integer,"
@@ -89,7 +99,8 @@ const char * const CREATE_TABLE_CLASS_ATTENDANCE = ("CREATE TABLE IF NOT EXISTS 
 				"FOREIGN KEY (id_att_type) REFERENCES AttendanceType(id)"
 			")");
 
-const char * const CREATE_TABLE_CLASS_SUBORDINATION = ("CREATE TABLE IF NOT EXISTS ClassSubordination("
+const char * const CREATE_TABLE_CLASS_SUBORDINATION =
+			("CREATE TABLE IF NOT EXISTS ClassSubordination("
 				"id						integer primary key,"
 				"id_sub					integer,"
 				"id_sup					integer,"
@@ -97,13 +108,15 @@ const char * const CREATE_TABLE_CLASS_SUBORDINATION = ("CREATE TABLE IF NOT EXIS
 				"FOREIGN KEY (id_sup) REFERENCES Class(id)"
 			")");
 
-const char * const CREATE_TABLE_SUBJECT = ("CREATE TABLE IF NOT EXISTS Subject("
+const char * const CREATE_TABLE_SUBJECT =
+			("CREATE TABLE IF NOT EXISTS Subject("
 				"id						integer primary key,"
 				"name					text,"
 				"short_name				text"
 			")");
 
-const char * const CREATE_TABLE_CLASS_SUBJECT = ("CREATE TABLE IF NOT EXISTS ClassSubject("
+const char * const CREATE_TABLE_CLASS_SUBJECT =
+			("CREATE TABLE IF NOT EXISTS ClassSubject("
 				"id 					integer primary key,"
 				"class_id				integer,"
 				"subject_id				integer,"
@@ -112,7 +125,8 @@ const char * const CREATE_TABLE_CLASS_SUBJECT = ("CREATE TABLE IF NOT EXISTS Cla
 				"FOREIGN KEY (subject_id) REFERENCES Subject(id)"
 			")");
 
-const char * const CREATE_TABLE_TEACHER = ("CREATE TABLE IF NOT EXISTS Teacher("
+const char * const CREATE_TABLE_TEACHER =
+			("CREATE TABLE IF NOT EXISTS Teacher("
 				"id 					integer primary key,"
 				"name					text,"
 				"short_name				text,"
@@ -123,7 +137,8 @@ const char * const CREATE_TABLE_TEACHER = ("CREATE TABLE IF NOT EXISTS Teacher("
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
 
-const char * const CREATE_TABLE_TEACHES = ("CREATE TABLE IF NOT EXISTS Teaches("
+const char * const CREATE_TABLE_TEACHES =
+			("CREATE TABLE IF NOT EXISTS Teaches("
 				"id 					integer primary key,"
 				"id_teacher				integer,"
 				"id_subject				integer,"
@@ -131,7 +146,8 @@ const char * const CREATE_TABLE_TEACHES = ("CREATE TABLE IF NOT EXISTS Teaches("
 				"FOREIGN KEY (id_subject) REFERENCES Subject(id)"
 			")");
 
-const char * const CREATE_TABLE_TEACHER_SUBORDINATION = ("CREATE TABLE IF NOT EXISTS TeacherSubordination("
+const char * const CREATE_TABLE_TEACHER_SUBORDINATION =
+			("CREATE TABLE IF NOT EXISTS TeacherSubordination("
 				"id						integer primary key,"
 				"id_sub					integer,"
 				"id_sup					integer,"
@@ -139,9 +155,11 @@ const char * const CREATE_TABLE_TEACHER_SUBORDINATION = ("CREATE TABLE IF NOT EX
 				"FOREIGN KEY (id_sup) REFERENCES Teacher(id)"
 			")");
 
-const char * const CREATE_TABLE_TEACHER_ATTENDANCE = ("CREATE TABLE IF NOT EXISTS TeacherAttendance("
+const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
+			("CREATE TABLE IF NOT EXISTS TeacherAttendance("
 				"id						integer primary key,"
 				"id_teacher				integer,"
+				"id_period				integer,"
 				"id_period				integer,"
 				"id_att_type			integer,"
 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
@@ -149,17 +167,48 @@ const char * const CREATE_TABLE_TEACHER_ATTENDANCE = ("CREATE TABLE IF NOT EXIST
 				"FOREIGN KEY (id_att_type) REFERENCES AttendanceType(id)"
 			")");
 
-const char * const CREATE_TABLE_ATTENDANCE_TYPE = ("CREATE TABLE IF NOT EXISTS AttendanceType("
+const char * const CREATE_TABLE_ATTENDANCE_TYPE =
+			("CREATE TABLE IF NOT EXISTS AttendanceType("
 				"id						integer primary key,"
 				"name					integer"
 			")");
 
-const char * const CREATE_TABLE_DEMAND = ("CREATE TABLE IF NOT EXISTS Demand("
+const char * const CREATE_TABLE_DEMAND =
+			("CREATE TABLE IF NOT EXISTS Demand("
 				"id						integer primary key,"
 				"teaches_id				integer,"
 				"feature_id				integer,"
 				"FOREIGN KEY (teaches_id) REFERENCES Teaches(id),"
 				"FOREIGN KEY (feature_id) REFERENCES Feature(id)"
+			")");
+
+const char * const CREATE_TABLE_TEACHER_ATTENDANCE_PREFERENCE =
+			("CREATE TABLE IF NOT EXISTS TeacherAttendancePreference("
+			 	"id 					integer primary key,"
+				"id_teacher				integer,"
+				"id_period				integer,"
+				"value					integer,"
+				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
+				"FOREIGN KEY (id_period)  REFERENCES Period(id)"
+			")");
+
+const char * const CREATE_TABLE_TEACHES_PERIOD_PREFERENCE =
+			("CREATE TABLE IF NOT EXISTS TeachesPeriodPreference("
+				"id 					integer primary key,"
+				"id_teaches				integer,"
+				"id_period				integer,"
+				"value					integer,"
+				"FOREIGN KEY (id_teaches) REFERENCES Teaches(id),"
+				"FOREIGN KEY (id_period)  REFERENCES Period(id)"
+			")");
+
+const char * const CREATE_TABLE_TEACHES_TWIN_PREFERENCE =
+			("CREATE TABLE IF NOT EXISTS TeachesTwinPreference("
+				"id 					integer primary key,"
+				"id_teaches				integer,"
+				"twin_val				integer,"
+				"value					integer,"
+				"FOREIGN KEY (id_teaches) REFERENCES Teaches(id)"
 			")");
 
 int create_table_test(FILE * console_out, sqlite3* db,const char * const tablename, const char * const sql){
@@ -207,6 +256,9 @@ bool init_all_tables(FILE * console_out, char * db_filename){
 			create_table_test(console_out,db,"TeacherSubordination", CREATE_TABLE_TEACHER_SUBORDINATION)?1:
 			create_table_test(console_out,db,"TeacherAttendance", CREATE_TABLE_TEACHER_ATTENDANCE)?1:
 			create_table_test(console_out,db,"Demand", CREATE_TABLE_DEMAND);
+			create_table_test(console_out,db,"TeachesPeriodPreference", CREATE_TABLE_TEACHES_PERIOD_PREFERENCE)?1:
+			create_table_test(console_out,db,"TeachesTwinPreference", CREATE_TABLE_TEACHES_TWIN_PREFERENCE)?1:
+			create_table_test(console_out,db,"TeacherAttendancePreference", CREATE_TABLE_TEACHER_ATTENDANCE_PREFERENCE);
 
 	return iserr;
 }

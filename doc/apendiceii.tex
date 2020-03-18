@@ -6,6 +6,7 @@
 \usepackage{scrextend} % addmargin
 \usepackage{fontspec} % Arial
 \usepackage[portuguese]{babel}
+ \usepackage{indentfirst} % indentação do primeiro parágrafo de seção
 \usepackage{makeidx} % Títulos das tabelas
 \usepackage[pagestyles]{titlesec} % titleformat
 \usepackage{geometry}
@@ -21,6 +22,7 @@
 }
 
 \usepackage[breaklinks=true]{hyperref}
+\addbibresource{texto.bib}
 
 
 \title{MINERVA: UMA SOLUÇÃO INFORMATIZADA PARA O ESCALONAMENTO DE PROFESSORES NAS ESCOLAS BRASILEIRAS}
@@ -102,25 +104,51 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \section{JUSTIFICATIVA DO PROJETO CIENTÍFICO}
 
-		\lipsum[1]
-
 		\subsection{DESCRIÇÃO DO PROBLEMA}
 
-			\lipsum[1]
+
+			\par Elaborar um cronograma é uma tarefa extraordinária. Mesmo nos casos mais simples, como nos cronogramas pessoais, há um grande número de possiblidades, restrições e preferências do usuário. Assim, a qualidade do cronograma depende não só das restrições seguidas, mas também do grau de satisfação dessas preferências.
+
+			\par A dificuldade de produzir um cronograma eficaz aumenta rapidamente conforme seu tamanho. Mesmo assim, eles são de vital importância para a operação de aeroportos, indústrias, hospitais, escolas e até para a rotina de indivíduos.
+
+			\par Instituições de ensino, em particular, tem custos enormes com a elaboração de suas grades horárias: estima-se que elaborá-las manualmente pode demandar centenas de horas \cite{appleby} de um profissional. No entanto, esse processo é rotineiro: a cada mudança na docência, a grade pode se tornar inviável.
+
+			\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que o cronograma faça um professor frequentar a escola em um dia a mais, ou que uma aula de física foi cortada ao meio pelo intervalo e seu rendimento foi reduzido. Ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo.
+
+			\par Processos de verificação extensiva para esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
+
+			\par Até mesmo em instituições que o criam manualmente, um sistema computadorizado ainda pode filtrar possibilidades e auxiliar na visualização. Em outras, uma geração automatizada pode ser preferível. Em todo caso, pode-se tirar proveito de computadores.
+
+			\par Tais sistemas, no entanto, são intrincados e elaboram sobre necessidades específicas. Alguns não levam em conta preferências do usuário\cite{nikita}. Outros, muitas vezes, são incompatíveis, pois deixam de levar em conta uma necessidade vital de algumas escolas.
+
+			\par Isso faz com que preços de softwares do gênero sejam altíssimos. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los. Mesmo as que têm poderiam utilizar esse valiosíssimo recurso para melhorar sua infraestrutura.
 
 		\subsection{PROPOSTA DE SOLUÇÃO}
 
-			\lipsum[1]
+			 \par A partir das considerações acima, constata-se a ausência de um software público \cite{publico} que supra as necessidades das escolas brasileiras e que seja de fácil utilização por professores de fora da área de informática. Tal software, então, deveria poderia ser implementado e utilizado em computadores da rede pública de ensino -- ou seja, compatível com os sistemas operacionais Windows e Linux Educacional.
+
+			 \par Em tal software, o professor responsável pela criação do horário escolar insere as necessidades programáticas de aula, as demandas subjetivas dos professores e os horários disponíveis para esses encontros. O sistema então, em constante interação com o usuário, cria o horário escolar.  Desta forma, são reduzidos custos em tempo e em dinheiro da escola que se propõe a utilizar o sistema.
 
 		\subsection{OBJETIVO}
 
 			\subsubsection{OBJETIVO GERAL}
 
-				\lipsum[1]
+				\par Implementar um software público para a facilitação da criação e manutenção de cronograma escolar.
 
 			\subsubsection{OBJETIVOS ESPECÍFICOS}
 
-				\lipsum[1]
+				\begin{itemize}
+					\item Analisar a literatura existente em relação a softwares de escalonamento e \textit{timetabling};
+					\item Analistar a literatura existente em relação à criação de boas interfaces do usuário;
+					\item Realizar um levantamento de softwares da área, estabelecendo métricas de comparação tendo em vista a experiência do usuário final;
+					\item Definir os requisitos de uma grade horária de forma abrangente e precisa;
+					\item Definir os requisitos de um sistema que gere tais grades horárias;
+					\item Realizar a modelagem do sistema;
+					\item Implementar um sistema leve, eficiente e de fácil utilização para a criação de grades horárias escolares;
+					\item Testar o sistema, realizando \textit{benchmarking} e graduação do horário gerado, comparando-o com soluções anteriores;
+					\item Publicar o software produzido no repositório de Software Público do governo brasileiro;
+					\item Documentar o processo.
+				\end{itemize}
 
 	\section{TRABALHOS RELACIONADOS}
 
@@ -145,6 +173,7 @@
 				 Elicitação de Requisitos  & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
 				 Escolha das Tecnologias   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
 				 Escolha das Ferramentas   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+				 Pesquisa Bibliográfica    &   & X & X & X & X & X & X & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   \\
 				 Implementação             &   & X & X & X & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
 				 Elaboração Apêndice II    &   &   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
 				 Documentação              &   &   &   & X & X & X & X & X & X & X & X & X & X & X & X & X & X & X &   &   &   &   \\
@@ -157,8 +186,13 @@
 				 \hline
 			\end{tabular}
 		}
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%        Referências         %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\section*{REFERÊNCIAS}
+		\addcontentsline{toc}{section}{REFERÊNCIAS}
 
-		\section{REFERÊNCIAS}
+		\printbibliography[heading=none]
 
-			\lipsum[1]
+		\newpage
 \end{document}

@@ -6,6 +6,7 @@
 \usepackage{scrextend} % addmargin
 \usepackage{fontspec} % Arial
 \usepackage[portuguese]{babel}
+ \usepackage{indentfirst} % indentação do primeiro parágrafo de seção
 \usepackage{makeidx} % Títulos das tabelas
 \usepackage[pagestyles]{titlesec} % titleformat
 \usepackage{geometry}
@@ -144,7 +145,7 @@
 	\thispagestyle{empty}
 	\section*{RESUMO}
 
-	Um fator decisivo para a eficiência de uma escola é seu cronograma semanal. Além de sua criação ser quase impraticável por uma pessoa, ele pode gerar gastos desnecessários. Sendo assim, programas foram desenvolvidos para a construção da grade horária, cada um levando um sistema educacional em conta. Assim, eles raramente são compatíveis as particularidades de algumas instituições. Além disso, a licença de um software deste ramo tende a ser financeiramente inviável para escolas de baixo orçamento.  O presente trabalho visa, então, a criação de um \textit{software} público de escalonamento de professores que seja capaz de levar em conta as demandas de diversas instituições brasileiras. Uma breve descrição do sistema educacional brasileiro é dada, assim como as necessidades adicionais de \textbf{N} escolas, que representam o grupo como um todo. Para isso, foi utilizada uma abordagem \textbf{abordagem}, de tal forma. \textbf{ -------------- Implementação -------------- }. Após a implantação, o sistema foi testado nessas mesmas \textbf{N} escolas. Por fim, foi disponibilizado um questionário, a fim de obter uma análise diversificada quanto a eficiência e a possíveis melhorias no sistema.
+	No presente trabalho, é estudado o problema da elaboração do cronograma semanal escolar. São catalogadas necessidades e preferências de escolas em relação ao horário final, bem como carências de métodos atualmente utilizados. São levadas em conta soluções anteriores, sejam elas computacionais ou não. É identificada, então, a necessidade das escolas brasileiras por um \textit{software} público e de fácil utilização para a elaboração do mesmo. Um software com esse fim é implementado utilizando uma abordagem de criação de horários semelhante à usada em motores de xadrez. Essa abordagem é comparada	computacional e utilitariamente com abordagens anteriores. O software final é testado e é feita uma pesquisa de satisfação com as escolas que participaram do teste. São listados possíveis trabalhos futuros na área.
 
 	\begingroup
 		\setlength{\parindent}{0mm}
@@ -159,7 +160,6 @@
 	\thispagestyle{empty}
 	\section*{ABSTRACT}
 
-	One crucial factor for a school's efficiency is its weekly timetable. Apart from being impractical to make, it may cause unnecessary spending. With that in mind, various computer programs were designed to create school timetables, each for a specific school system. Thus, they are seldom compatible with the flexibility of some institutions. Furthermore, licenses for this kind of software are often too expensive for low-budget schools. Therefore, the present work aims at the creation of a public timetabling software which takes into account the demands of various brazilian schools. A brief description of the brazilian educational system is given, as well as the necessities of \textbf{N} schools, representing the larger group. For that, \textbf{X approach} was used.  \textbf{ -------------- Implementation -------------- }. After implementation, the system was tested in those same \textbf{N} schools. Finally, a survey was made available for the participants, with the aim of having a diverse analysis of the efficiency and possible improvements to the system.
 
 	\begingroup
 		\setlength{\parindent}{0mm}
@@ -259,7 +259,9 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{INTRODUÇÃO}
 
-		O problema da criação da grade horária escolar é NP-Completo \cite{complexity}. Sendo assim, é um grande entrave no gerenciamento de escolas tanto públicas quanto privadas.
+		O problema da criação da grade horária escolar é NP-Completo \cite{complexity}. Sendo assim, é um grande entrave no gerenciamento de escolas tanto públicas quanto privadas. Se mal projetado, pode gerar gastos desnecessários. Sendo assim, programas foram desenvolvidos para a construção da grade horária, cada um levando um conjunto de escolas-alvo em conta. Assim, eles raramente são compatíveis as particularidades de algumas instituições. Além disso, a licença de uso de um software deste ramo tende a ser financeiramente inviável para escolas de baixo orçamento. O presente trabalho visa, então, a criação de um \textit{software} público de escalonamento de professores que seja capaz de levar em conta as demandas de diversas instituições brasileiras. Uma breve descrição do sistema educacional brasileiro é dada, assim como as necessidades adicionais de \textbf{N} escolas, que representam o grupo como um todo. Para isso, foi utilizada uma abordagem \textbf{abordagem}, de tal forma. \textbf{ -------------- Implementação -------------- }. Após a implantação, o sistema foi testado nessas mesmas \textbf{N} escolas. Por fim, foi disponibilizado um questionário, a fim de obter uma análise diversificada quanto a eficiência e a possíveis melhorias no sistema.
+
+
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%      Solução Proposta      %%%%
@@ -346,13 +348,45 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{TRABALHOS RELACIONADOS}
 
-		\begin{tabular}{| c | c | c |}
+		\begin{tabular}{| c | c | c | c | c |}
 		  \hline
-		  Nome & Versão em Português & Gratuito\\
+		  Nome & Linguagens & Preço & Ativo &\\
 		  \hline\hline
-		  UniTime & Não & Sim \\
+		  UniTime &  &    & &\\
 		  \hline
-		  Urânia & Sim & Não \\
+		  Urânia &   &   & &\\
+		  \hline
+		  Benchmark Timetable \\
+		  \hline
+		  ASC Timetables \\
+		  \hline
+		  http://supertimetable.com/ \\
+		  \hline
+		  Untis \\
+		  \hline
+		  http://www.skool-master.com/ \\
+		  \hline
+		  https://lantiv.com/ \\
+		  \hline
+		  https://www.timetabler.com/ \\
+		  \hline
+		  Sims Nova T6 \\
+		  \hline
+		  Facility Scheduler \\
+		  \hline
+		  http://school-timetable.co.uk/ \\
+		  \hline
+		  https://www.parishsoft.com/parish/facility-scheduler/ para igrejas \\
+		  \hline
+		  https://web.archive.org/web/20190911010453/http://www.itimetable.org/ \\
+		  \hline
+		  https://www.timetableweb.com/index.php?lang=pt \\
+		  \hline
+		  http://www.makeyourtimetable.com/ \\
+		  \hline
+		  http://www.schoolsoftwares.com/timetable\_software\_overview.html \\
+		  \hline
+		  https://skoolmanager.com/ \\
 		  \hline
 		\end{tabular}\\
 
