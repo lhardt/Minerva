@@ -1,4 +1,4 @@
-RM := rm
+RM := -rm
 CC := gcc
 SRCDIR := src
 OBJDIR := obj

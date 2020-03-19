@@ -3,7 +3,11 @@
 
 #include "types.h"
 
+#include <sqlite3.h>
+
 bool init_all_tables(FILE* console_out, char * db_filename);
+
+bool insert_school(FILE * console_out, sqlite3* db, School * school);
 
 bool  load_school(char * db_filename, int id, School ** load_ptr);
 bool  load_all_schools(char * db_filename, School ** load_ptr);

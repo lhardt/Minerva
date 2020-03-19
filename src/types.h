@@ -167,8 +167,16 @@ typedef struct School {
 	/* Current state */
 	int 		 id;
 	char 	   * name;
+
 	char      ** day_names;
-	char      ** period_per_day_names;
+	char      ** daily_period_names;
+	char      ** period_names;
+	char 	  ** feature_names;
+
+	int		   * day_ids;
+	int 	   * daily_period_ids;
+	int		   * feature_ids;
+	int		   * period_ids;
 
 	Class      * classes;
 	Teacher    * teachers;
@@ -178,6 +186,8 @@ typedef struct School {
 	int 		 n_periods;
 	int 		 n_days;
 	int 		 n_periods_per_day;
+	int 		 n_features;
+	int 		 n_rooms;
 
 	bool 		 periods[MAX_PERIODS_PER_WEEK];
 

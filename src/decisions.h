@@ -14,11 +14,13 @@ typedef enum NodeType {
 	NODE_PERIOD
 } NodeType;
 
-typedef struct DecisionNode{
+typedef struct DecisionTree DecisionTree;
+typedef struct DecisionNode DecisionNode;
+struct DecisionNode{
 	int id;
 	NodeType type;
-	Node * parent;
-	Tree * owner;
+	DecisionNode * parent;
+	DecisionTree * owner;
 
 	// TODO: threading.
 	// bool is_locked;
@@ -31,16 +33,16 @@ typedef struct DecisionNode{
 	Meeting * conclusion;
 
 	double score;
-} DecisionNode;
+};
 
-typedef struct DecisionTree{
+struct DecisionTree{
 	int id;
 	/* Nodes may be stored linearly at start[i] */
 	int alloc_sz;
 	int last_id;
 
-	Node * start;
-} DecisionNode;
+	DecisionNode * start;
+};
 
 /* Generates a tree based on the initial data informed by user */
 DecisionTree * make_primary_tree(School * school);
