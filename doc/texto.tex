@@ -6,11 +6,13 @@
 \usepackage{scrextend} % addmargin
 \usepackage{fontspec} % Arial
 \usepackage[portuguese]{babel}
- \usepackage{indentfirst} % indentação do primeiro parágrafo de seção
+\usepackage{indentfirst} % indentação do primeiro parágrafo de seção
 \usepackage{makeidx} % Títulos das tabelas
 \usepackage[pagestyles]{titlesec} % titleformat
 \usepackage{geometry}
+\usepackage{amsfonts} % blackletter
 \usepackage{graphicx} % resizebox
+\usepackage{svg} % Grafos
 % citestyle authoryear para citações anbt
 \usepackage[backend=biber,sorting=nty, style=abnt, citestyle=abnt-numeric]{biblatex}
 
@@ -146,7 +148,7 @@
 	\thispagestyle{empty}
 	\section*{RESUMO}
 
-	No presente trabalho, é estudado o problema da elaboração do cronograma semanal escolar. São catalogadas necessidades e preferências de escolas em relação ao horário final, bem como carências de métodos atualmente utilizados. São levadas em conta soluções anteriores, sejam elas computacionais ou não. É identificada, então, a necessidade das escolas brasileiras por um \textit{software} público e de fácil utilização para a elaboração do mesmo. Um software com esse fim é implementado utilizando uma abordagem de criação de horários semelhante à usada em motores de xadrez. Essa abordagem é comparada	computacional e utilitariamente com abordagens anteriores. O software final é testado e é feita uma pesquisa de satisfação com as escolas que participaram do teste. São listados possíveis trabalhos futuros na área.
+	No presente trabalho, é estudado o problema da elaboração do cronograma semanal escolar. São catalogadas necessidades e preferências de escolas em relação ao horário final, bem como carências de métodos atualmente utilizados. São levadas em conta soluções anteriores, sejam elas computacionais ou não. É identificada, então, uma necessidade das escolas brasileiras por um \textit{software} público e de fácil utilização para a elaboração do mesmo. Um software com esse fim é implementado utilizando uma abordagem de criação de horários semelhante à usada em motores de xadrez. Essa abordagem é comparada	computacional e utilitariamente com abordagens anteriores. O software final é testado e é feita uma pesquisa de satisfação com as escolas que participaram do teste. São listados possíveis trabalhos futuros na área.
 
 
 	\begingroup
@@ -162,6 +164,7 @@
 	\thispagestyle{empty}
 	\section*{ABSTRACT}
 
+	In the present work, the school timetabling problem is studied. School necessities and preferences about the final timetable, as well as deficiencies of the current methods are listed. Previous solutions, computational or otherwise, are taken into account. A necessity by the brazilian schools for an easy to use public software to address the creation of timetables is identified. A software is implemented with this goal, using an approach similar to that used in chess engines. This approach is compared from computational and utilitarian perspectives. The software is tested, and a satisfaction survey is made for schools which participated in the test. Possible future work in the area is listed.
 
 	\begingroup
 		\setlength{\parindent}{0mm}
@@ -177,7 +180,7 @@
 	\thispagestyle{empty}
 	\section*{ZUSAMMENFASSUNG}
 
-	Ein entscheidende Faktor für die Effizienz einer Schule ist seinen Zeitplan. Zusätzlich zu es
+	In der vorliegenden Arbeit, ist das Stundenplanerstellungsproblem untergesucht.
 
 	\lipsum[1]
 
@@ -266,17 +269,17 @@
 		\par Elaborar um cronograma é uma tarefa extraordinária. Mesmo nos casos mais simples, como nos cronogramas pessoais, há um grande número de possiblidades, restrições e preferências do usuário. Assim, a dificuldade de produzir um cronograma eficaz aumenta rapidamente conforme seu tamanho.
 
 		% Assim, a qualidade do cronograma depende não só das restrições seguidas, mas também do grau de satisfação dessas preferências.
-		\par Mesmo assim, eles são de vital importância para a rotina de indivíduos, escolas, indústrias, aeroportos, hospitais e eventos esportivos. Instituições de ensino, em particular, tem custos enormes com a elaboração de suas grades horárias: estima-se que elaborá-las manualmente pode demandar centenas de horas \cite{appleby} de um profissional. No entanto, esse processo é rotineiro: a cada mudança na docência, um novo cronograma pode ser necessário.
+		\par Mesmo assim, eles são de vital importância para a rotina de indivíduos, escolas, indústrias, aeroportos, hospitais e eventos esportivos. Instituições de ensino, em particular, têm custos enormes com a elaboração de suas grades horárias: estima-se que elaborá-las manualmente pode demandar centenas de horas \cite{appleby} de um profissional. No entanto, esse processo é rotineiro, já que a cada mudança na docência, um novo cronograma pode ser necessário.
 
-		\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que esta faça um professor frequentar a escola em um dia a mais, ou que uma aula de física foi cortada ao meio pelo intervalo e seu rendimento foi reduzido. Ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo.
+		\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que esta faça um professor frequentar a escola desnecessariamente, ou que uma aula geminada é dividida ao meio pelo intervalo e seu rendimento, reduzido. Ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo.
 
 		\par Processos de verificação extensiva para esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
 
 		% \par Até mesmo em instituições que o criam manualmente, um sistema computadorizado ainda pode filtrar possibilidades e auxiliar na visualização. Em outras, uma geração automatizada pode ser preferível. Em todo caso, pode-se tirar proveito de computadores.
 
-		\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas geminadas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita}.
+		\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas tripas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita, carter1995}.
 
-		\par O preço de um software que atende a essas considerações é maior, pois sua oferta é menor. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando novamente pela criação manual. Mesmo nas escolas que têm capital, o ideal seria invesí-lo na manutenção de infraestrutura, da docência, da merenda, melhorando assim, a qualidade de ensino.
+		\par Por ser mais escasso e mais difícil de criar, o preço de um software comercial que atenda às especificadades de uma escola é elevado. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando pela criação manual e aceitando a ineficácia que isso pode causar. Mesmo nas escolas com tal capital, se possível, seria ideal invesí-lo na manutenção de infraestrutura, da docência, da merenda, e melhorar assim, a qualidade de ensino.
 
 
 
@@ -285,7 +288,7 @@
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{SOLUÇÃO PROPOSTA}
 
-			 \par A partir das considerações acima, constata-se a ausência de um software público \cite{publico} que supra as necessidades das escolas brasileiras e que seja de fácil utilização por professores de fora da área de informática. Tal software, então, deveria poderia ser implementado e utilizado em computadores da rede pública de ensino -- ou seja, compatível com os sistemas operacionais Windows, Ubuntu e Linux Educacional \cite{proinfo}.
+			 \par A partir das considerações acima, constata-se a ausência de um software público \cite{publico} que supra as necessidades das escolas brasileiras e que seja de fácil utilização por professores de fora da área de informática. Tal software, então, deveria poderia ser implementado e utilizado em computadores da rede pública de ensino -- ou seja, compatível com os sistemas operacionais Windows, Ubuntu e Linux Educacional \cite{proinfo, w3s}.
 
 			 \par Em tal software, o professor responsável pela criação do horário escolar insere as necessidades programáticas de aula, as demandas subjetivas dos professores e os horários disponíveis para esses encontros. O sistema então, em constante interação com o usuário, cria o horário escolar.  Desta forma, são reduzidos custos em tempo e em dinheiro da escola que se propõe a utilizar o sistema.
 
@@ -324,21 +327,24 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{FUNDAMENTAÇÃO TEÓRICA}
 
-		\par Parágrafo Introdutório.
 
 		\subsection{DESCRIÇÃO FORMAL DAS RESTRIÇÕES DO CRONOGRAMA}
 
+			Defina uma escola como uma tupla $S = (C,T,R,P)$, com turmas, professores, salas e períodos, respectivamente.
+			Segue então que, para qualquer $c \in C$, $t \in T$, $r \in R$, $p \in P$, temos:
+
+			\begin{itemize}
+				\item s
+			\end{itemize}
 			\lipsum[1]
 
-		\subsection{ALGORÍTMOS CORRENTEMENTE UTILIZADOS}
+		\subsection{SOLUÇÕES CORRENTEMENTE UTILIZADOS}
 
 			\lipsum[1]
 
-		\subsection{MODELO PARA COMPARAÇÃO COM ALGORÍTMOS ANTERIORES}
-
-			\lipsum[1]
-
-		\subsection{MÉTRICAS PARA A AVALIAÇÃO DA EXPERIÊNCIA DO USUÁRIO}
+		% \subsection{MODELOS PARA COMPARAÇÃO COM SOLUÇÕES ANTERIORES}
+		%
+		% 	\lipsum[1]
 
 			\lipsum[1]
 	\newpage
@@ -348,6 +354,8 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{TRABALHOS RELACIONADOS}
 
+		\par Para simplificar a comparação com softwares similares, fica estabelecida a métrica de $50$ turmas com as quais o sistema deve lidar. Esse número fica muito acima da média de turmas por escola de cidades como Porto Alegre, Canoas e Cachoeirinha, por exemplo \cite{inep}. Fica viável, então, comparar preços de softwares comerciais, dado que estes geralmente cobram por licenças (usualmente de doze meses) baseado no número de turmas.
+
 		\scalebox{0.7}{
 			\begin{tabular}{| c | c | c | c | c |}
 				\hline
@@ -356,6 +364,10 @@
 				UniTime &   &    &   &  \\
 				\hline
 				Urânia &   &   &   &  \\
+				\hline
+				Horário Fácil & & & & \\
+				\hline
+				GridClass http://gridclass.com.br/ \\
 				\hline
 				Benchmark Timetable &   &    &   &  \\
 				\hline
@@ -394,32 +406,60 @@
 
 	\newpage
 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%         Metodologia        %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{METODOLOGIA}
 
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%    Tecnologias Adotadas    %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{TECNOLOGIAS ADOTADAS}
 
 			\lipsum[1]
 
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%    Ferramentas Adotadas    %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{FERRAMENTAS ADOTADAS}
 
 			\lipsum[1]
 
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%    Modelagem do Sistema    %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{MODELAGEM DO SISTEMA}
 
 			\lipsum[1]
 
 
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%%        Casos de Uso        %%%%
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			\subsubsection{CASOS DE USO}
 
 				\lipsum[1]
 
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%%       Banco de Dados       %%%%
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			\subsubsection{BANCO DE DADOS}
 
 				\lipsum[1]
 
-			\subsubsection{ALGORÍTMOS}
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%%          Algoritmos        %%%%
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			\subsubsection{ALGORITMOS}
 
-				\lipsum[1]
+				\textbf{Orientações Gerais}
+
+				\par Sequential method of Saturation Degree (um dos mais robustos segundo Carter, Laporte e Lee 1995. Ler o artigo!).
+				Lewis 2015 também vê resultados mais favoráveis no Saturation
+
+				\par Ler sobre 1-opt e 2-opt (Carter, Laporte e Chinnek)
+
+				\par Usar alguma aleatoridade depois do primeiro cronograma
 
 	\section{RESULTADO}
 

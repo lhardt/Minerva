@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
+
+   <!-- COMPILAR COM inkscape -f <nomearquivo>.svg -A <nomearquivo>.pdf -->
+
+   <polygon points="50,0 350,0 350,200 50,200" stroke="black" fill="white" />
+
+	<line x1="200" y1="100" x2="150" y2=" 20" stroke="black"/>
+	<line x1="200" y1="100" x2="250" y2=" 40" stroke="black"/>
+	<line x1="200" y1="100" x2="280" y2="110" stroke="black"/>
+	<line x1="200" y1="100" x2="130" y2="110" stroke="black"/>
+
+	<line x1="130" y1="110" x2="80" y2=" 60" stroke="black"/>
+	<line x1="130" y1="110" x2="80" y2="160" stroke="black"/>
+	<line x1="200" y1="100" x2="150" y2=" 20" stroke="black"/>
+
+	<line x1="150" y1="20" x2="250" y2=" 40" stroke="black"/>
+
+	<line x1="280" y1="110" x2="240" y2="160" stroke="black"/>
+
+	<circle cx="200" cy="100" r="9" stroke="black" fill="white" />
+	<text x="180" y="120" fill="black" >T1C1R1</text>
+
+	<circle cx="150" cy=" 20" r="9" stroke="black" fill="white" />
+	<text x="160" y="20" fill="black" >T4C5R1</text>
+	<text x="146" y="24" fill="black" >5</text>
+
+	<circle cx="250" cy=" 40" r="9" stroke="black" fill="white" />
+	<text x="250" y="30" fill="black" >T5C6R1</text>
+	<text x="246" y="44" fill="black" >4</text>
+
+	<circle cx="280" cy="110" r="9" stroke="black" fill="white" />
+	<text x="280" y="100" fill="black" >T1C3R4</text>
+
+	<circle cx="240" cy="160" r="9" stroke="black" fill="white" />
+	<text x="250" y="163" fill="black" >T6C3R5</text>
+	<text x="236" y="164" fill="black" >4</text>
+
+	<circle cx="130" cy="110" r="9" stroke="black" fill="white" />
+	<text x="130" y="100" fill="black" >T2C1R2</text>
+
+	<circle cx="80" cy=" 60" r="9" stroke="black" fill="white" />
+	<text x="80" y="50" fill="black" >T2C2R3</text>
+	<text x="77" y="64" fill="black" >1</text>
+
+	<circle cx="80" cy="160" r="9" stroke="black" fill="white" />
+	<text x="90" y="165" fill="black" >T3C4R2</text>
+</svg>

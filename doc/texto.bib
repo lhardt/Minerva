@@ -1,3 +1,4 @@
+% Artigo do primeiro PATAT que confirma que o problema do timetabling é NP-Comlepto.
 @article{complexity,
     author = "Cooper T.B., Kingston J.H.",
     title = "The Complexity of Timetable Construction Problems.",
@@ -7,6 +8,7 @@
     keywords = "Timetable, Algorithm, Complexity"
 }
 
+% Um artigo que dava luz sobre o estado da arte na época. Grande referência, mas antigo
 @article {appleby,
 	author = "J. S. Appleby; D.V. Blake; E. A. Newman",
 	title = "Techniques for Producing School Timetables on a Computer and their Application to other Scheduling Problems",
@@ -24,6 +26,7 @@
     eprint = {https://academic.oup.com/comjnl/article-pdf/3/4/237/1073987/030237.pdf},
 }
 
+% Sugestões do autor para que outros parâmetros softwares podem levar em conta
 @article{nikita,
 	author = {Desai, Nikita},
 	year = {2011},
@@ -34,6 +37,7 @@
 	journal = {Indian Journal of Computer Science and Engineering (IJCSE)}
 }
 
+% Definição de software público e outras orientações
 @manual{publico,
 	organization = {BRASIL, {Ministério do Planejamento}},
 	title = {Portaria n° 64/2016},
@@ -46,6 +50,7 @@
 	page = {52}
 }
 
+% sistemas operacionais utilizados nas escolas brasileiras
 @article {proinfo,
 	organization = {PROINFO},
 	title = {Sistemas Operacionais},
@@ -53,9 +58,50 @@
 	note = {Acesso em 18 de março de 2020.}
 }
 
+% estatísticas sobre escolas, alunos e turmas
+@article { inep,
+	organization = {Insituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira},
+	title = {Sinopse Estatística da Educação Básica 2019},
+	address = {Brasília},
+	publisher = {Inep},
+	year = {2019},
+	url = {ENCONTRAR_URL}
+}
+
+% Estatísticas de uso do W3S -- windows é o sistema dominante
+@article {w3s,
+	organization = {W3 Schools},
+	title = {OS Platform Statistics},
+	url = {https://www.w3schools.com/browsers/browsers_os.asp},
+	note = {Acesso em 20 de março de 2020.}
+
+}
+
+% Sobre ser uma área de pesquisa muito ativa. Exemplo: PATAT ainda acontece
 @article {patat2020,
 	organization = {PATAT},
 	title = {PATAT Conference 2020 home page},
 	url = {https://www.patatconference.org/patat2020/},
 	note = {Acesso em 18 de março de 2020.}
+}
+
+% Mais uma revisão da área. Defn. Sequential Methods.
+% a maioria dos artigos que ele cita não tem as constraints que ele especificava.
+% cita 1-opt e 2-opt
+% cita "saturation degree é mais robusto"
+@article {carter1995,
+	author = {{Michael W. Carter}, {Gilbert Laporte}},
+	title  = {Recent Developments in Practical Examination Timetabling},
+	year   = {1995},
+	journal = "Pracite and Theory of Automated Timetabling"
+}
+
+% Lista formas de solução, e é continuado pelo carter1995.
+% Foca mais em graph coloring
+% "o melhor algorítmo depende da instituição"
+@article {carter1985,
+	author = {{Michael W. Carter}},
+	title = {A Survey of Practical Applications of Examination Timetabling Algorithms},
+	year = {1985},
+	journal = {OR Practice}
 }
