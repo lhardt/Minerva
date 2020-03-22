@@ -4,11 +4,12 @@
  * Copyright (C) Léo H. 2019-2020.
  */
 #ifndef DECISIONS_H
-#define DECICIONS_H
+#define DECISIONS_H
 
 #include "types.h"
 
 typedef enum NodeType {
+	NODE_START,
 	NODE_ROOM,
 	NODE_TEACHER,
 	NODE_PERIOD
@@ -36,21 +37,19 @@ struct DecisionNode{
 };
 
 struct DecisionTree{
-	int id;
+	int parent_node_id;
 	/* Nodes may be stored linearly at start[i] */
 	int alloc_sz;
-	int last_id;
+	int last_index;
 
 	DecisionNode * start;
 };
 
-/* Generates a tree based on the initial data informed by user */
-DecisionTree * make_primary_tree(School * school);
-/* Tries to find solutions based on the current situation */
+
+DecisionTree * init_decision_tree(School * school);
+
 void primary_search(DecisionNode * tree, int limit_sec);
 
 void explore_consequences(DecisionTree * tree, int limit_sec, Meeting * affected, Teacher * fixed_teacher, Class * fixed_class, int fixed_period);
-
-
 
 #endif /* DECISIONS_H */

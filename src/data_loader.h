@@ -1,3 +1,8 @@
+/*
+ * Project Minerva.
+ *
+ * Copyright (C) Léo H. 2019-2020.
+ */
 #ifndef DATA_LOADER_H
 #define DATA_LOADER_H
 

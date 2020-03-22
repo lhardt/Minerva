@@ -201,6 +201,7 @@ const char * const CREATE_TABLE_TEACHES =
 				"id 					integer primary key,"
 				"id_teacher				integer,"
 				"id_subject				integer,"
+				"rating 				integer," // NEW FIELD. ADD TO DIAGRAM
 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
 				"FOREIGN KEY (id_subject) REFERENCES Subject(id)"
 			")");
@@ -405,7 +406,7 @@ bool insert_feature(FILE * console_out, sqlite3* db, School * school){
 	}
 	sqlite3_finalize(stmt);
 	return true;
-} //CREATE_TABLE_FEATURE
+}
 
 /**
  * Inserts in the database all periods in a school

@@ -23,6 +23,7 @@ typedef enum Period {
 typedef struct ClassQuantity ClassQuantity;
 typedef struct TeacherQuantity TeacherQuantity;
 typedef struct SubjectQuantity SubjectQuantity;
+typedef struct RoomFeatureQuantity RoomFeatureQuantity;
 
 typedef struct RoomFeature {
 	int id;
@@ -34,8 +35,10 @@ typedef struct Room {
 	int id;
 	char * name;
 	char * short_name;
+	int size;
 	/*this is not a list of fetures. Is rather a score given to all fetures, being 0 absent. */
-	int room_features[MAX_FEATURES];
+	/* Last value must be -1. */
+	int room_features[MAX_FEATURES + 1];
 	int disponibility[MAX_PERIODS_PER_WEEK];
 } Room;
 
@@ -44,8 +47,8 @@ typedef struct Subject {
 	char * name;
 	char * short_name;
 
-	int gemini_score[MAX_PERIODS_PER_DAY];
-	int week_position_score[MAX_PERIODS_PER_WEEK];
+	int * gemini_score;
+	int * week_position_score;
 } Subject;
 
 typedef struct SubjectGroup {
@@ -56,26 +59,34 @@ typedef struct SubjectGroup {
 	Subject * subjects;
 } SubjectGroup;
 
+typedef struct Teaches Teaches;
 typedef struct Teacher Teacher;
 struct Teacher{
 	int    			id;
 	char 		  * name;
 	char 		  * short_name;
 
-	int    			periods[MAX_PERIODS_PER_WEEK];
+	int    		  * periods;
 	int    			max_meetings_per_day;
 	int    			max_meetings_per_week;
 	int    			num_planning_periods;
 	// bool   			one_day_planning_periods; DEFAULT TO YES.
 	int	   			preferred_planning_periods;
 
-	Subject       * teaches;
+	Teaches      ** teaches;
 	ClassQuantity * possible_classes;
 	ClassQuantity * classes;
 
-	Teacher*      * subordinates;
+	Teacher      ** subordinates;
 
-	int 			per_day_number_score[MAX_DAYS];
+	int 		  * per_day_number_score;
+};
+
+struct Teaches{
+	int id;
+	Teacher * teacher;
+	Subject * subject;
+	int  min_features[MAX_FEATURES + 1];
 };
 
 typedef struct Class Class;
@@ -86,12 +97,12 @@ struct Class{
 
 	int 			size;
 
-	int 			periods[MAX_PERIODS_PER_WEEK];
+	int 		  * periods;
 	bool 			can_have_free_periods_flag;
 	int 			minimal_exit_period;
 	int 			maximal_entry_period;
 
-	Class *		  * subordinates;
+	Class       * * subordinates;
 
 	SubjectQuantity * needs;
 };
@@ -109,8 +120,13 @@ struct ClassQuantity{
 };
 
 struct SubjectQuantity{
-	Subject    	  * disc;
+	Subject    	  * subject;
 	int			 	quantity;
+};
+
+struct RoomFeatureQuantity{
+	RoomFeature * feature;
+	int			  quantity;
 };
 
 typedef struct ExtendedClass{
@@ -141,8 +157,8 @@ typedef struct Meeting{
 	int 	     	period;
 
 	int    	      * possible_periods;
-	Room * 	   	  * possible_rooms;
-	Teacher *  	  * possible_teachers;
+	Room        * * possible_rooms;
+	Teacher     * * possible_teachers;
 } Meeting;
 
 typedef enum EditActionActionType {
@@ -181,6 +197,7 @@ typedef struct School {
 	Class      * classes;
 	Teacher    * teachers;
 	Room       * rooms;
+	Teaches    * teaches;
 	Meeting    * all_meetings;
 
 	int 		 n_periods;
@@ -188,6 +205,9 @@ typedef struct School {
 	int 		 n_periods_per_day;
 	int 		 n_features;
 	int 		 n_rooms;
+	int			 n_teaches;
+	int 		 n_teachers;
+	int 		 n_classes;
 
 	bool 		 periods[MAX_PERIODS_PER_WEEK];
 

@@ -3,7 +3,6 @@
  *
  * Copyright (C) Léo H. 2019-2020.
  */
-
 #ifndef UTIL_H
 #define UTIL_H
 
