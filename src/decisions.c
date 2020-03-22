@@ -117,7 +117,7 @@ DecisionTree * init_decision_tree(School * school){
 			conclusion[i_meet].possible_teachers = make_possible_teacher_list(school,&conclusion[i_meet]);
 			// conclusion[i_meet].possible_rooms = make_possible_room_list(school, &conclusion[i_meet]);
 			conclusion[i_meet].possible_periods = make_possible_period_list(school,&conclusion[i_meet]);
-
+			i_meet++;
 		}
 	}
 	return tree;
