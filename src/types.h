@@ -86,6 +86,7 @@ struct Teaches{
 	int id;
 	Teacher * teacher;
 	Subject * subject;
+	int  score;
 	int  min_features[MAX_FEATURES + 1];
 };
 
@@ -156,9 +157,12 @@ typedef struct Meeting{
 	Room 	   	  * room;
 	int 	     	period;
 
+	/* A score given to each teacher, period and room, where
+	 * possible_periods[i] is the score of periods[i] in this
+	 * meeting. Similarly the others*/
 	int    	      * possible_periods;
-	Room        * * possible_rooms;
-	Teacher     * * possible_teachers;
+	int			  * possible_rooms;
+	int			  * possible_teachers;
 } Meeting;
 
 typedef enum EditActionActionType {

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Edit this text area to see live preview to the right -->
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
+
+	<defs></defs>
+
+	<!-- <polygon points="0,0 400,0 400,400 0,400" fill="/" /> -->
+	<!-- three far mountains -->
+	<polygon points="180,200 200,80 220,200" fill="#999" />
+	<polygon points="160,200 175,100 190,200" fill="#bbb" />
+	<polygon points="210,200 225,100 240,200" fill="#aaa" />
+	<!-- one medium mountain -->
+	<polygon points="150,200 200,130 250,200" fill="#44c" />
+	<polygon points="180,156 200,130 220,156 200,160" fill="#fff" />
+	<!-- two close mountains -->
+	<polygon points="120,200 160,150 200,200" fill="#66C" />
+	<polygon points="280,200 240,150 200,200" fill="#66c" />
+	<!-- <polygon points="210,200 225,100 240,200" fill="#aaa" /> -->
+	<!-- ground -->
+	<polygon points="100,205 115,195 285,195 300,205 300,210 100,210" fill="#292" />
+	<!-- underground -->
+	<polygon points="100,210 180,300 200,280 220,300 300,210" fill="#88a" />
+	<polygon points="130,210 150,250 180,270 200,250 220,270 250,250 270,210" fill="#669" />
+	<polygon points="140,210 200,230 260,210" fill="#442" />
+	<polygon points="140,210 150,220 160,210" fill="#552" />
+	<polygon points="260,210 250,220 240,210" fill="#552" />
+	<!-- flight lines -->
+	<line x1="130" x2="130" y1="260" y2="320" stroke="white" stroke-width="3" stroke-linecap="round" />
+	<line x1="270" x2="270" y1="280" y2="340" stroke="white" stroke-width="3" stroke-linecap="round" />
+	<line x1="220" x2="220" y1="340" y2="380" stroke="white" stroke-width="3" stroke-linecap="round" />
+	<line x1="180" x2="180" y1="320" y2="360" stroke="white" stroke-width="3" stroke-linecap="round" />
+	<!-- escola -->
+	<polygon points="180,200 180,180 185,180 250,180 250,200"  fill="#fb3" />
+	<polygon points="180,200 250,200 250,197 180,197" fill="#fd9800"  />
+	<polygon points="215,200 205,200 205,190 215,190" fill="#ccf" stroke="#555" />
+	<!-- flag -->
+	<polygon points="170,170 180,170 180,175 170,175" stroke="#666" fill="#3d3" />
+	<line x1="170" y1="200" x2="170" y2="170" stroke="#666" stroke-width="2" />
+	<!-- windows -->
+	<!-- <polygon points="215,190 215,195 222,195 222,190 " stroke="#666" fill="white" />
+	<polygon points="205,190 205,195 212,195 212,190 " stroke="#666" fill="white" /> -->
+
+	<polygon points="180,180 180,177 210,172 250,177 250,180 " fill="#d83621" />
+	<!-- <polygon points="200,190 220,195 230,195 230,190 " stroke="#666" fill="white" /> -->
+	<!-- <polygon points="220,190 220,195 230,195 230,190 " stroke="#666" fill="white" /> -->
+</svg>

@@ -1,0 +1,210 @@
+@font-face {
+	src: url('./Gilroy-ExtraBold.otf');
+	font-family: 'GilroyEB';
+}
+@font-face {
+	src: url('./Gilroy-Regular.ttf');
+	font-family: 'Gilroy';
+}
+
+* {
+	box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: 'Gilroy';
+}
+h2 {
+	border-bottom: 2px solid white;
+}
+
+body, html{
+	margin: 0;
+	border: 0;
+	padding: 0;
+	min-height:100vh;
+	font-family: Helvetica;
+}
+
+.fixed-width-center {
+	width:900px;
+	margin: 0 auto;
+	border-left: 3px solid #ccc;
+	border-right: 3px solid #ccc;
+	padding-top: 10px;
+	min-height:100vh;
+}
+
+.window{
+	overflow: auto;
+	width: 800;
+	height: 600;
+	border: 1px solid black;
+	margin: 0 auto;
+	margin-bottom: 20px;
+}
+.window > header{
+	background: #22f;
+	color: white;
+	height:20px;
+}
+#window1 {
+	box-sizing: content-box;
+}
+#window1 * {
+	box-sizing: border-box;
+}
+#window1 > main {
+	background: #2980b9;
+	width:100%;
+	height: 555;
+}
+#window1 .left_panel {
+	padding: 30px;
+	height: 550;
+	width:440px;
+	float:left;
+}
+#window1  .right_panel {
+	height: 550;
+	width:350px;
+	float:right;
+	background: #2980b9;
+}
+#window1 .right_panel {
+	background: url('floating.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+}
+#window1 h1 {
+	color: white;
+	margin-top: 20%;
+	text-align: center;
+	font-family: 'Gilroy';
+	border-bottom: 4px solid white;
+}
+#window1 p {
+	color: white;
+}
+#window1 button {
+	width: 300px;
+	clear:both;
+	display: block;
+	margin: 0 auto;
+	margin-top:10px;
+	border: 2px solid white;
+	padding: 5px;
+	border-radius: 20px;
+	color: white;
+	font-weight:bold;
+	transition: backgorund-color, 0.2s;
+}
+#window1 button:hover{
+	background: white;
+	color: black;
+	transition: backgorund-color, 0.2s;
+}
+footer{
+	background:  #2575b0;
+	color: white;
+	text-align: center;
+	font-size: 0.8em;
+	height: 25px;
+	line-height: 25px;
+	clear: both;
+}
+
+#window1 ul {
+	color: white;
+	font-weight: bold;
+	border: 2px solid white;
+	border-radius: 15px;
+	padding: 0;
+	height: 30px;
+	margin: 0 auto;
+	margin-top: 20px;
+	width: 300px;
+	overflow:hidden;
+}
+#window1 li {
+	list-style-type: none;
+	float: left;
+	height: 26px;
+	padding: 5px;
+	line-height:15px;
+	width:74px;
+	text-align: center;
+	transition: background 0.2s;
+	font-size: 0.9em;
+	cursor: pointer;
+}
+#window1 li:hover {
+	padding: 5px;
+	background: white;
+	color: black;
+	transition: background 0.2s;
+}
+#window1 li:not(:first-child){
+	border-left: 1px solid white;
+}
+
+/*****************************************/
+
+#window2 .left_panel{
+	height: 553;
+	width:300px;
+	float:left;
+	background: #2980b9;
+	padding: 30px;
+	color: white;
+}
+#window2 .right_panel {
+	padding: 5px;
+	padding-top: 10%;
+	height: 553;
+	width:490px;
+	float:right;
+	background: white;
+	color: black;
+}
+#window2 p {
+	text-align: justify;
+	font-size: 0.9em;
+}
+#window2 .right_panel p {
+	font-size: 0.7em;
+	margin: 2px;
+}
+#window2 input{
+	margin: 0;
+	border: 2px solid #ddd;
+	padding: 5px;
+	padding-left: 10px;
+	border-radius: 20px;
+	margin-bottom: 10px;
+}
+#window2 input:focus{
+	margin: 1px;
+	border: 1px solid #000;
+	padding: 5px;
+	padding-left: 10px;
+	border-radius: 20px;
+	margin-bottom: 11px;
+}
+#window2 input[type=number]{
+	width: 50px;
+}
+#window2 button {
+	background: #2980b9;
+	color: white;
+	border: 0;
+	padding: 8px;
+	width: 150px;
+	font-weight: bold;
+	border-radius: 20px;
+	border-bottom: 3px solid #2575b0;
+	margin: 0 auto;
+	display: block;
+}
+
+#window2 button:

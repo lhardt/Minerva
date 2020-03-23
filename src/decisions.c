@@ -10,66 +10,55 @@ static const int EXPAND_ALLOC_SZ = 100;
 
 static int g_TREE_LASTID = 0;
 
-Teacher ** make_possible_teacher_list(School * school, Meeting * meeting){
-	int i_teacher, i_teaches, i_list = 0;
+int * make_possible_teacher_list(School * school, Meeting * meeting){
+	int i_teacher, i_teaches;
 	/* Reference to shorten indirection. */
 	Teacher * teacher;
 
-	Teacher ** list = calloc(school->n_teachers, sizeof(Teacher*));
+	int * scores = calloc(school->n_teachers + 1, sizeof(int));
+	scores[school->n_teachers] = -1;
+
 
 	for(i_teacher = 0; i_teacher < school->n_teachers; i_teacher++){
 		teacher = &(school->teachers[i_teacher]);
 		for(i_teaches = 0; teacher->teaches[i_teaches] == NULL; i_teaches++){
 			if(teacher->teaches[i_teaches]->subject == meeting->subj){
-				list[i_list] = teacher;
-				i_list++;
+				scores[i_teacher] = teacher->teaches[i_teaches]->score;
+			} else {
+				/* TODO: written for clarity. calloc makes it redundant */
+				scores[i_teacher] = 0;
 			}
 		}
 	}
-	list[i_list] = NULL;
-
-	return list;
+	return scores;
 }
 
-Room ** make_possible_room_list(School * school, Meeting * meeting){
-	int i_room, i_rfeat, i_list = 0, i_teaches;
-	bool suitable;
+/* It is impossible to
+ *
+ *
+ */
+int* make_possible_room_list(School * school, Meeting * meeting){
+	int i_room, i_list = 0;
 	/* Reference to shorten indirection. */
 	Room * room;
 
-	Room ** list = calloc(school->n_rooms, sizeof(Room*));
-	Teaches * teaches = NULL;
-
-	for(i_teaches = 0; meeting->teacher->teaches[i_teaches] != NULL; i_teaches++ ){
-		if( meeting->teacher->teaches[i_teaches]->subject  == meeting->subj){
-			teaches = meeting->teacher->teaches[i_teaches];
-			break;
-		}
-	}
-
-	if(teaches == NULL){
-		printf("Error: Teacher doesn't lecture on that subject!\n");
-		return NULL;
-	}
+	int * list = calloc(school->n_rooms + 1, sizeof(int));
 
 	for(i_room = 0; i_room < school->n_rooms; i_room++){
 		room = &(school->rooms[i_room]);
-		suitable = true;
-		for(i_rfeat = 0; suitable && room->room_features[i_rfeat] >= 0; i_rfeat++){
-			suitable &= (room->room_features[i_rfeat] >= teaches->min_features[i_rfeat]);
+		if(room->size >= meeting->class->size){
+			list[i_room] = 1;
 		}
-		if(suitable){
-			list[i_list] = room;
-			i_list++;
-		}
+		i_list++;
 	}
+	list[school->n_rooms] = -1;
 	return list;
 }
 
 int * make_possible_period_list(School * school, Meeting * meeting){
 	int i_per;
 
-	int * possible_periods = calloc(school->n_periods, sizeof(int));
+	int * possible_periods = calloc(school->n_periods + 1, sizeof(int));
 
 	for(i_per = 0; i_per < school->n_periods; i_per++){
 
@@ -77,11 +66,12 @@ int * make_possible_period_list(School * school, Meeting * meeting){
 		// ele calcula o mínimo entre os dois valores
 		possible_periods[i_per] = meeting->class->periods[i_per];
 	}
+	possible_periods[school->n_periods] = -1;
 	return possible_periods;
 }
 
 DecisionTree * init_decision_tree(School * school){
-	int n_meetings, i_class, i_meet = 0, i_need;
+	int n_meetings, i_class, i_meet = 0, i_need, i_quant;
 	/* References to shorten indirection. */
 	Class * class;
 	Meeting * conclusion;
@@ -108,16 +98,18 @@ DecisionTree * init_decision_tree(School * school){
 	for(i_class = 0; i_class < school->n_classes; i_class++){
 		class = &(school->classes[i_class]);
 		for(i_need = 0; class->needs[i_need].subject != NULL; i_need++){
-			conclusion[i_meet].class = class;
-			conclusion[i_meet].subj  = class->needs[i_need].subject;
-			conclusion[i_meet].teacher = NULL;
-			conclusion[i_meet].room = NULL;
-			conclusion[i_meet].period = -1;
+			for(i_quant = 0; i_quant < class->needs[i_need].quantity; i_quant++){
+				conclusion[i_meet].class = class;
+				conclusion[i_meet].subj  = class->needs[i_need].subject;
+				conclusion[i_meet].teacher = NULL;
+				conclusion[i_meet].room = NULL;
+				conclusion[i_meet].period = -1;
 
-			conclusion[i_meet].possible_teachers = make_possible_teacher_list(school,&conclusion[i_meet]);
-			// conclusion[i_meet].possible_rooms = make_possible_room_list(school, &conclusion[i_meet]);
-			conclusion[i_meet].possible_periods = make_possible_period_list(school,&conclusion[i_meet]);
-			i_meet++;
+				conclusion[i_meet].possible_teachers = make_possible_teacher_list(school,&conclusion[i_meet]);
+				conclusion[i_meet].possible_rooms = make_possible_room_list(school, &conclusion[i_meet]);
+				conclusion[i_meet].possible_periods = make_possible_period_list(school,&conclusion[i_meet]);
+				i_meet++;
+			}
 		}
 	}
 	return tree;

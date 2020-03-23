@@ -201,7 +201,7 @@ const char * const CREATE_TABLE_TEACHES =
 				"id 					integer primary key,"
 				"id_teacher				integer,"
 				"id_subject				integer,"
-				"rating 				integer," // NEW FIELD. ADD TO DIAGRAM
+				"score  				integer," // NEW FIELD. ADD TO DIAGRAM
 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
 				"FOREIGN KEY (id_subject) REFERENCES Subject(id)"
 			")");

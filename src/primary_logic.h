@@ -51,7 +51,7 @@ bool elim_period_overflow(DecisionNode * node);
  */
 bool elim_vacation_day(DecisionNode * node);
 
-/* TWIN ORDERING RULE:
+/* ANALOGOUS ORDERING RULE:
  *
  * Logic Type: Class-Teacher-Period;
  *
@@ -66,13 +66,10 @@ bool elim_vacation_day(DecisionNode * node);
  * - This creates an order betweek periods;
  * - Therefore it must happen after any user interference (because messing with one period messes with all the other twins);
  * - But it may be reversed as L1.possible = L1.possible U L2.possible U L3.possible.
- * - TODO: IMPORTANT TO ALGORITHM DESIGN:
- *     we may do one of the following:
- *		a) make sure that every constraint applies even to fixed meetings
- *      b) make sure we do not include fixed meetings in the reversal union.
+ * - make sure we do not include fixed meetings in the reversal union.
  */
-bool elim_twin_ordering(DecisionNode * node);
-bool reverse_twin_ordering(DecisionNode * node);
+bool elim_analogous_ordering(School * school, DecisionNode * node);
+bool reverse_analogous_ordering(School * school, DecisionNode * node);
 
 /* FIXED MEETING RULE:
  *
@@ -89,10 +86,10 @@ bool reverse_twin_ordering(DecisionNode * node);
  * - TODO This algorithm **should** work even if one of the parameters (A,C, or R)
  *        is not set. The exclusion, then, happens by other means.
  */
-bool elim_search_fixed_meeting(DecisionNode * node);
-bool elim_fixed_meeting(DecisionNode * node, int fixed_meeting_index);
+bool elim_search_fixed_meeting(School * school, DecisionNode * node);
+bool elim_fixed_meeting(School * school, DecisionNode * node, int fixed_meeting_index);
 
-/* GOOD ROOM RULE: TODO better name
+/* GOOD ROOM RULE - Room: TODO better name
  *
  * Logic Type: Room-Meeting;
  *
@@ -104,7 +101,22 @@ bool elim_fixed_meeting(DecisionNode * node, int fixed_meeting_index);
  * Things to consider:
  *  -
  */
-bool elim_good_room(DecisionNode * node);
+bool elim_good_room_room(DecisionNode * node);
+
+/* GOOD ROOM RULE - Teacher: TODO better name
+ *
+ * Logic Type: Room-Meeting;
+ *
+ * Basic Explanation:
+ *   If meeting M happens in a room with X features & size
+ *       Then M cannot happen with any teaches that needs
+ *        more than those features;
+ *
+ *
+ * Things to consider:
+ *  -
+ */
+bool elim_good_room_teacher(DecisionNode * node);
 
 /* MAX PER DAY RULE:
  *

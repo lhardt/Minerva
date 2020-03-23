@@ -38,12 +38,12 @@ School * test_case_1(){
 	school.day_names = day_names;
 	school.daily_period_names = daily_period_names;
 	school.period_names = period_names;
-	school.teaches = calloc(4, sizeof(Teaches));
+	school.teaches = calloc(5, sizeof(Teaches));
 
 	school.n_features = 1;
 	school.feature_names = features;
 
-	Subject subjects[4];
+	Subject subjects[5];
 	for(int i = 0; i < 4; i++){
 		subjects[i] = (Subject){
 				.id=i,
@@ -53,6 +53,26 @@ School * test_case_1(){
 				.week_position_score = perfect_periods
 		};
 	}
+	subjects[4] = (Subject){
+		.id = -1,
+		.name = NULL,
+		.short_name = NULL
+	};
+
+	for(int i = 0; i < 4; i++){
+		school.teaches[i] = (Teaches){
+			.id=i,
+			.teacher = &school.teachers[i],
+			.subject = &subjects[i],
+			.min_features = {1}
+		};
+	}
+	school.teaches[4] = (Teaches){
+		.id = -1,
+		.teacher = NULL,
+		.subject = NULL,
+	};
+
 
 	school.n_teachers = 4;
 	school.teachers = calloc(5, sizeof(Teacher));
@@ -63,12 +83,30 @@ School * test_case_1(){
 				.max_meetings_per_day = 3,
 				.max_meetings_per_week = 6,
 				.num_planning_periods = 0,
-				.teaches = calloc(1, sizeof(Subject*))
+				.teaches = calloc(2, sizeof(Subject*))
 		};
 		school.teachers[i].teaches[0] = &school.teaches[i];
+		school.teachers[i].teaches[1] = NULL;
 	}
 
-	school.rooms = NULL;
+	school.n_rooms = 3;
+	school.rooms = calloc(4,sizeof(Room));
+	for(int i = 0; i < 3; i++){
+		school.rooms[i] = (Room){
+			.id = i,
+			.name = "RoomName",
+			.short_name = "RoomShort",
+			.size = 10 + 10*i,
+			.room_features = {1},
+			.disponibility  = {1}
+		};
+	}
+	school.rooms[3] = (Room){
+		.id = -1,
+		.name = NULL,
+		.short_name = NULL,
+		.size = -1,
+	};
 
 	SubjectQuantity class_needs[] = {
 			{.subject=&subjects[0], .quantity=2},
@@ -97,12 +135,13 @@ School * test_case_1(){
 	DecisionTree * tree = init_decision_tree(&school);
 
 	int nmet = 0;
-	while(tree->start[0].conclusion[nmet].class != NULL)
+	while(tree->start[0].conclusion[nmet].class != NULL){
 		nmet++;
+	}
 	printf("Nmet: %d\n", nmet);
 
 	// for(int i = 0; i < school.n_classes; i++){
-	// 	int number = count_required_meetings(&school, &school.classes[i], NULL);
+		// int number = count_required_meetings(&school, &school.classes[i], NULL);
 	// 	printf("Class %d:%s Required Meetings %d\n",
 	// 			i, (school.classes[i].name==NULL?("nul"):school.classes[i].name), number);
 	//
@@ -114,6 +153,8 @@ School * test_case_1(){
 	//
 	// 	}
 	// }
+	elim_analogous_ordering(&school, &tree->start[0]);
+	elim_search_fixed_meeting(&school, &tree->start[0]);
 
 	return NULL;
 }
