@@ -1,107 +1,290 @@
-% Artigo do primeiro PATAT que confirma que o problema do timetabling é NP-Comlepto.
-@article{complexity,
-    author = "Cooper T.B., Kingston J.H.",
-    title = "The Complexity of Timetable Construction Problems.",
-    journal = "Pracite and Theory of Automated Timetabling",
-    year = "1995",
-    DOI = "https://doi.org/10.1007/3-540-61794-9_66",
-    keywords = "Timetable, Algorithm, Complexity"
-}
 
-% Um artigo que dava luz sobre o estado da arte na época. Grande referência, mas antigo
-@article {appleby,
-	author = "J. S. Appleby; D.V. Blake; E. A. Newman",
-	title = "Techniques for Producing School Timetables on a Computer and their Application to other Scheduling Problems",
-	year = "1961",
-	journal = {The Computer Journal},
-	volume = {3},
-    number = {4},
-    pages = {237-245},
-    year = {1961},
-    month = {01},
-    abstract = "{This paper describes a method by which a timetable for a medium-sized school can be produced on a general-purpose digital computer in about 1½ hours. The techniques used and time taken by human beings and the computer program are compared. The use of this work in other scheduling problems is briefly described.}",
-    issn = {0010-4620},
-    doi = {10.1093/comjnl/3.4.237},
-    url = {https://doi.org/10.1093/comjnl/3.4.237},
-    eprint = {https://academic.oup.com/comjnl/article-pdf/3/4/237/1073987/030237.pdf},
-}
-
-% Sugestões do autor para que outros parâmetros softwares podem levar em conta
-@article{nikita,
-	author = {Desai, Nikita},
-	year = {2011},
-	month = {06},
-	pages = {461-465},
-	title = {Preferences of teachers and Students for auto generation Of sensitive timetable: A case Study},
-	volume = {2},
-	journal = {Indian Journal of Computer Science and Engineering (IJCSE)}
-}
-
-% Definição de software público e outras orientações
-@manual{publico,
-	organization = {BRASIL, {Ministério do Planejamento}},
-	title = {Portaria n° 64/2016},
-	year = {28 de Setembro de 2016},
-	abstract = {Dispõe sobre a disponibilização de Software Público Brasileiro e dá outras providências.},
-	address = "Brasília",
-	note = "Diário Oficial da União de 04 de outubro de 2016",
-	number = {1},
-	section = {1},
-	page = {52}
-}
-
-% sistemas operacionais utilizados nas escolas brasileiras
-@article {proinfo,
-	organization = {PROINFO},
-	title = {Sistemas Operacionais},
-	url = {http://proinfodata.c3sl.ufpr.br/attendance/os/proinfo/},
-	note = {Acesso em 18 de março de 2020.}
-}
-
-% estatísticas sobre escolas, alunos e turmas
-@article { inep,
-	organization = {Insituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira},
-	title = {Sinopse Estatística da Educação Básica 2019},
-	address = {Brasília},
-	publisher = {Inep},
-	year = {2019},
-	url = {ENCONTRAR_URL}
-}
-
-% Estatísticas de uso do W3S -- windows é o sistema dominante
-@article {w3s,
-	organization = {W3 Schools},
-	title = {OS Platform Statistics},
-	url = {https://www.w3schools.com/browsers/browsers_os.asp},
-	note = {Acesso em 20 de março de 2020.}
-
-}
 
 % Sobre ser uma área de pesquisa muito ativa. Exemplo: PATAT ainda acontece
 @article {patat2020,
-	organization = {PATAT},
-	title = {PATAT Conference 2020 home page},
-	url = {https://www.patatconference.org/patat2020/},
-	note = {Acesso em 18 de março de 2020.}
+organization = {PATAT},
+title = {PATAT Conference 2020 home page},
+url = {https://www.patatconference.org/patat2020/},
+note = {Acesso em 18 de março de 2020.}
 }
 
-% Mais uma revisão da área. Defn. Sequential Methods.
-% a maioria dos artigos que ele cita não tem as constraints que ele especificava.
-% cita 1-opt e 2-opt
-% cita "saturation degree é mais robusto"
-@article {carter1995,
-	author = {{Michael W. Carter}, {Gilbert Laporte}},
-	title  = {Recent Developments in Practical Examination Timetabling},
-	year   = {1995},
-	journal = "Pracite and Theory of Automated Timetabling"
-}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%           Dados            %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Lista formas de solução, e é continuado pelo carter1995.
-% Foca mais em graph coloring
-% "o melhor algorítmo depende da instituição"
-@article {carter1985,
-	author = {{Michael W. Carter}},
-	title = {A Survey of Practical Applications of Examination Timetabling Algorithms},
-	year = {1985},
-	journal = {OR Practice}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%         Educação           %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		% estatísticas sobre escolas, alunos e turmas
+		@article { inep,
+			organization = {Insituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira},
+			title = {Sinopse Estatística da Educação Básica 2019},
+			address = {Brasília},
+			publisher = {Inep},
+			year = {2019},
+			url = {http://inep.gov.br/sinopses-estatisticas-da-educacao-basica}
+		}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%        Performance         %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		% Ler o artigo. Fala sobre diferenças entre linguagens, mas não é direto e reto
+		% "C é melhor". É bem mais compreensivo
+		@article{languages,
+			organization = {{Ars Technica}},
+			title={Ask Ars: Why are some programming languages faster than others?},
+			year={2014},
+			url={https://arstechnica.com/information-technology/2014/05/ask-ars-why-are-some-programming-languages-faster-than-others/}
+		}
+
+		% Otimização em C -- Pesquisar sobre a keyword "restrict"
+		@article{c_memory,
+			organization = {LWN.net},
+			title = {Memory part 5: What programmers can do},
+			year = {2007},
+			url = {https://lwn.net/Articles/255364/}
+		}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%     Uso de Computadores    %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		% sistemas operacionais utilizados nas escolas brasileiras
+		@article {proinfo,
+			organization = {PROINFO},
+			title = {Sistemas Operacionais},
+			url = {http://proinfodata.c3sl.ufpr.br/attendance/os/proinfo/},
+			note = {Acesso em 18 de março de 2020.}
+		}
+
+		% Estatísticas de uso do W3S -- windows é o sistema dominante
+		@article {w3s,
+			organization = {W3 Schools},
+			title = {OS Platform Statistics},
+			url = {https://www.w3schools.com/browsers/browsers_os.asp},
+			note = {Acesso em 20 de março de 2020.}
+
+		}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%   Artigos Sobre a Geração  %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%     Matemática e Teoria    %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		% Artigo do primeiro PATAT que confirma que o problema do timetabling é NP-Comlepto.
+		@article{complexity,
+		    author = "Cooper T.B., Kingston J.H.",
+		    title = "The Complexity of Timetable Construction Problems.",
+		    journal = "Pracite and Theory of Automated Timetabling",
+		    year = "1995",
+		    DOI = "https://doi.org/10.1007/3-540-61794-9_66",
+		    keywords = "Timetable, Algorithm, Complexity"
+		}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%      Artigos de Revisão    %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		% Um artigo que dava luz sobre o estado da arte na época. Grande referência, mas antigo
+		@article {appleby,
+			author = "J. S. Appleby; D.V. Blake; E. A. Newman",
+			title = "Techniques for Producing School Timetables on a Computer and their Application to other Scheduling Problems",
+			year = "1961",
+			journal = {The Computer Journal},
+			volume = {3},
+		    number = {4},
+		    pages = {237-245},
+		    year = {1961},
+		    month = {01},
+		    abstract = "{This paper describes a method by which a timetable for a medium-sized school can be produced on a general-purpose digital computer in about 1½ hours. The techniques used and time taken by human beings and the computer program are compared. The use of this work in other scheduling problems is briefly described.}",
+		    issn = {0010-4620},
+		    doi = {10.1093/comjnl/3.4.237},
+		    url = {https://doi.org/10.1093/comjnl/3.4.237},
+		    eprint = {https://academic.oup.com/comjnl/article-pdf/3/4/237/1073987/030237.pdf},
+		}
+
+		% Lista formas de solução, e é continuado pelo carter1995.
+		% Foca mais em graph coloring
+		% "o melhor algorítmo depende da instituição"
+		@article {carter1985,
+			author = {{Michael W. Carter}},
+			title = {A Survey of Practical Applications of Examination Timetabling Algorithms},
+			year = {1985},
+			journal = {OR Practice}
+		}
+
+		% Mais uma revisão da área. Defn. Sequential Methods.
+		% a maioria dos artigos que ele cita não tem as constraints que ele especificava.
+		% cita 1-opt e 2-opt
+		% cita "saturation degree é mais robusto"
+		@article {carter1995,
+			author = {{Michael W. Carter}, {Gilbert Laporte}},
+			title  = {Recent Developments in Practical Examination Timetabling},
+			year   = {1995},
+			journal = "Pracite and Theory of Automated Timetabling"
+		}
+
+		% Sugestões do autor para que outros parâmetros softwares podem levar em conta
+		@article{nikita,
+			author = {Desai, Nikita},
+			year = {2011},
+			month = {06},
+			pages = {461-465},
+			title = {Preferences of teachers and Students for auto generation Of sensitive timetable: A case Study},
+			volume = {2},
+			journal = {Indian Journal of Computer Science and Engineering (IJCSE)}
+		}
+
+		% Artigo importante.
+		@article{burkeepetrovic,
+			author={{Edmund Kieran Burke},{Sanja Petrovic}},
+			title={Recent Research Directions in Automated Timetabling},
+			year={2002},
+			journal={EJOR}
+		}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%       Meta-Heurisitcs      %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%  Local Search Optimisation %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			% Local search engloba 2-opt, 3-opt, hill climbing, tabu e simulated annealing
+			@article{schaerfegaspero,
+				author={{Andrea Schaerf},{Luca Di Gaspero}},
+				title={LOCAL SEARCH TECHNIQUES FOR EDUCATIONAL TIMETABLING PROBLEMS},
+				address={Udine	},
+				year={2002},
+			}
+
+			@article{fabio,
+				author = {Fábio Santana de Oliveira},
+				title={Otimização interativa de problemas de quadro de horário escolar sujeito a restrições},
+				insitution={UFG},
+				address={Goiânia}
+			}
+
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%  Algorítmos Evolucionários %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			@article{daniela,
+				author={Daniela Oliveira Francisco},
+				title={Aplicação de Algoritmos Bio-Inspirados ao Problema de Geração Automática de Grades Horárias},
+				instition={UFSCar},
+				year={2013}
+			}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%      Constraint Logic      %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		@article{goltz,
+			author = {Hans-Joachim Goltz},
+			title={Interaktive, automatische Stundenplanung mittels constraintlogischer Programmierung},
+			year={1998},
+			institution={Universität-GH-Paderborn},
+			address={Berlin}
+		}
+
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%    Solução por Clusters    %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%     Métodos Sequenciais    %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+		% O Artigo parece indicar 14 casos de exemplo da cidade de Araucária, PR
+		@article{andradeetal,
+			author={{Pedro Rochavetz de Lara Andrade},{Maria Teresinha Arns Steiner},{Anderson Roges Teixeira Góes}},
+			title={Optimization in timetabling in schools using a mathematical model, local search and Iterated Local Search procedures},
+			journal={Gestão & Produção},
+			volume={24},
+			number={4},
+			year={2019},
+			doi={https://doi.org/10.1590/0104-530X3241-19}
+
+		}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%    Softwares Comerciais    %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	@article{rel_urania,
+		organization = {{Geha Sistemas Específicos}},
+		title = {Horário Escolar - Programa Urânia. Gere os horários de forma rápida e mantenha sua instituição funcional desde o primeiro dia de aula.},
+		url = {https://horario.com.br/},
+		note = {Acesso em 25 de março de 2020.}
+	}
+
+	@article{rel_asctimetables,
+		organization = {{aSc Applied Software Consultants}},
+		title = {ascTimetables. School scheduling. Best timetable software to create school timetable.},
+		url = {https://www.asctimetables.com/},
+		note =  {Acesso em 25 de março de 2020.}
+	}
+
+	@article{rel_horariofacil,
+		organization = {{Horário Fácil}},
+		title = {Programa para fazer horário escolar | Horário Fácil},
+		url = {https://www.horariofacil.com/},
+		note = {Acesso em 25 de março de 2020.}
+	}
+
+	@article{rel_unitime,
+		organization = {Apereo},
+		title = {UniTime | University Timetabling},
+		url = {https://www.unitime.org/},
+		note = {Acesso em 25 de março de 2020.}
+	}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  Diretrizes e Orientações  %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%    Interface do Usuário    %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%       Acessibilidade       %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%         Performance        %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%             Leis           %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		% Definição de software público e outras orientações
+		@manual{publico,
+			organization = {BRASIL, {Ministério do Planejamento}},
+			title = {Portaria n° 64/2016},
+			year = {28 de Setembro de 2016},
+			abstract = {Dispõe sobre a disponibilização de Software Público Brasileiro e dá outras providências.},
+			address = "Brasília",
+			note = "Diário Oficial da União de 04 de outubro de 2016",
+			number = {1},
+			section = {1},
+			page = {52}
+		}
+
+
+@article{parana,
+	title={Registro de Classes},
+	url={http://www.gestaoescolar.diaadia.pr.gov.br/modules/conteudo/conteudo.php?conteudo=1468}
 }

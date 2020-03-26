@@ -4,13 +4,14 @@
 #include <stdio.h>
 #include "data_loader.h"
 
-/* Do not forget PRAGMA foreign_keys = on */
+/* TODO: Assure PRAGMA foreign_keys = on */
 
 const char * const CREATE_TABLE_SCHOOL =
 			("CREATE TABLE IF NOT EXISTS School("
 				"id						integer primary key,"
 				"name					text,"
 				"num_per_per_day		integer,"
+				"num_days				integer,"
 				"max_per_per_day		integer,"
 				"max_per_per_week		integer,"
 				"max_doubling			integer"
@@ -51,10 +52,10 @@ const char * const CREATE_TABLE_PERIOD =
 			("CREATE TABLE IF NOT EXISTS Period("
 				"id 					integer primary key,"
 				"name					text,"
-				"daily_period_id		integer," // EDITED!! ADD TO DIAGRAMS
+				"school_operates_flag   integer," // NEW!!! ADD TO DIAGRAMS
 				"day_id					integer,"
 				"school_id				integer,"
-				"school_operates_flag   integer," // NEW!!! ADD TO DIAGRAMS
+				"daily_period_id		integer," // EDITED!! ADD TO DIAGRAMS
 				"FOREIGN KEY (day_id) REFERENCES Day(id),"
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
@@ -133,6 +134,7 @@ const char * const CREATE_TABLE_CLASS_ATTENDANCE =
 				"id_class				integer,"
 				"id_period				integer,"
 				"id_att_type			integer,"
+				"score      			integer,"
 				"FOREIGN KEY (id_class) REFERENCES Class(id),"
 				"FOREIGN KEY (id_period) REFERENCES Period(id)"
 				"FOREIGN KEY (id_att_type) REFERENCES AttendanceType(id)"
@@ -230,6 +232,7 @@ const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
 				"id_period				integer,"
 				"id_period				integer,"
 				"id_att_type			integer,"
+				"score					integer,"
 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
 				"FOREIGN KEY (id_period) REFERENCES Period(id)"
 				"FOREIGN KEY (id_att_type) REFERENCES AttendanceType(id)"
@@ -254,6 +257,7 @@ const char * const CREATE_TABLE_DEMAND =
 				"id						integer primary key,"
 				"teaches_id				integer,"
 				"feature_id				integer,"
+				"minimum				integer,"
 				"FOREIGN KEY (teaches_id) REFERENCES Teaches(id),"
 				"FOREIGN KEY (feature_id) REFERENCES Feature(id)"
 			")");
@@ -262,20 +266,20 @@ const char * const INSERT_TABLE_DEMAND =
 const char * const LASTID_CLASS_DEMAND =
 			("SELECT id FROM Demand where rowid = last_insert_rowid()");
 
-
-const char * const CREATE_TABLE_TEACHER_ATTENDANCE_PREFERENCE =
-			("CREATE TABLE IF NOT EXISTS TeacherAttendancePreference("
-			 	"id 					integer primary key,"
-				"id_teacher				integer,"
-				"id_period				integer,"
-				"value					integer,"
-				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
-				"FOREIGN KEY (id_period)  REFERENCES Period(id)"
-			")");
-const char * const INSERT_TABLE_TEACHER_ATTENDANCE_PREFERENCE =
-			("INSERT INTO TeacherAttendancePreference VALUES (?,?,?,?)");
-const char * const LASTID_CLASS_TEACHER_ATTENDANCE_PREFERENCE =
-			("SELECT id FROM TeacherAttendancePreference where rowid = last_insert_rowid()");
+//
+// const char * const CREATE_TABLE_TEACHER_ATTENDANCE_PREFERENCE =
+// 			("CREATE TABLE IF NOT EXISTS TeacherAttendancePreference("
+// 			 	"id 					integer primary key,"
+// 				"id_teacher				integer,"
+// 				"id_period				integer,"
+// 				"value					integer,"
+// 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
+// 				"FOREIGN KEY (id_period)  REFERENCES Period(id)"
+// 			")");
+// const char * const INSERT_TABLE_TEACHER_ATTENDANCE_PREFERENCE =
+// 			("INSERT INTO TeacherAttendancePreference VALUES (?,?,?,?)");
+// const char * const LASTID_CLASS_TEACHER_ATTENDANCE_PREFERENCE =
+// 			("SELECT id FROM TeacherAttendancePreference where rowid = last_insert_rowid()");
 
 const char * const CREATE_TABLE_TEACHES_PERIOD_PREFERENCE =
 			("CREATE TABLE IF NOT EXISTS TeachesPeriodPreference("

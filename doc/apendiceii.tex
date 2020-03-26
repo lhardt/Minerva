@@ -54,57 +54,58 @@
 \titleformat{\section}
   {\normalfont\scshape\bfseries}{\thesection}{1em}{}
 \titleformat{\subsection}
-	{\normalfont\scshape}{\thesubsection}{1em}{}
+	{\normalfont\scshape\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+	{\normalfont\scshape}{\thesubsubsection}{1em}{}
 
 \newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
 
 \begin{document}
 
-
-
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%            Capa            %%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\thispagestyle{empty}
+		\thispagestyle{empty}
 
-	\begin{center}
-		INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO RIO GRANDE DO SUL - CAMPUS CANOAS \\
-		CURSO TÉCNICO DE DESENVOLVIMENTO DE SISTEMAS INTEGRADO AO ENSINO MÉDIO\\
-	\end{center}
-
-	\vskip 3cm
-
-	\begin{center}
-		LÉO MARCO DE ASSIS HARDT
-	\end{center}
-
-	\vskip 5cm
-
-	\begin{center}
-		\textbf{APÊNDICE II - MINERVA: UMA SOLUÇÃO INFORMATIZADA PARA O ESCALONAMENTO DE PROFESSORES NAS ESCOLAS BRASILEIRAS}
-	\end{center}
-
-	\vskip 5cm
-
-	\begin{center}
-		Orientador: Gustavo Neuberger
-	\end{center}
-
-
-
-	\begin{bottompar}
 		\begin{center}
-		CANOAS \\
-		2020
+			INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO RIO GRANDE DO SUL - CAMPUS CANOAS \\
+			CURSO TÉCNICO DE DESENVOLVIMENTO DE SISTEMAS INTEGRADO AO ENSINO MÉDIO\\
 		\end{center}
-	\end{bottompar}
+
+		\vskip 3cm
+
+		\begin{center}
+			LÉO MARCO DE ASSIS HARDT
+		\end{center}
+
+		\vskip 5cm
+
+		\begin{center}
+			\textbf{APÊNDICE II - MINERVA: UMA SOLUÇÃO INFORMATIZADA PARA O ESCALONAMENTO DE PROFESSORES NAS ESCOLAS BRASILEIRAS}
+		\end{center}
+
+		\vskip 5cm
+
+		\begin{center}
+			Orientador: Gustavo Neuberger
+		\end{center}
+
+		\begin{bottompar}
+			\begin{center}
+			CANOAS \\
+			2020
+			\end{center}
+		\end{bottompar}
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%        Justificativa       %%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \section{JUSTIFICATIVA DO PROJETO CIENTÍFICO}
 
-		\subsection{DESCRIÇÃO DO PROBLEMA}
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%    Descrição do Problema   %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsection{Descrição do Problema}
 
 
 			\par Elaborar um cronograma é uma tarefa extraordinária. Mesmo nos casos mais simples, como nos cronogramas pessoais, há um grande número de possiblidades, restrições e preferências do usuário. Assim, a dificuldade de produzir um cronograma eficaz aumenta rapidamente conforme seu tamanho.
@@ -115,56 +116,105 @@
 
 			\par Processos de verificação extensiva para esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
 
-			% \par Até mesmo em instituições que o criam manualmente, um sistema computadorizado ainda pode filtrar possibilidades e auxiliar na visualização. Em outras, uma geração automatizada pode ser preferível. Em todo caso, pode-se tirar proveito de computadores.
-
 			\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas geminadas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita}.
 
 			\par O preço de um software que atende a essas considerações é maior, pois sua oferta é menor. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando novamente pela criação manual. Mesmo nas escolas que têm capital, o ideal seria invesí-lo na manutenção de infraestrutura, da docência, da merenda, melhorando assim, a qualidade de ensino.
 
-		\subsection{PROPOSTA DE SOLUÇÃO}
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%     Proposta de Solução    %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsection{Proposta de Solução}
 
 			 \par A partir das considerações acima, constata-se a ausência de um software público \cite{publico} que supra as necessidades das escolas brasileiras e que seja de fácil utilização por professores de fora da área de informática. Tal software, então, deveria poderia ser implementado e utilizado em computadores da rede pública de ensino -- ou seja, compatível com os sistemas operacionais Windows, Ubuntu e Linux Educacional \cite{proinfo}.
 
 			 \par Em tal software, o professor responsável pela criação do horário escolar insere as necessidades programáticas de aula, as demandas subjetivas dos professores e os horários disponíveis para esses encontros. O sistema então, em constante interação com o usuário, cria o horário escolar.  Desta forma, são reduzidos custos em tempo e em dinheiro da escola que se propõe a utilizar o sistema.
 
-		\subsection{OBJETIVO}
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 		%%%          Objetivo          %%%%
+ 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsection{Objetivo}
 
-			\subsubsection{OBJETIVO GERAL}
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%%       Objetivo Geral       %%%%
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			\subsubsection{Objetivo Geral}
 
-				\par Implementar um software público para a facilitação da criação e manutenção de cronograma escolar.
+				\par Implementar um software público para facilitar a criação e manutenção de cronograma escolar.
 
-			\subsubsection{OBJETIVOS ESPECÍFICOS}
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%%    Objetivos Específicos   %%%%
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			\subsubsection{Objetivos Específicos}
 
 				\begin{itemize}
 					\item Analisar a literatura existente em relação a softwares de escalonamento e \textit{timetabling};
-					\item Analistar a literatura existente em relação à criação de boas interfaces do usuário;
+					\item Analisar a literatura existente em relação à criação de boas interfaces do usuário;
 					\item Realizar um levantamento de softwares da área, estabelecendo métricas de comparação tendo em vista a experiência do usuário final;
 					\item Definir os requisitos de uma grade horária de forma abrangente e precisa;
 					\item Definir os requisitos de um sistema que gere tais grades horárias;
 					\item Realizar a modelagem do sistema;
 					\item Implementar um sistema leve, eficiente e de fácil utilização para a criação de grades horárias escolares;
-					\item Testar o sistema, realizando \textit{benchmarking} e graduação do horário gerado, comparando-o com soluções anteriores;
+					\item Testar o sistema, realizando \textit{benchmarking} do sistema e graduação do horário gerado, comparando-o com soluções anteriores;
+					\item Identificar falhas e possíveis trabalhos futuros no que diz respeito ao programa e sua implementação;
 					\item Publicar o software produzido no repositório de Software Público do governo brasileiro;
 					\item Documentar o processo.
 				\end{itemize}
 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%   Trabalhos Relacionados   %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{TRABALHOS RELACIONADOS}
 
-		A criação de grades horárias é um campo em desenvolvimento \cite{patat2020}. Há mais de 50 anos \cite{appleby} são pesquisadas formas de criação de cronogramas escolares com auxílio computacional. São citados resultados importantes ao longo do texto. Também encontra-se uma abundância de softwares comerciais com este fim.
+		\par A criação de grades horárias é um campo em desenvolvimento \cite{patat2020}. Há mais de 50 anos \cite{appleby} são pesquisadas formas de criação de cronogramas escolares com auxílio computacional. Há, então, uma abundância de trabalhos relacionados. Os aqui citados estão divididos em duas seções: Trabalhos Acadêmicos e Softwares Comerciais. À primeira cabem as técnicas, os algorítmos, as estruturas de dados e os resultados computacionais e práticos acarretados. À segunda, como foram utilizados esses resultados e quais outras necessidades importantes as escolas têm que não foram mencionadas seção anterior.
 
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%     Trabalhos Acadêmicos   %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsection{Trabalhos Acadêmicos}
 
+			\par Múltiplas abordagens foram desenvolvidos para realizar a criação da grade horária. Entre eles podemos citar:
 
+			\begin{itemize}
+				\item Escalonamento Sequencial
+				\item Constraint Logic Programming
+				\item Local Search Optimization
+				\item Solução por Clusters
+			\end{itemize}
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%    Softwares Comerciais    %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsection{Softwares Comerciais}
+
+			\par Desta miríade, pode-se destacar aSc Timetables \cite{rel_asctimetables}, Horário Fácil \cite{rel_horariofacil}, Urânia \cite{rel_urania} e UniTime \cite{rel_unitime}. Neste capítulo, estes softwares serão apresentados, afim de traçar melhor as necessidades que os softwares da área geralmente têm.
+
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			%%%       aSc Timetables       %%%%
+			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			\subsubsection{ASC TIMETABLES}
+
+				\par Segundo sua própria página, aSc Timetables é um software utilizado por 150.000 escolas. Tanto o programa quanto a \textit{webpage} podem ser utilizadas em 13 línguas diferentes. Isso dá a entender que o software se alinha com as demandas apresentadas por uma gama muito grande de escolas. Para escolas brasileiras, seu preço base é de USD 120.
+
+				\par Algumas das características do software, listadas no próprio site, são:
+
+				\begin{itemize}
+					\item Geração Automática;
+					\item Ajustes manuais;
+					\item Detecção automática de conflitos no horário;
+					\item Entrada simples de dados;
+					\item O horário pode ser acessado por dispositivos móveis;
+					\item Importação de dados;
+				\end{itemize}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%         Cronograma         %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{CRONOGRAMA}
-
-		\lipsum[1]
-
-		\\
 
 		\scalebox{0.7}{
 			\begin{tabular}{| c | c *{10}{ c | c } c|}
 				\hline
-				Nome da Atividade
-				 & \multicolumn{2}{c}{Fev} & \multicolumn{2}{c}{Mar}
+				Nome da Atividade          & \multicolumn{2}{c}{Fev} & \multicolumn{2}{c}{Mar}
 				 & \multicolumn{2}{c}{Abr} & \multicolumn{2}{c}{Mai} & \multicolumn{2}{c}{Jun}
 				 & \multicolumn{2}{c}{Jul} & \multicolumn{2}{c}{Ago} & \multicolumn{2}{c}{Set}
 				 & \multicolumn{2}{c}{Out} & \multicolumn{2}{c}{Nov} & \multicolumn{2}{c|}{Dez} \\
@@ -189,13 +239,14 @@
 				 \hline
 			\end{tabular}
 		}
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		%%%        Referências         %%%%
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\section*{REFERÊNCIAS}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%        Referências         %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\section*{REFERÊNCIAS}
 		\addcontentsline{toc}{section}{REFERÊNCIAS}
 
 		\printbibliography[heading=none]
 
 		\newpage
+
 \end{document}
