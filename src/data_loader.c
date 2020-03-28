@@ -26,7 +26,7 @@ const char * const CREATE_TABLE_DAILY_PERIOD =
 			("CREATE TABLE IF NOT EXISTS DailyPeriod("
 				"id 					integer primary key,"
 				"name					text,"
-				"day_index				integer,"
+				"index					integer,"
 				"school_id				integer,"
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
@@ -39,7 +39,7 @@ const char * const CREATE_TABLE_DAY =
 			("CREATE TABLE IF NOT EXISTS Day("
 				"id 					integer primary key,"
 				"name					text,"
-				"school_index			integer,"
+				"index					integer,"
 				"school_id				integer,"
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
@@ -52,10 +52,10 @@ const char * const CREATE_TABLE_PERIOD =
 			("CREATE TABLE IF NOT EXISTS Period("
 				"id 					integer primary key,"
 				"name					text,"
-				"school_operates_flag   integer," // NEW!!! ADD TO DIAGRAMS
+				"school_operates_flag   integer,"
 				"day_id					integer,"
 				"school_id				integer,"
-				"daily_period_id		integer," // EDITED!! ADD TO DIAGRAMS
+				"daily_period_id		integer,"
 				"FOREIGN KEY (day_id) REFERENCES Day(id),"
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
@@ -92,6 +92,7 @@ const char * const CREATE_TABLE_ROOM_FEATURE =
 				"id						integer primary key,"
 				"id_room				integer,"
 				"id_feature				integer,"
+				"score					integer,"
 				"FOREIGN KEY (id_room) REFERENCES Room(id),"
 				"FOREIGN KEY (id_feature) REFERENCES Feature(id)"
 			")");
@@ -101,17 +102,18 @@ const char * const LASTID_TABLE_ROOM_FEATURE =
 			("SELECT id FROM RoomFeature where rowid = last_insert_rowid()");
 
 const char * const CREATE_TABLE_ROOM_AVALIBILITY =
-("CREATE TABLE IF NOT EXISTS RoomAvalibility("
-"id						integer primary key,"
-"room_id				integer,"
-"period_id				integer,"
-"FOREIGN KEY (room_id) REFERENCES Room(id),"
-"FOREIGN KEY (period_id) REFERENCES Period(id)"
-")");
+			("CREATE TABLE IF NOT EXISTS RoomAvalibility("
+				"id						integer primary key,"
+				"room_id				integer,"
+				"period_id				integer,"
+				"score					integer,"
+				"FOREIGN KEY (room_id) REFERENCES Room(id),"
+				"FOREIGN KEY (period_id) REFERENCES Period(id)"
+			")");
 const char * const INSERT_TABLE_ROOM_AVALIBILITY =
-("INSERT INTO RoomAvalibility values(?,?,?)");
+			("INSERT INTO RoomAvalibility values(?,?,?)");
 const char * const LASTID_TABLE_ROOM_AVALIBILITY =
-("SELECT id FROM RoomAvalibility where rowid = last_insert_rowid()");
+			("SELECT id FROM RoomAvalibility where rowid = last_insert_rowid()");
 
 const char * const CREATE_TABLE_CLASS =
 			("CREATE TABLE IF NOT EXISTS Class("
@@ -119,9 +121,12 @@ const char * const CREATE_TABLE_CLASS =
 				"name 					text,"
 				"short_name 			text,"
 				"size 					integer,"
+				"abstract				integer,"
 				"free_periods_flag 		integer,"
 				"per_max_entrance 		integer,"
-				"per_min_exit 			integer"
+				"per_min_exit 			integer,"
+				"school_id  			integer,"
+				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
 const char * const INSERT_TABLE_CLASS =
 			("INSERT INTO Class VALUES (?,?,?,?,?,?,?)");
@@ -188,7 +193,7 @@ const char * const CREATE_TABLE_TEACHER =
 				"name					text,"
 				"short_name				text,"
 				"max_per_per_day		integer,"
-				"max_per_per_week		integer,"
+				"max_per				integer,"
 				"num_per_planning		integer,"
 				"school_id				integer,"
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
@@ -230,7 +235,6 @@ const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
 				"id						integer primary key,"
 				"id_teacher				integer,"
 				"id_period				integer,"
-				"id_period				integer,"
 				"id_att_type			integer,"
 				"score					integer,"
 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
@@ -257,7 +261,8 @@ const char * const CREATE_TABLE_DEMAND =
 				"id						integer primary key,"
 				"teaches_id				integer,"
 				"feature_id				integer,"
-				"minimum				integer,"
+				"min_score				integer,"
+				"score  				integer,"
 				"FOREIGN KEY (teaches_id) REFERENCES Teaches(id),"
 				"FOREIGN KEY (feature_id) REFERENCES Feature(id)"
 			")");
@@ -266,27 +271,12 @@ const char * const INSERT_TABLE_DEMAND =
 const char * const LASTID_CLASS_DEMAND =
 			("SELECT id FROM Demand where rowid = last_insert_rowid()");
 
-//
-// const char * const CREATE_TABLE_TEACHER_ATTENDANCE_PREFERENCE =
-// 			("CREATE TABLE IF NOT EXISTS TeacherAttendancePreference("
-// 			 	"id 					integer primary key,"
-// 				"id_teacher				integer,"
-// 				"id_period				integer,"
-// 				"value					integer,"
-// 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
-// 				"FOREIGN KEY (id_period)  REFERENCES Period(id)"
-// 			")");
-// const char * const INSERT_TABLE_TEACHER_ATTENDANCE_PREFERENCE =
-// 			("INSERT INTO TeacherAttendancePreference VALUES (?,?,?,?)");
-// const char * const LASTID_CLASS_TEACHER_ATTENDANCE_PREFERENCE =
-// 			("SELECT id FROM TeacherAttendancePreference where rowid = last_insert_rowid()");
-
 const char * const CREATE_TABLE_TEACHES_PERIOD_PREFERENCE =
 			("CREATE TABLE IF NOT EXISTS TeachesPeriodPreference("
 				"id 					integer primary key,"
 				"id_teaches				integer,"
 				"id_period				integer,"
-				"value					integer,"
+				"score					integer,"
 				"FOREIGN KEY (id_teaches) REFERENCES Teaches(id),"
 				"FOREIGN KEY (id_period)  REFERENCES Period(id)"
 			")");
@@ -300,7 +290,7 @@ const char * const CREATE_TABLE_TEACHES_TWIN_PREFERENCE =
 				"id 					integer primary key,"
 				"id_teaches				integer,"
 				"twin_val				integer,"
-				"value					integer,"
+				"score					integer,"
 				"FOREIGN KEY (id_teaches) REFERENCES Teaches(id)"
 			")");
 const char * const INSERT_TABLE_TEACHES_TWIN_PREFERENCE =
@@ -591,8 +581,7 @@ bool init_all_tables(FILE * console_out, char * db_filename){
 			create_table_test(console_out,db,"TeacherAttendance", CREATE_TABLE_TEACHER_ATTENDANCE)?1:
 			create_table_test(console_out,db,"Demand", CREATE_TABLE_DEMAND);
 			create_table_test(console_out,db,"TeachesPeriodPreference", CREATE_TABLE_TEACHES_PERIOD_PREFERENCE)?1:
-			create_table_test(console_out,db,"TeachesTwinPreference", CREATE_TABLE_TEACHES_TWIN_PREFERENCE)?1:
-			create_table_test(console_out,db,"TeacherAttendancePreference", CREATE_TABLE_TEACHER_ATTENDANCE_PREFERENCE);
+			create_table_test(console_out,db,"TeachesTwinPreference", CREATE_TABLE_TEACHES_TWIN_PREFERENCE);
 
 	return iserr;
 }

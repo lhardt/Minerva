@@ -27,6 +27,7 @@ School * test_case_1(){
 	int    perfect_periods[] = {1,1,1,1,1,1, -1};
 
 	char * subject_names[] = {"Math", "Engl", "Germ", "Biol", ""};
+	char *    room_names[] = {"R1", "R2", "R3", NULL};
 
 	school.name = "TestCase1 School";
 	school.n_periods = 6;
@@ -81,7 +82,7 @@ School * test_case_1(){
 				.short_name = teacher_names[i],
 				.periods = perfect_periods,
 				.max_meetings_per_day = 3,
-				.max_meetings_per_week = 6,
+				.max_meetings = 6,
 				.num_planning_periods = 0,
 				.teaches = calloc(2, sizeof(Subject*))
 		};
@@ -94,8 +95,8 @@ School * test_case_1(){
 	for(int i = 0; i < 3; i++){
 		school.rooms[i] = (Room){
 			.id = i,
-			.name = "RoomName",
-			.short_name = "RoomShort",
+			.name = room_names[i],
+			.short_name = room_names[i],
 			.size = 10 + 10*i,
 			.room_features = {1},
 			.disponibility  = {1}
@@ -124,12 +125,17 @@ School * test_case_1(){
 			.name = class_names[i],
 			.short_name = class_names[i],
 			.size = 10 + 10*i,
-			.periods = perfect_periods,
+			// .periods = perfect_periods,
 			.can_have_free_periods_flag = true,
 			.minimal_exit_period = 0,
 			.maximal_entry_period = 3,
 			.needs = class_needs
 		};
+		int j;
+		for(j = 0; perfect_periods[j] >= 0 ; j++){
+			school.classes[i].periods[j] = perfect_periods[j];
+		}
+		school.classes[i].periods[j] = -1;
 	}
 
 	DecisionTree * tree = init_decision_tree(&school);
@@ -140,21 +146,19 @@ School * test_case_1(){
 	}
 	printf("Nmet: %d\n", nmet);
 
-	// for(int i = 0; i < school.n_classes; i++){
-		// int number = count_required_meetings(&school, &school.classes[i], NULL);
-	// 	printf("Class %d:%s Required Meetings %d\n",
-	// 			i, (school.classes[i].name==NULL?("nul"):school.classes[i].name), number);
-	//
-	// 	for(int j = 0; j < 4; j++){
-	// 		int number = count_required_meetings(&school, &school.classes[i], &subjects[j]);
-	// 		printf("Class %d:%s Subject %d %s Required Meetings %d\n",
-	// 				i, (school.classes[i].name==NULL?("nul"):school.classes[i].name),
-	// 				j, subject_names[j], number);
-	//
-	// 	}
-	// }
+	print_meeting_list(stdout, tree->start[0].conclusion);
+
 	elim_analogous_ordering(&school, &tree->start[0]);
-	elim_search_fixed_meeting(&school, &tree->start[0]);
+
+	bool change = true;
+	while(change){
+		change = false;
+		change |= elim_search_fixed_meeting(&school, &tree->start[0]);
+		change |= elim_general_super_room(&school, &tree->start[0]);
+	}
+	printf("\n\n");
+	print_meeting_list(stdout, tree->start[0].conclusion);
+
 
 	return NULL;
 }

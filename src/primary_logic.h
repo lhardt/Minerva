@@ -141,7 +141,19 @@ bool elim_good_room_teacher(DecisionNode * node);
  * Things to consider:
  *  -
  */
-bool elim_max_per_day(DecisionNode * node);
+bool elim_max_per_day(School * school, DecisionNode * node);
 
+/* SUPER ROOM RULE
+ *
+ * Basic Explanation:
+ *   If N classes happen in room R, and the limit is K,
+ *    then any other class that needs more than N-K periods can't
+ *    happen in that room.
+ *
+ * Things to consider:
+ * - "limit" above is not a single quantity. It may be
+ *  max_per_day, max_per_week, etc. in this function, it means school->n_meetings.
+ */
+bool elim_general_super_room(School * school, DecisionNode * node);
 
 #endif /* PRIMARY_LOGIC_H */

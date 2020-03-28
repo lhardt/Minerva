@@ -28,7 +28,7 @@ int count_required_meetings(
 
 /* Meetings are analogous if class == class && subj == subj */
 bool elim_analogous_ordering(School * school, DecisionNode * node){
-	int i_meet = 0, j_meet = 0, impossible = -1;
+	int i_meet = 0, j_meet = 0, elim_asc = -1, elim_desc;
 	bool change = false;
 	/* Reference to shorten indirection */
 	Meeting * meetings = node->conclusion;
@@ -40,12 +40,18 @@ bool elim_analogous_ordering(School * school, DecisionNode * node){
 			   && meetings[i_meet].subj == meetings[j_meet].subj
 		       && meetings[i_meet].period == -1
 		       && meetings[j_meet].period == -1){
-				impossible = find_first_positive(meetings[i_meet].possible_periods);
-				if(meetings[j_meet].possible_periods[impossible] != 0){
-					meetings[j_meet].possible_periods[impossible] = 0;
+
+				elim_asc = find_first_positive(meetings[i_meet].possible_periods);
+				if(meetings[j_meet].possible_periods[elim_asc] > 0){
+					meetings[j_meet].possible_periods[elim_asc] = 0;
 					change = true;
-					printf("Fix analogous %d %d\n", i_meet, j_meet);
 				}
+				elim_desc = find_last_positive(meetings[j_meet].possible_periods);
+				if(meetings[i_meet].possible_periods[elim_desc] > 0){
+					meetings[i_meet].possible_periods[elim_desc] = 0;
+					change = true;
+				}
+				printf("Fix analogous %d %d\n", i_meet, j_meet);
 			}
 		}
 	}
@@ -95,5 +101,43 @@ bool elim_search_fixed_meeting(School * school, DecisionNode * node){
 			printf("Fixed period\n");
 		}
 	}
+	return change;
+}
+
+bool elim_general_super_room(School * school, DecisionNode * node){
+	int i_meet, i_room;
+	bool change = false;
+
+	int * room_remainders = calloc(school->n_rooms + 1, sizeof(int));
+	Meeting * meet;
+
+	for(i_room = 0; i_room < school->n_rooms; i_room++){
+		room_remainders[i_room] = school->n_periods;
+	}
+
+	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
+		meet = &node->conclusion[i_meet];
+		if(meet->room != NULL){
+			printf("Nrom %d\n",  school->n_rooms);
+			printf("Room index %d\n", meet->room - school->rooms);
+			room_remainders[(meet->room - school->rooms)]--;
+		}
+	}
+	room_remainders[school->n_rooms] = -1;
+
+	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
+		meet = &node->conclusion[i_meet];
+		if(meet->room == NULL){
+			for(i_room = 0; i_room < school->n_rooms; i_room++){
+				if( meet->possible_rooms[i_room] >=  room_remainders[i_room]){
+					change = true;
+					printf("Happened!\n");
+					meet->possible_rooms[i_room] = 0;
+				}
+			}
+		}
+	}
+
+	print_int_list(stdout,room_remainders);
 	return change;
 }

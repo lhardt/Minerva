@@ -39,7 +39,7 @@ typedef struct Room {
 	/*this is not a list of fetures. Is rather a score given to all fetures, being 0 absent. */
 	/* Last value must be -1. */
 	int room_features[MAX_FEATURES + 1];
-	int disponibility[MAX_PERIODS_PER_WEEK];
+	int disponibility[MAX_PERIODS_PER_WEEK + 1];
 } Room;
 
 typedef struct Subject {
@@ -47,17 +47,9 @@ typedef struct Subject {
 	char * name;
 	char * short_name;
 
-	int * gemini_score;
-	int * week_position_score;
+	int * gemini_score;  	   // TODO is it necessary? Not present in diagram
+	int * week_position_score; // TODO is it necessary? Not present in diagram
 } Subject;
-
-typedef struct SubjectGroup {
-	int    id;
-	char * name;
-	char * short_name;
-
-	Subject * subjects;
-} SubjectGroup;
 
 typedef struct Teaches Teaches;
 typedef struct Teacher Teacher;
@@ -68,10 +60,9 @@ struct Teacher{
 
 	int    		  * periods;
 	int    			max_meetings_per_day;
-	int    			max_meetings_per_week;
+	int    			max_meetings;
 	int    			num_planning_periods;
 	// bool   			one_day_planning_periods; DEFAULT TO YES.
-	int	   			preferred_planning_periods;
 
 	Teaches      ** teaches;
 	ClassQuantity * possible_classes;
@@ -87,6 +78,7 @@ struct Teaches{
 	Teacher * teacher;
 	Subject * subject;
 	int  score;
+	int  features[MAX_FEATURES + 1];
 	int  min_features[MAX_FEATURES + 1];
 };
 
@@ -97,11 +89,17 @@ struct Class{
 	char 		  * short_name;
 
 	int 			size;
-
-	int 		  * periods;
+	/* Not a list, but a list of scores */
+	int 		    periods[MAX_PERIODS_PER_WEEK+1];
 	bool 			can_have_free_periods_flag;
 	int 			minimal_exit_period;
 	int 			maximal_entry_period;
+	/* If the class is abstract, the features are inherited,
+	 *  but the classes dont need to be together. For preprocessing.
+	 * Before the nucleus is ran, this should already have been substituted
+	 *  in the subordinate classes. 
+	 */
+	bool abstract;
 
 	Class       * * subordinates;
 
