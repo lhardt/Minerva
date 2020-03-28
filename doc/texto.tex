@@ -13,6 +13,7 @@
 \usepackage{amsfonts} % blackletter
 \usepackage{graphicx} % resizebox
 \usepackage{svg} % Grafos
+\usepackage{enumitem} % HC01, HC02...
 % citestyle authoryear para citações anbt
 \usepackage[backend=biber,sorting=nty, style=abnt, citestyle=abnt-numeric]{biblatex}
 
@@ -57,7 +58,9 @@
 \titleformat{\section}
   {\normalfont\scshape\bfseries}{\thesection}{1em}{}
 \titleformat{\subsection}
-	{\normalfont\scshape}{\thesubsection}{1em}{}
+	{\normalfont\scshape\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+	{\normalfont\scshape}{\thesubsubsection}{1em}{}
 
 \newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
 
@@ -269,34 +272,29 @@
 		\par Elaborar um cronograma é uma tarefa extraordinária. Mesmo nos casos mais simples, como nos cronogramas pessoais, há um grande número de possiblidades, restrições e preferências do usuário. Assim, a dificuldade de produzir um cronograma eficaz aumenta rapidamente conforme seu tamanho.
 
 		% Assim, a qualidade do cronograma depende não só das restrições seguidas, mas também do grau de satisfação dessas preferências.
-		\par Mesmo assim, eles são de vital importância para a rotina de indivíduos, escolas, indústrias, aeroportos, hospitais e eventos esportivos. Instituições de ensino, em particular, têm custos enormes com a elaboração de suas grades horárias: estima-se que elaborá-las manualmente pode demandar centenas de horas \cite{appleby} de um profissional. No entanto, esse processo é rotineiro, já que a cada mudança na docência, um novo cronograma pode ser necessário.
+		\par Mesmo assim, eles são de vital importância para a rotina de indivíduos, escolas, indústrias, aeroportos, hospitais e eventos esportivos. Instituições de ensino, em particular, têm custos enormes com a elaboração de suas grades horárias: elaborá-las manualmente pode demandar dias, ou até semanas \cite{appleby,nikita} de um profissional. No entanto, esse processo é rotineiro, já que a cada mudança na docência, um novo cronograma pode ser necessário.
 
 		\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que esta faça um professor frequentar a escola desnecessariamente, ou que uma aula geminada é dividida ao meio pelo intervalo e seu rendimento, reduzido. Ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo.
 
 		\par Processos de verificação extensiva para esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
 
-		% \par Até mesmo em instituições que o criam manualmente, um sistema computadorizado ainda pode filtrar possibilidades e auxiliar na visualização. Em outras, uma geração automatizada pode ser preferível. Em todo caso, pode-se tirar proveito de computadores.
-
 		\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas tripas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita, carter1995}.
 
 		\par Por ser mais escasso e mais difícil de criar, o preço de um software comercial que atenda às especificadades de uma escola é elevado. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando pela criação manual e aceitando a ineficácia que isso pode causar. Mesmo nas escolas com tal capital, se possível, seria ideal invesí-lo na manutenção de infraestrutura, da docência, da merenda, e melhorar assim, a qualidade de ensino.
 
-
-
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%      Solução Proposta      %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\subsection{SOLUÇÃO PROPOSTA}
+		\subsection{Solução Proposta}
 
 			 \par A partir das considerações acima, constata-se a ausência de um software público \cite{publico} que supra as necessidades das escolas brasileiras e que seja de fácil utilização por professores de fora da área de informática. Tal software, então, deveria poderia ser implementado e utilizado em computadores da rede pública de ensino -- ou seja, compatível com os sistemas operacionais Windows, Ubuntu e Linux Educacional \cite{proinfo, w3s}.
 
 			 \par Em tal software, o professor responsável pela criação do horário escolar insere as necessidades programáticas de aula, as demandas subjetivas dos professores e os horários disponíveis para esses encontros. O sistema então, em constante interação com o usuário, cria o horário escolar.  Desta forma, são reduzidos custos em tempo e em dinheiro da escola que se propõe a utilizar o sistema.
 
-
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%      Objetivos Gerais      %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\subsection{OBJETIVOS GERAIS}
+		\subsection{Objetivos Gerais}
 
 			\par Implementar um software público para a facilitação da criação e manutenção de cronograma escolar.
 
@@ -304,7 +302,7 @@
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%   Objetivos Específicos    %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\subsection{OBJETIVOS ESPECIFICOS}
+		\subsection{Objetivos Específicos}
 
 			\begin{itemize}
 				\item Analisar a literatura existente em relação a softwares de escalonamento e \textit{timetabling};
@@ -348,16 +346,54 @@
 			\item DSatur;
 		\end{itemize}
 
-		\subsection{DESCRIÇÃO FORMAL DAS RESTRIÇÕES DO CRONOGRAMA}
+		\subsection{Descrição Formal do Cronograma}
 
-			Os requisitos aqui mencionados são divididos em três categorias: rígidas, quando o requisito deve ser seguido por qualquer cronograma; flexíveis, que não invalidam a solução final se quebradas; e opcional, quando o usuário opta se o cronograma deve segui-lo ou não. As restrições opcionais podem ser tanto rígidas quanto flexíveis
+			\par Os requisitos aqui mencionados são divididos em três categorias: rígidas, quando o requisito deve ser seguido por qualquer cronograma; flexíveis, que não invalidam a solução final se quebradas; e opcional, quando o usuário opta se o cronograma deve segui-lo ou não. Os requisitos opcionais podem ser tanto rígidas quanto flexíveis. Cada um desses requisitos, na implementação, será utilizado para eliminar possiblidades no cronograma.
 
-			\begin{itemize}
-				\item s
-			\end{itemize}
+			\textbf{Pressuposições (ASs):}
+			\begin{enumerate}
+				\item O cronograma abrange um Ciclo, que é dividido em Dias e Períodos;
+				\item Há um número fixo de dias em um ciclo;
+				\item Há um número fixo de períodos em um dia, que é o mesmo para qualquer outro dia;
+				\item Todos os períodos tem igual tamanho;
+				\item O currículo de uma turma para cada disciplina é um número exato de períodos por ciclo;
+			\end{enumerate}
+
+			\textbf{Requisitos Rígidos (HCs):}
+			\begin{enumerate}
+				\item Nenhum professor pode ministrar duas aulas em um único período;
+				\item Nenhuma turma pode assistir a duas aulas em um único período;
+				\item O número de períodos utilizados para uma disciplina por uma turma em um ciclo deve ser o especificado no currículo escolar;
+				\item Um único grupo de professores é responsável por ministrar todas as aulas de uma disciplina de uma turma, e deve se fazer presente em todas essas aulas;
+				\item Uma sala pode ser ocupada, no máximo, por uma aula em qualquer dado período;
+				\item Nenhuma sala será ocupada acima de sua capacidade;
+				\item Nenhuma aula será dada em uma sala que não tenha as características necessárias;
+				\item Uma aula só será ministrada por um professor (ou grupo de professores) que está capacitado para tal.
+			\end{enumerate}
 			\lipsum[1]
 
-		\subsection{SOLUÇÕES CORRENTEMENTE UTILIZADOS}
+			\textbf{Requisitos Flexíveies (OCs):}
+			\begin{enumerate}
+				\item As preferências de aula de cada turma, considerando o período em que a aula é dada;
+				\item As preferências de aula de cada professor, considerando o período em que a aula é dada;
+				\item Algumas disciplinas têm preferência quanto ao número de aulas geminadas;
+				\item Podem ser definidas ordens de preferência por cada professor para o uso de salas para cada característica;
+			\end{enumerate}
+
+			\textbf{Requisitos Opcionais Rígidos (HOCs):}
+			\begin{enumerate}
+				\item O professor deverá ou não ter um conjunto de períodos para a elaboração de suas aulas;
+				\item Algumas aulas poderão ser previamente fixadas em alguns horários;
+				\item Algumas professores poderão ser previamente fixados para ministrar aulas de algumas turmas;
+				\item Algumas salas poderão ser previamente fixadas para abrigar algumas aulas;
+				\item Algumas turmas podem ter um número máximo de aulas por dia por grupos de disciplina;
+				\item Alguns professores podem ter um número máximo de aulas por dia por grupos de turmas;
+				\item Pode haver, para cada turma, um horário fixo de entrada e de saída da instituição;
+				\item Pode haver, para cada turma, a possibilidade de períodos vagos entre aulas;
+				\item Uma sala pode ter disponibilidade limitada durante a um ciclo;
+			\end{enumerate}
+
+		\subsection{Soluções Correntemente Utilizadas}
 
 			\lipsum[1]
 
@@ -366,7 +402,6 @@
 		%
 		% 	\lipsum[1]
 
-			\lipsum[1]
 	\newpage
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -374,65 +409,46 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{TRABALHOS RELACIONADOS}
 
-		\par Para simplificar a comparação com softwares similares, fica estabelecida a métrica de $50$ turmas com as quais o sistema deve lidar. Esse número fica muito acima da média de turmas por escola de cidades como Porto Alegre, Canoas e Cachoeirinha, por exemplo \cite{inep}. Fica viável, então, comparar preços de softwares comerciais, dado que estes geralmente cobram por licenças (usualmente de doze meses) baseado no número de turmas.
+		\par A criação de grades horárias é um campo em desenvolvimento \cite{patat2020}. Há mais de 50 anos são pesquisadas formas de criação de cronogramas escolares com auxílio computacional \cite{appleby}. Há, então, uma abundância de trabalhos relacionados. Os aqui citados estão divididos em duas seções: Trabalhos Acadêmicos e Softwares Comerciais. À primeira cabem as técnicas, os algoritmos, as estruturas de dados e os resultados computacionais e práticos acarretados. À segunda, como são, na prática, esses resultados e quais outras necessidades importantes as escolas têm que não foram mencionadas seção anterior.
+
+		\par Para simplificar a comparação com softwares similares, fica estabelecida a métrica de $50$ turmas com as quais o sistema deve lidar. Esse número fica muito acima da média de turmas por escola de cidades como Porto Alegre, Canoas e Cachoeirinha, por exemplo \cite{inep}. Fica viável, então, comparar preços de softwares comerciais, dado que estes geralmente cobram baseado no número de turmas.
+
 
 		\scalebox{0.7}{
-			\begin{tabular}{| c | c | c | c | c |}
+			\begin{tabular}{| l | c | c | c | c | c | c | c | c | }
 				\hline
-				Nome & Linguagens & Preço & Ativo &\\
+				Nome & Português & Gratuito & Livre & Ativo & Local & Online & Ref   \\
 				\hline\hline
-				UniTime &   &    &   &  \\
-				\hline
-				Urânia &   &   &   &  \\
-				\hline
-				Horário Fácil & & & & \\
-				\hline
-				GridClass http://gridclass.com.br/ \\
-				\hline
-				Benchmark Timetable &   &    &   &  \\
-				\hline
-				ASC Timetables &   &    &   &  \\
-				\hline
-				http://supertimetable.com/ &   &    &   &  \\
-				\hline
-				Untis &   &    &   &  \\
-				\hline
-				http://www.skool-master.com/ &   &    &   &  \\
-				\hline
-				https://lantiv.com/ &   &    &   &  \\
-				\hline
-				https://www.timetabler.com/ &   &    &   &  \\
-				\hline
-				Sims Nova T6 &   &    &   &  \\
-				\hline
-				Facility Scheduler &   &    &   &  \\
-				\hline
-				http://school-timetable.co.uk/ &   &    &   &  \\
-				\hline
-				https://www.parishsoft.com/parish/facility-scheduler/ para igrejas &   &    &   &  \\
-				\hline
-				https://web.archive.org/web/20190911010453/http://www.itimetable.org/ &   &    &   &  \\
-				\hline
-				https://www.timetableweb.com/index.php?lang=pt &   &    &   &  \\
-				\hline
-				http://www.makeyourtimetable.com/ &   &    &   &  \\
-				\hline
-				http://www.schoolsoftwares.com/timetable\_software\_overview.html &   &    &   &  \\
-				\hline
-				https://skoolmanager.com/ &   &    &   &  \\
-				\hline
-				http://timefinder.sourceforge.net/index.html \\
-				\hline
-				https://lalescu.ro/liviu/fet/ \\
-				\hline
-			\end{tabular}\\
+				%%%%%%%%%%%%%%%%%%  POR GRA LIV ATI LOC ONL REF
+				UniTime  			& N & S & S & S & S & N & \cite{rel_unitime}  \\ \hline
+				Urânia 		   	 	& S & N & N & S & S & N & \cite{rel_urania} \\ \hline
+				Horário Fácil 	  	& S & N & N & S & N & S & \cite{rel_horariofacil} \\ \hline
+				GridClass 	    	& S & N & N & S & N & S & \cite{rel_gridclass} \\ \hline
+				Benchmark Timetable & N & N & N & ? & S & N & \cite{rel_benchmark,rel_supertimetable} \\ \hline
+				ASC Timetables 		& S & N & N & S & S & ? & \cite{rel_asctimetables}\\ \hline
+				Untis 	 			& N & N & N & S & S & ? & \cite{rel_untis} \\ \hline
+				Lantiv 				& N & N & N & S & * & * & \cite{rel_lantiv} \\ \hline
+				Timetabler          & N & N & N & S & S & N & \cite{rel_timetabler} \\ \hline
+				Nova T6             & ? & ? & N & ? & N & ? & \cite{rel_novat6}\\ \hline
+				iTimetable          & N & N & N & N & N & **& \cite{rel_itimetable}  \\ \hline
+				Timetable Web 	    & S & N & N & ? & N & S & \cite{rel_timetableweb} \\ \hline
+				Make Your Timetable & ? & Y & N & ? & N & S & \cite{rel_makeyourtimetable} \\ \hline
+				School Softwares    & N & N & N & S & S & N & \cite{rel_schoolsoftwares} \\ \hline
+				TimeFinder          & N & S & S & N & S & N & \cite{rel_timefinder}\\ \hline
+				FET 				& N & S & S & S & S & N & \cite{rel_fet}\\  \hline
+				Peñalara GHC		& S & S & N & S & S & N & \cite{rel_penalara}\\ \hline
+				CMIS	  			& N & N & N & ? & N & S & \cite{rel_penalara}\\ \hline
+			\end{tabular}
 		}
+
+		* - O programa é local, mas os dados ficam na nuvem.
+		** - A grade horária é encomendada.
 		\\
 
-		Há muito desenvolvimento na área. Em particular, são notórias as fontes de arigos:
+		Há muito desenvolvimento na área. Em particular, são notórias as fontes:
 
 		\begin{itemize}
-			\item PATAT Conference;
+			\item Conferência PATAT -- Practice and Theory of Automated Timetabling ;
 			\item ITC -- International Timetabling Competition;
 			\item SBPO -- Simpósio Brasileiro de Pesquisa Operacional;
 		\end{itemize}
@@ -447,7 +463,7 @@
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%    Tecnologias Adotadas    %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\subsection{TECNOLOGIAS ADOTADAS}
+		\subsection{Tecnologias Adotadas}
 
 		\par Pelo relativo baixo nível e pela eficiência que ainda retém boas abstrações, foram escolhidas as linguagens C e C++ para o desenvolvimento do projeto. Foi escrito em C o código que faz o cronograma. A multiplicidade de línguas se dá por que os compiladores podem realizar otimizações mais agressivas na linguagem C, mas é em C++ que geralmente encontra-se bibliotecas e frameworks de interface do usuário.
 
@@ -458,14 +474,18 @@
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%    Ferramentas Adotadas    %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\subsection{FERRAMENTAS ADOTADAS}
+		\subsection{Ferramentas Adotadas}
 
 			\par As principais ferramentas adotas foram: brModelo e astah na modelagem; gcc na compilação em sistemas GNU/Linux; mingw na compilação em Windows; valgrind no debbuging; Atom na edição de texto; e \LaTeX \, na escrita do texto.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%    Modelagem do Sistema    %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\subsection{MODELAGEM DO SISTEMA}
+		\subsection{Modelagem do Sistema}
+
+			A solução proposta pode ser dita como \textit{exaustiva}, no sentido de que dados tempo e memória suficientes, pode-se encontrar a melhor solução
+
+			É utilizada a estrutura CART (para a criação
 
 			\lipsum[1]
 
@@ -473,21 +493,21 @@
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			%%%        Casos de Uso        %%%%
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			\subsubsection{CASOS DE USO}
+			\subsubsection{Casos de Uso}
 
 				\lipsum[1]
 
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			%%%       Banco de Dados       %%%%
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			\subsubsection{BANCO DE DADOS}
+			\subsubsection{Banco de Dados}
 
 				\lipsum[1]
 
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			%%%          Algoritmos        %%%%
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			\subsubsection{ALGORITMOS}
+			\subsubsection{Algoritmos}
 
 				\textbf{Orientações Gerais}
 
@@ -504,19 +524,19 @@
 
 		\lipsum[1]
 
-		\subsection{PERFORMANCE}
+		\subsection{Performance}
 
 			\lipsum[1]
 
-		\subsection{COMPATIBILIDADE}
+		\subsection{Compatibilidade}
 
 			\lipsum[1]
 
-		\subsection{ACESSIBILIDADE}
+		\subsection{Acessibilidade}
 
 			\lipsum[1]
 
-		\subsection{USABILIDADE}
+		\subsection{Usabilidade}
 
 			\lipsum[1]
 
@@ -528,7 +548,7 @@
 
 	\lipsum[1]
 
-		\subsection{TRABALHOS FUTUROS}
+		\subsection{Trabalhos Futuros}
 
 			\lipsum[1]
 
