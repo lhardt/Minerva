@@ -97,7 +97,7 @@ struct Class{
 	/* If the class is abstract, the features are inherited,
 	 *  but the classes dont need to be together. For preprocessing.
 	 * Before the nucleus is ran, this should already have been substituted
-	 *  in the subordinate classes. 
+	 *  in the subordinate classes.
 	 */
 	bool abstract;
 

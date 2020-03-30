@@ -21,7 +21,7 @@ int * make_possible_teacher_list(School * school, Meeting * meeting){
 
 	for(i_teacher = 0; i_teacher < school->n_teachers; i_teacher++){
 		teacher = &(school->teachers[i_teacher]);
-		for(i_teaches = 0; teacher->teaches[i_teaches] == NULL; i_teaches++){
+		for(i_teaches = 0; teacher->teaches[i_teaches] != NULL; i_teaches++){
 			if(teacher->teaches[i_teaches]->subject == meeting->subj){
 				scores[i_teacher] = teacher->teaches[i_teaches]->score;
 			} else {

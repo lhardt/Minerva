@@ -105,6 +105,7 @@ void order_by_rank(int * list, int * rank);
 
 void order_by_rank_not_null(int * list, int * rank);
 
-
+/* Number of indexes where list_a[i] > 0 and list[b] > 0 */
+int intersec_size(int * list_a, int * list_b);
 
 #endif /* COMBINATORICS_H */

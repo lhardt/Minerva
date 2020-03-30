@@ -356,3 +356,17 @@ void order_by_rank_not_null(int * list, int * rank){
 	free(used);
 	list[n] = -1;
 }
+
+int intersec_size(int * list_a, int * list_b){
+	int n = 0, i;
+	if(list_a == NULL || list_b == NULL){
+		printf("intersecsz called with null parameter\n");
+		return 0;
+	}
+	for( i = 0; list_a[i] >= 0 && list_b[i] >= 0;i++){
+		if(list_a[i] > 0 && list_b[i] > 0){
+			n++;
+		}
+	}
+	return n;
+}

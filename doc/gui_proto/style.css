@@ -207,4 +207,63 @@ footer{
 	display: block;
 }
 
-#window2 button:
+/*******************************************************/
+
+
+#window3 .left_panel {
+	height: 553;
+	width:300px;
+	float:left;
+	background: #2980b9;
+	padding: 30px;
+	color: white;
+}
+
+#window3 .right_panel {
+	background: red;
+	padding: 5px;
+	padding-top: 10%;
+	height: 553;
+	width:490px;
+	float:right;
+	background: white;
+	color: black;
+}
+
+#window3 .left_panel p{
+	margin: 0;
+	padding-left: 50px;
+}
+
+.vert-menu{
+	margin: 0;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	list-style-type: none;
+	padding-left: 0;
+	margin-left: 45px;
+}
+
+.vert-menu li {
+	background: #20679c;
+	border-top: 1px solid white;
+	padding: 5px;
+	padding-left: 10px;
+	cursor: pointer;
+}
+
+.vert-menu li:hover{
+	background: white;
+	color: black;
+}
+
+.vert-menu li:first-child{
+	border-top: 0;
+	border-top-left-radius: 5px;
+	border-top-right-radius:5px;
+}
+
+.vert-menu li:last-child{
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius:5px;
+}

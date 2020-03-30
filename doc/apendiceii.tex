@@ -178,18 +178,19 @@
 			\par Múltiplas abordagens foram desenvolvidos para realizar a criação da grade horária. Entre eles podemos citar:
 
 			\begin{itemize}
-				\item Escalonamento Sequencial: nesta abordagem, às aulas são atribuídos períodos sequencialmente. O problema, então, comporta-se de forma semelhante ao problema da coloração de grafos.
+				\item \textit{Constraint Logic Programming} (CLP): o problema é conceituado como uma lista de variáveis, com domínios e restrições. \cite{badoni} De modo geral, pode-se dizer que algorítmos tanto de busca de soluções quanto de propagação de restrições são utilizados \cite{citar_alguém}.
 				\item Solução por \textit{Clusters}: o grupo total de aulas é dividido em \textit{clusters}, conflitantes entre si (não podem acontecer no mesmo período), mas que não são conflitantes internamente. O programa tenta, então, assinalar um período para cada cluster. Este tipo de solução é criticado pois a fixação de grupos acontece muito cedo e dificulta a otimização dos grupos. \cite{muller}
-				\item Constraint Logic Programming:
-				\item Soluções Meta-Heurísticas: neste tipo de solução, inicia-se com um horário gerado aleatoriamente e busca-se a otimização de uma função objetivo, por meio de estratégias de busca. Estão incluídos aqui Tabu Search e Simulated Annealing.
+				\item Soluções Meta-Heurísticas: neste tipo de solução, inicia-se com um horário gerado aleatoriamente e busca-se a otimização de uma função objetivo, por meio de estratégias de busca. Estão incluídos aqui Tabu Search, Simulated Annealing e as soluções genéticas.
 			\end{itemize}
+
+			\par O algorítmo aqui implentado é baseado em CLP, focado em \textit{Forward Checking} (FC) e otimização de uma função objetivo (dada pela soma).
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%    Softwares Comerciais    %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{Softwares Comerciais}
 
-			\par Desta miríade, pode-se destacar aSc Timetables \cite{rel_asctimetables}, Horário Fácil \cite{rel_horariofacil}, Urânia \cite{rel_urania} e UniTime \cite{rel_unitime}. Neste capítulo, estes softwares serão apresentados, afim de traçar melhor as necessidades que os softwares da área geralmente têm. https://help.asctimetables.com/text.php?id=592&lang=pt
+			\par Desta miríade, pode-se destacar aSc Timetables \cite{rel_asctimetables}, Horário Fácil \cite{rel_horariofacil}, Urânia \cite{rel_urania} e UniTime \cite{rel_unitime}. Neste capítulo, estes softwares serão apresentados, afim de traçar melhor as necessidades que os softwares da área geralmente têm. https://help.asctimetables.com/text.php?id=592\&lang=pt
 
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			%%%       aSc Timetables       %%%%
@@ -218,7 +219,7 @@
 					Nova T6             & ? & ? & N & ? & N & ? & \cite{rel_novat6}\\ \hline
 					iTimetable          & N & N & N & N & N & **& \cite{rel_itimetable}  \\ \hline
 					Timetable Web 	    & S & N & N & ? & N & S & \cite{rel_timetableweb} \\ \hline
-					Make Your Timetable & ? & Y & N & ? & N & S & \cite{rel_makeyourtimetable} \\ \hline
+					Make Your Timetable & ? & S & N & ? & N & S & \cite{rel_makeyourtimetable} \\ \hline
 					School Softwares    & N & N & N & S & S & N & \cite{rel_schoolsoftwares} \\ \hline
 					TimeFinder          & N & S & S & N & S & N & \cite{rel_timefinder}\\ \hline
 					FET 				& N & S & S & S & S & N & \cite{rel_fet}\\  \hline
@@ -226,8 +227,8 @@
 					CMIS	  			& N & N & N & ? & N & S & \cite{rel_cmis}\\ \hline
 				\end{tabular}
 			}
-
-			* - O programa é local, mas os dados ficam na nuvem.
+			\\
+			* - O programa é local, mas os dados ficam na nuvem.\\
 			** - A grade horária é encomendada.
 
 

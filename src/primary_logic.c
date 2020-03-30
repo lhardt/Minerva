@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 
+#include "util.h"
 #include "combinatorics.h"
 #include "primary_logic.h"
 
@@ -51,7 +52,6 @@ bool elim_analogous_ordering(School * school, DecisionNode * node){
 					meetings[i_meet].possible_periods[elim_desc] = 0;
 					change = true;
 				}
-				printf("Fix analogous %d %d\n", i_meet, j_meet);
 			}
 		}
 	}
@@ -75,7 +75,7 @@ bool elim_analogous_ordering(School * school, DecisionNode * node){
 // }
 
 bool elim_search_fixed_meeting(School * school, DecisionNode * node){
-	int i_meet = 0;
+	int i_meet = 0, found = 0;
 	bool change = false;
 	/* Reference to shorten indirection. */
 	Meeting * meeting;
@@ -84,21 +84,19 @@ bool elim_search_fixed_meeting(School * school, DecisionNode * node){
 		/* Check for fixed teachers */
 		if(meeting->teacher == NULL && 1 == not_null_int_list_len(meeting->possible_teachers)){
 			meeting->teacher = &school->teachers[find_first_positive(meeting->possible_teachers)];
-			printf("Fixed teacher\n");
 			change = true;
 		}
 		/* Check for fixed rooms */
 		if(meeting->room == NULL && 1 == not_null_int_list_len(meeting->possible_rooms)){
-			meeting->room = &school->rooms[find_first_positive(meeting->possible_rooms)];
-			printf("Fixed room %d on meeting %d \n", find_first_positive(meeting->possible_rooms), i_meet);
+			found = find_first_positive(meeting->possible_rooms);
+			meeting->room = &school->rooms[found];
 			change = true;
 		}
 		/* Check for fixed periods */
 		if(meeting->period == -1 && 1 == not_null_int_list_len(meeting->possible_periods)){
-			meeting->period = find_first_positive(meeting->possible_periods);
+			found = find_first_positive(meeting->possible_periods);
+			meeting->period = found;
 			change = true;
-
-			printf("Fixed period\n");
 		}
 	}
 	return change;
@@ -111,15 +109,16 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 	int * room_remainders = calloc(school->n_rooms + 1, sizeof(int));
 	Meeting * meet;
 
+	int period_remainders[MAX_PERIODS_PER_WEEK + 1] = {0};
+
 	for(i_room = 0; i_room < school->n_rooms; i_room++){
 		room_remainders[i_room] = school->n_periods;
 	}
 
 	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
+		// for()
 		meet = &node->conclusion[i_meet];
 		if(meet->room != NULL){
-			printf("Nrom %d\n",  school->n_rooms);
-			printf("Room index %d\n", meet->room - school->rooms);
 			room_remainders[(meet->room - school->rooms)]--;
 		}
 	}
@@ -131,13 +130,10 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 			for(i_room = 0; i_room < school->n_rooms; i_room++){
 				if( meet->possible_rooms[i_room] >=  room_remainders[i_room]){
 					change = true;
-					printf("Happened!\n");
 					meet->possible_rooms[i_room] = 0;
 				}
 			}
 		}
 	}
-
-	print_int_list(stdout,room_remainders);
 	return change;
 }

@@ -156,4 +156,6 @@ bool elim_max_per_day(School * school, DecisionNode * node);
  */
 bool elim_general_super_room(School * school, DecisionNode * node);
 
+bool elim_super_room_daily(School * school, DecisionNode * node, int day);
+
 #endif /* PRIMARY_LOGIC_H */

@@ -65,6 +65,7 @@ School * test_case_1(){
 			.id=i,
 			.teacher = &school.teachers[i],
 			.subject = &subjects[i],
+			.score=1,
 			.min_features = {1}
 		};
 	}
@@ -101,6 +102,7 @@ School * test_case_1(){
 			.room_features = {1},
 			.disponibility  = {1}
 		};
+		school.rooms[i].disponibility[school.n_periods] = -1;
 	}
 	school.rooms[3] = (Room){
 		.id = -1,
@@ -202,8 +204,6 @@ void test_insert_school(){
 }
 
 int main(){
-	// printf("Hello, world.\n");
 	test_case_1();
-
 	return 0;
 }

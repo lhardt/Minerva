@@ -176,6 +176,7 @@ const char * const LASTID_TABLE_SUBJECT =
 const char * const CREATE_TABLE_CLASS_SUBJECT =
 			("CREATE TABLE IF NOT EXISTS ClassSubject("
 				"id 					integer primary key,"
+				"max_per_per_day		integer,"
 				"class_id				integer,"
 				"subject_id				integer,"
 				"amount					integer,"
@@ -193,6 +194,7 @@ const char * const CREATE_TABLE_TEACHER =
 				"name					text,"
 				"short_name				text,"
 				"max_per_per_day		integer,"
+				"max_per_class_per_day	integer,"
 				"max_per				integer,"
 				"num_per_planning		integer,"
 				"school_id				integer,"
@@ -340,43 +342,9 @@ int get_id_callback(void* id_field_ptr,int no_columns,char** text_columns,char**
 
 }
 
-// bool insert_room(FILE * console_out, sqlite3* db, School * school) {
-//
-// 	sqlite3_stmt * stmt;
-// 	int i;
-// 	int errc;
-//
-// 	sqlite3_prepare(db, INSERT_TABLE_FEATURE, -1, &stmt, NULL);
-// 	for(i = 0; i < school->n_features; i++){
-// 		sqlite3_bind_text(stmt,2, school->feature_names[i], -1, SQLITE_TRANSIENT);
-// 		sqlite3_bind_text(stmt,3, school->feature_names[i], -1, SQLITE_TRANSIENT);
-// 		sqlite3_bind_text(stmt,4, school->feature_names[i], -1, SQLITE_TRANSIENT);
-// 		sqlite3_bind_text(stmt,5, school->feature_names[i], -1, SQLITE_TRANSIENT);
-//
-// 		errc = sqlite3_step(stmt);
-// 		errc |= sqlite3_exec(db, LASTID_TABLE_FEATURE, get_id_callback, &(school->feature_ids[i]), NULL);
-//
-// 		if(errc != SQLITE_DONE){
-// 			if(console_out){
-// 				fprintf(console_out, "Errc %d %s\n", errc, sqlite3_errmsg(db));
-// 			}
-// 			return false;
-// 		}
-//
-// 		sqlite3_reset(stmt);
-// 	}
-// 	sqlite3_finalize(stmt);
-// 	return true;
-// 		// "id 					integer primary key,"
-// 		// "name 					text,"
-// 		// "short_name 			text,"
-// 		// "school_id 				integer,"
-// }
-
 /**
  * Inserts in the database all features in a school
  */
-
 bool insert_feature(FILE * console_out, sqlite3* db, School * school){
 	sqlite3_stmt * stmt;
 	int i;
