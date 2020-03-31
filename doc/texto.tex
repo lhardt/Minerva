@@ -185,7 +185,7 @@
 	\thispagestyle{empty}
 	\section*{ZUSAMMENFASSUNG}
 
-	In der vorliegenden Arbeit, ist das Stundenplanungsproblem untergesucht. Schulnotwendigkeiten und Vorlieben, sowie Mängel der aktuellen Systeme sind aufgelistet. Verherige Lösungen, rechnerisch oder nicht, sind betracht.
+	In der vorliegenden Arbeit, ist das Stundenplanungsproblem untergesucht. Schulnotwendigkeiten und Vorlieben, sowie Mängel der aktuellen Systeme sind aufgelistet. Vorherige Lösungen, rechnerisch oder nicht, sind betrachtet.
 
 	\lipsum[1]
 
@@ -280,7 +280,7 @@
 
 		\par Processos de verificação extensiva para esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
 
-		\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas tripas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita, carter1995}.
+		\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas triplas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita, carter1995}.
 
 		\par Por ser mais escasso e mais difícil de criar, o preço de um software comercial que atenda às especificadades de uma escola é elevado. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando pela criação manual e aceitando a ineficácia que isso pode causar. Mesmo nas escolas com tal capital, se possível, seria ideal invesí-lo na manutenção de infraestrutura, da docência, da merenda, e melhorar assim, a qualidade de ensino.
 
@@ -308,7 +308,7 @@
 
 			\begin{itemize}
 				\item Analisar a literatura existente em relação a softwares de escalonamento e \textit{timetabling};
-				\item Analistar a literatura existente em relação à criação de boas interfaces do usuário;
+				\item Analisar a literatura existente em relação à criação de boas interfaces do usuário;
 				\item Realizar um levantamento de softwares da área, estabelecendo métricas de comparação tendo em vista a experiência do usuário final;
 				\item Definir os requisitos de uma grade horária de forma abrangente e precisa;
 				\item Definir os requisitos de um sistema que gere tais grades horárias;
@@ -330,7 +330,7 @@
 		\par A criação de grades horárias é um campo em desenvolvimento \cite{patat2020}. Há mais de 50 anos são pesquisadas formas de criação de cronogramas escolares com auxílio computacional \cite{appleby}. Há, então, uma abundância de trabalhos relacionados. Citamos aqui três abordagens gerais tomadas para a criação do cronograma:
 
 		\begin{itemize}
-			\item \textit{Constraint Logic Programming} (CLP): o problema é conceituado como uma lista de variáveis, com domínios e restrições. \cite{badoni} De modo geral, pode-se dizer que algorítmos tanto de busca de soluções quanto de propagação de restrições são utilizados \cite{citar_alguém}.
+			\item \textit{Constraint Logic Programming} (CLP): o problema é conceituado como uma lista de variáveis, com domínios e restrições. \cite{badoni} De modo geral, pode-se dizer que algorítmos tanto de busca de soluções quanto de propagação de restrições são utilizados para encontrar valores para todas as váriáveis, de forma a satisfazer todas as restrições \cite{citar_alguém}.
 			\item Solução por \textit{Clusters}: o grupo total de aulas é dividido em \textit{clusters}, conflitantes entre si (não podem acontecer no mesmo período), mas que não são conflitantes internamente. O programa tenta, então, assinalar um período para cada cluster. Este tipo de solução é criticado pois a fixação de grupos acontece muito cedo e dificulta a otimização dentro dos grupos. \cite{muller}
 			\item Soluções Meta-Heurísticas: neste tipo de solução, inicia-se com um horário gerado aleatoriamente e busca-se a otimização de uma função objetivo, por meio de estratégias de busca. Estão incluídos aqui Tabu Search, Simulated Annealing e as soluções genéticas.
 		\end{itemize}
@@ -374,9 +374,10 @@
 
 			\textbf{Requisitos Flexíveies (OCs):}
 			\begin{enumerate}
-				\item As preferências de aula de cada turma, considerando o período em que a aula é dada;
-				\item As preferências de aula de cada professor, considerando o período em que a aula é dada;
-				\item As preferências de aula de cada par professor-disciplina, considerando o período em que a aula é dada;
+				\item As preferências de cada turma, considerando o período em que a aula é dada;
+				\item As preferências de cada professor, considerando o período em que a aula é dada;
+				\item As preferências de cada par professor-disciplina, considerando o período em que a aula é dada;
+				\item As preferências de sala de C dada;
 				\item As preferências de geminação de alguns pares professor-disciplina;
 				\item Podem ser definidas ordens de preferência por cada professor para o uso de salas para cada característica;
 			\end{enumerate}
@@ -390,6 +391,7 @@
 				\item Algumas salas poderão ser previamente fixadas para abrigar algumas aulas;
 				\item Algumas turmas podem ter um número máximo de aulas por dia por grupos de disciplina;
 				\item Alguns professores podem ter um número máximo de aulas por dia por turmas (mas sem discriminar qual turma);
+				\item Alguns professores podem ter um número máximo de dias para frequentar a instituição (discriminando o dia ou não);
 				\item Pode haver, para cada turma, um horário fixo de entrada e de saída da instituição;
 				\item Pode haver, para cada turma, a possibilidade de períodos vagos entre aulas;
 				\item Uma sala pode ter disponibilidade limitada durante um ciclo;
@@ -430,24 +432,25 @@
 						Nome & Português & Gratuito & Livre & Ativo & Local & Online & Ref   \\
 						\hline\hline
 						%%%%%%%%%%%%%%%%%%  POR GRA LIV ATI LOC ONL REF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-						UniTime  			& N & S & S & S & S & N & \cite{rel_unitime}  						\\ \hline
-						Urânia 		   	 	& S & N & N & S & S & N & \cite{rel_urania} 						\\ \hline
-						Horário Fácil 	  	& S & N & N & S & N & S & \cite{rel_horariofacil} 					\\ \hline
-						GridClass 	    	& S & N & N & S & N & S & \cite{rel_gridclass} 						\\ \hline
-						Benchmark Timetable & N & N & N & ? & S & N & \cite{rel_benchmark,rel_supertimetable} 	\\ \hline
 						ASC Timetables 		& S & N & N & S & S & ? & \cite{rel_asctimetables}					\\ \hline
-						Untis 	 			& N & N & N & S & S & ? & \cite{rel_untis} 							\\ \hline
-						Lantiv 				& N & N & N & S & * & * & \cite{rel_lantiv} 						\\ \hline
-						Timetabler          & N & N & N & S & S & N & \cite{rel_timetabler} 					\\ \hline
-						Nova T6             & ? & ? & N & ? & N & ? & \cite{rel_novat6}							\\ \hline
+						Benchmark Timetable & N & N & N & ? & S & N & \cite{rel_benchmark,rel_supertimetable} 	\\ \hline
+						CMIS	  			& N & N & N & ? & N & S & \cite{rel_penalara}						\\ \hline
+						FET 				& N & S & S & S & S & N & \cite{rel_fet}							\\ \hline
+						Horário Fácil 	  	& S & N & N & S & N & S & \cite{rel_horariofacil} 					\\ \hline
 						iTimetable          & N & N & N & N & N & **& \cite{rel_itimetable}  					\\ \hline
-						Timetable Web 	    & S & N & N & ? & N & S & \cite{rel_timetableweb} 					\\ \hline
+						Lantiv 				& N & N & N & S & * & * & \cite{rel_lantiv} 						\\ \hline
 						Make Your Timetable & ? & S & N & ? & N & S & \cite{rel_makeyourtimetable}	 			\\ \hline
+						Nova T6             & ? & ? & N & ? & N & ? & \cite{rel_novat6}							\\ \hline
+						Peñalara GHC		& S & S & N & S & S & N & \cite{rel_penalara}						\\ \hline
+						PowerCubus 	    	& S & N & N & S & N & S & \cite{rel_gridclass, rel_powercubus}		\\ \hline
 						School Softwares    & N & N & N & S & S & N & \cite{rel_schoolsoftwares} 				\\ \hline
 						TimeFinder          & N & S & S & N & S & N & \cite{rel_timefinder}						\\ \hline
-						FET 				& N & S & S & S & S & N & \cite{rel_fet}							\\ \hline
-						Peñalara GHC		& S & S & N & S & S & N & \cite{rel_penalara}						\\ \hline
-						CMIS	  			& N & N & N & ? & N & S & \cite{rel_penalara}						\\ \hline
+						Timetable Web 	    & S & N & N & ? & N & S & \cite{rel_timetableweb} 					\\ \hline
+						Timetabler          & N & N & N & S & S & N & \cite{rel_timetabler} 					\\ \hline
+						UniTime  			& N & S & S & S & S & N & \cite{rel_unitime}  						\\ \hline
+						Untis 	 			& N & N & N & S & S & ? & \cite{rel_untis} 							\\ \hline
+						Urânia 		   	 	& S & N & N & S & S & N & \cite{rel_urania} 						\\ \hline \hline
+						Minerva		   	 	& S & S & S & S & S & S & 					 						\\ \hline
 						%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 					\end{tabular}
 				}
@@ -466,7 +469,7 @@
 			\item SBPO -- Simpósio Brasileiro de Pesquisa Operacional;
 		\end{itemize}
 
-	\newpage
+	\clearpage
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%         Metodologia        %%%%

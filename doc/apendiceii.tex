@@ -116,7 +116,7 @@
 
 			\par Processos de verificação extensiva para esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
 
-			\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas geminadas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita}.
+			\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas triplas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita}.
 
 			\par Um software que atenda a essas considerações é caro, pois sua oferta é menor. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando novamente pela criação manual. Mesmo nas escolas que têm capital, o ideal seria investí-lo na manutenção de infraestrutura, da docência, da merenda, melhorando assim, a qualidade de ensino.
 
@@ -165,108 +165,124 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{TRABALHOS RELACIONADOS}
 
-		\par A criação de grades horárias é um campo em desenvolvimento \cite{patat2020}. Há mais de 50 anos são pesquisadas formas de criação de cronogramas escolares com auxílio computacional \cite{appleby}. Há, então, uma abundância de trabalhos relacionados. Os aqui citados estão divididos em duas seções: Trabalhos Acadêmicos e Softwares Comerciais. À primeira cabem as técnicas, os algoritmos, as estruturas de dados e os resultados computacionais e práticos acarretados. À segunda, como são, na prática, esses resultados e quais outras necessidades importantes as escolas têm que não foram mencionadas seção anterior.
+		\par A criação de grades horárias é um campo em desenvolvimento \cite{patat2020}. Há mais de 50 anos são pesquisadas formas de criação de cronogramas escolares com auxílio computacional \cite{appleby}. Há, então, uma abundância de trabalhos relacionados.
 
-		\par Para simplificar a comparação com softwares similares, fica estabelecida a métrica de $50$ turmas com as quais o sistema deve lidar. Esse número fica muito acima da média de turmas por escola de cidades como Porto Alegre, Canoas e Cachoeirinha, por exemplo \cite{inep}. Fica viável, então, comparar preços de softwares comerciais, dado que estes geralmente cobram baseado no número de turmas.
+		\par Desta miríade, pode-se destacar aSc Timetables \cite{rel_asctimetables}, Horário Fácil \cite{rel_horariofacil}, Urânia \cite{rel_urania} e UniTime \cite{rel_unitime}. Neste capítulo, estes softwares serão apresentados, afim de traçar melhor as necessidades que os softwares da área geralmente têm.
+
+		\par A tabela \ref{table:softwares} estima softwares da área. Foram encontrados dezoito softwares por busca exploratória. Deve-se notar que não foi encontrado programa gratuito, livre, em Português e em desenvolvimento ativo na área.
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%       aSc Timetables       %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsection{ASC Timetables}
+
+			\par Segundo sua própria página, aSc Timetables é um software utilizado por 150.000 escolas. Tanto o programa quanto a \textit{webpage} podem ser utilizadas em 13 línguas diferentes. Isso dá a entender que o software se alinha com as demandas apresentadas por uma gama muito grande de escolas. Para escolas brasileiras, seu preço base é de USD 120.
+
+			\par Algumas características que podemos destacar são: ajustes manuais; detecção automática de conflitos no horário; entrada simples de dados;  o horário pode ser acessado por dispositivos móveis; importação de dados;
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%        Horário Fácil       %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsection{Horário Fácil}
+
+			\par Horário Fácil é um web app brasileiro para a criação da grade horária escolar. Assim, é o servidor que gera a grade horária, evitando possíveis problemas de performance no computador do usuário. O sistema é um tanto simples, mas conta com tutorial, interface simples de usar e suporte técnico via telefone. É, assim, uma opção desejável para escolas menores.
 
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		%%%     Trabalhos Acadêmicos   %%%%
+		%%%           Urânia           %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\subsection{Trabalhos Acadêmicos}
+		\subsection{Urânia}
 
-			\par Múltiplas abordagens foram desenvolvidos para realizar a criação da grade horária. Entre eles podemos citar:
-
-			\begin{itemize}
-				\item \textit{Constraint Logic Programming} (CLP): o problema é conceituado como uma lista de variáveis, com domínios e restrições. \cite{badoni} De modo geral, pode-se dizer que algorítmos tanto de busca de soluções quanto de propagação de restrições são utilizados \cite{citar_alguém}.
-				\item Solução por \textit{Clusters}: o grupo total de aulas é dividido em \textit{clusters}, conflitantes entre si (não podem acontecer no mesmo período), mas que não são conflitantes internamente. O programa tenta, então, assinalar um período para cada cluster. Este tipo de solução é criticado pois a fixação de grupos acontece muito cedo e dificulta a otimização dos grupos. \cite{muller}
-				\item Soluções Meta-Heurísticas: neste tipo de solução, inicia-se com um horário gerado aleatoriamente e busca-se a otimização de uma função objetivo, por meio de estratégias de busca. Estão incluídos aqui Tabu Search, Simulated Annealing e as soluções genéticas.
-			\end{itemize}
-
-			\par O algorítmo aqui implentado é baseado em CLP, focado em \textit{Forward Checking} (FC) e otimização de uma função objetivo (dada pela soma).
+			\par Urânia é outro software brasileiro, totalmente em português para a criação de cronogramas escolares. É um software totalmente local, o que significa que a computação é feita no computador do cliente, não necessitando de acesso à Internet. Sua interface é clara, possuindo seções de ajuda em quase todas as páginas, ainda que algumas funções do sistema sejam mais complexas. Estão disponíveis videoaulas detalhando o uso de várias partes do programa na Internet. Parece ser preferível para escolas de porte médio.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		%%%    Softwares Comerciais    %%%%
+		%%%          UniTime           %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		\subsection{Softwares Comerciais}
+		\subsection{UniTime}
 
-			\par Desta miríade, pode-se destacar aSc Timetables \cite{rel_asctimetables}, Horário Fácil \cite{rel_horariofacil}, Urânia \cite{rel_urania} e UniTime \cite{rel_unitime}. Neste capítulo, estes softwares serão apresentados, afim de traçar melhor as necessidades que os softwares da área geralmente têm. https://help.asctimetables.com/text.php?id=592\&lang=pt
+			\par UniTime é um tanto especial. É um software livre, bem documentado e disponível para quem quiser baixá-lo. Foi construído por universidades norteamericanas em colaboração e apoia amplamente pesquisas na área de \textit{timetabling}. O usuário o utilizaria pela web, mas a universidade que o usa deve implementá-lo no próprio servidor, já que não há servidor central. Não possui nem a documentação nem o programa em Português.
 
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			%%%       aSc Timetables       %%%%
-			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			\subsubsection{ASC TIMETABLES}
+		\vspace{1cm}
 
-				\par Segundo sua própria página, aSc Timetables é um software utilizado por 150.000 escolas. Tanto o programa quanto a \textit{webpage} podem ser utilizadas em 13 línguas diferentes. Isso dá a entender que o software se alinha com as demandas apresentadas por uma gama muito grande de escolas. Para escolas brasileiras, seu preço base é de USD 120.
-
-				\par Algumas características que podemos destacar são: ajustes manuais; detecção automática de conflitos no horário; entrada simples de dados;  o horário pode ser acessado por dispositivos móveis; importação de dados;
-
+		\begin{table}[htb]
+			\begin{center}
 			\scalebox{0.7}{
 				\begin{tabular}{| l | c | c | c | c | c | c | c | c | }
 					\hline
 					Nome & Português & Gratuito & Livre & Ativo & Local & Online & Ref   \\
 					\hline\hline
-					%%%%%%%%%%%%%%%%%%  POR GRA LIV ATI LOC ONL REF
-					UniTime  			& N & S & S & S & S & N & \cite{rel_unitime}  \\ \hline
-					Urânia 		   	 	& S & N & N & S & S & N & \cite{rel_urania} \\ \hline
-					Horário Fácil 	  	& S & N & N & S & N & S & \cite{rel_horariofacil} \\ \hline
-					GridClass 	    	& S & N & N & S & N & S & \cite{rel_gridclass} \\ \hline
-					Benchmark Timetable & N & N & N & ? & S & N & \cite{rel_benchmark,rel_supertimetable} \\ \hline
-					ASC Timetables 		& S & N & N & S & S & ? & \cite{rel_asctimetables}\\ \hline
-					Untis 	 			& N & N & N & S & S & ? & \cite{rel_untis} \\ \hline
-					Lantiv 				& N & N & N & S & * & * & \cite{rel_lantiv} \\ \hline
-					Timetabler          & N & N & N & S & S & N & \cite{rel_timetabler} \\ \hline
-					Nova T6             & ? & ? & N & ? & N & ? & \cite{rel_novat6}\\ \hline
-					iTimetable          & N & N & N & N & N & **& \cite{rel_itimetable}  \\ \hline
-					Timetable Web 	    & S & N & N & ? & N & S & \cite{rel_timetableweb} \\ \hline
-					Make Your Timetable & ? & S & N & ? & N & S & \cite{rel_makeyourtimetable} \\ \hline
-					School Softwares    & N & N & N & S & S & N & \cite{rel_schoolsoftwares} \\ \hline
-					TimeFinder          & N & S & S & N & S & N & \cite{rel_timefinder}\\ \hline
-					FET 				& N & S & S & S & S & N & \cite{rel_fet}\\  \hline
-					Peñalara GHC		& S & S & N & S & S & N & \cite{rel_penalara}\\ \hline
-					CMIS	  			& N & N & N & ? & N & S & \cite{rel_cmis}\\ \hline
+					%%%%%%%%%%%%%%%%%%  POR GRA LIV ATI LOC ONL REF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+					ASC Timetables 		& S & N & N & S & S & ? & \cite{rel_asctimetables}						\\ \hline
+					Benchmark Timetable & N & N & N & ? & S & N & \cite{rel_benchmark,rel_supertimetable} 		\\ \hline
+					CMIS	  			& N & N & N & ? & N & S & \cite{rel_penalara}							\\ \hline
+					FET 				& N & S & S & S & S & N & \cite{rel_fet}								\\ \hline
+					Horário Fácil 	  	& S & N & N & S & N & S & \cite{rel_horariofacil} 						\\ \hline
+					iTimetable          & N & N & N & N & N & \footnotemark& \cite{rel_itimetable}  			\\ \hline
+					Lantiv 				& N & N & N & S & \multicolumn{2}{c|}{\footnotemark} & \cite{rel_lantiv}\\ \hline
+					Make Your Timetable & ? & S & N & ? & N & S & \cite{rel_makeyourtimetable}	 				\\ \hline
+					Nova T6             & ? & ? & N & ? & N & ? & \cite{rel_novat6}								\\ \hline
+					Peñalara GHC		& S & S & N & S & S & N & \cite{rel_penalara}							\\ \hline
+					PowerCubus 	    	& S & N & N & S & N & S & \cite{rel_gridclass, rel_powercubus}			\\ \hline
+					School Softwares    & N & N & N & S & S & N & \cite{rel_schoolsoftwares} 					\\ \hline
+					TimeFinder          & N & S & S & N & S & N & \cite{rel_timefinder}							\\ \hline
+					Timetable Web 	    & S & N & N & ? & N & S & \cite{rel_timetableweb} 						\\ \hline
+					Timetabler          & N & N & N & S & S & N & \cite{rel_timetabler} 						\\ \hline
+					UniTime  			& N & S & S & S & S & N & \cite{rel_unitime}  							\\ \hline
+					Untis 	 			& N & N & N & S & S & ? & \cite{rel_untis} 								\\ \hline
+					Urânia 		   	 	& S & N & N & S & S & N & \cite{rel_urania} 							\\ \hline
+					%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				\end{tabular}
 			}
-			\\
-			* - O programa é local, mas os dados ficam na nuvem.\\
-			** - A grade horária é encomendada.
+			\caption{Comparativo entre softwares comerciais da área}
+			\label{table:softwares}
+			\end{center}
+		\end{table}
+		\vspace{1cm}
+		\addtocounter{footnote}{-1}
+		\footnotetext{O programa é local, mas os dados ficam na nuvem.}
+		\addtocounter{footnote}{1}
+		\footnotetext{A grade horária é encomendada}
 
+	\clearpage
 
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%         Cronograma         %%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{CRONOGRAMA}
-		\center{
-			\scalebox{0.7}{
-				\begin{tabular}{| c | c *{10}{ c | c } c|}
-					\hline
-					Nome da Atividade          & \multicolumn{2}{c}{Fev} & \multicolumn{2}{c}{Mar}
-					 & \multicolumn{2}{c}{Abr} & \multicolumn{2}{c}{Mai} & \multicolumn{2}{c}{Jun}
-					 & \multicolumn{2}{c}{Jul} & \multicolumn{2}{c}{Ago} & \multicolumn{2}{c}{Set}
-					 & \multicolumn{2}{c}{Out} & \multicolumn{2}{c}{Nov} & \multicolumn{2}{c|}{Dez} \\
-					 \hline
-					 % ATIVIDADE             % FV1 FV2 MR1 MR2 AB1 AB2 MA1 MA2 JN1 JN2 JL1 JL2 AG1 AG2 ST1 ST2 OC1 OC2 NV1 NV2 DZ1 DZ2  %
-				     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-					 Escolha do Tema 		   & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
-					 Escolha do Orientador     & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
-					 Elicitação de Requisitos  & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
-					 Escolha das Tecnologias   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
-					 Escolha das Ferramentas   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
-					 Pesquisa Bibliográfica    &   & X & X & X & X & X & X & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   \\
-					 Implementação             &   & X & X & X & X & X & X & X & X & X & X &   &   &   &   &   &   &   &   &   &   &   \\
-					 Elaboração Apêndice II    &   &   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
-					 Documentação              &   &   &   & X & X & X & X & X & X & X & X & X & X & X & X & X & X & X &   &   &   &   \\
-					 Fase de Testes            &   &   &   &   &   &   &   & X & X & X & X & X & X & X & X & X &   &   &   &   &   &   \\
-					 Aprimoramento / Feedback  &   &   &   &   &   &   &   &   & X & X & X & X & X & X & X & X & X & X &   &   &   &   \\
-					 Apresentação na IFCITEC   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   &   &   &   \\
-					 Apresentação Final        &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X & X &   &   \\
-					 Entrega do Texto Final    &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X &   \\
-					 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%&
-					 \hline
-				\end{tabular}
+		\begin{table}[htb]
+			\begin{center}
+				\scalebox{0.7}{
+					\begin{tabular}{| c | c *{10}{ c | c } c|}
+						\hline
+						Nome da Atividade          & \multicolumn{2}{c}{Fev} & \multicolumn{2}{c}{Mar}
+						 & \multicolumn{2}{c}{Abr} & \multicolumn{2}{c}{Mai} & \multicolumn{2}{c}{Jun}
+						 & \multicolumn{2}{c}{Jul} & \multicolumn{2}{c}{Ago} & \multicolumn{2}{c}{Set}
+						 & \multicolumn{2}{c}{Out} & \multicolumn{2}{c}{Nov} & \multicolumn{2}{c|}{Dez} \\
+						 \hline
+						 % ATIVIDADE             % FV1 FV2 MR1 MR2 AB1 AB2 MA1 MA2 JN1 JN2 JL1 JL2 AG1 AG2 ST1 ST2 OC1 OC2 NV1 NV2 DZ1 DZ2  %
+					     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+						 Escolha do Tema 		   & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+						 Escolha do Orientador     & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+						 Elicitação de Requisitos  & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+						 Escolha das Tecnologias   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+						 Escolha das Ferramentas   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+						 Pesquisa Bibliográfica    &   & X & X & X & X & X & X & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   \\
+						 Implementação             &   & X & X & X & X & X & X & X & X & X & X &   &   &   &   &   &   &   &   &   &   &   \\
+						 Elaboração Apêndice II    &   &   & X & X & X &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   \\
+						 Documentação              &   &   &   & X & X & X & X & X & X & X & X & X & X & X & X & X & X & X &   &   &   &   \\
+						 Fase de Testes            &   &   &   &   &   &   &   & X & X & X & X & X & X & X & X & X &   &   &   &   &   &   \\
+						 Aprimoramento / Feedback  &   &   &   &   &   &   &   &   & X & X & X & X & X & X & X & X & X & X &   &   &   &   \\
+						 Apresentação na IFCITEC   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X &   &   &   &   &   &   \\
+						 Apresentação Final        &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X & X &   &   \\
+						 Entrega do Texto Final    &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   &   & X &   \\
+						 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%&
+						 \hline
+					\end{tabular}
 			}
-		}
+			\caption{Cronograma de desenvolvimento do projeto.}
+		\end{center}
+	\end{table}
 	\newpage
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%        Referências         %%%%
