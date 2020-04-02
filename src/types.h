@@ -27,6 +27,13 @@ typedef struct TeacherQuantity TeacherQuantity;
 typedef struct SubjectQuantity SubjectQuantity;
 typedef struct RoomFeatureQuantity RoomFeatureQuantity;
 
+/* TODO: preprocessing.
+ * - Abstract classes need to be sorted out;
+ * - Scores for lessons must be weighted;
+ * - Disponibility of sub-/superordinate teachers/classes sorted out;
+ * - Cascading specificity in values inserted by user;
+ */
+
 typedef struct RoomFeature {
 	int id;
 	char * name;

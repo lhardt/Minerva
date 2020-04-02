@@ -37,19 +37,19 @@ int count_required_meetings(School * school, Class * class, Subject * subject);
  */
 bool elim_period_overflow(DecisionNode * node);
 
-/* VACATION DAY RULE:
+/* PLANNING DAY RULE:
  *
  * Logic Type: Teacher-Period;
  *
  * Simple Explanation:
- *   If teacher A needs 1 free day
- *     And now only in day X he has all the periods free,
- *       Then A has the X day as free day.
+ *   If teacher A needs 5 consecutive free periods
+ *     And now only in periods X he has 5 periods free,
+ *       Then A has the X periods as planning day.
  *
  * Things to consider:
  * -
  */
-bool elim_vacation_day(DecisionNode * node);
+bool elim_planning_day(DecisionNode * node);
 
 /* ANALOGOUS ORDERING RULE:
  *
@@ -63,7 +63,7 @@ bool elim_vacation_day(DecisionNode * node);
  *            L3 can not happen in their second meeting;
  *
  * Things to consider:
- * - This creates an order betweek periods;
+ * - This creates an order between periods;
  * - Therefore it must happen after any user interference (because messing with one period messes with all the other twins);
  * - But it may be reversed as L1.possible = L1.possible U L2.possible U L3.possible.
  * - make sure we do not include fixed meetings in the reversal union.
@@ -76,15 +76,19 @@ bool reverse_analogous_ordering(School * school, DecisionNode * node);
  * Logic Type: Period-*;
  *
  * Basic Explanation:
- *   If teacher A teaches class C at period P, in room R
- *       Then A cannot teach any other class at P;
- *            C cannot attend any other lecture at P;
- *		      R cannot be allocated at P by any other meeting.
- *
+ *   If teacher A teaches discipline D to class C at period P, in room R
+ *      Then: A cannot teach any other class at P;
+ *          - C cannot attend any other lecture at P;
+ *		    - R cannot be allocated at P by any other meeting;
+ *			- A teaches C in all periods of D for C;
+ *			- R accomodates every period of D to C;
+ *			- Any superordinate of A cannot lecture at P;
+ *			- Any superordinate of C cannot attend lectures at P.
  *
  * Things to consider:
  * - TODO This algorithm **should** work even if one of the parameters (A,C, or R)
- *        is not set. The exclusion, then, happens by other means.
+ *        is not set. The exclusion, then, happens only partially.
+ * - if the room
  */
 bool elim_search_fixed_meeting(School * school, DecisionNode * node);
 bool elim_fixed_meeting(School * school, DecisionNode * node, int fixed_meeting_index);
@@ -94,31 +98,18 @@ bool elim_fixed_meeting(School * school, DecisionNode * node, int fixed_meeting_
  * Logic Type: Room-Meeting;
  *
  * Basic Explanation:
- *   If meeting M demands a room with X features & size
- *       Then M cannot happen in any room without those features;
+ *   If class C demands X feautres for a teacher-discipline D,
+ *       Then those classes cannot happen in any room without X features;
+ *	 If class C has room R for a discipline D,
+ *		 Then no teacher which needs more than those features cannot lecture D to C;
  *
  *
  * Things to consider:
  *  -
  */
-bool elim_good_room_room(DecisionNode * node);
+bool elim_good_room(DecisionNode * node);
 
-/* GOOD ROOM RULE - Teacher: TODO better name
- *
- * Logic Type: Room-Meeting;
- *
- * Basic Explanation:
- *   If meeting M happens in a room with X features & size
- *       Then M cannot happen with any teaches that needs
- *        more than those features;
- *
- *
- * Things to consider:
- *  -
- */
-bool elim_good_room_teacher(DecisionNode * node);
-
-/* MAX PER DAY RULE:
+/* TEACHER MAX PER DAY RULE:
  *
  * Logic Type: Teacher-Period;
  *
@@ -141,7 +132,22 @@ bool elim_good_room_teacher(DecisionNode * node);
  * Things to consider:
  *  -
  */
-bool elim_max_per_day(School * school, DecisionNode * node);
+bool elim_teacher_max_per_day(School * school, DecisionNode * node);
+
+
+/* GROUP MAX PER DAY RULE:
+ *
+ * Logic Type: Room-Class-Period;
+ *
+ * Basic Explanation:
+ * 	 If class C has a max per day of group G of M,
+ *			but M classes of G are already allocated,
+ *		Then no more lectures of G can happen in that day
+ *
+ * Things to consider:
+ * - The algorithm can be made to have the hindsight of the function above.
+ */
+bool elim_group_max_per_day(School * school, DecisionNode * node);
 
 /* SUPER ROOM RULE
  *
