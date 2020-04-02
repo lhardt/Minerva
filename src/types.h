@@ -12,7 +12,9 @@
 #define MAX_FEATURES          (64)
 #define MAX_PERIODS_PER_DAY   (32)
 #define MAX_PERIODS_PER_WEEK  (1024)
-#define MAX_DAYS ((MAX_PERIODS_PER_WEEK)/(MAX_PERIODS_PER_DAY))
+#define MAX_DAYS 			  ((MAX_PERIODS_PER_WEEK)/(MAX_PERIODS_PER_DAY))
+#define MAX_ROOMS			  (256)
+#define MAX_GROUPS			  (128)
 
 typedef enum Period {
 	_NULL     = -1,
@@ -49,6 +51,8 @@ typedef struct Subject {
 
 	int * gemini_score;  	   // TODO is it necessary? Not present in diagram
 	int * week_position_score; // TODO is it necessary? Not present in diagram
+
+	int   in_groups[MAX_GROUPS];
 } Subject;
 
 typedef struct Teaches Teaches;
@@ -58,7 +62,6 @@ struct Teacher{
 	char 		  * name;
 	char 		  * short_name;
 
-	int    		  * periods;
 	int    			max_meetings_per_day;
 	int    			max_meetings;
 	int    			num_planning_periods;
@@ -70,7 +73,10 @@ struct Teacher{
 
 	Teacher      ** subordinates;
 
-	int 		  * per_day_number_score;
+
+	int    		  * periods;
+	int 		  * days;
+	int 		  * rooms;
 };
 
 struct Teaches{
@@ -91,6 +97,7 @@ struct Class{
 	int 			size;
 	/* Not a list, but a list of scores */
 	int 		    periods[MAX_PERIODS_PER_WEEK+1];
+	int 		  * rooms;
 	bool 			can_have_free_periods_flag;
 	int 			minimal_exit_period;
 	int 			maximal_entry_period;
@@ -104,6 +111,7 @@ struct Class{
 	Class       * * subordinates;
 
 	SubjectQuantity * needs;
+	int max_per_day_group[MAX_GROUPS];
 };
 
 

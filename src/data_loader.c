@@ -5,7 +5,7 @@
 #include "data_loader.h"
 
 /* TODO: Assure PRAGMA foreign_keys = on */
-
+/* TODO insert DisciplineGroups. */
 const char * const CREATE_TABLE_SCHOOL =
 			("CREATE TABLE IF NOT EXISTS School("
 				"id						integer primary key,"
@@ -193,7 +193,6 @@ const char * const CREATE_TABLE_TEACHER =
 				"id 					integer primary key,"
 				"name					text,"
 				"short_name				text,"
-				"max_per_per_day		integer,"
 				"max_per_class_per_day	integer,"
 				"max_per				integer,"
 				"num_per_planning		integer,"
@@ -204,6 +203,21 @@ const char * const INSERT_TABLE_TEACHER =
 			("INSERT INTO Teacher VALUES (?,?,?,?,?,?,?)");
 const char * const LASTID_CLASS_TEACHER =
 			("SELECT id FROM Teacher where rowid = last_insert_rowid()");
+
+const char * const CREATE_TABLE_TEACHER_DAY =
+			("CREATE TABLE IF NOT EXISTS TeacherDay("
+				"id						integer primary key,"
+				"id_teacher				integer,"
+				"id_day					integer,"
+				"max_periods			integer,"
+				"score					integer,"
+				"FOREIGN KEY (id_teacher) references Teacher(id),"
+				"FOREGIN KEY (id_day) references Day(id)"
+			")");
+const char * const INSERT_TABLE_TEACHER_DAY =
+			("INSERT INTO TABLE TeacherDay VALUES (?,?,?,?,?)");
+const char * const LASTID_TABLE_TEACHER_DAY =
+			("SELECT id from TeacherDay where rowid = last_insert_rowid()");
 
 const char * const CREATE_TABLE_TEACHES =
 			("CREATE TABLE IF NOT EXISTS Teaches("
@@ -544,6 +558,7 @@ bool init_all_tables(FILE * console_out, char * db_filename){
 			create_table_test(console_out,db,"Subject", CREATE_TABLE_SUBJECT)?1:
 			create_table_test(console_out,db,"ClassSubject", CREATE_TABLE_CLASS_SUBJECT)?1:
 			create_table_test(console_out,db,"Teacher", CREATE_TABLE_TEACHER)?1:
+			create_table_test(console_out,db,"TeacherDay",CREATE_TABLE_TEACHER_DAY)?1:
 			create_table_test(console_out,db,"Teaches", CREATE_TABLE_TEACHES)?1:
 			create_table_test(console_out,db,"TeacherSubordination", CREATE_TABLE_TEACHER_SUBORDINATION)?1:
 			create_table_test(console_out,db,"TeacherAttendance", CREATE_TABLE_TEACHER_ATTENDANCE)?1:
