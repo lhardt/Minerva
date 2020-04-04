@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 #include "util.h"
-#include "combinatorics.h"
-#include "primary_logic.h"
+#include "maths.h"
+#include "logic.h"
 
 int count_required_meetings(
 				School * school,

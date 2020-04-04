@@ -1,7 +1,13 @@
 /*
  * Project Minerva.
+ *   decisions.h - decision tree for timetabling.
  *
- * Copyright (C) Léo H. 2019-2020.
+ * (C) 2019-2020 Léo Hardt <leom.hardt@gmail.com>.
+ *
+ * This program is free software. See LICENSE.
+ *
+ * This module contains structures and functions for the creation
+ * and development of a decision tree in school timetabling.
  */
 #ifndef DECISIONS_H
 #define DECISIONS_H

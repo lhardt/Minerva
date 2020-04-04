@@ -1,7 +1,13 @@
 /*
  * Project Minerva.
+ *   util.h - utility library for timetabling.
  *
- * Copyright (C) Léo H. 2019-2020.
+ * (C) 2019-2020 Léo Hardt <leom.hardt@gmail.com>.
+ *
+ * This program is free software. See LICENSE.
+ *
+ * This module contains functions for interacting with
+ * the user or debugger via streams.
  */
 #ifndef UTIL_H
 #define UTIL_H

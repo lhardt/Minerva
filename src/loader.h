@@ -1,7 +1,13 @@
 /*
  * Project Minerva.
+ *   loader.h - SQL data loader utility module.
  *
- * Copyright (C) Léo H. 2019-2020.
+ * (C) 2019-2020 Léo Hardt <leom.hardt@gmail.com>.
+ *
+ * This program is free software. See LICENSE.
+ *
+ * This module contains functions for saving and loading data
+ * from SQL databases related to school timetabling.
  */
 #ifndef DATA_LOADER_H
 #define DATA_LOADER_H

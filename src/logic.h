@@ -1,10 +1,16 @@
 /*
  * Project Minerva.
+ *   logic.h - constraint propagation for timetabling.
  *
- * Copyright (C) Léo H. 2019-2020.
+ * (C) 2019-2020 Léo Hardt <leom.hardt@gmail.com>.
+ *
+ * This program is free software. See LICENSE.
+ *
+ * This module contains functions for making sure that all decision nodes
+ * are valid. It also has some counting functions for utility.
  */
- #ifndef PRIMARY_LOGIC_H
- #define PRIMARY_LOGIC_H
+ #ifndef LOGIC_H
+ #define LOGIC_H
 
  #include <stdlib.h>
 
@@ -21,11 +27,19 @@
  */
 int count_required_meetings(School * school, Class * class, Subject * subject);
 
+/**
+ * Checks if a given node can not possibly be a solution.
+ *
+ *
+ *
+ */
+bool is_invalid(DecisionNode * node);
+
 /* PERIOD OVERFLOW RULE:
  *
  * Logic Type: Teacher-Subject-Class;
  *
- * Simple Explanation:
+ * Simp	le Explanation:
  *   If teacher A teachers subject D
  *   And class C needs subject D,
  *     If A has 4 free periods and C needs 5 periods of D,

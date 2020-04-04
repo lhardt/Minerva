@@ -3,6 +3,7 @@
 
 \usepackage{ifpdf} % configuraç
 \usepackage{lipsum} % lipsum
+\usepackage[flushleft]{threeparttable}
 \usepackage{scrextend} % addmargin
 \usepackage{fontspec} % Arial
 \usepackage[portuguese]{babel}
@@ -10,6 +11,7 @@
 \usepackage{makeidx} % Títulos das tabelas
 \usepackage[pagestyles]{titlesec} % titleformat
 \usepackage{geometry}
+\usepackage[symbol]{footmisc} % Asterisco em notas de rodapé
 \usepackage{graphicx} % resizebox
 % citestyle authoryear para citações anbt
 \usepackage[backend=biber,sorting=nty, style=abnt, citestyle=abnt-numeric]{biblatex}
@@ -24,6 +26,7 @@
 \usepackage[breaklinks=true]{hyperref}
 \addbibresource{texto.bib}
 
+\renewcommand{\thefootnote}{\fnsymbol{footnote}} % Asterisco em notas de rodapé
 
 \title{MINERVA: UMA SOLUÇÃO INFORMATIZADA PARA O ESCALONAMENTO DE PROFESSORES NAS ESCOLAS BRASILEIRAS}
 \ifpdf
@@ -100,7 +103,9 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%        Justificativa       %%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \section{JUSTIFICATIVA DO PROJETO CIENTÍFICO}
+    \section{JUSTIFICATIVA}
+
+		O presente trabalho elabora sobre a construção da grade horária escolar. A ausência de um software gratuito e brasileiro na área é seu principal motivador. Assim sendo, é dada uma descrição mais apurada do tema, bem como um comparativo de soluções atuais e seus problemas. Por fim, é delineada uma possível solução geral para este problema.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%    Descrição do Problema   %%%%
@@ -118,7 +123,7 @@
 
 			\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas triplas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita}.
 
-			\par Um software que atenda a essas considerações é caro, pois sua oferta é menor. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando novamente pela criação manual. Mesmo nas escolas que têm capital, o ideal seria investí-lo na manutenção de infraestrutura, da docência, da merenda, melhorando assim, a qualidade de ensino.
+			\par Um software que atenda a essas considerações é caro, pois sua oferta é menor. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando novamente pela criação manual. Mesmo nas escolas que têm capital, seria ideal investí-lo na manutenção da qualidade de ensino.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%     Proposta de Solução    %%%%
@@ -160,16 +165,18 @@
 					\item Documentar o processo.
 				\end{itemize}
 
+	\clearpage
+
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%   Trabalhos Relacionados   %%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{TRABALHOS RELACIONADOS}
 
-		\par A criação de grades horárias é um campo em desenvolvimento \cite{patat2020}. Há mais de 50 anos são pesquisadas formas de criação de cronogramas escolares com auxílio computacional \cite{appleby}. Há, então, uma abundância de trabalhos relacionados.
+		\par A criação de grades horárias é um campo em desenvolvimento \cite{patat2020}. Há mais de 50 anos são pesquisadas formas de criação de cronogramas escolares com auxílio computacional \cite{appleby}. Há, então, uma abundância de trabalhos relacionados. Na busca por eles, não foi feita distinção entre softwares para escolas ou para universidades. Em geral, softwares para universidades têm mais funcionalidades, retendo grande parte das características da contraparte escolar.
 
-		\par Desta miríade, pode-se destacar aSc Timetables \cite{rel_asctimetables}, Horário Fácil \cite{rel_horariofacil}, Urânia \cite{rel_urania} e UniTime \cite{rel_unitime}. Neste capítulo, estes softwares serão apresentados, afim de traçar melhor as necessidades que os softwares da área geralmente têm.
+		\par Sendo assim, foram elencados, por meio de levantamento bibliográfico, softwares da área. Por cada escola ter suas particularidades na criação do horário, todos eles, em seu respectivo \textit{site}, listam características supostamente únicas, que os fariam mais adequados que os concorrentes. Todas essas características são levadas em consideração para elaborar a lista do software Minerva. Além disso, foram destacados cinco softwares para um olhar mais aprofundado. São eles: aSc Timetables \cite{rel_asctimetables}, Horário Fácil \cite{rel_horariofacil}, Prime Timetable \cite{rel_primetimetable}, Urânia \cite{rel_urania} e UniTime \cite{rel_unitime}.
 
-		\par A tabela \ref{table:softwares} estima softwares da área. Foram encontrados dezoito softwares por busca exploratória. Deve-se notar que não foi encontrado programa gratuito, livre, em Português e em desenvolvimento ativo na área.
+		\par A tabela \ref{table:softwares} os estima. Além de fatores básicos, como linguagem e gratuidade, também foram elencados fatores como: se o \textit{software} é livre ou não, como definido em \cite{publico}, se o software está em desenvolvimento ativo ou não e se o software é local ou web. Aqueles que são executados exclusivamente no computador do usuário são chamados de \textit{locais}, enquanto que quando o processamento é feito em um servidor é dito \textit{web}.  Um software foi considerado "ativo" se teve uma nova versão nos últimos 2 anos e sua \textit{homepage} está no ar. Nos casos onde isso não pôde ser determinado, se seu website foi atualizado nesse mesmo período.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%       aSc Timetables       %%%%
@@ -200,48 +207,80 @@
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{UniTime}
 
-			\par UniTime é um tanto especial. É um software livre, bem documentado e disponível para quem quiser baixá-lo. Foi construído por universidades norteamericanas em colaboração e apoia amplamente pesquisas na área de \textit{timetabling}. O usuário o utilizaria pela web, mas a universidade que o usa deve implementá-lo no próprio servidor, já que não há servidor central. Não possui nem a documentação nem o programa em Português.
+			\par UniTime é um tanto especial. É um software livre, bem documentado e disponível para quem quiser baixá-lo. Foi construído colaborativamente por universidades norteamericanas e apoia pesquisas na área. O usuário o utilizaria pela web, mas a universidade que o usa deve implementá-lo no próprio servidor, já que não há servidor central. Não possui nem a documentação nem o programa em Português.
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%       Prime Timetable      %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsection{Prime Timetable}
+
+			\par Prime Timetable é um \textit{web app} compatível com Mac, PC, Linux, tablets e celulares. Sua interface elabora sobre do conceito de \textit{cards}, ou cartões. Uma aula é, então, um cartão que pode ser arrastado para o período em que ela é dada.  \textit{Cards} podem ser fixados em cetos períodos, bem como mesclados com \textit{cards} similares. Pode, a qualquer momento, ser criado o horário a partir da configuração atual. O usuário tem a liberdade de continuar movendo os cards até ficar satisfeito. Em qualquer dado momento, o sistema mostra quais restrições estão sendo violadas. Além disso, há a opção de mostrar um histórico de ações e desfazê-las. Isso é excelente, pois devemos esperar que o usuário eventualmente cometa erros. \cite{norman, gnome_hig}.
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%           Skolaris         %%%%
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\subsection{Skolaris}
+
+			\par Skolaris é um outro \textit{web app}, com uma interface que lembra muito o padrão Material, da Google. Em grandes resoluções, o usuário deve promover grandes movimentos com o mouse, para promover até o cadastro mais simples. Depois de gerada a grade, uma função similar à do Prime Timetable fica disponível, mas ao invés de uma função de Fazer-Desfazer, pode ser criado um \textit{snapshot} da edição atual e salvá-lo com um nome. Assim, qualquer edição que o usuário não queira perder fica salva e rotulada no sistema. Análogo ao mostrador de restrições violadas do Prime, o Skolaris mostra duas porcentagens: Health (saúde) e Fitness (adequação). A primeira relacionada ao cumprimento de restrições rígidas e a segunda, de restrições flexíveis. Assim, um cronograma pode ser utilizado somente se sua saúde é de 100\%, mas quanto maior sua adequação, mais eficiente ela é.
+
+		  
 
 		\vspace{1cm}
+
+ 		% Como fazer manualmente
+		% https://gestaoescolar.org.br/conteudo/296/planejamento-8-passos-para-elaborar-a-grade-de-aulas
 
 		\begin{table}[htb]
 			\begin{center}
-			\scalebox{0.7}{
-				\begin{tabular}{| l | c | c | c | c | c | c | c | c | }
-					\hline
-					Nome & Português & Gratuito & Livre & Ativo & Local & Online & Ref   \\
-					\hline\hline
-					%%%%%%%%%%%%%%%%%%  POR GRA LIV ATI LOC ONL REF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-					ASC Timetables 		& S & N & N & S & S & ? & \cite{rel_asctimetables}						\\ \hline
-					Benchmark Timetable & N & N & N & ? & S & N & \cite{rel_benchmark,rel_supertimetable} 		\\ \hline
-					CMIS	  			& N & N & N & ? & N & S & \cite{rel_penalara}							\\ \hline
-					FET 				& N & S & S & S & S & N & \cite{rel_fet}								\\ \hline
-					Horário Fácil 	  	& S & N & N & S & N & S & \cite{rel_horariofacil} 						\\ \hline
-					iTimetable          & N & N & N & N & N & \footnotemark& \cite{rel_itimetable}  			\\ \hline
-					Lantiv 				& N & N & N & S & \multicolumn{2}{c|}{\footnotemark} & \cite{rel_lantiv}\\ \hline
-					Make Your Timetable & ? & S & N & ? & N & S & \cite{rel_makeyourtimetable}	 				\\ \hline
-					Nova T6             & ? & ? & N & ? & N & ? & \cite{rel_novat6}								\\ \hline
-					Peñalara GHC		& S & S & N & S & S & N & \cite{rel_penalara}							\\ \hline
-					PowerCubus 	    	& S & N & N & S & N & S & \cite{rel_gridclass, rel_powercubus}			\\ \hline
-					School Softwares    & N & N & N & S & S & N & \cite{rel_schoolsoftwares} 					\\ \hline
-					TimeFinder          & N & S & S & N & S & N & \cite{rel_timefinder}							\\ \hline
-					Timetable Web 	    & S & N & N & ? & N & S & \cite{rel_timetableweb} 						\\ \hline
-					Timetabler          & N & N & N & S & S & N & \cite{rel_timetabler} 						\\ \hline
-					UniTime  			& N & S & S & S & S & N & \cite{rel_unitime}  							\\ \hline
-					Untis 	 			& N & N & N & S & S & ? & \cite{rel_untis} 								\\ \hline
-					Urânia 		   	 	& S & N & N & S & S & N & \cite{rel_urania} 							\\ \hline
-					%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-				\end{tabular}
-			}
-			\caption{Comparativo entre softwares comerciais da área}
-			\label{table:softwares}
+				\scalebox{0.7}{
+				  	\begin{threeparttable}
+						\begin{tabular}{| l | c | c | c | c | c | c | c | c | }
+							\hline
+							Nome & Português & Gratuito & Livre & Ativo & Local & Web & Ref   \\
+							\hline\hline
+							%%%%%%%%%%%%%%%%%%  POR GRA LIV ATI LOC WEB REF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+							ASAS Gerador		& S & N & N & N & S & N & \cite{rel_asas}								\\ \hline % última versão em 2012. Site fora do ar
+							ASC Timetables 		& S & N & N & S & S & ? & \cite{rel_asctimetables}						\\ \hline % Ativo.
+							Benchmark Timetable & N & N & N & n & S & N & \cite{rel_benchmark,rel_supertimetable} 		\\ \hline % Última versão em 2012.
+							CMIS	  			& N & N & N & S & N & S & \cite{rel_cmis}								\\ \hline % Twitter extremamente ativo
+							Cronos				& S & N & N & S & N & S & \cite{rel_cronos}								\\ \hline % Web. Site e redes sociais ativas
+							Cyber Matrix 		& N & N & N & N & S & N & \cite{rel_cybermatrix}						\\ \hline % Última versão em 2013
+							DCS					& S & N & N & S & S & N & \cite{rel_dcs}								\\ \hline % DCS
+							edval				& N & N & N &   &   &   &                                               \\ \hline %
+							FET 				& N & S & S & S & S & N & \cite{rel_fet}								\\ \hline % Última versão em março/20
+							Horário Fácil 	  	& S & N & N & S & N & S & \cite{rel_horariofacil} 						\\ \hline % Whatsapp de suporte disponível em 02/abr
+							iMagic Timetable    & N & N & N & N & S & N & \cite{rel_imagic}								\\ \hline % Não parece estar ativo. Embora o copyright diga, Press Room não
+							iTimetable          & N & N & N & N & N & \tnote{*}& \cite{rel_itimetable}  			\\ \hline % Site Fora do Ar.
+							Lantiv 				& N & N & N & S & \multicolumn{2}{c|}{\tnote{**}} & \cite{rel_lantiv}\\ \hline % O nome diz 2020.
+							Make Your Timetable & ? & S & N & ? & N & S & \cite{rel_makeyourtimetable}	 				\\ \hline %
+							Mimosa				& S & N & N & N & S & N & \cite{rel_mimosa}								\\ \hline % Fora do ar há menos de 2 anos. Mandei e-mail
+							Nova T6             & ? & ? & N & ? & N & ? & \cite{rel_novat6}								\\ \hline %
+							Peñalara GHC		& S & S & N & S & S & N & \cite{rel_penalara}							\\ \hline
+							PowerCubus 	    	& S & N & N & S & N & S & \cite{rel_gridclass, rel_powercubus}			\\ \hline
+							Prime Timetable     &   & N & N & ? & N & S & \cite{rel_primetimetable}						\\ \hline %
+							School Admin		& N & N & N & ? & N & S & \cite{rel_schooladmin}						\\ \hline % Twitter ativo
+							School Softwares    & N & N & N & S & S & N & \cite{rel_schoolsoftwares} 					\\ \hline
+							Skolaris			& N & N & N & S & N & S & \cite{rel_skolaris}							\\ \hline % Wiki editada 2/abr
+							TimeFinder          & N & S & S & N & S & N & \cite{rel_timefinder}							\\ \hline %
+							Timetable Web 	    & S & N & N & ? & N & S & \cite{rel_timetableweb} 						\\ \hline %
+							Timetabler          & N & N & N & S & S & N & \cite{rel_timetabler} 						\\ \hline % Versão de 2020 lançada
+							UniTime  			& N & S & S & S & S & N & \cite{rel_unitime}  							\\ \hline % Versão 4.4 em Dez/2019
+							Untis 	 			& N & N & N & S & S & ? & \cite{rel_untis} 								\\ \hline % Última versão em fev/2020
+							Urânia 		   	 	& S & N & N & S & S & N & \cite{rel_urania} 							\\ \hline % Blog ativvo
+							Zathura				& S & N & N & S & S & N & \cite{rel_zathura}							\\ \hline % Versão "2019"
+							%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+						\end{tabular}
+						\caption{Comparativo entre softwares da área}
+						\label{table:softwares}
+						\footnotesize
+						\begin{tablenotes}
+							\item[*]{ O programa é local, mas os dados ficam na nuvem.}
+							\item[**]{A grade horária é encomendada}
+						\end{tablenotes}
+					\end{threeparttable}
+				}
 			\end{center}
 		\end{table}
-		\vspace{1cm}
-		\addtocounter{footnote}{-1}
-		\footnotetext{O programa é local, mas os dados ficam na nuvem.}
-		\addtocounter{footnote}{1}
-		\footnotetext{A grade horária é encomendada}
 
 	\clearpage
 

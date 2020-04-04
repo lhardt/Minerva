@@ -2,7 +2,8 @@
 #include <sqlite3.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "data_loader.h"
+
+#include "loader.h"
 
 /* TODO: Assure PRAGMA foreign_keys = on */
 /* TODO insert DisciplineGroups. */

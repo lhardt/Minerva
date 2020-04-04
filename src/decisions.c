@@ -1,6 +1,17 @@
+/*
+ * Project Minerva.
+ *   decisions.c - decision tree for timetabling.
+ *
+ * (C) 2019-2020 Léo Hardt <leom.hardt@gmail.com>.
+ *
+ * This program is free software. See LICENSE.
+ *
+ * This module contains structures and functions for the creation
+ * and development of a decision tree in school timetabling.
+ */
 #include "types.h"
 #include "decisions.h"
-#include "primary_logic.h"
+#include "logic.h"
 
 #include <stdlib.h>
 #include <stdio.h>

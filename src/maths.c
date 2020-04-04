@@ -10,8 +10,7 @@
  #include <stdint.h>
  #include <stdbool.h>
 
-#include "combinatorics.h"
-#include "util.h"
+#include "maths.h"
 
  /* Calculates the result of P!/(P-T)! */
  uint64_t factorial_division(uint64_t p, uint64_t t){
@@ -242,9 +241,7 @@ bool equal_lists(int * a, int * b){
 }
 
 
-/* Returns the index of the first positive integer in a list terminated
- * by -1.
- */
+/* Returns the index of the first non-zero value in a list of positive integers */
 int find_first_positive(int * list){
 	int index = 0;
 	while(list[index] == 0){
@@ -257,9 +254,7 @@ int find_first_positive(int * list){
 	}
 }
 
-/* Returns the index of the last positive integer in a list terminated
- * by -1.
- */
+/* Returns the index of the last non-zero value in a list of positive integers */
 int find_last_positive(int * list){
 	int index = 0;
 	while(list[index] != -1){
@@ -274,7 +269,7 @@ int find_last_positive(int * list){
 	return index;
 }
 
-
+/* Returns the largest value in a list of positive integers */
 int find_max_int(int * list){
 	int index = 0, max = -1;
 
@@ -287,6 +282,7 @@ int find_max_int(int * list){
 	return max;
 }
 
+/* Finds the index of the largest value in a list of positive integers */
 int find_max_int_index(int * list){
 	int index = 0, max = -1, max_ind;
 
@@ -301,6 +297,7 @@ int find_max_int_index(int * list){
 	return max_ind;
 }
 
+/* Orders indexes according to value in a list */
 void order_by_rank(int * list, int * rank){
 	int i = 0, j = 0, k = 0, n, max = -1, i_list = 0;
 	for(n = 0; rank[n] >= 0; n++){}
@@ -318,6 +315,7 @@ void order_by_rank(int * list, int * rank){
 		list[i_list] = max;
 		i_list++;
 	}
+	free(used);
 	list[n] = -1;
 }
 
@@ -359,10 +357,6 @@ void order_by_rank_not_null(int * list, int * rank){
 
 int intersec_size(int * list_a, int * list_b){
 	int n = 0, i;
-	if(list_a == NULL || list_b == NULL){
-		printf("intersecsz called with null parameter\n");
-		return 0;
-	}
 	for( i = 0; list_a[i] >= 0 && list_b[i] >= 0;i++){
 		if(list_a[i] > 0 && list_b[i] > 0){
 			n++;
