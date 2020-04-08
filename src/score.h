@@ -9,7 +9,7 @@
  * This module contains functions to evaluate both the
  * likelihood of a node having a valid timetable in its
  * domain, as well as the acceptability of such timetable,
- * given the soft constraints..
+ * given the soft constraints.
  */
 #ifndef SCORE_H
 #define SCORE_H
