@@ -18,7 +18,7 @@
  	uint64_t total = 1;
  	while(i > t){
  		total *= i;
- 		i--;
+ 		--i;
  	}
  	return total;
  }
@@ -47,22 +47,22 @@
  	while(j >= 0){
  		decomposition[i] = 1+ elements/factorial(j);
  		elements %= factorial(j);
- 		j--;
- 		i++;
+ 		--j;
+ 		++i;
  	}
  	// Correction of indexes
  	bool * used_numbers = calloc(n, sizeof(bool));
- 	for(i = 0; i < n; i++){
+ 	for(i = 0; i < n; ++i){
  		used_numbers[i] = false;
  	}
- 	for(i = 0; i < n; i++){
+	for(i = 0; i < n; ++i){
  		while(used_numbers[ decomposition[i] ] == true){
- 			decomposition[i]++;
+ 			++decomposition[i];
  		}
  		used_numbers[ decomposition[i] ] = true;
- 		for(j = i+1; j < n; j++){
+ 		for(j = i+1; j < n; ++j){
  			if(decomposition[i] <= decomposition[j]){
- 				decomposition[j]++;
+ 				++decomposition[j];
  			}
  		}
  	}
@@ -75,8 +75,8 @@
  void order_elements_desc(uint64_t * list, size_t size){
  	uint64_t max = 0, tmp = 0;
  	int i, j, iMax = 0;
- 	for(i = 0; i < size; i++){
- 		for(j = i; j < size; j++){
+ 	for(i = 0; i < size; ++i){
+ 		for(j = i; j < size; ++j){
  			if(list[j] > max){
  				max = list[j];
  				iMax = j;
@@ -92,17 +92,17 @@
  /* Orders elements of a list ascendingly */
  void order_elements_asc(uint64_t * list, size_t size){
  	uint64_t min = -1, tmp = 0;
- 	int i, j, iMin = 0;
- 	for(i = 0; i < size; i++){
- 		for(j = i; j < size; j++){
+ 	int i, j, i_min = 0;
+ 	for(i = 0; i < size; ++i){
+ 		for(j = i; j < size; ++j){
  			if(list[j] < min){
  				min = list[j];
- 				iMin = j;
+ 				i_min = j;
  			}
  		}
  		tmp = list[i];
  		list[i] = min;
- 		list[iMin] = tmp;
+ 		list[i_min] = tmp;
  		min = -1;
  	}
  }
@@ -124,7 +124,7 @@
   */
   uint64_t * get_first_order(size_t size){
  	uint64_t * list = calloc(size + 1, sizeof(uint64_t));
- 	for(size_t i = 0; i < size; i++){
+ 	for(size_t i = 0; i < size; ++i){
  		list[i] = i;
  	}
  	list[size] = -1;
@@ -132,7 +132,7 @@
   }
   int * get_first_order_int(int size){
  	int * list = calloc(size + 1, sizeof(int));
- 	for(int i = 0; i < size; i++){
+ 	for(int i = 0; i < size; ++i){
  		list[i] = i;
  	}
  	list[size] = -1;
@@ -158,14 +158,14 @@ bool get_next_order(uint64_t * order, size_t size){
  	int i = size-2;
  	// While it' a descending list, it's good.
  	while( i >= 0 && order[1+i] < order[i]){
- 		i--;
+ 		--i;
  	}
  	if(i >= 0){
  		/* We need to swap the ith element */
  		size_t next_el_index = i+1;
  		// Calculating what is the next element in the list.
  		// It's the smallest number bigger than next[i-1]
- 		for(int j = i+2; j < size; j++){
+ 		for(int j = i+2; j < size; ++j){
  			if( order[i] < order[j] && order[j] <= order[next_el_index]){
  				next_el_index = j;
  			}
@@ -182,7 +182,7 @@ bool get_next_order(uint64_t * order, size_t size){
 
  uint64_t * get_first_subset(size_t size){
 	uint64_t * list = calloc(size+1, sizeof(uint64_t));
-	for(int i = 0; i <= size; i++){
+	for(int i = 0; i <= size; ++i){
 		list[i] = -1;
 	}
 	list[0] = 0;
@@ -191,14 +191,14 @@ bool get_next_order(uint64_t * order, size_t size){
 
 uint64_t * get_next_subset(uint64_t * list, size_t size){
 	uint64_t max = 0;
-	for(int i = 0; list[i] != -1; i++){
+	for(int i = 0; list[i] != -1; ++i){
 		if(list[i] >= max)
 			max = list[i];
 	}
 	bool hasNext = get_next_order(list,max);
 	if(hasNext){
 		// count which elements we have until now
-		for(int i = 0; i <= max + 1; i++){
+		for(int i = 0; i <= max + 1; ++i){
 			list[i] = i;
 		}
 		return list;
@@ -210,14 +210,14 @@ uint64_t * get_next_subset(uint64_t * list, size_t size){
 int str_list_len(const char * const list[]){
 	int len = 0;
 	while(list[len] != NULL)
-		len ++;
+		++len;
 	return len;
 }
 
 int int_list_len(const int * const list){
 	int len = 0;
 	while(list[len] != -1)
-		len ++;
+		++len;
 	return len;
 }
 
@@ -225,9 +225,9 @@ int not_null_int_list_len(const int * const list){
 	int i = 0, len = 0;
 	while(list[i] != -1){
 		if(list[i] > 0){
-			len++;
+			++len;
 		}
-		i ++;
+		++i;
 	}
 	return len;
 }
@@ -235,7 +235,7 @@ int not_null_int_list_len(const int * const list){
 bool equal_lists(int * a, int * b){
 	int i = 0;
 	while(a[i] != -1 && b[i] == a[i]){
-		i++;
+		++i;
 	}
 	return a[i] == b[i];
 }
@@ -245,9 +245,9 @@ bool equal_lists(int * a, int * b){
 int find_first_positive(int * list){
 	int index = 0;
 	while(list[index] == 0){
-		index++;
+		++index;
 	}
-	if(list[index] == -1){
+	if(list[index] <= 0){
 		return -1;
 	} else {
 		return index;
@@ -258,12 +258,12 @@ int find_first_positive(int * list){
 int find_last_positive(int * list){
 	int index = 0;
 	while(list[index] != -1){
-		index++;
+		++index;
 	}
 	// the current value was -1;
-	index--;
+	--index;
 	while( index >= 0 && list[index] == 0) {
-		index--;
+		--index;
 	}
 	// may return -1 in case of error.
 	return index;
@@ -276,7 +276,7 @@ int find_max_int(int * list){
 	while(list[index] != -1){
 		if(max < list[index])
 			max = list[index];
-		index++;
+		++index;
 	}
 
 	return max;
@@ -291,7 +291,7 @@ int find_max_int_index(int * list){
 			max = list[index];
 			max_ind = index;
 		}
-		index++;
+		++index;
 	}
 
 	return max_ind;
@@ -300,11 +300,11 @@ int find_max_int_index(int * list){
 /* Orders indexes according to value in a list */
 void order_by_rank(int * list, int * rank){
 	int i = 0, j = 0, k = 0, n, max = -1, i_list = 0;
-	for(n = 0; rank[n] >= 0; n++){}
+	for(n = 0; rank[n] >= 0; ++n){}
 	bool * used = calloc(n , sizeof(bool));
-	for(i = 0; i < n - j; i++){
+	for(i = 0; i < n - j; ++i){
 		max = n;
-		for(k = 0; k < n; k++){
+		for(k = 0; k < n; ++k){
 			if(used[k])
 				continue;
 			if(rank[k] > rank[max]){
@@ -313,7 +313,7 @@ void order_by_rank(int * list, int * rank){
 		}
 		used[max] = true;
 		list[i_list] = max;
-		i_list++;
+		++i_list;
 	}
 	free(used);
 	list[n] = -1;
@@ -322,19 +322,19 @@ void order_by_rank(int * list, int * rank){
 void order_by_rank_not_null(int * list, int * rank){
 	int i = 0, k = 0, n, max = -1, i_list = 0;
 	bool * used;
-	for(n = 0; rank[n] >= 0; n++){
+	for(n = 0; rank[n] >= 0; ++n){
 	}
 	used = calloc(n+1 , sizeof(bool));
-	for(i = 0; rank[i] >= 0; i++){
+	for(i = 0; rank[i] >= 0; ++i){
 		if(rank[i] == 0){
 			used[i] = true;
 		} else {
 			used[i] = false;
 		}
 	}
-	for(i = 0; i < n; i++){
+	for(i = 0; i < n; ++i){
 		max = n;
-		for(k = 0; k < n; k++){
+		for(k = 0; k < n; ++k){
 			if(used[k])
 				continue;
 			if(rank[k] > rank[max]){
@@ -343,9 +343,9 @@ void order_by_rank_not_null(int * list, int * rank){
 		}
 		used[max] = true;
 		list[i_list] = max;
-		i_list++;
+		++i_list;
 	}
-	for(i = 0; i < n; i++){
+	for(i = 0; i < n; ++i){
 		if(list[i] == n){
 			list[i] = -1;
 			break;
@@ -357,9 +357,9 @@ void order_by_rank_not_null(int * list, int * rank){
 
 int intersec_size(int * list_a, int * list_b){
 	int n = 0, i;
-	for( i = 0; list_a[i] >= 0 && list_b[i] >= 0;i++){
+	for( i = 0; list_a[i] >= 0 && list_b[i] >= 0; ++i){
 		if(list_a[i] > 0 && list_b[i] > 0){
-			n++;
+			++n;
 		}
 	}
 	return n;
