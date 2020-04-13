@@ -14,5 +14,17 @@
 #ifndef SCORE_H
 #define SCORE_H
 
+#include "decisions.h"
+#include "maths.h"
+#include "types.h"
+
+/* Gives this node its score. */
+bool rank_partial_node(School * school, DecisionNode * node);
+
+/* Gives this node its score. */
+bool rank_final_node(School * school, DecisionNode * node);
+
+/* Ranks possible children nodes. */
+bool score_children(School * school, DecisionNode * node);
 
 #endif /* SCORE_H */

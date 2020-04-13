@@ -27,6 +27,7 @@ struct DecisionNode{
 	int id;
 	NodeType type;
 	DecisionNode * parent;
+	DecisionNode * children;
 	DecisionTree * owner;
 
 	// TODO: threading.
@@ -34,10 +35,20 @@ struct DecisionNode{
 	// thrd_t responsible;
 	// bool is_child_locked;
 
+	int * children_score;
+	int * children_score_order;
+	int children_alloc_sz;
+
+	Meeting * next_affected_meeting;
+	NodeType next_node_type;
+
 	/* What decision was made. Is this field necessary? */
 	Meeting * affected_meeting;
 	/* The meeting list computed afterwards. */
 	Meeting * conclusion;
+
+	int is_final;
+	int is_consistent;
 
 	double score;
 };

@@ -125,3 +125,23 @@ DecisionTree * init_decision_tree(School * school){
 	}
 	return tree;
 }
+
+int make_decision(School * school, DecisionNode * parent){
+	// int i_child, i_score;
+	//
+	//
+	// if(!parent->is_final){
+	// 	if(parent->children_score == NULL){
+	// 		score_children(school, parent);
+	// 	} else {
+	// 		for(i_child = 0; parent->children_score[i_child] >= 0; ++i_child){ }
+	// 		//
+	// 		// 	if(i_child >= children_alloc_sz){
+	// 		// 		parent->children_alloc_sz += 16;
+	// 		// 		parent->children = realloc(parent->children, parent->children_alloc_sz);
+	// 		// 		parent->children_score =
+	// 		// 	}
+	// 	}
+	// }
+	return 0;
+}
