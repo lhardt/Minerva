@@ -1,6 +1,6 @@
 # Minerva
 
-Uma solução informatizada para o escalonamento de professores nas escolas brasileiras.
+Implementação de um Software para a Criação da Grade Horária de Escolas Brasileiras. 
 
 
 ## Dados Gerais
