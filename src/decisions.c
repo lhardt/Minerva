@@ -17,7 +17,7 @@
 #include <stdio.h>
 
 static const int  FIRST_ALLOC_SZ = 100;
-static const int EXPAND_ALLOC_SZ = 100;
+// static const int EXPAND_ALLOC_SZ = 100;
 
 static int g_TREE_LASTID = 0;
 
@@ -82,7 +82,7 @@ int * make_possible_period_list(School * school, Meeting * meeting){
 }
 
 DecisionTree * init_decision_tree(School * school){
-	int n_meetings, i_class, i_meet = 0, i_need, i_quant;
+	int i_class, i_meet = 0, i_need, i_quant;
 	/* References to shorten indirection. */
 	Class * class;
 	Meeting * conclusion;
@@ -100,9 +100,9 @@ DecisionTree * init_decision_tree(School * school){
 	tree->start[0].parent = NULL;
 	tree->start[0].owner = tree;
 
-	n_meetings = count_required_meetings(school, NULL, NULL);
+	tree->n_meetings = count_required_meetings(school, NULL, NULL);
 
-	tree->start[0].conclusion = calloc(n_meetings + 1, sizeof(Meeting));
+	tree->start[0].conclusion = calloc(tree->n_meetings + 1, sizeof(Meeting));
 
 	conclusion = tree->start[0].conclusion;
 

@@ -84,7 +84,7 @@ struct Teacher{
 	ClassQuantity * possible_classes;
 	ClassQuantity * classes;
 
-	Teacher      ** subordinates;
+	int * subordinates;
 
 
 	int    		  * periods;
@@ -121,7 +121,7 @@ struct Class{
 	 */
 	bool abstract;
 
-	Class       * * subordinates;
+	int * subordinates;
 
 	SubjectQuantity * needs;
 	int max_per_day_group[MAX_GROUPS];
@@ -171,14 +171,15 @@ typedef struct Meeting{
 	/* Initially fixed */
 	Class      	  * class;
 	Subject    	  * subj;
-
+	/* May be fixed */
 	Teacher    	  * teacher;
 	Room 	   	  * room;
 	int 	     	period;
 
-	/* A score given to each teacher, period and room, where
-	 * possible_periods[i] is the score of periods[i] in this
-	 * meeting. Similarly the others*/
+	/* Scores given to each teacher, period and room, where
+	 * possible_x[i] is the score of the choic x[i] in this
+	 * meeting.
+	 */
 	int    	      * possible_periods;
 	int			  * possible_rooms;
 	int			  * possible_teachers;

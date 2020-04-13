@@ -99,7 +99,7 @@ bool equal_lists(int * a, int * b);
 int find_first_positive(int * list);
 
 /* Returns the index of the last positive integer in a list terminated
- * by -1.
+ * by -1. If no such number exists, retuns -1.
  */
 int find_last_positive(int * list);
 

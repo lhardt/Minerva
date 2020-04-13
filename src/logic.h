@@ -30,7 +30,7 @@ int count_required_meetings(School * school, Class * class, Subject * subject);
 /**
  * Checks if a given node can not possibly be a solution.
  *
- *
+ * This simply means that no meeting can have no periods to be in.
  *
  */
 bool is_invalid(DecisionNode * node);
@@ -90,14 +90,14 @@ bool reverse_analogous_ordering(School * school, DecisionNode * node);
  * Logic Type: Period-*;
  *
  * Basic Explanation:
- *   If teacher A teaches discipline D to class C at period P, in room R
- *      Then: A cannot teach any other class at P;
- *          - C cannot attend any other lecture at P;
- *		    - R cannot be allocated at P by any other meeting;
- *			- A teaches C in all periods of D for C;
- *			- R accomodates every period of D to C;
- *			- Any superordinate of A cannot lecture at P;
- *			- Any superordinate of C cannot attend lectures at P.
+ *   If teacher T teaches subject S to class C at period P, in room R
+ *      Then: 1 T cannot teach any other class at P;
+ *          - 2 C cannot attend any other lecture at P;
+ *		    - 3 R cannot be allocated at P by any other meeting;
+ *			- 4 T teaches C in all periods of S for C;
+ *			- 5 R accomodates every period of S to C;
+ *			- 6 Any super/subordinate of T cannot lecture at P;
+ *			- 7 Any super/subordinate of C cannot attend lectures at P.
  *
  * Things to consider:
  * - TODO This algorithm **should** work even if one of the parameters (A,C, or R)

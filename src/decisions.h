@@ -48,6 +48,8 @@ struct DecisionTree{
 	int alloc_sz;
 	int last_index;
 
+	int n_meetings;
+
 	DecisionNode * start;
 };
 
