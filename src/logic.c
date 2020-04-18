@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 
+#include "assert.h"
 #include "util.h"
 #include "maths.h"
 #include "logic.h"
@@ -13,6 +14,10 @@
 // bool detect_class_circular_subordination(School * school){
 //
 // }
+
+bool root_consistency_check(School * school, DecisionNode * node){
+	return false;
+}
 
 /* NOTE: expects plain relationships, not composite ones
  * If t1 subordinates t2, returns +1
@@ -58,7 +63,10 @@ int count_required_meetings(
 				Subject * subject
 				){
 	int count = 0, i_class = 0, i_need = 0;
-	if(school != NULL && school->classes != NULL && school->n_classes > 0){
+
+	LMH_ASSERT(school != NULL, "null par");
+
+	if(school->classes != NULL && school->n_classes > 0){
 		for(i_class = 0; i_class < school->n_classes; i_class++){
 			if( (class == NULL) != (&school->classes[i_class] == class) ){
 				for(i_need = 0; school->classes[i_class].needs[i_need].subject != NULL; i_need++){

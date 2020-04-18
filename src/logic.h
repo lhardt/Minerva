@@ -22,8 +22,13 @@
  * All parameters except for the first are optional.
  *
  * Default values:
- *	Teacher: NULL;
- *	Class: NULL;
+ *	Teacher: NULL, Class: NULL;
+ *
+ * Assertion Preconditions:
+ *  - School is not null.
+ *
+ * Development Status:
+ * 		Implemented, Untested.
  */
 int count_required_meetings(School * school, Class * class, Subject * subject);
 
