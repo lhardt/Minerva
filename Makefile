@@ -27,7 +27,7 @@ TSTGET  := $(BINDIR)/test
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJ) $(TSTOBJ)
 
 $(OBJ): $(SRC)
 	$(CC)  $(CFLAGS) -c $(@:$(OBJDIR)/%.o=$(SRCDIR)/%.c) -o $@
