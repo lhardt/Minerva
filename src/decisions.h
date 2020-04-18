@@ -6,8 +6,8 @@
  *
  * This program is free software. See LICENSE.
  *
- * This module contains structures and functions for the creation
- * and development of a decision tree in school timetabling.
+ * This module contains structures related to
+ * decision trees for school timetabling.
  */
 #ifndef DECISIONS_H
 #define DECISIONS_H
@@ -27,8 +27,15 @@ struct DecisionNode{
 	int id;
 	NodeType type;
 	DecisionNode * parent;
+	/* Does not make it clear when nodes
+	 * from different parents are sequentially
+	 * allocated. This is an optimisation planned
+	 * for the near future. The distinction of "end of list"
+	 * is given by n_children.
+	 */
 	DecisionNode * children;
 	DecisionTree * owner;
+	int n_children;
 
 	// TODO: threading.
 	// bool is_locked;
@@ -62,13 +69,7 @@ struct DecisionTree{
 	int n_meetings;
 
 	DecisionNode * start;
+	DecisionNode * best_satisfaction_node;
 };
-
-
-DecisionTree * init_decision_tree(School * school);
-
-void primary_search(DecisionNode * tree, int limit_sec);
-
-void explore_consequences(DecisionTree * tree, int limit_sec, Meeting * affected, Teacher * fixed_teacher, Class * fixed_class, int fixed_period);
 
 #endif /* DECISIONS_H */

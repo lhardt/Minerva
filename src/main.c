@@ -14,10 +14,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
+#include "assert.h"
 #include "types.h"
 #include "util.h"
-#include "decisions.h"
 #include "logic.h"
+#include "decisions.h"
+#include "solver.h"
 #include "loader.h"
 
 School * test_case_1(){
@@ -211,5 +214,7 @@ void test_insert_school(){
 
 int main(){
 	test_case_1();
+	// LMH_ASSERT(false, "Assertion failed. ");
+
 	return 0;
 }

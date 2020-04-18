@@ -1,6 +1,6 @@
 /*
  * Project Minerva.
- *   decisions.c - decision tree for timetabling.
+ *   solver.c - timetabling problem solver.
  *
  * (C) 2019-2020 Léo Hardt <leom.hardt@gmail.com>.
  *
@@ -9,9 +9,12 @@
  * This module contains structures and functions for the creation
  * and development of a decision tree in school timetabling.
  */
+
+#include "assert.h"
 #include "types.h"
-#include "decisions.h"
 #include "logic.h"
+#include "decisions.h"
+#include "solver.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -25,6 +28,8 @@ int * make_possible_teacher_list(School * school, Meeting * meeting){
 	int i_teacher, i_teaches;
 	/* Reference to shorten indirection. */
 	Teacher * teacher;
+
+	LMH_ASSERT( (school != NULL) && (meeting != NULL), "null parameters" );
 
 	int * scores = calloc(school->n_teachers + 1, sizeof(int));
 	scores[school->n_teachers] = -1;
@@ -144,4 +149,37 @@ int make_decision(School * school, DecisionNode * parent){
 	// 	}
 	// }
 	return 0;
+}
+
+
+Meeting * create_timetable(School * school){
+	bool valid = false;
+	/* currhead refers to the top node being changed */
+	// DecisionNode * curr, currhead;
+
+	LMH_ASSERT(school != NULL, "null par");
+
+	/* Preprocess  -- ? */
+	/* Initialize  */
+	DecisionTree * tree = init_decision_tree(school);
+	/* Diagnose inconsistencies */
+	valid = root_consistency_check(school, &(tree->start));
+	if(!valid){
+		return NULL;
+	}
+	/* Create a valid timetable */
+	// curr = tree->start;
+
+
+
+	/* The tree will have, at most, 3x n_meetings depth */
+	int * min_score_by_depth = calloc( 3 * tree->n_meetings + 1, sizeof(int));
+	min_score_by_depth[3 * tree->n_meetings] = -1;
+	while(true){
+
+	}
+	/* Then optimize it */
+
+
+	return NULL;
 }

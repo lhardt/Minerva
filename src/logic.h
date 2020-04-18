@@ -33,7 +33,7 @@ int count_required_meetings(School * school, Class * class, Subject * subject);
  * This simply means that no meeting can have no periods to be in.
  *
  */
-bool is_invalid(DecisionNode * node);
+bool is_node_invalid(School * school, DecisionNode * node);
 
 /* PERIOD OVERFLOW RULE:
  *
@@ -178,4 +178,33 @@ bool elim_general_super_room(School * school, DecisionNode * node);
 
 bool elim_super_room_daily(School * school, DecisionNode * node, int day);
 
-#endif /* PRIMARY_LOGIC_H */
+/* ROOT CONSISTENCY CHECK
+ *
+ * Returns false if it is garanteed that no timetable can be made.
+ *
+ * TODO: implement
+ */
+bool root_consistency_check(School * school, DecisionNode * node);
+
+/* ROOT ELIMINATION
+ *
+ * Tries to eliminate, as much as possible, upfront.
+ * Making this avoids entire branches of the tree to grow.
+ *
+ * TODO: Implement.
+ */
+bool root_elimination(School * school, DecisionNode * node);
+
+/* NEW NODE ELIMINATIONS
+ *
+ * Blackbox functions for eliminating possibilities,
+ * based on the type of node created.
+ *
+ * TODO: Implement.
+ */
+bool new_node_elimination(School * school, DecisionNode * node);
+bool new_teacher_node_elimination(School * school, DecisionNode * node);
+bool new_room_node_elimination(School * school, DecisionNode * node);
+bool new_period_node_elimination(School * school, DecisionNode * node);
+
+#endif /* LOGIC_H */
