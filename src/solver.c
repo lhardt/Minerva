@@ -163,7 +163,7 @@ Meeting * create_timetable(School * school){
 	/* Initialize  */
 	DecisionTree * tree = init_decision_tree(school);
 	/* Diagnose inconsistencies */
-	valid = root_consistency_check(school, &(tree->start));
+	valid = root_consistency_check(school, (tree->start));
 	if(!valid){
 		return NULL;
 	}

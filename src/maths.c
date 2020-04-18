@@ -22,12 +22,12 @@
  *		Calculates the result of P!/(P-T)!
  *
  * Development Status:
- *		Implemented,
+ *		Implemented, Tested
  */
 uint64_t factorial_division(const uint64_t p, const uint64_t t){
 	uint64_t i = p;
 	uint64_t total = 1;
-	LMH_ASSERT(p >= t && p > 0, "invalid par");
+	LMH_ASSERT(p >= t && p >= 0 && t >= 0, "invalid par");
 	while(i > t){
 		total *= i;
 		--i;
@@ -39,7 +39,7 @@ uint64_t factorial_division(const uint64_t p, const uint64_t t){
  * 		Calculates the result of N!
  *
  * Development Status:
- * 		Implemented,
+ * 		Implemented, Tested
  */
 uint64_t factorial(const uint64_t n){
 	LMH_ASSERT(n>=0, "invalid par");
@@ -50,7 +50,7 @@ uint64_t factorial(const uint64_t n){
  * 		Gets one combination of K elements, based on its index.
  *
  * Development Status:
- *		Implemented,
+ *		Implemented, TODO test
  *
  * Example:
  *   With n=5, we have the numbers {1,2,3,4,5},
@@ -94,27 +94,39 @@ uint64_t * create_list_by_index(const uint64_t elements_, const uint64_t n){
 }
 
 /* ORDER ELEMENTS DESC
- *		Orders elements of a list descendingly
- * Alters the list.
+ *		Orders elements of a list descendingly.
  *
  * Development status:
- * 		Implemented
+ * 		Implemented, Tested
  */
-void order_elements_desc(uint64_t * list, const size_t size){
-	uint64_t max = 0, tmp = 0;
-	int i, j, iMax = 0;
-	for(i = 0; i < size; ++i){
-		for(j = i; j < size; ++j){
-			if(list[j] > max){
-				max = list[j];
-				iMax = j;
+int * order_elements_desc(const int * const list){
+	int min = 0, tmp = 0;
+	int i, j, i_min = 0, n;
+
+	LMH_ASSERT(list != NULL, "null par");
+
+	for(n = 0; list[n] >= 0; n++){ }
+
+	int * ordered = calloc(n+1, sizeof(int));
+
+	for(i = 0; i <= n; i++){
+		ordered[i] = list[i];
+	}
+
+	for(i = 0; i < n; ++i){
+		min = ordered[i];
+		i_min = i;
+		for(j = i + 1; j < n; ++j){
+			if(ordered[j] >= min){
+				i_min = j;
+				min = ordered[i_min];
 			}
 		}
-		tmp = list[i];
-		list[i] = max;
-		list[iMax] = tmp;
-		max = 0;
+		tmp = ordered[i];
+		ordered[i] = ordered[i_min];
+		ordered[i_min] = tmp;
 	}
+	return ordered;
 }
 
 /* ORDER ELEMENTS ASC
@@ -122,49 +134,49 @@ void order_elements_desc(uint64_t * list, const size_t size){
  * Alters the list.
  *
  * Development Status:
- *		Implemented.
+ *		Implemented, Tested
  */
-void order_elements_asc(uint64_t * list, const size_t size){
-	uint64_t min = -1, tmp = 0;
-	int i, j, i_min = 0;
-	for(i = 0; i < size; ++i){
-		for(j = i; j < size; ++j){
-			if(list[j] < min){
-				min = list[j];
+int * order_elements_asc(const int * const list){
+	int min = 0, tmp = 0;
+	int i, j, i_min = 0, n;
+
+	LMH_ASSERT(list != NULL, "null par");
+
+	for(n = 0; list[n] >= 0; n++){ }
+
+	int * ordered = calloc(n+1, sizeof(int));
+
+	for(i = 0; i <= n; i++){
+		ordered[i] = list[i];
+	}
+
+	for(i = 0; i < n; ++i){
+		min = ordered[i];
+		i_min = i;
+		for(j = i + 1; j < n; ++j){
+			if(ordered[j] <= min){
 				i_min = j;
+				min = ordered[i_min];
 			}
 		}
-		tmp = list[i];
-		list[i] = min;
-		list[i_min] = tmp;
-		min = -1;
+		tmp = ordered[i];
+		ordered[i] = ordered[i_min];
+		ordered[i_min] = tmp;
 	}
-}
-
-/* GET FIRST ORDER
- *		Returns the first order of n elements, namely [0,1,2,3... n].
- *
- * Development status:
- *		Implemented.
- */
-uint64_t * get_first_order(const size_t size){
-	uint64_t * list = calloc(size + 1, sizeof(uint64_t));
-	for(size_t i = 0; i < size; ++i){
-		list[i] = i;
-	}
-	list[size] = -1;
-	return list;
+	return ordered;
 }
 
 /* GET FIRST ORDER INT
  *		Returns the first order of n elements, namely [0,1,2,3... n].
  *
  * Development status:
- *		Implemented.
+ *		Implemented, TODO test
  */
-int * get_first_order_int(const int size){
-	int * list = calloc(size + 1, sizeof(int));
-	for(int i = 0; i < size; ++i){
+int * get_first_order(const int size){
+	int i, *list;
+	LMH_ASSERT(size >= 0, "null par");
+	list = calloc(size + 1, sizeof(int));
+	for(i = 0; i < size; ++i){
 		list[i] = i;
 	}
 	list[size] = -1;
@@ -174,33 +186,35 @@ int * get_first_order_int(const int size){
 /* GET NEXT ORDER
  *		returns the next order of elements (from dec to asc)
  *
- * Jumps to the next possible order of those elements.
+ * 		Imagine that you have a particular list of numbers.
+ *		The corresponding set has a list of (nummerable) possible orders,
+ * 		so the list [1,2,3,4,5] has these possible orders:
+ * 		[[1,2,3,4,5], [1,2,3,5,4], [1,2,4,3,5], ... [5,4,3,2,1]]
  *
- * Imagine that you have a particular list of numbers.
+ * 		What this function does is that it jumps from one in the
+ * 		above list to the next.
  *
- * The corresponding set has a list of (nummerable) possible orders,
- * so the list [1,2,3,4,5] has these possible orders:
- *
- * [[1,2,3,4,5], [1,2,3,5,4], [1,2,4,3,5], ... [5,4,3,2,1]]
- *
- * What this function does is that it jumps from one in the
- * above list to the next.
- *
- * When we have the last element on that list, say, [3,2,1],
- * this function just doesn't alter anything.
+ * 		When we have the last element on that list, say, [3,2,1],
+ * 		this function just doesn't alter anything.
  *
  * Development status:
- * 		Implemented
+ * 		Implemented, TODO test
  */
-bool get_next_order(uint64_t * order, const size_t size){
-	int i = size-2;
+bool get_next_order(int * order){
+	int i, j;
+	int * sublist;
+
+	int size;
+	for(size = 0; order[size] >= 0; size++) { }
+
+	i = size - 2;
 	// While it' a descending list, it's good.
 	while( i >= 0 && order[1+i] < order[i]){
 		--i;
 	}
 	if(i >= 0){
 		/* We need to swap the ith element */
-		size_t next_el_index = i+1;
+		int next_el_index = i+1;
 		// Calculating what is the next element in the list.
 		// It's the smallest number bigger than next[i-1]
 		for(int j = i+2; j < size; ++j){
@@ -208,10 +222,14 @@ bool get_next_order(uint64_t * order, const size_t size){
 				next_el_index = j;
 			}
 		}
-		uint64_t tmp = order[i];
+		int tmp = order[i];
 		order[i] = order[next_el_index];
 		order[next_el_index] = tmp;
-		order_elements_asc(&order[i+1], size-i-1);
+		sublist = order_elements_asc(&order[i+1]);
+		for(j = i+1; j <= size; j++){
+			order[i] = sublist[i];
+		}
+		free(sublist);
 	} else {
 		return false;
 	}
@@ -222,7 +240,7 @@ bool get_next_order(uint64_t * order, const size_t size){
  * 		returns the first index of subsets of that size (just an empty list)
  *
  * Development status:
- * 		Implemented
+ * 		Implemented, TODO test
  */
 uint64_t * get_first_subset(const size_t size){
 	uint64_t * list = calloc(size+1, sizeof(uint64_t));
@@ -237,30 +255,35 @@ uint64_t * get_first_subset(const size_t size){
  *		returns the next subset (from dec to asc)
  *
  * Development status:
- *		Implemented
+ *		Implemented, TODO test
  */
-uint64_t * get_next_subset(uint64_t * list, const size_t size){
+bool get_next_subset(int * list){
 	uint64_t max = 0;
+	int tmp;
 	for(int i = 0; list[i] != -1; ++i){
-		if(list[i] >= max)
+		if(list[i] >= max){
 			max = list[i];
+		}
 	}
-	bool hasNext = get_next_order(list,max);
+	tmp = list[max];
+	list[max] = -1;
+	bool hasNext = get_next_order(list);
+	list[max] = tmp;
 	if(hasNext){
 		// count which elements we have until now
 		for(int i = 0; i <= max + 1; ++i){
 			list[i] = i;
 		}
-		return list;
+		return true;
 	}
-	return NULL;
+	return false;
 }
 
 /* STR LIST LEN
  *		returns the size of a null-terminated list of pointers.
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested.
  */
 int str_list_len(const char * const list[]){
 	int len = 0;
@@ -274,7 +297,7 @@ int str_list_len(const char * const list[]){
  *		returns the length of a negative-terminated int list.
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested
  */
 int int_list_len(const int * const list){
 	int len = 0;
@@ -284,37 +307,40 @@ int int_list_len(const int * const list){
 	return len;
 }
 
-/* NOT NUL INT LIST LEN
+/* NON ZERO INT LIST COUNT
  *		returns the number of positive ints in a negative-terminated list
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested
  */
-int not_null_int_list_len(const int * const list){
-	int i = 0, len = 0;
+int non_zero_int_list_count(const int * const list){
+	int i = 0, ctr = 0;
 	LMH_ASSERT(list != NULL, "null par");
-	while(list[i] != -1){
+	while(list[i] >= 0){
 		if(list[i] > 0){
-			++len;
+			++ctr;
 		}
 		++i;
 	}
-	return len;
+	return ctr;
 }
 
 /* ARE INT LISTS EQUAL
  *		returns true if all elements of two negative-terminated lists are equal
  *
  * Development status:
- * 		Implemented.
+ * 		Implemented, Tested
  */
 bool are_int_lists_equal(const int * const a, const int * const b){
 	int i = 0;
 	LMH_ASSERT(a != NULL && b != NULL, "null par");
+	if(a == b){
+		return true;
+	}
 	while(a[i] != -1 && b[i] == a[i]){
 		++i;
 	}
-	return a[i] == b[i];
+	return (a[i] < 0 && b[i] < 0) || a[i] == b[i];
 }
 
 
@@ -324,7 +350,7 @@ bool are_int_lists_equal(const int * const a, const int * const b){
  * Returns -1 in case that there was no such element.
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested
  */
 int find_first_positive(const int * const list){
 	int index = 0;
@@ -344,12 +370,12 @@ int find_first_positive(const int * const list){
  * Returns -1 in case that there was no such element.
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested
  */
 int find_last_positive(const int * const list){
 	int index = 0;
 	LMH_ASSERT(list != NULL, "null par");
-	while(list[index] != -1){
+	while(list[index] >= 0){
 		++index;
 	}
 	/* the current value was -1; */
@@ -364,103 +390,32 @@ int find_last_positive(const int * const list){
 /* FIND MAX INT
  *		Returns the index of the largest value in a non-negative int list.
  *
+ * If there are multiple instances of a same number, returns the first.
+ *
  * Development status:
- *		Implemented
+ *		Implemented, Tested
  */
 int find_max_int(const int * const list){
-	int index = 0, max = -1;
+	int i = 1, max = 0;
 	LMH_ASSERT(list != NULL, "null par");
-	while(list[index] != -1){
-		if(max < list[index])
-			max = list[index];
-		++index;
+	if(list[0] < 0){
+		return -1;
 	}
-	return index;
+	while(list[i] != -1){
+		if(list[max] < list[i])
+			max = i;
+		++i;
+	}
+	return max;
 }
 
-/* ORDER BY VALUE
- *		Orders indexes according to value in a list
- *
- * Returns a list of indexes.
- *
- * Development status:
- * 		Implemented.
- */
-int * order_by_value(const int * const values){
-	int i = 0, j = 0, k = 0, n, max = -1, i_list = 0;
-	int * list;
-	LMH_ASSERT(values != NULL, "null par");
-	for(n = 0; values[n] >= 0; ++n){ }
-	list = calloc(n + 1, sizeof(int));
-	for(i = 0; i <= n; i++){
-		list[i] = -1;
-	}
-	for(i = 0; i < n - j; ++i){
-		max = n;
-		for(k = 0; k < n; ++k){
-			if(list[k] != -1)
-				continue;
-			if(values[k] > values[max]){
-				max = k;
-			}
-		}
-		list[i_list] = max;
-		++i_list;
-	}
-	return list;
-}
-
-/* ORDER BY VALUE NOT ZERO
- *		returns a list of indexes, by ascending order.
- *
- * The list returned may end before values's list, because it
- * does not include indexes s.t. values[list[i]] = 0.
- *
- * Development status:
- *		Implemented.
- */
-int * order_by_value_not_zero(const int * const values){
-	int i = 0, k = 0, n, max = -1, i_list = 0;
-	LMH_ASSERT(values != NULL, "null par");
-	int * list;
-	for(n = 0; values[n] >= 0; ++n){ }
-	list= calloc(n+1 , sizeof(int));
-	for(i = 0; i <= n; i++){
-		list[i] = -1;
-	}
-	for(i = 0; values[i] >= 0; ++i){
-		if(values[i] == 0){
-			list[i] = 0;
-		}
-	}
-	for(i = 0; i < n; ++i){
-		max = n;
-		for(k = 0; k < n; ++k){
-			if(list[k] != -1)
-				continue;
-			if(values[k] > values[max]){
-				max = k;
-			}
-		}
-		list[i_list] = max;
-		++i_list;
-	}
-	for(i = 0; i < n; ++i){
-		if(list[i] == n){
-			list[i] = -1;
-			break;
-		}
-	}
-	return list;
-}
-
-/* INT LIST INTERSEC SIZE
+/* INT LIST BOTH POSITIVE CTR
  *		calculates the number of times taht a[i] > 0 & b[i] > 0.
  *
  * Development status:
- *		Implemented.
+ *		Implemented, Tested
  */
-int int_list_intersec_size(const int * const list_a, const int * const list_b){
+int int_list_both_positive_ctr(const int * const list_a, const int * const list_b){
 	int n = 0, i;
 	for( i = 0; list_a[i] >= 0 && list_b[i] >= 0; ++i){
 		if(list_a[i] > 0 && list_b[i] > 0){

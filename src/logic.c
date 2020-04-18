@@ -125,20 +125,20 @@ bool elim_search_fixed_meeting(School * school, DecisionNode * node){
 	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
 		meeting = &node->conclusion[i_meet];
 		/* Check for fixed teachers */
-		if(meeting->teacher == NULL && 1 == not_null_int_list_len(meeting->possible_teachers)){
+		if(meeting->teacher == NULL && 1 == non_zero_int_list_count(meeting->possible_teachers)){
 			meeting->teacher = &school->teachers[find_first_positive(meeting->possible_teachers)];
 			++changed_meetings[i_meet];
 			change = true;
 		}
 		/* Check for fixed rooms */
-		if(meeting->room == NULL && 1 == not_null_int_list_len(meeting->possible_rooms)){
+		if(meeting->room == NULL && 1 == non_zero_int_list_count(meeting->possible_rooms)){
 			found = find_first_positive(meeting->possible_rooms);
 			meeting->room = &school->rooms[found];
 			++changed_meetings[i_meet];
 			change = true;
 		}
 		/* Check for fixed periods */
-		if(meeting->period == -1 && 1 == not_null_int_list_len(meeting->possible_periods)){
+		if(meeting->period == -1 && 1 == non_zero_int_list_count(meeting->possible_periods)){
 			found = find_first_positive(meeting->possible_periods);
 			meeting->period = found;
 			++changed_meetings[i_meet];

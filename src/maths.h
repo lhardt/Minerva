@@ -24,7 +24,7 @@
  *		Calculates the result of P!/(P-T)!
  *
  * Development Status:
- *		Implemented,
+ *		Implemented, Tested
  */
 uint64_t factorial_division(const uint64_t p, const uint64_t t);
 
@@ -32,7 +32,7 @@ uint64_t factorial_division(const uint64_t p, const uint64_t t);
  * 		Calculates the result of N!
  *
  * Development Status:
- * 		Implemented,
+ * 		Implemented, Tested
  */
 uint64_t factorial(const uint64_t n);
 
@@ -40,7 +40,7 @@ uint64_t factorial(const uint64_t n);
  * 		Gets one combination of K elements, based on its index.
  *
  * Development Status:
- *		Implemented,
+ *		Implemented, TODO test
  *
  * Example:
  *   With n=5, we have the numbers {1,2,3,4,5},
@@ -56,66 +56,53 @@ uint64_t * create_list_by_index(const uint64_t elements, const uint64_t n);
 
 /* ORDER ELEMENTS DESC
  *		Orders elements of a list descendingly
- * Alters the list.
  *
  * Development status:
- * 		Implemented
+ * 		Implemented, Tested
  */
-void order_elements_desc(uint64_t * list, const size_t size);
+int * order_elements_desc(const int * const list);
 
 /* ORDER ELEMENTS ASC
  *		Orders elements of a list ascendingly
  * Alters the list.
  *
  * Development Status:
- *		Implemented.
+ *		Implemented, Tested
  */
-void order_elements_asc(uint64_t * list, const size_t size);
+int * order_elements_asc(const int * const list);
 
 /* GET FIRST ORDER
  *		Returns the first order of n elements, namely [0,1,2,3... n].
  *
  * Development status:
- *		Implemented.
+ *		Implemented, TODO test
  */
-uint64_t * get_first_order(const size_t size);
-
-/* GET FIRST ORDER INT
- *		Returns the first order of n elements, namely [0,1,2,3... n].
- *
- * Development status:
- *		Implemented.
- */
-int * get_first_order_int(const int size);
+int * get_first_order(const int size);
 
 /* GET NEXT ORDER
  *		returns the next order of elements (from dec to asc)
  *
- * Jumps to the next possible order of those elements.
+ * 		Imagine that you have a particular list of numbers.
+ *		The corresponding set has a list of (nummerable) possible orders,
+ * 		so the list [1,2,3,4,5] has these possible orders:
+ * 		[[1,2,3,4,5], [1,2,3,5,4], [1,2,4,3,5], ... [5,4,3,2,1]]
  *
- * Imagine that you have a particular list of numbers.
+ * 		What this function does is that it jumps from one in the
+ * 		above list to the next.
  *
- * The corresponding set has a list of (nummerable) possible orders,
- * so the list [1,2,3,4,5] has these possible orders:
- *
- * [[1,2,3,4,5], [1,2,3,5,4], [1,2,4,3,5], ... [5,4,3,2,1]]
- *
- * What this function does is that it jumps from one in the
- * above list to the next.
- *
- * When we have the last element on that list, say, [3,2,1],
- * this function just doesn't alter anything.
+ * 		When we have the last element on that list, say, [3,2,1],
+ * 		this function just doesn't alter anything.
  *
  * Development status:
- * 		Implemented
+ * 		Implemented, TODO test
  */
-bool get_next_order(uint64_t * order, size_t size);
+bool get_next_order(int * order);
 
 /* GET FIRST SUBSET
  * 		returns the first index of subsets of that size (just an empty list)
  *
  * Development status:
- * 		Implemented
+ * 		Implemented, TODO test
  */
 uint64_t * get_first_subset(size_t size);
 
@@ -123,15 +110,15 @@ uint64_t * get_first_subset(size_t size);
  *		returns the next subset (from dec to asc)
  *
  * Development status:
- *		Implemented
+ *		Implemented, TODO test
  */
-uint64_t * get_next_subset(uint64_t * list, const size_t size);
+bool get_next_subset(int * list);
 
 /* STR LIST LEN
  *		returns the size of a null-terminated list of pointers.
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested.
  */
 int str_list_len(const char * const list[]);
 
@@ -139,23 +126,23 @@ int str_list_len(const char * const list[]);
  *		returns the length of a negative-terminated int list.
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested.
  */
 int int_list_len(const int * const list);
 
-/* NOT NUL INT LIST LEN
+/* NON ZERO INT LIST COUNT
  *		returns the number of positive ints in a negative-terminated list
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested.
  */
-int not_null_int_list_len(const int * const list);
+int non_zero_int_list_count(const int * const list);
 
 /* ARE INT LISTS EQUAL
  *		returns true if all elements of two negative-terminated lists are equal
  *
  * Development status:
- * 		Implemented.
+ * 		Implemented, Tested.
  */
 bool are_int_lists_equal(const int * const a, const int * const b);
 
@@ -165,7 +152,7 @@ bool are_int_lists_equal(const int * const a, const int * const b);
  * Returns -1 in case that there was no such element.
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested.
  */
 int find_first_positive(const int * const list);
 
@@ -175,7 +162,7 @@ int find_first_positive(const int * const list);
  * Returns -1 in case that there was no such element.
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested.
  */
 int find_last_positive(const int * const list);
 
@@ -183,55 +170,16 @@ int find_last_positive(const int * const list);
  *		Returns the index of the largest value in a non-negative int list.
  *
  * Development status:
- *		Implemented
+ *		Implemented, Tested.
  */
 int find_max_int(const int * const list);
 
-/* ORDER BY VALUE
- *		Orders indexes according to value in a list
- *
- * Returns a list of indexes.
- *
- * Development status:
- * 		Implemented.
- */
-int find_max_int_index(const int * const list);
-
-/* ORDER BY VALUE
- *		Orders indexes according to value in a list
- *
- * Returns a list of indexes.
- *
- * Development status:
- * 		Implemented.
- */
-int * order_by_value(const int * const values);
-
-/* ORDER BY VALUE NOT ZERO
- *		returns a list of indexes, by ascending order.
- *
- * The list returned may end before values's list, because it
- * does not include indexes s.t. values[list[i]] = 0.
- *
- * Development status:
- *		Implemented.
- */
-int * order_by_value_not_zero(const int * const values);
-
-/* INT LIST INTERSEC SIZE
+/* INT LIST BOTH POSITIVE CTR
  *		calculates the number of times taht a[i] > 0 & b[i] > 0.
  *
  * Development status:
- *		Implemented.
+ *		Implemented, Tested.
  */
-void order_by_rank_not_null(int * list, int * rank);
-
-/* INT LIST INTERSEC SIZE
- *		calculates the number of times taht a[i] > 0 & b[i] > 0.
- *
- * Development status:
- *		Implemented.
- */
-int int_list_intersec_size(const int * const list_a, const int * const list_b);
+int int_list_both_positive_ctr(const int * const a, const int * const b);
 
 #endif /* MATHS_H */

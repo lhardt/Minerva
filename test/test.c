@@ -3,7 +3,7 @@
 #include "test_maths.h"
 
 int main(int argc, char ** argv){
+	test_maths_all();
 
-	printf("hello, world!\n");
 	return 0;
 }
