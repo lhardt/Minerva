@@ -16,7 +16,7 @@
 // }
 
 bool root_consistency_check(School * school, DecisionNode * node){
-	return false;
+	return true;
 }
 
 /* NOTE: expects plain relationships, not composite ones

@@ -1,0 +1,52 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{xcolor} % highlight
+\usepackage{soul} % highlight
+
+\newcommand{\hlc}[2][yellow]{{%
+    \colorlet{foo}{#1}%
+    \sethlcolor{foo}\hl{#2}}%
+}
+
+
+\usepackage{geometry}
+\geometry{
+	a4paper,
+	left=30mm,
+	right=30mm,
+	top=30mm,
+	bottom=30mm
+}
+
+\begin{document}
+
+	\begin{center}
+		\large\textbf{Resumo do Projeto} \\
+		\vspace{0.2cm}
+		\footnotesize\texttt{Minerva: Um Software para a Criação da Grade Horária de Escolas Brasileiras} \\
+		\hrule
+		\vspace{0.3cm}
+	\end{center}
+
+	Todo ano, milhares de escolas brasileiras devem refazer sua grade horária. Não é uma tarefa trivial: profissionais podem levar centenas de horas para criá-la. A\-tual\-mente, há programas de computador para auxiliar e substituir os professores neste processo. No entanto, alguns fatores como preço, incompatibilidade e inacessibilidade podem deixar muitos desses programas inutilizáveis. Há, então, uma grande necessidade por um software público para a criação da grade horária escolar no Brasil. O presente trabalho visa a implementação de tal \textit{software}. Inicialmente, foram estudados trabalhos anteriores na área. Paralelo a isso, foram elencadas as necessidades às quais tanto o programa quanto as grades horárias devem atender, via pesquisa bibliográfica e aplicação de um questionário junto a escolas. Com essas informações, o programa está sendo desenvolvido. Ele será testado em algumas das mesmas escolas que participaram do teste. Resultados preliminares do questionário indicam que escolas demonstraram grande interesse neste desenvolvimento. Além disso, a codificação do software têm tido resultados promissores. Sendo implementado com êxito, o programa será distribuído sem custos, economizando centenas de reais dos cofres públicos para cada escola que se propor a utilizá-lo.\\
+
+	% \hlc[cyan!50]{
+	% \hlc[yellow]{
+	% \hlc[green!50] {
+	% \hlc[pink]{
+	 % \hlc[cyan!50]{Todo ano, milhares de escolas no Brasil devem refazer seu cronograma escolar. Não é uma tarefa trivial: profissionais levam centenas de horas para criá-lo. Há \textit{softwares} para auxiliar e substituir os professores neste processo. No entanto, alguns fatores como preço, incompatiblidade e inacessibilidade podem deixá-los inutilizáveis. Há, então, uma grande necessidade por um software público para a criação da grade horária escolar no Brasil.}
+
+	\textbf{Palavras-chave:} Software, Escola, Grade Horária;
+
+	% \textbf{Cores e significado:} Azul: propósito, amarelo: métodos, rosa: resultados, verde: consequências;
+
+
+	\vspace{0.1cm}
+	\hrule
+	\vspace{0.2cm}
+
+	\footnotesize{Abril de 2020.}
+
+\end{document}

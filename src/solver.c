@@ -22,7 +22,6 @@
 static const int  FIRST_ALLOC_SZ = 100;
 // static const int EXPAND_ALLOC_SZ = 100;
 
-static int g_TREE_LASTID = 0;
 
 int * make_possible_teacher_list(School * school, Meeting * meeting){
 	int i_teacher, i_teaches;
@@ -98,7 +97,7 @@ DecisionTree * init_decision_tree(School * school){
 	tree->alloc_sz = FIRST_ALLOC_SZ;
 
 	tree->start = calloc(tree->alloc_sz, sizeof(DecisionNode));
-	tree->start[0].id = ++g_TREE_LASTID;
+	tree->start[0].id = -666;
 	tree->last_index = tree->start[0].id;
 
 	tree->start[0].type = NODE_START;
