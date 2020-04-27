@@ -296,9 +296,9 @@ void test_maths_all(){
 			 true;
 
 	if(result == false){
-		printf("Test suite failed\n");
+		printf("Maths Test suite failed\n");
 	} else {
-		printf("Test suite passed\n");
+		printf("Maths Test suite passed\n");
 	}
 }
 

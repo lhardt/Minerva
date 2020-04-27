@@ -7,13 +7,106 @@
 #include "logic.h"
 
 
-// bool detect_teacher_circular_subordination(School * school){
-//
-// }
-//
-// bool detect_class_circular_subordination(School * school){
-//
-// }
+bool detect_teacher_circular_subordination(School * school){
+	return false;
+}
+
+bool flatten_class_subordination(School * school){
+	int i, j;
+
+	for(i = 0; i < school->n_classes; i++){
+		if(school->classes[i].subordinates == NULL){
+			school->classes[i].subordinates = calloc(school->n_classes + 1, sizeof(int));
+		}
+	}
+}
+
+/* DETECT CLASS CIRCULAR SUBORDINATION
+ *		Tries to detect if some class subordinates itself, which is illegal.
+ *
+ * Development Status:
+ *		Implemented, tested.
+ */
+bool detect_class_circular_subordination(School * school){
+	int i = 0, i_path = 0 , remain = 0, j = 0;
+	bool found = false, backtrack = false;
+	bool * possible_circ = calloc(school->n_classes, sizeof(bool));
+	bool * visited = calloc(school->n_classes, sizeof(bool));
+	int * path = calloc(1 + school->n_classes, sizeof(int));
+
+	path[school->n_classes] = -1;
+	/* Basic criterion. Excludes the obvious ones. */
+	for(i = 0; i < school->n_classes; ++i){
+		possible_circ[i] = (NULL != school->classes[i].subordinates);
+		if(possible_circ[i]){
+			++remain;
+			/* Self-subordination is not allowed. */
+			if(school->classes[i].subordinates[i]){
+				free(possible_circ);
+				free(visited);
+				free(path);
+				return true;
+			}
+		}
+	}
+
+	/* Tries to visit twice some node starting at each of the remaining. */
+	for(i = 0; !found && i < school->n_classes; ++i){
+		if(!possible_circ[i]){
+			continue;
+		}
+		/* Reseting of variables */
+		for(j = 0; j < school->n_classes; ++j){
+			visited[j] = false;
+			path[j] = -1;
+		}
+		i_path = 0;
+		visited[i] = true;
+		path[i_path] = i;
+		backtrack = false;
+		/* Depth-frst  search in the 'subordination tree' */
+		while( !found ){
+			/* Tries to first (or next) child: classes[j]
+			 * If can't, backtracks.
+			 * If could, store it considering the last nodes visited
+			 */
+			backtrack = true;
+			for(j = path[i_path+1] + 1; j < school->n_classes; ++j){
+				/* Self-subordination was already excluded. */
+				if(j == path[i_path] || possible_circ[j] == false){
+					continue;
+				}
+				if(school->classes[ path[i_path] ].subordinates[j] > 0){
+					if(visited[j]){
+						found = true;
+						break;
+					}
+					backtrack = false;
+					break;
+				}
+			}
+			if(found){
+				break;
+			}
+			if(!backtrack){
+				visited[j] = true;
+				i_path++;
+				path[i_path] = j;
+			} else if(i_path > 0) {
+				/* Backtracking routine*/
+				visited[path[i_path]] = false;
+				i_path--;
+			} else {
+				break;
+			}
+		}
+	}
+
+	free(possible_circ);
+	free(visited);
+	free(path);
+	return found;
+}
 
 bool root_consistency_check(School * school, DecisionNode * node){
 	return true;

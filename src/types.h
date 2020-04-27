@@ -102,7 +102,7 @@ struct Teaches{
 };
 
 typedef struct Class Class;
-struct Class{
+struct Class {
 	int 			id;
 	char 		  * name;
 	char 		  * short_name;

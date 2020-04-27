@@ -16,6 +16,8 @@
 
 void print_int_list(FILE * out, const int * const list);
 
+void print_bool_list(FILE * out, const bool * const list, const int size);
+
 void print_meeting_list(FILE * out, const Meeting * const meetings);
 
 void print_room(FILE * out, const Room * const t);

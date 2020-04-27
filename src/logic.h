@@ -16,6 +16,14 @@
 
  #include "decisions.h"
 
+/* DETECT CLASS CIRCULAR SUBORDINATION
+ *		Tries to detect if some class subordinates itself, which is illegal.
+ *
+ * Development Status:
+ *		Implemented, tested.
+ */
+bool detect_class_circular_subordination(School * school);
+
 /** GENERAL PURPOUSE COUNTING FUNCTION.
  *
  * Counts the number of meetings that must happen in a school.

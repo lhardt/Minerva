@@ -25,6 +25,24 @@ void print_int_list(FILE * out, const int * const list){
 	}
 }
 
+void print_bool_list(FILE * out, const bool * const list, const int size){
+	int i = 0;
+	if(list == NULL){
+		fprintf(out, "(nul)");
+		return;
+	}
+	if(size == 0){
+		fprintf(out, "[]");
+	}
+	if(size > 0){
+		fprintf(out,"[%c", list[i]?'t':'f');
+		for(i = 1; i < size; i++){
+			printf(", %c", list[i]?'t':'f');
+		}
+		fprintf(out,"]");
+	}
+}
+
 void print_meeting_list(FILE * out, const Meeting * const meetings){
 	int i = 0;
 
