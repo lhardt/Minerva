@@ -1,24 +1,77 @@
 
 #include <stdio.h>
 
+#include "logic.h"
+
 #include "assert.h"
 #include "util.h"
 #include "maths.h"
-#include "logic.h"
 
 
 bool detect_teacher_circular_subordination(School * school){
 	return false;
 }
 
+/* FLATTEN CLASS SUBORDINATION
+ *		A preprocessing tool before the core functions run.
+ *
+ * Development Status:
+ *		Implemented. Not tested.
+ */
 bool flatten_class_subordination(School * school){
-	int i, j;
+	int i = 0, i_path = 0, j = 0, tmp, k;
+	bool backtrack = false;
+	int * path = calloc(1 + school->n_classes, sizeof(int));
+	path[school->n_classes] = -1;
 
-	for(i = 0; i < school->n_classes; i++){
-		if(school->classes[i].subordinates == NULL){
-			school->classes[i].subordinates = calloc(school->n_classes + 1, sizeof(int));
+	LMH_ASSERT(school != NULL, "nul par");
+	LMH_ASSERT(false == detect_class_circular_subordination(school), "invalid par");
+
+	for(i = 0; i < school->n_classes; ++i){
+		if(NULL == school->classes[i].subordinates){
+			continue;
+		}
+		/* Reseting of variables */
+		for(j = 0; j < school->n_classes; ++j){
+			path[j] = -1;
+		}
+		i_path = -1;
+		backtrack = false;
+		j = i;
+		/* Depth-frst  search in the 'subordination tree' */
+		while( true ){
+			if(backtrack){
+				if(i_path > 0) {
+					i_path--;
+				} else {
+					break;
+				}
+			} else {
+				path[++i_path] = j;
+			}
+			backtrack = true;
+			/* Tries to next/first child index (j). Backtrack flag = true if could not.
+			 * The trick here is that we know that every j < i was already visited
+			 * because of the for() loop we are in.
+			 */
+			j = (path[i_path+1]+1 >= i)?path[i_path+1]+1:i;
+			for(; j < school->n_classes; ++j){
+				if(NULL != school->classes[j].subordinates
+							&& school->classes[ path[i_path] ].subordinates[j] > 0){
+					path[++i_path] = j;
+					tmp = 1;
+					for(k = 0; k < i_path-1; k++){
+						tmp *= school->classes[ path[k] ].subordinates[ path[k+1] ];
+					}
+					school->classes[i].subordinates[j] += tmp;
+					backtrack = false;
+					break;
+				}
+			}
 		}
 	}
+	free(path);
+	return true;
 }
 
 /* DETECT CLASS CIRCULAR SUBORDINATION
@@ -27,32 +80,18 @@ bool flatten_class_subordination(School * school){
  * Development Status:
  *		Implemented, tested.
  */
-bool detect_class_circular_subordination(School * school){
-	int i = 0, i_path = 0 , remain = 0, j = 0;
+bool detect_class_circular_subordination(const School * const school){
+	int i = 0, i_path = 0, j = 0;
 	bool found = false, backtrack = false;
-	bool * possible_circ = calloc(school->n_classes, sizeof(bool));
 	bool * visited = calloc(school->n_classes, sizeof(bool));
 	int * path = calloc(1 + school->n_classes, sizeof(int));
 
-	path[school->n_classes] = -1;
-	/* Basic criterion. Excludes the obvious ones. */
-	for(i = 0; i < school->n_classes; ++i){
-		possible_circ[i] = (NULL != school->classes[i].subordinates);
-		if(possible_circ[i]){
-			++remain;
-			/* Self-subordination is not allowed. */
-			if(school->classes[i].subordinates[i]){
-				free(possible_circ);
-				free(visited);
-				free(path);
-				return true;
-			}
-		}
-	}
+	LMH_ASSERT(school != NULL, "nul par");
 
+	path[school->n_classes] = -1;
 	/* Tries to visit twice some node starting at each of the remaining. */
 	for(i = 0; !found && i < school->n_classes; ++i){
-		if(!possible_circ[i]){
+		if(NULL == school->classes[i].subordinates){
 			continue;
 		}
 		/* Reseting of variables */
@@ -60,49 +99,50 @@ bool detect_class_circular_subordination(School * school){
 			visited[j] = false;
 			path[j] = -1;
 		}
-		i_path = 0;
-		visited[i] = true;
-		path[i_path] = i;
+		i_path = -1;
 		backtrack = false;
+		j = i;
 		/* Depth-frst  search in the 'subordination tree' */
 		while( !found ){
-			/* Tries to first (or next) child: classes[j]
-			 * If can't, backtracks.
-			 * If could, store it considering the last nodes visited
-			 */
-			backtrack = true;
-			for(j = path[i_path+1] + 1; j < school->n_classes; ++j){
-				/* Self-subordination was already excluded. */
-				if(j == path[i_path] || possible_circ[j] == false){
-					continue;
+			if(backtrack){
+				if(i_path > 0) {
+					visited[path[i_path]] = false;
+					i_path--;
+				} else {
+					break;
 				}
-				if(school->classes[ path[i_path] ].subordinates[j] > 0){
+			} else {
+				visited[j] = true;
+				path[++i_path] = j;
+			}
+			backtrack = true;
+			/* Tries to next/first child index (j). Backtrack flag = true if could not.
+			 * The trick here is that we know that every j < i was already visited
+			 * because of the for() loop we are in.
+			 */
+			j = (path[i_path+1]+1 >= i)?path[i_path+1]+1:i;
+			for(; j < school->n_classes; ++j){
+				if(NULL != school->classes[j].subordinates
+							&& school->classes[ path[i_path] ].subordinates[j] > 0){
 					if(visited[j]){
+						path[++i_path] = j;
 						found = true;
-						break;
 					}
 					backtrack = false;
 					break;
 				}
 			}
-			if(found){
-				break;
-			}
-			if(!backtrack){
-				visited[j] = true;
-				i_path++;
-				path[i_path] = j;
-			} else if(i_path > 0) {
-				/* Backtracking routine*/
-				visited[path[i_path]] = false;
-				i_path--;
-			} else {
-				break;
-			}
 		}
 	}
-
-	free(possible_circ);
+	/* Cute report. It'll be useful when the user needs to debug. * /
+	if(found){
+		printf("Found self-subordination path [%d", path[0]);
+		for(i = 1; path[i] > 0; i++){
+			printf(", %d", path[i]);
+		}
+		printf("]\n");
+	}
+	*/
 	free(visited);
 	free(path);
 	return found;

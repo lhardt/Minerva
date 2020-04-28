@@ -16,13 +16,22 @@
 
  #include "decisions.h"
 
+ /* FLATTEN CLASS SUBORDINATION
+  *		A preprocessing tool before the core functions run.
+  *
+  * Development Status:
+  *		Implemented. Not tested.
+  */
+ bool flatten_class_subordination(School * school);
+
+
 /* DETECT CLASS CIRCULAR SUBORDINATION
  *		Tries to detect if some class subordinates itself, which is illegal.
  *
  * Development Status:
  *		Implemented, tested.
  */
-bool detect_class_circular_subordination(School * school);
+bool detect_class_circular_subordination(const School * const school);
 
 /** GENERAL PURPOUSE COUNTING FUNCTION.
  *

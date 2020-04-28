@@ -132,7 +132,6 @@ bool test_detect_class_circular_subordination(){
 			}
 		};
 		sc.classes = classes;
-
 		LMH_TEST_EQ(true, detect_class_circular_subordination(&sc));
 	}
 	/* Dataset 8 */ {
