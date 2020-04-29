@@ -19,6 +19,8 @@
  /* FLATTEN CLASS SUBORDINATION
   *		A preprocessing tool before the core functions run.
   *
+  * Returns true on success.
+  *
   * Development Status:
   *		Implemented. Not tested.
   */

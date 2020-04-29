@@ -15,18 +15,23 @@ bool detect_teacher_circular_subordination(School * school){
 /* FLATTEN CLASS SUBORDINATION
  *		A preprocessing tool before the core functions run.
  *
+ * Returns true on success.
+ *
+ * Warning: this function must be called *after* detect_circular.
+ *
  * Development Status:
- *		Implemented. Not tested.
+ *		Implemented. tested.
  */
 bool flatten_class_subordination(School * school){
-	int i = 0, i_path = 0, j = 0, tmp, k;
+	int i = 0, i_path = 0, j = 0;
 	bool backtrack = false;
-	int * path = calloc(1 + school->n_classes, sizeof(int));
-	path[school->n_classes] = -1;
+	int * path = calloc(10 + school->n_classes, sizeof(int));
 
 	LMH_ASSERT(school != NULL, "nul par");
-	LMH_ASSERT(false == detect_class_circular_subordination(school), "invalid par");
+	LMH_ASSERT(false == detect_class_circular_subordination(school), "nul par");
 
+	path[school->n_classes] = -1;
+	/* Tries to visit twice some node starting at each of the remaining. */
 	for(i = 0; i < school->n_classes; ++i){
 		if(NULL == school->classes[i].subordinates){
 			continue;
@@ -42,30 +47,27 @@ bool flatten_class_subordination(School * school){
 		while( true ){
 			if(backtrack){
 				if(i_path > 0) {
+					path[i_path+1] = -1;
 					i_path--;
 				} else {
 					break;
 				}
 			} else {
 				path[++i_path] = j;
+				if(i_path > 1){
+					school->classes[i].subordinates[j] += 1;
+				}
 			}
-			backtrack = true;
-			/* Tries to next/first child index (j). Backtrack flag = true if could not.
-			 * The trick here is that we know that every j < i was already visited
-			 * because of the for() loop we are in.
+			/* Provided that this node has children, tries to find one.
+			 * If could not, backtrack=true.
 			 */
-			j = (path[i_path+1]+1 >= i)?path[i_path+1]+1:i;
-			for(; j < school->n_classes; ++j){
-				if(NULL != school->classes[j].subordinates
-							&& school->classes[ path[i_path] ].subordinates[j] > 0){
-					path[++i_path] = j;
-					tmp = 1;
-					for(k = 0; k < i_path-1; k++){
-						tmp *= school->classes[ path[k] ].subordinates[ path[k+1] ];
+			backtrack = true;
+			if(NULL != school->classes[ path[i_path] ].subordinates){
+				for(j= path[i_path+1] +1; j < school->n_classes; ++j){
+					if(school->classes[ path[i_path] ].subordinates[j] > 0){
+						backtrack = false;
+						break;
 					}
-					school->classes[i].subordinates[j] += tmp;
-					backtrack = false;
-					break;
 				}
 			}
 		}
@@ -134,15 +136,6 @@ bool detect_class_circular_subordination(const School * const school){
 			}
 		}
 	}
-	/* Cute report. It'll be useful when the user needs to debug. * /
-	if(found){
-		printf("Found self-subordination path [%d", path[0]);
-		for(i = 1; path[i] > 0; i++){
-			printf(", %d", path[i]);
-		}
-		printf("]\n");
-	}
-	*/
 	free(visited);
 	free(path);
 	return found;
