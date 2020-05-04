@@ -16,13 +16,31 @@
 
  #include "decisions.h"
 
+ /* DETECT TEACHER CIRCULAR SUBORDINATION
+  *		Tries to detect if some teacher subordinates itself, which is illegal.
+  *
+  * Development status:
+  *		Implemented, not tested.
+  */
+ bool detect_teacher_circular_subordination(const School * const school);
+
+ /* FLATTEN TEACHER SUBORDINATION
+ *		Includes sub-subordinates in teachers' subordinate list.
+ *
+ * Development status:
+ *		Implemented.
+ */
+ bool flatten_teacher_subordination(School * school);
+
  /* FLATTEN CLASS SUBORDINATION
-  *		A preprocessing tool before the core functions run.
+  *		Includes sub-subordinates in classes' subordinate list.
   *
   * Returns true on success.
   *
+  * Warning: this function must be called *after* detect_circular.
+  *
   * Development Status:
-  *		Implemented. Not tested.
+  *		Implemented. tested.
   */
  bool flatten_class_subordination(School * school);
 
@@ -47,17 +65,23 @@ bool detect_class_circular_subordination(const School * const school);
  *  - School is not null.
  *
  * Development Status:
- * 		Implemented, Untested.
+ * 		Implemented, not tested.
  */
 int count_required_meetings(School * school, Class * class, Subject * subject);
 
-/**
- * Checks if a given node can not possibly be a solution.
+/* IS NODE INCONSISTENT
+ * 		Checks if a given node can not possibly be a solution.
+ *		This simply means that no meeting can have no periods to be in.
  *
- * This simply means that no meeting can have no periods to be in.
+ * 		Returns true if node is invalid. Modifies variable "valid" on node.
  *
+ *		Note: this does not mean that on false being returned, this node is
+ *		garanteed to have a solution.
+ *
+ * Development status:
+ *		Implemented, not tested.
  */
-bool is_node_invalid(School * school, DecisionNode * node);
+bool is_node_inconsistent(const School * const school, DecisionNode * node);
 
 /* PERIOD OVERFLOW RULE:
  *

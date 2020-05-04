@@ -7,13 +7,133 @@
 #include "util.h"
 #include "maths.h"
 
+/* DETECT TEACHER CIRCULAR SUBORDINATION
+ *		Tries to detect if some teacher subordinates itself, which is illegal.
+ *
+ * Development status:
+ *		Implemented, not tested.
+ */
+bool detect_teacher_circular_subordination(const School * const school){
+	int i = 0, i_path = 0, j = 0;
+	bool found = false, backtrack = false;
+	bool * visited = calloc(school->n_teachers, sizeof(bool));
+	int * path = calloc(1 + school->n_teachers, sizeof(int));
 
-bool detect_teacher_circular_subordination(School * school){
-	return false;
+	LMH_ASSERT(school != NULL, "nul par");
+
+	path[school->n_teachers] = -1;
+	/* Tries to visit twice some node starting at each of the remaining. */
+	for(i = 0; !found && i < school->n_teachers; ++i){
+		if(NULL == school->teachers[i].subordinates){
+			continue;
+		}
+		/* Reseting of variables */
+		for(j = 0; j < school->n_teachers; ++j){
+			visited[j] = false;
+			path[j] = -1;
+		}
+		i_path = -1;
+		backtrack = false;
+		j = i;
+		/* Depth-frst  search in the 'subordination tree' */
+		while( !found ){
+			if(backtrack){
+				if(i_path > 0) {
+					visited[path[i_path]] = false;
+					i_path--;
+				} else {
+					break;
+				}
+			} else {
+				visited[j] = true;
+				path[++i_path] = j;
+			}
+			backtrack = true;
+			/* Tries to next/first child index (j). Backtrack flag = true if could not.
+			 * The trick here is that we know that every j < i was already visited
+			 * because of the for() loop we are in.
+			 */
+			j = (path[i_path+1]+1 >= i)?path[i_path+1]+1:i;
+			for(; j < school->n_teachers; ++j){
+				if(NULL != school->teachers[j].subordinates
+							&& school->teachers[ path[i_path] ].subordinates[j] > 0){
+					if(visited[j]){
+						path[++i_path] = j;
+						found = true;
+					}
+					backtrack = false;
+					break;
+				}
+			}
+		}
+	}
+	free(visited);
+	free(path);
+	return found;
+}
+
+/* FLATTEN TEACHER SUBORDINATION
+*		Includes sub-subordinates in teachers' subordinate list.
+*
+* Development status:
+*		Implemented.
+*/
+bool flatten_teacher_subordination(School * school){
+	int i = 0, i_path = 0, j = 0;
+	bool backtrack = false;
+	int * path = calloc(10 + school->n_teachers, sizeof(int));
+
+	LMH_ASSERT(school != NULL, "nul par");
+	LMH_ASSERT(false == detect_teacher_circular_subordination(school), "nul par");
+
+	path[school->n_teachers] = -1;
+	/* Tries to visit twice some node starting at each of the remaining. */
+	for(i = 0; i < school->n_teachers; ++i){
+		if(NULL == school->teachers[i].subordinates){
+			continue;
+		}
+		/* Reseting of variables */
+		for(j = 0; j < school->n_teachers; ++j){
+			path[j] = -1;
+		}
+		i_path = -1;
+		backtrack = false;
+		j = i;
+		/* Depth-frst  search in the 'subordination tree' */
+		while( true ){
+			if(backtrack){
+				if(i_path > 0) {
+					path[i_path+1] = -1;
+					i_path--;
+				} else {
+					break;
+				}
+			} else {
+				path[++i_path] = j;
+				if(i_path > 1){
+					school->teachers[i].subordinates[j] += 1;
+				}
+			}
+			/* Provided that this node has children, tries to find one.
+			 * If could not, backtrack=true.
+			 */
+			backtrack = true;
+			if(NULL != school->teachers[ path[i_path] ].subordinates){
+				for(j= path[i_path+1] +1; j < school->n_teachers; ++j){
+					if(school->teachers[ path[i_path] ].subordinates[j] > 0){
+						backtrack = false;
+						break;
+					}
+				}
+			}
+		}
+	}
+	free(path);
+	return true;
 }
 
 /* FLATTEN CLASS SUBORDINATION
- *		A preprocessing tool before the core functions run.
+ *		Includes sub-subordinates in classes' subordinate list.
  *
  * Returns true on success.
  *
@@ -145,6 +265,7 @@ bool root_consistency_check(School * school, DecisionNode * node){
 	return true;
 }
 
+
 /* NOTE: expects plain relationships, not composite ones
  * If t1 subordinates t2, returns +1
  * If t2 subordinates t1, returns -1
@@ -206,6 +327,36 @@ int count_required_meetings(
 		printf("Count called with invalid school\n");
 	}
 	return count;
+}
+
+/* IS NODE INCONSISTENT
+ * 		Checks if a given node can not possibly be a solution.
+ *		This simply means that no meeting can have no periods to be in.
+ *
+ * 		Returns true if node is invalid. Modifies variable "valid" on node.
+ *
+ *		Note: this does not mean that on false being returned, this node is
+ *		garanteed to have a solution.
+ *
+ * Development status:
+ *		Implemented, not tested.
+ */
+bool is_node_inconsistent(const School * const school, DecisionNode * node){
+	int i_met = 0;
+	Meeting * ref_met;
+
+	for(i_met = 0; node->conclusion[i_met].class != NULL; i_met++){
+		ref_met = &node->conclusion[i_met];
+		/* Values must be set or have possibilities to be in */
+		if(    (ref_met->room == NULL	 && non_zero_int_list_count(ref_met->possible_rooms))
+			|| (ref_met->teacher == NULL && non_zero_int_list_count(ref_met->possible_teachers))
+			|| (ref_met->period == -1	 && non_zero_int_list_count(ref_met->possible_periods))
+		){
+			node->is_consistent = false;
+			return true;
+		}
+	}
+	return false;
 }
 
 /* Meetings are analogous if class == class && subj == subj */
