@@ -261,17 +261,23 @@ bool detect_class_circular_subordination(const School * const school){
 	return found;
 }
 
-bool root_consistency_check(School * school, DecisionNode * node){
-	return true;
+/* ROOT CONSISTENCY CHECK
+ *		Tries to detect problems before the timetable generation.
+ *		Returns true if the test passed.
+ *
+ *	Development status:
+ *		partially implemented.
+ *	TODO:
+ *		Implement some way to see if all lectures have periods.
+ * */
+bool root_consistency_check(const School * const school, DecisionNode * node){
+	return detect_teacher_circular_subordination(school)? false:
+		   detect_class_circular_subordination(school)?
+		   false:true;
 }
 
-
-/* NOTE: expects plain relationships, not composite ones
- * If t1 subordinates t2, returns +1
- * If t2 subordinates t1, returns -1
- * Else returns  0
- */
-bool have_teachers_relation(School * school, Teacher * t1, Teacher * t2){
+/* NOTE expects flattened relations */
+bool have_teachers_relation(const School * const school, Teacher * t1, Teacher * t2){
 	int result = 0;
 	int t1_index = (t1 - school->teachers);
 	int t2_index = (t2 - school->teachers);
@@ -284,12 +290,8 @@ bool have_teachers_relation(School * school, Teacher * t1, Teacher * t2){
 	return result;
 }
 
-/* NOTE: expects plain relationships, not composite ones
- * If c1 subordinates c2, returns +1
- * If c2 subordinates c1, returns -1
- * Else returns  0
- */
-bool have_classes_relation(School * school, Class * c1, Class * c2){
+/* NOTE expects flattened relations */
+bool have_classes_relation(const School * const school, const Class * const c1, const Class * const c2){
 	int result = 0;
 	int c1_index = (c1 - school->classes);
 	int c2_index = (c2 - school->classes);
@@ -304,11 +306,15 @@ bool have_classes_relation(School * school, Class * c1, Class * c2){
 	return result;
 }
 
-int count_required_meetings(
-				School * school,
-				Class * class,
-				Subject * subject
-				){
+/* COUNT REQUIRED MEETINGS
+ *		Counts required meetings in a school with two optional parameters.
+ *
+ *		If class or subject is passed as NULL, counts with all classes/subjects.
+ *
+ * Development status:
+ *		Implemented, not tested.
+ */
+int count_required_meetings(School * school,Class * class,Subject * subject){
 	int count = 0, i_class = 0, i_need = 0;
 
 	LMH_ASSERT(school != NULL, "null par");
@@ -359,7 +365,13 @@ bool is_node_inconsistent(const School * const school, DecisionNode * node){
 	return false;
 }
 
-/* Meetings are analogous if class == class && subj == subj */
+/* ELIM ANALOGOUS ORDERING
+ *		Eliminates possibilities of same period for analogous ordering.
+ * 		Meetings are analogous if class == class && subj == subj
+ *
+ * Development Status:
+ *		Implemented, not tested.
+ */
 bool elim_analogous_ordering(School * school, DecisionNode * node){
 	int i_meet = 0, j_meet = 0, elim_asc = -1, elim_desc;
 	bool change = false;
@@ -390,6 +402,13 @@ bool elim_analogous_ordering(School * school, DecisionNode * node){
 	return change;
 }
 
+/* ELIM SEARCH FIXED MEETING
+ *		Tries to search for a meeting that has only one option for one resource.
+ *		For each found, calls elim_fixed_meeting. If found any, returns true.
+ *
+ * Development status:
+ *		Implemented, not tested.
+ */
 bool elim_search_fixed_meeting(School * school, DecisionNode * node){
 	int i_meet = 0, found = 0;
 	bool change = false;
@@ -431,7 +450,13 @@ bool elim_search_fixed_meeting(School * school, DecisionNode * node){
 	return change;
 }
 
-bool elim_fixed_meeting(School * school, DecisionNode * node, int fix_meet_i){
+/* ELIM FIXED MEETING
+ *		Fixes a meeting that has only one possibility
+ *
+ * Development status:
+ *		Implemented, not tested.
+ */
+bool elim_fixed_meeting(const School * const school, DecisionNode * node, const int fix_meet_i){
 	int i_meet = 0;
 	bool change = false;
 
@@ -539,4 +564,35 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 		}
 	}
 	return change;
+}
+
+bool new_node_elimination(School * school, DecisionNode * node){
+	bool change = false, changed = false;
+
+	switch(node->type){
+		case NODE_TEACHER:{
+			node->conclusion[node->affected_meeting_index].teacher = node->fixed_teacher;
+			break;
+		}
+		case NODE_ROOM:{
+			node->conclusion[node->affected_meeting_index].room = node->fixed_room;
+			break;
+		}
+		case NODE_PERIOD:{
+			node->conclusion[node->affected_meeting_index].period = node->fixed_period;
+			break;
+		}
+		case NODE_START: {
+			root_elimination(school, node);
+		}
+	}
+	do{
+		change = false;
+		/* TODO: basic elimination. Improve over time. */
+		change |= elim_fixed_meeting(school,node, node->affected_meeting_index);
+		chane  |= elim_search_fixed_meeting(school,node);
+
+		changed |= change;
+	}while(change == true);
+	return changed;
 }

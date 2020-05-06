@@ -153,7 +153,7 @@ bool reverse_analogous_ordering(School * school, DecisionNode * node);
  * - if the room
  */
 bool elim_search_fixed_meeting(School * school, DecisionNode * node);
-bool elim_fixed_meeting(School * school, DecisionNode * node, int fixed_meeting_index);
+bool elim_fixed_meeting(const School * const school, DecisionNode * node, const int fixed_meeting_index);
 
 /* GOOD ROOM RULE - Room: TODO better name
  *
@@ -227,12 +227,15 @@ bool elim_general_super_room(School * school, DecisionNode * node);
 bool elim_super_room_daily(School * school, DecisionNode * node, int day);
 
 /* ROOT CONSISTENCY CHECK
+ *		Tries to detect problems before the timetable generation.
+ *		Returns true if the test passed.
  *
- * Returns false if it is garanteed that no timetable can be made.
- *
- * TODO: implement
- */
-bool root_consistency_check(School * school, DecisionNode * node);
+ *	Development status:
+ *		partially implemented.
+ *	TODO:
+ *		Implement some way to see if all lectures have periods.
+ * */
+bool root_consistency_check(const School * const school, DecisionNode * node);
 
 /* ROOT ELIMINATION
  *

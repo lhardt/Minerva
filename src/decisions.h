@@ -50,7 +50,13 @@ struct DecisionNode{
 	NodeType next_node_type;
 
 	/* What decision was made. Is this field necessary? */
-	Meeting * affected_meeting;
+	int affected_meeting_index;
+	/* Defined by this.type. */
+	union{
+		Teacher * fixed_teacher;
+		int		  fixed_period;
+		Room	* fixed_room;
+	};
 	/* The meeting list computed afterwards. */
 	Meeting * conclusion;
 

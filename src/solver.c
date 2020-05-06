@@ -48,10 +48,6 @@ int * make_possible_teacher_list(School * school, Meeting * meeting){
 	return scores;
 }
 
-/* It is impossible to
- *
- *
- */
 int* make_possible_room_list(School * school, Meeting * meeting){
 	int i_room, i_list = 0;
 	/* Reference to shorten indirection. */
@@ -147,6 +143,8 @@ int make_decision(School * school, DecisionNode * parent){
 	// 		// 	}
 	// 	}
 	// }
+
+
 	return 0;
 }
 
@@ -159,6 +157,8 @@ Meeting * create_timetable(School * school){
 	LMH_ASSERT(school != NULL, "null par");
 
 	/* Preprocess  -- ? */
+	flatten_teacher_subordination(school);
+	flatten_class_subordination(school);
 	/* Initialize  */
 	DecisionTree * tree = init_decision_tree(school);
 	/* Diagnose inconsistencies */
