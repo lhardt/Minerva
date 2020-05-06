@@ -566,6 +566,12 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 	return change;
 }
 
+bool root_elimination(School * school, DecisionNode * node){
+	return !flatten_teacher_subordination(school)? false:
+		   !flatten_class_subordination(school)?
+		   false:true;
+}
+
 bool new_node_elimination(School * school, DecisionNode * node){
 	bool change = false, changed = false;
 
@@ -585,12 +591,15 @@ bool new_node_elimination(School * school, DecisionNode * node){
 		case NODE_START: {
 			root_elimination(school, node);
 		}
+		case NODE_NULL_TYPE:{
+			break;
+		}
 	}
 	do{
 		change = false;
 		/* TODO: basic elimination. Improve over time. */
 		change |= elim_fixed_meeting(school,node, node->affected_meeting_index);
-		chane  |= elim_search_fixed_meeting(school,node);
+		change  |= elim_search_fixed_meeting(school,node);
 
 		changed |= change;
 	}while(change == true);

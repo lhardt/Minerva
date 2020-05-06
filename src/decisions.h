@@ -15,6 +15,7 @@
 #include "types.h"
 
 typedef enum NodeType {
+	NODE_NULL_TYPE = 0,
 	NODE_START,
 	NODE_ROOM,
 	NODE_TEACHER,
@@ -42,11 +43,15 @@ struct DecisionNode{
 	// thrd_t responsible;
 	// bool is_child_locked;
 
+	/* NOTE these are created before the children and used
+	 * as measure of what nodes must be created next.
+	 * not the other way around.
+	 */
 	int * children_score;
 	int * children_score_order;
 	int children_alloc_sz;
 
-	Meeting * next_affected_meeting;
+	int next_affected_meeting_index;
 	NodeType next_node_type;
 
 	/* What decision was made. Is this field necessary? */

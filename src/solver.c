@@ -9,15 +9,17 @@
  * This module contains structures and functions for the creation
  * and development of a decision tree in school timetabling.
  */
-
-#include "assert.h"
-#include "types.h"
-#include "logic.h"
-#include "decisions.h"
 #include "solver.h"
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "assert.h"
+#include "decisions.h"
+#include "logic.h"
+#include "score.h"
+#include "types.h"
+
 
 static const int  FIRST_ALLOC_SZ = 100;
 // static const int EXPAND_ALLOC_SZ = 100;
@@ -126,26 +128,68 @@ DecisionTree * init_decision_tree(School * school){
 	return tree;
 }
 
-int make_decision(School * school, DecisionNode * parent){
-	// int i_child, i_score;
-	//
-	//
-	// if(!parent->is_final){
-	// 	if(parent->children_score == NULL){
-	// 		score_children(school, parent);
-	// 	} else {
-	// 		for(i_child = 0; parent->children_score[i_child] >= 0; ++i_child){ }
-	// 		//
-	// 		// 	if(i_child >= children_alloc_sz){
-	// 		// 		parent->children_alloc_sz += 16;
-	// 		// 		parent->children = realloc(parent->children, parent->children_alloc_sz);
-	// 		// 		parent->children_score =
-	// 		// 	}
-	// 	}
-	// }
+
+DecisionNode * make_decision(School * school, DecisionNode * parent){
+	int i_child = 0;
+	DecisionNode * child;
+
+	if(!parent->is_final){
+		if(parent->children_score == NULL){
+			score_possible_children(school, parent);
+			child = &parent->children[0];
+		} else {
+			/* Find first not initialized */
+			for(i_child = 0; parent->children_score[i_child] >= 0; ++i_child){
+				if(i_child >= parent->children_alloc_sz){
+					parent->children_alloc_sz += 16;
+					parent->children = realloc(parent->children, parent->children_alloc_sz);
+					break;
+				}
+				if(parent->children[i_child].type == NODE_NULL_TYPE){
+					break;
+				}
+			}
+			child = &parent->children[i_child];
+		}
+		if(parent->children_score[i_child] <= 0){
+			return NULL;
+		}
+		*child = (DecisionNode){
+			.id=1,
+			.type=parent->next_node_type,
+			.parent=parent,
+			.children=NULL,
+			.owner=parent->owner,
+			.n_children = 0,
+			.children_score = NULL,
+			.children_score_order = NULL,
+			.children_alloc_sz = 0,
+			.next_affected_meeting_index = -1,
+			.affected_meeting_index = parent->next_affected_meeting_index
+		};
+		parent->n_children++;
+
+		switch(parent->next_node_type){
+			case NODE_TEACHER:{
+				child->fixed_teacher = &(school->teachers[parent->children_score_order[i_child]]);
+				break;
+			}
+			case NODE_ROOM:{
+				child->fixed_room = &(school->rooms[parent->children_score_order[i_child]]);
+				break;
+			}
+			case NODE_PERIOD:{
+				child->fixed_period = parent->children_score_order[i_child];
+			}
+			case NODE_START:
+			case NODE_NULL_TYPE:{
+				break;
+			}
+		}
 
 
-	return 0;
+	}
+	return NULL;
 }
 
 

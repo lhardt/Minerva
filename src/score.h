@@ -22,7 +22,7 @@
  *
  * TODO: Implement.
  */
-bool new_node_evaluation(School * school, DecisionNode * node);
+bool new_node_evaluation(const School * const school, DecisionNode * node);
 
 /* Gives a complete timetable its score.
  * More exensive than the former
@@ -31,11 +31,11 @@ bool new_node_evaluation(School * school, DecisionNode * node);
  */
 bool leaf_node_evaluation(School * school, DecisionNode * node);
 
-/* Ranks possible children nodes.
+/* Ranks and orders possible children before they are created.
  *
  * TODO: Implement.
  */
-bool children_evaluation(School * school, DecisionNode * node);
+bool score_possible_children(const School * const school, DecisionNode * node);
 
 /* Chooses the next direct children of node to be created.
  * Returns -1 if there is no more direct children to be created.
