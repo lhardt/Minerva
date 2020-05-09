@@ -22,6 +22,8 @@ void print_bool_list(FILE * out, const bool * const list, const int size);
 
 void print_meeting_list(FILE * out, const Meeting * const meetings);
 
+void print_short_meeting_list(FILE * out, const Meeting * const meetings);
+
 void print_room(FILE * out, const Room * const t);
 
 void print_teacher(FILE * out, const Teacher * const t);

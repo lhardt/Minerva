@@ -83,3 +83,22 @@ void print_meeting_list(FILE * out, const Meeting * const meetings){
 		fprintf(out,"\n");
 	}
 }
+
+void print_short_meeting_list(FILE * out, const Meeting * const meetings){
+	int i = 0;
+
+	if(meetings == NULL){
+		printf("Returning on null");
+		return;
+	}
+
+	for(i = 0; meetings[i].class != NULL; i++){
+		fprintf(out, "Meeting %2d %s: T(%s) ",
+					i,
+					meetings[i].class->name,
+					(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
+		fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
+		fprintf(out, "; P(%d) ", meetings[i].period);
+		fprintf(out,"\n");
+	}
+}

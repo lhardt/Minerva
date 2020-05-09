@@ -149,26 +149,28 @@ School * test_case_1(){
 		school.classes[i].periods[j] = -1;
 	}
 
-	DecisionTree * tree = init_decision_tree(&school);
-
-	int nmet = 0;
-	while(tree->start[0].conclusion[nmet].class != NULL){
-		nmet++;
-	}
-	printf("Nmet: %d\n", nmet);
-
-	print_meeting_list(stdout, tree->start[0].conclusion);
-
-	elim_analogous_ordering(&school, &tree->start[0]);
-
-	bool change = true;
-	while(change){
-		change = false;
-		change |= elim_search_fixed_meeting(&school, &tree->start[0]);
-		change |= elim_general_super_room(&school, &tree->start[0]);
-	}
-	printf("\n\n");
-	print_meeting_list(stdout, tree->start[0].conclusion);
+	Meeting * solution = create_timetable(&school);
+	print_meeting_list(stdout, solution);
+	// DecisionTree * tree = init_decision_tree(&school);
+	//
+	// int nmet = 0;
+	// while(tree->start[0].conclusion[nmet].class != NULL){
+	// 	nmet++;
+	// }
+	// printf("Nmet: %d\n", nmet);
+	//
+	// print_meeting_list(stdout, tree->start[0].conclusion);
+	//
+	// elim_analogous_ordering(&school, &tree->start[0]);
+	//
+	// bool change = true;
+	// while(change){
+	// 	change = false;
+	// 	change |= elim_search_fixed_meeting(&school, &tree->start[0]);
+	// 	change |= elim_general_super_room(&school, &tree->start[0]);
+	// }
+	// printf("\n\n");
+	// print_meeting_list(stdout, tree->start[0].conclusion);
 
 
 	return NULL;

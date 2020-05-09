@@ -166,6 +166,43 @@ int * order_elements_asc(const int * const list){
 	return ordered;
 }
 
+int * get_desc_order_indexes(const int * list){
+	int i, j, k, i_max;
+	bool skip;
+
+	int * order;
+
+	i_max = -1;
+	for(i = 0; list[i] >= 0; ++i){
+		if(i_max == -1 || list[i_max] < list[i]){
+			i_max = i;
+		}
+	}
+
+	order = calloc(i+1, sizeof(int));
+	order[i] = -1;
+	order[0] = i_max;
+
+	for(i = 1; list[i] >= 0; ++i){
+		i_max = -1;
+		for(j = 0; list[j] >= 0; ++j){
+			skip = false;
+			for(k = 0; k < i; k++){
+				if(order[k] == j){
+					skip = true;
+					break;
+				}
+			}
+			if(!skip && (i_max == -1 || list[i_max] <= list[j])){
+				i_max = j;
+			}
+		}
+		order[i] = i_max;
+	}
+	return order;
+}
+
+
 /* GET FIRST ORDER INT
  *		Returns the first order of n elements, namely [0,1,2,3... n].
  *
@@ -423,4 +460,19 @@ int int_list_both_positive_ctr(const int * const list_a, const int * const list_
 		}
 	}
 	return n;
+}
+
+int int_list_discrepancy(const int * const list){
+	int score = 0, i_max = -1, i;
+
+	for(i = 0; list[i] >= 0; ++i){
+		score -= list[i];
+		if(i_max == -1 || list[i] > list[i_max]){
+			i_max = i;
+		}
+	}
+
+	score += list[i_max] * (++i);
+
+	return score;
 }

@@ -19,14 +19,87 @@
 int get_max_teacher_score_discrepancy(const School * const school, const DecisionNode * const parent, int * res_index){
 	int max_disc = -1, curr_disc = -1, i = 0, max_i = 0;
 
-		// TODO.
+	for(i = 0; parent->conclusion[i].class != NULL; ++i){
+		if(parent->conclusion[i].teacher != NULL){
+			continue;
+		}
+		curr_disc = int_list_discrepancy(parent->conclusion[i].possible_teachers);
+
+		if(max_disc == -1 || curr_disc > max_disc){
+			max_disc = curr_disc;
+			max_i = i;
+		}
+	}
+
+	*res_index = max_i;
+	return max_disc;
+}
+
+int get_max_room_score_discrepancy(const School * const school, const DecisionNode * const parent, int * res_index){
+	int max_disc = -1, curr_disc = -1, i = 0, max_i = 0;
+
+	for(i = 0; parent->conclusion[i].class != NULL; ++i){
+		if(parent->conclusion[i].room != NULL){
+			continue;
+		}
+		curr_disc = int_list_discrepancy(parent->conclusion[i].possible_rooms);
+
+		if(max_disc == -1 || curr_disc > max_disc){
+			max_disc = curr_disc;
+			max_i = i;
+		}
+	}
+
+	*res_index = max_i;
+	return max_disc;
+}
+
+int get_max_period_score_discrepancy(const School * const school, const DecisionNode * const parent, int * res_index){
+	int max_disc = -1, curr_disc = -1, i = 0, max_i = 0;
+
+	for(i = 0; parent->conclusion[i].class != NULL; ++i){
+		if(parent->conclusion[i].period != -1){
+			continue;
+		}
+		curr_disc = int_list_discrepancy(parent->conclusion[i].possible_periods);
+
+		if(max_disc == -1 || curr_disc > max_disc){
+			max_disc = curr_disc;
+			max_i = i;
+		}
+	}
 
 	*res_index = max_i;
 	return max_disc;
 }
 
 bool score_possible_children(const School * const school, DecisionNode * parent){
-	int i_child;
+	int i_child, max_period, max_room, max_teacher, i_max_per, i_max_room, i_max_teacher;
+	int i_list, * list; /* generalization tool. not allocated. */
+
+
+	max_period = get_max_period_score_discrepancy(school, parent, &i_max_per);
+	max_room = get_max_room_score_discrepancy(school, parent, &i_max_room);
+	max_teacher = get_max_teacher_score_discrepancy(school, parent, &i_max_teacher);
+	// TODO use weights. (ex. 3*max_room).
+	if(max_period <= 0 && max_room <= 0 && max_teacher <= 0){
+		printf("nowhere to go\n");
+		return false;
+	}
+	if(max_period >= max_room && max_period >= max_teacher){
+		parent->next_node_type = NODE_PERIOD;
+		parent->next_affected_meeting_index = i_max_per;
+		list = parent->conclusion[i_max_per].possible_periods;
+	} else if(max_room >= max_period && max_room >= max_teacher){
+		parent->next_node_type = NODE_ROOM;
+		parent->next_affected_meeting_index = i_max_room;
+		list = parent->conclusion[i_max_room].possible_rooms;
+	} else if(max_teacher >= max_period && max_teacher >= max_room){
+		parent->next_node_type = NODE_TEACHER;
+		parent->next_affected_meeting_index = i_max_teacher;
+		list = parent->conclusion[i_max_teacher].possible_teachers;
+	}
+
 	parent->children_score = calloc(32, sizeof(int));
 	parent->children_score_order = calloc(32, sizeof(int));
 	parent->children = calloc(32, sizeof(DecisionNode));
@@ -39,7 +112,11 @@ bool score_possible_children(const School * const school, DecisionNode * parent)
 		parent->children_score_order[i_child] = -1;
 	}
 
-	// TODO
+	for(i_list = 0; list[i_list] >= 0; ++i_list){
+		parent->children_score[i_list] = list[i_list];
+	}
 
-	return false;
+	parent->children_score_order = get_desc_order_indexes(list);
+
+	return true;
 }

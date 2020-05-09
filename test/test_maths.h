@@ -56,7 +56,7 @@ bool test_order_elements_desc(){
 		{3,2,1,0, -1},
 		{3,2,1,0, -1},
 		{4,3,2,1,0, -1},
-		{8,7,6,5,4,3,2,1,0, -1}
+		{8,7,6,5,4,3,2,1,0, -1},
 	};
 
 	for(i = 0; i < 5; i++){
@@ -71,6 +71,25 @@ bool test_order_elements_desc(){
 
 	return lmh_result;
 }
+
+bool test_get_desc_order_indexes(){
+	bool lmh_result = true;
+	int i = 0;
+	int test_cases[][20] = {
+		{0,0,0,0,0,0,0,1,-1},
+		{5,4,3,2,1,0,-1},
+		{5,2,1,4,3,0,-5}
+	};
+
+
+	for( i = 0; i < 3; ++i){
+		print_int_list(stdout, get_desc_order_indexes(test_cases[i]));
+		printf("\n");
+	}
+
+	return lmh_result;
+}
+
 
 bool test_order_elements_asc(){
 	int i,j;
@@ -279,12 +298,33 @@ bool test_int_list_both_positive_ctr(){
 	return lmh_result;
 }
 
+bool test_int_list_discrepancy(){
+	bool lmh_result = true;
+	int i = 0;
+	int test_cases[][20] = {
+		{0,0,0,0,0,0,0,0,0,0,0,-1},
+		{1,-3},
+		{2,0,0,0,-1},
+		{2,5,0,0,-1},
+		{5,5,5,5,-1}
+	};
+	int answers[] = {
+		0,1,8,18, 5
+	};
+
+	for(i = 0; i < 5; i++){
+		LMH_TEST_EQ(answers[i], int_list_discrepancy(test_cases[i]));
+	}
+	return lmh_result;
+}
+
 void test_maths_all(){
 	bool result = true;
 	result = !test_factorial_division() ? false :
 			 !test_factorial() ? false :
 			 !test_order_elements_desc() ? false :
 			 !test_order_elements_asc() ? false :
+			 !test_get_desc_order_indexes() ? false :
 			 !test_str_list_len()? false:
 			 !test_int_list_len()? false:
 			 !test_non_zero_int_list_count()? false:
@@ -293,6 +333,7 @@ void test_maths_all(){
 			 !test_find_last_positive()? false:
 			 !test_find_max_int()? false:
 			 !test_int_list_both_positive_ctr()? false:
+			 !test_int_list_discrepancy()? false:
 			 true;
 
 	if(result == false){

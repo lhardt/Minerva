@@ -339,7 +339,7 @@ int count_required_meetings(School * school,Class * class,Subject * subject){
  * 		Checks if a given node can not possibly be a solution.
  *		This simply means that no meeting can have no periods to be in.
  *
- * 		Returns true if node is invalid. Modifies variable "valid" on node.
+ * 		Returns true if node is invalid.
  *
  *		Note: this does not mean that on false being returned, this node is
  *		garanteed to have a solution.
@@ -354,16 +354,29 @@ bool is_node_inconsistent(const School * const school, DecisionNode * node){
 	for(i_met = 0; node->conclusion[i_met].class != NULL; i_met++){
 		ref_met = &node->conclusion[i_met];
 		/* Values must be set or have possibilities to be in */
-		if(    (ref_met->room == NULL	 && non_zero_int_list_count(ref_met->possible_rooms))
-			|| (ref_met->teacher == NULL && non_zero_int_list_count(ref_met->possible_teachers))
-			|| (ref_met->period == -1	 && non_zero_int_list_count(ref_met->possible_periods))
+		if(    (ref_met->room == NULL	 && 0 == non_zero_int_list_count(ref_met->possible_rooms))
+			|| (ref_met->teacher == NULL && 0 == non_zero_int_list_count(ref_met->possible_teachers))
+			|| (ref_met->period == -1	 && 0 == non_zero_int_list_count(ref_met->possible_periods))
 		){
-			node->is_consistent = false;
 			return true;
 		}
 	}
 	return false;
 }
+
+bool is_node_final(const School * const school, DecisionNode * node){
+	int i = 0;
+	Meeting  curr;
+
+	for(i = 0; node->conclusion[i].class != NULL; ++i){
+		curr = node->conclusion[i];
+		if(curr.period < 0 || curr.room == NULL || curr.teacher == NULL){
+			return false;
+		}
+	}
+	return true;
+}
+
 
 /* ELIM ANALOGOUS ORDERING
  *		Eliminates possibilities of same period for analogous ordering.
@@ -409,14 +422,14 @@ bool elim_analogous_ordering(School * school, DecisionNode * node){
  * Development status:
  *		Implemented, not tested.
  */
-bool elim_search_fixed_meeting(School * school, DecisionNode * node){
+bool elim_search_fixed_meeting(const School * const school, DecisionNode * node){
 	int i_meet = 0, found = 0;
 	bool change = false;
 	/* Reference to shorten indirection. */
 	Meeting * meeting;
 
 	int * changed_meetings = calloc(node->owner->n_meetings + 1, sizeof(int));
-	changed_meetings[node->owner->n_meetings + 1] = -1;
+	changed_meetings[node->owner->n_meetings] = -1;
 
 	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
 		meeting = &node->conclusion[i_meet];
@@ -479,7 +492,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 		}
 		/* Rule 2. C cannot attend any other lecture at P */
 		if(meeting->class == fixed->class
-				&& fixed->period != 1
+				&& fixed->period != -1
 				&& meeting->period == -1
 				&& meeting->possible_periods[fixed->period] > 0){
 			meeting->possible_periods[fixed->period] = 0;
@@ -488,7 +501,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 		/* Rule 3. R cannot be allocated at P by any other meeting */
 		if(meeting->room == fixed->room
 				&& meeting->room != NULL
-				&& fixed->period != 1
+				&& fixed->period != -1
 				&& meeting->period == -1
 				&& meeting->possible_periods[fixed->period] > 0){
 			meeting->possible_periods[fixed->period] = 0;
@@ -566,14 +579,19 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 	return change;
 }
 
-bool root_elimination(School * school, DecisionNode * node){
-	return !flatten_teacher_subordination(school)? false:
-		   !flatten_class_subordination(school)?
-		   false:true;
+bool root_elimination(const School * const school, DecisionNode * node){
+	// return !flatten_teacher_subordination(school)? false:
+	// 	   !flatten_class_subordination(school)?
+	// 	   false:true;
+	return true;
 }
 
-bool new_node_elimination(School * school, DecisionNode * node){
+bool new_node_elimination(const School * const school, DecisionNode * node){
 	bool change = false, changed = false;
+
+	if(node == NULL){
+		printf("wtf null node man\n");
+	}
 
 	switch(node->type){
 		case NODE_TEACHER:{
@@ -603,5 +621,8 @@ bool new_node_elimination(School * school, DecisionNode * node){
 
 		changed |= change;
 	}while(change == true);
+
+	node->is_final = is_node_final(school, node);
+	node->is_consistent = !is_node_inconsistent(school, node);
 	return changed;
 }

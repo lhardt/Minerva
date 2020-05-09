@@ -83,6 +83,8 @@ int count_required_meetings(School * school, Class * class, Subject * subject);
  */
 bool is_node_inconsistent(const School * const school, DecisionNode * node);
 
+bool is_node_final(const School * const school, DecisionNode * node);
+
 /* PERIOD OVERFLOW RULE:
  *
  * Logic Type: Teacher-Subject-Class;
@@ -152,7 +154,7 @@ bool reverse_analogous_ordering(School * school, DecisionNode * node);
  *        is not set. The exclusion, then, happens only partially.
  * - if the room
  */
-bool elim_search_fixed_meeting(School * school, DecisionNode * node);
+bool elim_search_fixed_meeting(const School * const school, DecisionNode * node);
 bool elim_fixed_meeting(const School * const school, DecisionNode * node, const int fixed_meeting_index);
 
 /* GOOD ROOM RULE - Room: TODO better name
@@ -244,7 +246,7 @@ bool root_consistency_check(const School * const school, DecisionNode * node);
  *
  * TODO: Implement.
  */
-bool root_elimination(School * school, DecisionNode * node);
+bool root_elimination(const School * const school, DecisionNode * node);
 
 /* NEW NODE ELIMINATIONS
  *
@@ -253,7 +255,7 @@ bool root_elimination(School * school, DecisionNode * node);
  *
  * TODO: Implement.
  */
-bool new_node_elimination(School * school, DecisionNode * node);
+bool new_node_elimination(const School * const school, DecisionNode * node);
 bool new_teacher_node_elimination(School * school, DecisionNode * node);
 bool new_room_node_elimination(School * school, DecisionNode * node);
 bool new_period_node_elimination(School * school, DecisionNode * node);

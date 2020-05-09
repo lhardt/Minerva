@@ -71,6 +71,12 @@ int * order_elements_desc(const int * const list);
  */
 int * order_elements_asc(const int * const list);
 
+/* GET DESC ORDER INDEXES
+ *		Orders elemens of a list descendingly, using an auxiliary array.
+ *
+ */
+int * get_desc_order_indexes(const int * list);
+
 /* GET FIRST ORDER
  *		Returns the first order of n elements, namely [0,1,2,3... n].
  *
@@ -181,5 +187,12 @@ int find_max_int(const int * const list);
  *		Implemented, Tested.
  */
 int int_list_both_positive_ctr(const int * const a, const int * const b);
+
+/* INT LIST DISCREPANCY
+ *		the higher the result, more is there a 'clear frontrunner'.
+ *		If the result is 0, all elements are 0.
+ *
+ */
+int int_list_discrepancy(const int * const a);
 
 #endif /* MATHS_H */
