@@ -3,9 +3,12 @@
  *
  * Copyright (C) Léo H. 2019-2020.
  */
-#include <stdio.h>
-#include "types.h"
 #include "util.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "types.h"
 
 void print_int_list(FILE * out, const int * const list){
 	int i = 0;
@@ -42,7 +45,6 @@ void print_sized_int_list(FILE * out, const int * const list, const int size){
 		fprintf(out, "[]");
 	}
 }
-
 
 void print_bool_list(FILE * out, const bool * const list, const int size){
 	int i = 0;
@@ -101,4 +103,37 @@ void print_short_meeting_list(FILE * out, const Meeting * const meetings){
 		fprintf(out, "; P(%d) ", meetings[i].period);
 		fprintf(out,"\n");
 	}
+}
+
+Meeting * copy_meetings_list(const Meeting * const list){
+	Meeting * copy;
+	int i, n;
+	for(n = 0; list[n].class != NULL; ++n){ }
+
+	copy = calloc(n+1, sizeof(Meeting));
+	for(i = 0; i < n; ++i){
+		copy[i] = list[i];
+		copy[i].possible_periods = int_list_copy(copy[i].possible_periods);
+		copy[i].possible_rooms = int_list_copy(copy[i].possible_rooms);
+		copy[i].possible_teachers = int_list_copy(copy[i].possible_teachers);
+	}
+	return copy;
+}
+/* INT LIST COPY
+ *		allocates an exact copy of the null-terminated int list.
+ *
+ * Development status:
+ *		Implemented.
+ */
+int * int_list_copy(const int * const list){
+	int i, n, *copy;
+
+	for(n = 0; list[n] >= 0; ++n){ }
+
+	copy = calloc(n+1, sizeof(int));
+
+	for(i = 0; i <= n; ++i){
+		copy[i] = list[i];
+	}
+	return copy;
 }

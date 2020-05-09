@@ -12,8 +12,8 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-#include "types.h"
 #include "decisions.h"
+#include "types.h"
 
 /* CREATE TIMETABLE
  * 		Tries to create, from start to finish, a timetable for the school.

@@ -132,8 +132,8 @@ bool elim_planning_day(DecisionNode * node);
  * - But it may be reversed as L1.possible = L1.possible U L2.possible U L3.possible.
  * - make sure we do not include fixed meetings in the reversal union.
  */
-bool elim_analogous_ordering(School * school, DecisionNode * node);
-bool reverse_analogous_ordering(School * school, DecisionNode * node);
+bool elim_analogous_ordering(const School * const school, DecisionNode * node);
+bool reverse_analogous_ordering(const School * const school, DecisionNode * node);
 
 /* FIXED MEETING RULE:
  *
@@ -256,8 +256,5 @@ bool root_elimination(const School * const school, DecisionNode * node);
  * TODO: Implement.
  */
 bool new_node_elimination(const School * const school, DecisionNode * node);
-bool new_teacher_node_elimination(School * school, DecisionNode * node);
-bool new_room_node_elimination(School * school, DecisionNode * node);
-bool new_period_node_elimination(School * school, DecisionNode * node);
 
 #endif /* LOGIC_H */

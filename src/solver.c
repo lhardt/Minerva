@@ -21,47 +21,12 @@
 #include "types.h"
 #include "util.h"
 
-
-static const int  FIRST_ALLOC_SZ = 100;
-// static const int EXPAND_ALLOC_SZ = 100;
-
-
-int * int_list_copy(const int * const list){
-	int i, n, *copy;
-
-	for(n = 0; list[n] >= 0; ++n){ }
-
-	copy = calloc(n+1, sizeof(int));
-
-	for(i = 0; i <= n; ++i){
-		copy[i] = list[i];
-	}
-	return copy;
-}
-
-Meeting * copy_meetings_list(const Meeting * const list){
-	Meeting * copy;
-	int i, n;
-	for(n = 0; list[n].class != NULL; ++n){ }
-
-	copy = calloc(n+1, sizeof(Meeting));
-	for(i = 0; i < n; ++i){
-		copy[i] = list[i];
-		copy[i].possible_periods = int_list_copy(copy[i].possible_periods);
-		copy[i].possible_rooms = int_list_copy(copy[i].possible_rooms);
-		copy[i].possible_teachers = int_list_copy(copy[i].possible_teachers);
-	}
-
-
-	return copy;
-}
-
 int * make_possible_teacher_list(School * school, Meeting * meeting){
 	int i_teacher, i_teaches;
 	/* Reference to shorten indirection. */
 	Teacher * teacher;
 
-	LMH_ASSERT( (school != NULL) && (meeting != NULL), "null parameters" );
+	LMH_ASSERT( (school != NULL) && (meeting != NULL));
 
 	int * scores = calloc(school->n_teachers + 1, sizeof(int));
 	scores[school->n_teachers] = -1;
@@ -123,7 +88,7 @@ DecisionTree * init_decision_tree(School * school){
 
 	DecisionTree * tree = calloc(1, sizeof(DecisionTree));
 
-	tree->alloc_sz = FIRST_ALLOC_SZ;
+	tree->alloc_sz = 16;
 
 	tree->start = calloc(tree->alloc_sz, sizeof(DecisionNode));
 	tree->last_index = tree->start[0].id;
@@ -144,7 +109,8 @@ DecisionTree * init_decision_tree(School * school){
 		.next_affected_meeting_index = -1,
 		.affected_meeting_index = -1,
 		.is_final = false,
-		.is_consistent = true
+		.is_consistent = true,
+		.score = 1
 	};
 
 	conclusion = tree->start[0].conclusion;
@@ -209,7 +175,8 @@ DecisionNode * make_decision(const School * const school, DecisionNode * parent)
 			.affected_meeting_index = parent->next_affected_meeting_index,
 			.is_final = false,
 			.is_consistent = true,
-			.conclusion = copy_meetings_list(parent->conclusion)
+			.conclusion = copy_meetings_list(parent->conclusion),
+			.score = -1
 		};
 
 		parent->n_children++;
@@ -234,6 +201,9 @@ DecisionNode * make_decision(const School * const school, DecisionNode * parent)
 	} else {
 		printf("Was final. No can do.");
 	}
+
+	child->score = new_node_evaluation(school, child);
+
 	return child;
 }
 
@@ -253,80 +223,33 @@ DecisionNode * dfs_timetable_create(const School * const school , DecisionNode* 
 		}
 	} while(!curr->is_final && prev != NULL);
 	return curr;
-	// while(!solved){
-	// 	if(curr->is_consistent){
-	// 		if(curr->is_final){
-	// 			printf("Solved.");
-	// 			solved = true;
-	// 		} else {
-	// 			printf("making new one:\n");
-	// 			tmp = make_decision(school, curr);
-	// 			if(tmp != NULL){
-	// 				curr = tmp;
-	// 				new_node_elimination(school, curr);
-	// 				i++;
-	// 			} else {
-	// 				if(i == 0){
-	// 					printf("wtf dude\n");
-	// 					print_meeting_list(curr->conclusion);
-	// 					break;
-	// 				} else {
-	// 					curr = curr->parent;
-	// 					i--;
-	//
-	// 				}
-	// 			}
-	// 		}
-	// 	} else {
-	// 		print_meeting_list(curr->conclusion);
-	// 		if(i == 0){
-	// 			break;
-	// 		} else {
-	// 			curr = curr->parent;
-	// 			i--;
-	// 		}
-	// 	}
-	// }
-	// return curr;
 }
 
 // TODO: copy school.
 Meeting * create_timetable(School * school){
 	bool valid = false;
-	/* currhead refers to the top node being changed */
-	// DecisionNode * curr, currhead;
 
-	LMH_ASSERT(school != NULL, "null par");
+	LMH_ASSERT(school != NULL);
 
-	/* Preprocess  -- ? */
+	// school = make_school_copy(in_school);
+
+	/* Preprocess */
 	flatten_teacher_subordination(school);
 	flatten_class_subordination(school);
-	/* Initialize  */
+
 	DecisionTree * tree = init_decision_tree(school);
-	/* Diagnose inconsistencies */
+
 	valid = root_consistency_check(school, (tree->start));
 	if(!valid){
 		return NULL;
 	}
-	valid = flatten_class_subordination(school) &&
-			flatten_teacher_subordination(school);
-	if(!valid){
-		return NULL;
-	}
-	/* Create a valid timetable */
+
+	root_elimination(school, tree->start);
+
 	DecisionNode * solution = dfs_timetable_create(school, tree->start);
 
 	if(solution == NULL){
 		return NULL;
 	}
-	// /* The tree will have, at most, 3x n_meetings depth */
-	// int * min_score_by_depth = calloc( 3 * tree->n_meetings + 1, sizeof(int));
-	// min_score_by_depth[3 * tree->n_meetings] = -1;
-	// while(true){
-	//
-	// }
-	/* Then optimize it */
-
-
 	return solution->conclusion;
 }

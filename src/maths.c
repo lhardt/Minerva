@@ -9,13 +9,14 @@
  * This module contains general combinatorics functions counting
  * and ordering functions.
  */
+#include "maths.h"
+
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
-#include <stdbool.h>
 
-#include "maths.h"
 #include "assert.h"
 
 /* FACTORIAL DIVISION
@@ -27,7 +28,7 @@
 uint64_t factorial_division(const uint64_t p, const uint64_t t){
 	uint64_t i = p;
 	uint64_t total = 1;
-	LMH_ASSERT(p >= t && p >= 0 && t >= 0, "invalid par");
+	LMH_ASSERT(p >= t && p >= 0 && t >= 0);
 	while(i > t){
 		total *= i;
 		--i;
@@ -42,7 +43,7 @@ uint64_t factorial_division(const uint64_t p, const uint64_t t){
  * 		Implemented, Tested
  */
 uint64_t factorial(const uint64_t n){
-	LMH_ASSERT(n>=0, "invalid par");
+	LMH_ASSERT(n>=0);
 	return factorial_division(n,0);
 }
 
@@ -64,7 +65,7 @@ uint64_t factorial(const uint64_t n){
  */
 uint64_t * create_list_by_index(const uint64_t elements_, const uint64_t n){
 	uint64_t * decomposition, elements = elements_;
-	LMH_ASSERT(elements >= 0 && n >= 0, "null par");
+	LMH_ASSERT(elements >= 0 && n >= 0);
 	decomposition = calloc(n, sizeof(uint64_t));
 	int i = 0, j = n-1;
 	while(j >= 0){
@@ -103,7 +104,7 @@ int * order_elements_desc(const int * const list){
 	int min = 0, tmp = 0;
 	int i, j, i_min = 0, n;
 
-	LMH_ASSERT(list != NULL, "null par");
+	LMH_ASSERT(list != NULL);
 
 	for(n = 0; list[n] >= 0; n++){ }
 
@@ -140,7 +141,7 @@ int * order_elements_asc(const int * const list){
 	int min = 0, tmp = 0;
 	int i, j, i_min = 0, n;
 
-	LMH_ASSERT(list != NULL, "null par");
+	LMH_ASSERT(list != NULL);
 
 	for(n = 0; list[n] >= 0; n++){ }
 
@@ -211,7 +212,7 @@ int * get_desc_order_indexes(const int * list){
  */
 int * get_first_order(const int size){
 	int i, *list;
-	LMH_ASSERT(size >= 0, "null par");
+	LMH_ASSERT(size >= 0);
 	list = calloc(size + 1, sizeof(int));
 	for(i = 0; i < size; ++i){
 		list[i] = i;
@@ -324,7 +325,7 @@ bool get_next_subset(int * list){
  */
 int str_list_len(const char * const list[]){
 	int len = 0;
-	LMH_ASSERT(list != NULL, "null par");
+	LMH_ASSERT(list != NULL);
 	while(list[len] != NULL)
 		++len;
 	return len;
@@ -338,7 +339,7 @@ int str_list_len(const char * const list[]){
  */
 int int_list_len(const int * const list){
 	int len = 0;
-	LMH_ASSERT(list != NULL, "null par");
+	LMH_ASSERT(list != NULL);
 	while(list[len] >= 0)
 		++len;
 	return len;
@@ -352,7 +353,7 @@ int int_list_len(const int * const list){
  */
 int non_zero_int_list_count(const int * const list){
 	int i = 0, ctr = 0;
-	LMH_ASSERT(list != NULL, "null par");
+	LMH_ASSERT(list != NULL);
 	while(list[i] >= 0){
 		if(list[i] > 0){
 			++ctr;
@@ -370,7 +371,7 @@ int non_zero_int_list_count(const int * const list){
  */
 bool are_int_lists_equal(const int * const a, const int * const b){
 	int i = 0;
-	LMH_ASSERT(a != NULL && b != NULL, "null par");
+	LMH_ASSERT(a != NULL && b != NULL);
 	if(a == b){
 		return true;
 	}
@@ -411,7 +412,7 @@ int find_first_positive(const int * const list){
  */
 int find_last_positive(const int * const list){
 	int index = 0;
-	LMH_ASSERT(list != NULL, "null par");
+	LMH_ASSERT(list != NULL);
 	while(list[index] >= 0){
 		++index;
 	}
@@ -434,7 +435,7 @@ int find_last_positive(const int * const list){
  */
 int find_max_int(const int * const list){
 	int i = 1, max = 0;
-	LMH_ASSERT(list != NULL, "null par");
+	LMH_ASSERT(list != NULL);
 	if(list[0] < 0){
 		return -1;
 	}
@@ -447,7 +448,7 @@ int find_max_int(const int * const list){
 }
 
 /* INT LIST BOTH POSITIVE CTR
- *		calculates the number of times taht a[i] > 0 & b[i] > 0.
+ *		calculates the number of times that a[i] > 0 & b[i] > 0.
  *
  * Development status:
  *		Implemented, Tested
@@ -462,6 +463,12 @@ int int_list_both_positive_ctr(const int * const list_a, const int * const list_
 	return n;
 }
 
+/* INT LIST DISCREPANCY
+ *		the higher the result, more is there a 'clear frontrunner'.
+ *		If the result is 0, all elements are 0.
+ * Development status:
+ *		Implemented.
+ */
 int int_list_discrepancy(const int * const list){
 	int score = 0, i_max = -1, i;
 

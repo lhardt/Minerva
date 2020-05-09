@@ -4,8 +4,8 @@
 #include "logic.h"
 
 #include "assert.h"
-#include "util.h"
 #include "maths.h"
+#include "util.h"
 
 /* DETECT TEACHER CIRCULAR SUBORDINATION
  *		Tries to detect if some teacher subordinates itself, which is illegal.
@@ -19,7 +19,7 @@ bool detect_teacher_circular_subordination(const School * const school){
 	bool * visited = calloc(school->n_teachers, sizeof(bool));
 	int * path = calloc(1 + school->n_teachers, sizeof(int));
 
-	LMH_ASSERT(school != NULL, "nul par");
+	LMH_ASSERT(school != NULL);
 
 	path[school->n_teachers] = -1;
 	/* Tries to visit twice some node starting at each of the remaining. */
@@ -83,8 +83,8 @@ bool flatten_teacher_subordination(School * school){
 	bool backtrack = false;
 	int * path = calloc(10 + school->n_teachers, sizeof(int));
 
-	LMH_ASSERT(school != NULL, "nul par");
-	LMH_ASSERT(false == detect_teacher_circular_subordination(school), "nul par");
+	LMH_ASSERT(school != NULL);
+	LMH_ASSERT(false == detect_teacher_circular_subordination(school));
 
 	path[school->n_teachers] = -1;
 	/* Tries to visit twice some node starting at each of the remaining. */
@@ -147,8 +147,8 @@ bool flatten_class_subordination(School * school){
 	bool backtrack = false;
 	int * path = calloc(10 + school->n_classes, sizeof(int));
 
-	LMH_ASSERT(school != NULL, "nul par");
-	LMH_ASSERT(false == detect_class_circular_subordination(school), "nul par");
+	LMH_ASSERT(school != NULL);
+	LMH_ASSERT(false == detect_class_circular_subordination(school));
 
 	path[school->n_classes] = -1;
 	/* Tries to visit twice some node starting at each of the remaining. */
@@ -208,7 +208,7 @@ bool detect_class_circular_subordination(const School * const school){
 	bool * visited = calloc(school->n_classes, sizeof(bool));
 	int * path = calloc(1 + school->n_classes, sizeof(int));
 
-	LMH_ASSERT(school != NULL, "nul par");
+	LMH_ASSERT(school != NULL);
 
 	path[school->n_classes] = -1;
 	/* Tries to visit twice some node starting at each of the remaining. */
@@ -317,7 +317,7 @@ bool have_classes_relation(const School * const school, const Class * const c1, 
 int count_required_meetings(School * school,Class * class,Subject * subject){
 	int count = 0, i_class = 0, i_need = 0;
 
-	LMH_ASSERT(school != NULL, "null par");
+	LMH_ASSERT(school != NULL);
 
 	if(school->classes != NULL && school->n_classes > 0){
 		for(i_class = 0; i_class < school->n_classes; i_class++){
@@ -377,7 +377,6 @@ bool is_node_final(const School * const school, DecisionNode * node){
 	return true;
 }
 
-
 /* ELIM ANALOGOUS ORDERING
  *		Eliminates possibilities of same period for analogous ordering.
  * 		Meetings are analogous if class == class && subj == subj
@@ -385,7 +384,7 @@ bool is_node_final(const School * const school, DecisionNode * node){
  * Development Status:
  *		Implemented, not tested.
  */
-bool elim_analogous_ordering(School * school, DecisionNode * node){
+bool elim_analogous_ordering(const School * const school, DecisionNode * node){
 	int i_meet = 0, j_meet = 0, elim_asc = -1, elim_desc;
 	bool change = false;
 	/* Reference to shorten indirection */
@@ -580,9 +579,8 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 }
 
 bool root_elimination(const School * const school, DecisionNode * node){
-	// return !flatten_teacher_subordination(school)? false:
-	// 	   !flatten_class_subordination(school)?
-	// 	   false:true;
+	/* TODO expand to encompass more restrictions */
+	elim_analogous_ordering(school,node);
 	return true;
 }
 

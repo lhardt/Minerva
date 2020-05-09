@@ -12,17 +12,25 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include <stdio.h>
+
 #include "types.h"
 
+void copy_string(const char * const string);
+
 void print_int_list(FILE * out, const int * const list);
+int * copy_int_list(const int * const list);
+int * int_list_copy(const int * const list);
+
 
 void print_sized_int_list(FILE * out, const int * const list, const int size);
 
 void print_bool_list(FILE * out, const bool * const list, const int size);
 
 void print_meeting_list(FILE * out, const Meeting * const meetings);
-
 void print_short_meeting_list(FILE * out, const Meeting * const meetings);
+Meeting * copy_meetings_list(const Meeting * const meetings);
+
 
 void print_room(FILE * out, const Room * const t);
 
@@ -31,5 +39,7 @@ void print_teacher(FILE * out, const Teacher * const t);
 void print_class(FILE * out, const Class * const c);
 
 void print_school(FILE * out, const School * const s);
+School * copy_school(const School * const school);
+
 
 #endif /* UTIL_H */

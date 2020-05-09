@@ -120,3 +120,13 @@ bool score_possible_children(const School * const school, DecisionNode * parent)
 
 	return true;
 }
+
+bool new_node_evaluation(const School * const school, DecisionNode * node){
+	if(node->parent == NULL){
+		printf("Error. null parent\n");
+		node->score = 1;
+	} else {
+		node->score = node->parent->children_score[ node->parent->children_score_order[node - node->parent->children]];
+	}
+	return true;
+}

@@ -68,7 +68,7 @@ struct DecisionNode{
 	int is_final;
 	int is_consistent;
 
-	double score;
+	int score;
 };
 
 struct DecisionTree{

@@ -12,8 +12,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define MAX_FEATURES          (64)
 #define MAX_PERIODS_PER_DAY   (32)

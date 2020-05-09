@@ -10,18 +10,17 @@
  * a good timetable. However, in eliminting options sooner, it may
  * actually reduce time and memory spent by the computer.
  */
-#include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <string.h>
 
 #include "assert.h"
+#include "decisions.h"
+#include "loader.h"
+#include "logic.h"
+#include "solver.h"
 #include "types.h"
 #include "util.h"
-#include "logic.h"
-#include "decisions.h"
-#include "solver.h"
-#include "loader.h"
 
 School * test_case_1(){
 
@@ -216,7 +215,6 @@ void test_insert_school(){
 
 int main(){
 	test_case_1();
-	// LMH_ASSERT(false, "Assertion failed. ");
 
 	return 0;
 }

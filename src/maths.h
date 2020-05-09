@@ -12,11 +12,11 @@
 #ifndef MATHS_H
 #define MATHS_H
 
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
-#include <stdbool.h>
 
 #include "types.h"
 
@@ -191,8 +191,10 @@ int int_list_both_positive_ctr(const int * const a, const int * const b);
 /* INT LIST DISCREPANCY
  *		the higher the result, more is there a 'clear frontrunner'.
  *		If the result is 0, all elements are 0.
- *
+ * Development status:
+ *		Implemented.
  */
 int int_list_discrepancy(const int * const a);
+
 
 #endif /* MATHS_H */

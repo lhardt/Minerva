@@ -18,22 +18,27 @@
 #include "maths.h"
 #include "types.h"
 
-/* Gives this node its score.
+/* NEW NODE EVALUATION
+ * 		Gives this node its score.
  *
- * TODO: Implement.
+ * Developent status:
+ *		Implemented.
  */
 bool new_node_evaluation(const School * const school, DecisionNode * node);
 
-/* Gives a complete timetable its score.
- * More exensive than the former
+/* LEAF NODE EVALUATION
+ * 		Gives a complete timetable its score.
+ * 		More exensive than new_node_evaluation
  *
  * TODO: Implement.
  */
 bool leaf_node_evaluation(School * school, DecisionNode * node);
 
-/* Ranks and orders possible children before they are created.
+/* SCORE POSSIBLE CHILDREN
+ *		Ranks and orders possible children before they are created.
  *
- * TODO: Implement.
+ * Development Status:
+ *		Implemented.
  */
 bool score_possible_children(const School * const school, DecisionNode * node);
 
