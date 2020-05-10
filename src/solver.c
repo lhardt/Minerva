@@ -70,10 +70,7 @@ int * make_possible_period_list(School * school, Meeting * meeting){
 	int * possible_periods = calloc(school->n_periods + 1, sizeof(int));
 
 	for(i_per = 0; i_per < school->n_periods; i_per++){
-
-		// TODO: melhorar este algorítmo. No momento,
-		// ele calcula o mínimo entre os dois valores
-		possible_periods[i_per] = meeting->class->periods[i_per];
+		possible_periods[i_per] = school->periods[i_per]?(meeting->class->periods[i_per]):0;
 	}
 	possible_periods[school->n_periods] = -1;
 	return possible_periods;
@@ -88,14 +85,11 @@ DecisionTree * init_decision_tree(School * school){
 
 	DecisionTree * tree = calloc(1, sizeof(DecisionTree));
 
-	tree->alloc_sz = 16;
-
-	tree->start = calloc(tree->alloc_sz, sizeof(DecisionNode));
-	tree->last_index = tree->start[0].id;
+	tree->start = calloc(1, sizeof(DecisionNode));
 
 	tree->n_meetings = count_required_meetings(school, NULL, NULL);
 
-	tree->start[0] = (DecisionNode) {
+	* tree->start = (DecisionNode) {
 		.id=0,
 		.parent = NULL,
 		.type = NODE_START,
@@ -113,7 +107,7 @@ DecisionTree * init_decision_tree(School * school){
 		.score = 1
 	};
 
-	conclusion = tree->start[0].conclusion;
+	conclusion = tree->start->conclusion;
 
 	for(i_class = 0; i_class < school->n_classes; i_class++){
 		class = &(school->classes[i_class]);
@@ -228,6 +222,7 @@ DecisionNode * dfs_timetable_create(const School * const school , DecisionNode* 
 // TODO: copy school.
 Meeting * create_timetable(School * school){
 	bool valid = false;
+	Meeting * ret_val = NULL;
 
 	LMH_ASSERT(school != NULL);
 
@@ -248,8 +243,17 @@ Meeting * create_timetable(School * school){
 
 	DecisionNode * solution = dfs_timetable_create(school, tree->start);
 
-	if(solution == NULL){
-		return NULL;
+	if(solution != NULL){
+		ret_val = copy_meetings_list(solution->conclusion);
 	}
-	return solution->conclusion;
+
+	free_node(tree->start);
+	free(tree->start);
+	free(tree);
+
+	if(ret_val == NULL){
+		return NULL;
+	} else {
+		return ret_val;
+	}
 }

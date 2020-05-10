@@ -15,6 +15,7 @@
 #include <stdio.h>
 
 #include "types.h"
+#include "decisions.h"
 
 void copy_string(const char * const string);
 
@@ -41,5 +42,9 @@ void print_class(FILE * out, const Class * const c);
 void print_school(FILE * out, const School * const s);
 School * copy_school(const School * const school);
 
+
+void free_meetings_list(Meeting * list);
+
+void free_node(DecisionNode * node);
 
 #endif /* UTIL_H */

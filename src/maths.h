@@ -74,6 +74,8 @@ int * order_elements_asc(const int * const list);
 /* GET DESC ORDER INDEXES
  *		Orders elemens of a list descendingly, using an auxiliary array.
  *
+ * Development Status:
+ *		Implemented.
  */
 int * get_desc_order_indexes(const int * list);
 

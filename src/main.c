@@ -26,6 +26,10 @@ School * test_case_1(){
 
 	School school;
 
+	for(int i = 0; i<7;i++){
+		school.periods[i] = true;
+	}
+
 	char * day_names[]    = {"Monday", "Friday", ""};
 	char * daily_period_names[] = {"P1", "P2", "P3", ""};
 	char * period_names[] = {"M1", "M2", "M3", "F1", "F2", "F3"};
@@ -150,27 +154,16 @@ School * test_case_1(){
 
 	Meeting * solution = create_timetable(&school);
 	print_meeting_list(stdout, solution);
-	// DecisionTree * tree = init_decision_tree(&school);
-	//
-	// int nmet = 0;
-	// while(tree->start[0].conclusion[nmet].class != NULL){
-	// 	nmet++;
-	// }
-	// printf("Nmet: %d\n", nmet);
-	//
-	// print_meeting_list(stdout, tree->start[0].conclusion);
-	//
-	// elim_analogous_ordering(&school, &tree->start[0]);
-	//
-	// bool change = true;
-	// while(change){
-	// 	change = false;
-	// 	change |= elim_search_fixed_meeting(&school, &tree->start[0]);
-	// 	change |= elim_general_super_room(&school, &tree->start[0]);
-	// }
-	// printf("\n\n");
-	// print_meeting_list(stdout, tree->start[0].conclusion);
+	free_meetings_list(solution);
 
+	for(int i = 0; i < school.n_teachers; ++i){
+		free(school.teachers[i].teaches);
+	}
+
+	free(school.teaches);
+	free(school.teachers);
+	free(school.classes);
+	free(school.rooms);
 
 	return NULL;
 }
@@ -187,6 +180,7 @@ void test_insert_school(){
 						     "M41", "M42", "M43", "M44", "M45", "T41", "T42", "T43", "T44", "T45",
   						     "M51", "M52", "M53", "M54", "M55", "T51", "T52", "T53", "T54", "T55"};
 	char * features[] = {"Num. Computers", "N. Tables", "Projector", "Blackboard", "Ventilation", "Air Conditioning"};
+
 
 	school.name = "PeriodSchool";
 	school.n_periods = 50;

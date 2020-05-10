@@ -28,24 +28,19 @@ struct DecisionNode{
 	int id;
 	NodeType type;
 	DecisionNode * parent;
-	/* Does not make it clear when nodes
-	 * from different parents are sequentially
-	 * allocated. This is an optimisation planned
-	 * for the near future. The distinction of "end of list"
-	 * is given by n_children.
-	 */
 	DecisionNode * children;
 	DecisionTree * owner;
 	int n_children;
 
-	// TODO: threading.
-	// bool is_locked;
-	// thrd_t responsible;
-	// bool is_child_locked;
+	/* TODO: threading.
+	 *
+	 * bool is_locked;
+	 * thrd_t responsible;
+	 * bool is_child_locked;
+	 */
 
-	/* NOTE these are created before the children and used
+	 /* Variables created before the children themselves and used
 	 * as measure of what nodes must be created next.
-	 * not the other way around.
 	 */
 	int * children_score;
 	int * children_score_order;
@@ -72,11 +67,12 @@ struct DecisionNode{
 };
 
 struct DecisionTree{
+	/* NOTE: planned subdividing nodes into trees
+	 * to allocate a tree for each thread. not necessary
+	 * by now.
+	 */
 	int parent_node_id;
-	/* Nodes may be stored linearly at start[i] */
-	int alloc_sz;
-	int last_index;
-
+	
 	int n_meetings;
 
 	DecisionNode * start;

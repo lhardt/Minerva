@@ -21,7 +21,7 @@
  * 		Returns NULL on failure.
  *
  * Development status:
- *		-
+ *		More or less implemented
  */
 Meeting * create_timetable(School * school);
 
@@ -31,7 +31,7 @@ Meeting * create_timetable(School * school);
  *		Returns NULL on failure.
  *
  * Development status:
- * 		-
+ * 		Implemented. Not tested
  */
 DecisionTree * init_decision_tree(School * school);
 

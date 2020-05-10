@@ -16,13 +16,67 @@
 
  #include "decisions.h"
 
- /* DETECT TEACHER CIRCULAR SUBORDINATION
-  *		Tries to detect if some teacher subordinates itself, which is illegal.
-  *
-  * Development status:
-  *		Implemented, not tested.
-  */
- bool detect_teacher_circular_subordination(const School * const school);
+/* ROOT CONSISTENCY CHECK
+ *		Tries to detect problems before the timetable generation.
+ *		Returns true if the test passed.
+ *
+ *	Development status:
+ *		partially implemented.
+ *	TODO:
+ *		Implement some way to see if all lectures have periods.
+ * */
+bool root_consistency_check(const School * const school, DecisionNode * node);
+
+/* ROOT ELIMINATION
+ * 		Blackbox functions for eliminating possibilities, for the initial
+ *		node created.
+ *
+ * Development Status:
+ *		Implemented.
+ */
+bool root_elimination(const School * const school, DecisionNode * node);
+
+/* NEW NODE ELIMINATION
+ * 		Blackbox functions for eliminating possibilities, based on the
+ *		type of node created.
+ *
+ * Development Status:
+ *		Implemented.
+ */
+bool new_node_elimination(const School * const school, DecisionNode * node);
+
+/* IS NODE INCONSISTENT
+ * 		Checks if a given node can not possibly be a solution.
+ *		This simply means that a meeting doesn't have a period/room/teacher to be in.
+ *
+ * 		Returns true if node is inconsistent.
+ *
+ *		Note: this does not mean that on false being returned, this node is
+ *		garanteed to have a solution.
+ *
+ * Development status:
+ *		Implemented, not tested.
+ */
+bool is_node_inconsistent(const School * const school, const DecisionNode * const node);
+
+/* IS NODE FINAL
+ * 		Checks if a given node has every variable set.
+ *		This simply means that all meetings have period, teacher and room.
+ *
+ * 		Returns true if node is final.
+ *
+ * Development status:
+ *		Implemented, not tested.
+ */
+bool is_node_final(const School * const school, const DecisionNode * const node);
+
+/* DETECT TEACHER CIRCULAR SUBORDINATION
+ *		Tries to detect if some teacher subordinates itself, which is illegal.
+ *
+ * Development status:
+ *		Implemented, not tested.
+ */
+bool detect_teacher_circular_subordination(const School * const school);
 
  /* FLATTEN TEACHER SUBORDINATION
  *		Includes sub-subordinates in teachers' subordinate list.
@@ -32,17 +86,17 @@
  */
  bool flatten_teacher_subordination(School * school);
 
- /* FLATTEN CLASS SUBORDINATION
-  *		Includes sub-subordinates in classes' subordinate list.
-  *
-  * Returns true on success.
-  *
-  * Warning: this function must be called *after* detect_circular.
-  *
-  * Development Status:
-  *		Implemented. tested.
-  */
- bool flatten_class_subordination(School * school);
+/* FLATTEN CLASS SUBORDINATION
+ *		Includes sub-subordinates in classes' subordinate list.
+ *
+ * Returns true on success.
+ *
+ * Warning: this function must be called *after* detect_circular.
+ *
+ * Development Status:
+ *		Implemented. tested.
+ */
+bool flatten_class_subordination(School * school);
 
 
 /* DETECT CLASS CIRCULAR SUBORDINATION
@@ -68,22 +122,6 @@ bool detect_class_circular_subordination(const School * const school);
  * 		Implemented, not tested.
  */
 int count_required_meetings(School * school, Class * class, Subject * subject);
-
-/* IS NODE INCONSISTENT
- * 		Checks if a given node can not possibly be a solution.
- *		This simply means that no meeting can have no periods to be in.
- *
- * 		Returns true if node is invalid. Modifies variable "valid" on node.
- *
- *		Note: this does not mean that on false being returned, this node is
- *		garanteed to have a solution.
- *
- * Development status:
- *		Implemented, not tested.
- */
-bool is_node_inconsistent(const School * const school, DecisionNode * node);
-
-bool is_node_final(const School * const school, DecisionNode * node);
 
 /* PERIOD OVERFLOW RULE:
  *
@@ -228,33 +266,13 @@ bool elim_general_super_room(School * school, DecisionNode * node);
 
 bool elim_super_room_daily(School * school, DecisionNode * node, int day);
 
-/* ROOT CONSISTENCY CHECK
- *		Tries to detect problems before the timetable generation.
- *		Returns true if the test passed.
+/* ROOM PERIOD ELIMINATION
+ *		Tries to excluded periods based on room disponibiliy
+ *		and vice-versa.
  *
- *	Development status:
- *		partially implemented.
- *	TODO:
- *		Implement some way to see if all lectures have periods.
- * */
-bool root_consistency_check(const School * const school, DecisionNode * node);
-
-/* ROOT ELIMINATION
- *
- * Tries to eliminate, as much as possible, upfront.
- * Making this avoids entire branches of the tree to grow.
- *
- * TODO: Implement.
+ * Development Status:
+ *		Implemented.
  */
-bool root_elimination(const School * const school, DecisionNode * node);
-
-/* NEW NODE ELIMINATIONS
- *
- * Blackbox functions for eliminating possibilities,
- * based on the type of node created.
- *
- * TODO: Implement.
- */
-bool new_node_elimination(const School * const school, DecisionNode * node);
+bool room_period_elimination(const School * const school, DecisionNode * node);
 
 #endif /* LOGIC_H */

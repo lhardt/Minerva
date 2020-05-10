@@ -271,14 +271,20 @@ bool detect_class_circular_subordination(const School * const school){
  *		Implement some way to see if all lectures have periods.
  * */
 bool root_consistency_check(const School * const school, DecisionNode * node){
+
+	LMH_ASSERT(school != NULL && node != NULL);
+
 	return detect_teacher_circular_subordination(school)? false:
 		   detect_class_circular_subordination(school)?
 		   false:true;
 }
 
 /* NOTE expects flattened relations */
-bool have_teachers_relation(const School * const school, Teacher * t1, Teacher * t2){
+bool have_teachers_relation(const School * const school, const Teacher * const t1, const Teacher * const t2){
 	int result = 0;
+
+	LMH_ASSERT(school != NULL && t1 != NULL && t2 != NULL);
+
 	int t1_index = (t1 - school->teachers);
 	int t2_index = (t2 - school->teachers);
 	if(t1->subordinates && t1->subordinates[t2_index] > 0) {
@@ -293,6 +299,9 @@ bool have_teachers_relation(const School * const school, Teacher * t1, Teacher *
 /* NOTE expects flattened relations */
 bool have_classes_relation(const School * const school, const Class * const c1, const Class * const c2){
 	int result = 0;
+
+	LMH_ASSERT(school != NULL && c1 != NULL && c2 != NULL);
+
 	int c1_index = (c1 - school->classes);
 	int c2_index = (c2 - school->classes);
 
@@ -337,7 +346,7 @@ int count_required_meetings(School * school,Class * class,Subject * subject){
 
 /* IS NODE INCONSISTENT
  * 		Checks if a given node can not possibly be a solution.
- *		This simply means that no meeting can have no periods to be in.
+ *		This simply means that a meeting doesn't have a period/room/teacher to be in.
  *
  * 		Returns true if node is invalid.
  *
@@ -347,9 +356,11 @@ int count_required_meetings(School * school,Class * class,Subject * subject){
  * Development status:
  *		Implemented, not tested.
  */
-bool is_node_inconsistent(const School * const school, DecisionNode * node){
+bool is_node_inconsistent(const School * const school, const DecisionNode * const node){
 	int i_met = 0;
 	Meeting * ref_met;
+
+	LMH_ASSERT(school != NULL && node != NULL);
 
 	for(i_met = 0; node->conclusion[i_met].class != NULL; i_met++){
 		ref_met = &node->conclusion[i_met];
@@ -364,9 +375,20 @@ bool is_node_inconsistent(const School * const school, DecisionNode * node){
 	return false;
 }
 
-bool is_node_final(const School * const school, DecisionNode * node){
+/* IS NODE FINAL
+ * 		Checks if a given node has every variable set.
+ *		This simply means that all meetings have period, teacher and room.
+ *
+ * 		Returns true if node is final.
+ *
+ * Development status:
+ *		Implemented, not tested.
+ */
+bool is_node_final(const School * const school, const DecisionNode * const node){
 	int i = 0;
 	Meeting  curr;
+
+	LMH_ASSERT(school != NULL && node != NULL);
 
 	for(i = 0; node->conclusion[i].class != NULL; ++i){
 		curr = node->conclusion[i];
@@ -387,6 +409,8 @@ bool is_node_final(const School * const school, DecisionNode * node){
 bool elim_analogous_ordering(const School * const school, DecisionNode * node){
 	int i_meet = 0, j_meet = 0, elim_asc = -1, elim_desc;
 	bool change = false;
+
+	LMH_ASSERT(school != NULL && node != NULL);
 	/* Reference to shorten indirection */
 	Meeting * meetings = node->conclusion;
 	/* Ascending */
@@ -427,6 +451,8 @@ bool elim_search_fixed_meeting(const School * const school, DecisionNode * node)
 	/* Reference to shorten indirection. */
 	Meeting * meeting;
 
+	LMH_ASSERT(school != NULL && node != NULL);
+
 	int * changed_meetings = calloc(node->owner->n_meetings + 1, sizeof(int));
 	changed_meetings[node->owner->n_meetings] = -1;
 
@@ -459,6 +485,7 @@ bool elim_search_fixed_meeting(const School * const school, DecisionNode * node)
 			elim_fixed_meeting(school, node, i_meet);
 		}
 	}
+	free(changed_meetings);
 	return change;
 }
 
@@ -471,6 +498,8 @@ bool elim_search_fixed_meeting(const School * const school, DecisionNode * node)
 bool elim_fixed_meeting(const School * const school, DecisionNode * node, const int fix_meet_i){
 	int i_meet = 0;
 	bool change = false;
+
+	LMH_ASSERT(school != NULL && node != NULL && fix_meet_i >= 0);
 
 	Meeting * fixed = &node->conclusion[fix_meet_i];
 	Meeting * meeting;
@@ -522,7 +551,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 			meeting->room = fixed->room;
 			change = true;
 		}
-		/* Rule 6. Any super/subordinate of T cannot lecture at P. */
+		/* Rule 6. No super/subordinate of T can lecture at P. */
 		if(fixed->teacher != NULL
 				&& fixed->period != -1
 				&& meeting->period == -1
@@ -531,7 +560,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 			meeting->possible_periods[fixed->period] = 0;
 			change = true;
 		}
-		/* Rule 7. Any super/subordinate of C cannot attend lectures at P. */
+		/* Rule 7. No super/subordinate of C can attend lectures at P. */
 		if(fixed->period != -1
 				&& meeting->period == -1
 				&& have_classes_relation(school, meeting->class, fixed->class) != 0){
@@ -542,9 +571,22 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 	return change;
 }
 
+/* SUPER ROOM RULE
+ *
+ * Basic Explanation:
+ *   If N classes happen in room R, and the limit is K,
+ *    then any other class that needs more than N-K periods can't
+ *    happen in that room.
+ *
+ * Things to consider:
+ * - "limit" above is not a single quantity. It may be
+ *  max_per_day, max_per_week, etc. in this function, it means school->n_meetings.
+ */
 bool elim_general_super_room(School * school, DecisionNode * node){
 	int i_meet, i_room;
 	bool change = false;
+
+	LMH_ASSERT(school != NULL && node != NULL);
 
 	int * room_remainders = calloc(school->n_rooms + 1, sizeof(int));
 	Meeting * meet;
@@ -578,18 +620,78 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 	return change;
 }
 
+/* ROOM PERIOD ELIMINATION
+ *		Tries to excluded periods based on room disponibiliy
+ *		and vice-versa.
+ *
+ * Development Status:
+ *		Implemented.
+ */
+bool room_period_elimination(const School * const school, DecisionNode * node){
+	int i_per = 0, i_room = 0;
+	Meeting * met = NULL;
+	bool change = false;
+
+
+	LMH_ASSERT(node != NULL);
+
+	met = &node->conclusion[node->affected_meeting_index];
+	if(node->type == NODE_ROOM){
+		if(met->period >= 0){
+			if(met->class->periods[met->period] == 0){
+				// Selected a period that the class does not support.
+				// Theoretically, no nodes made by the program blocks
+				// tihs possibility by hindsight. But handmade, ...
+				node->is_consistent = false;
+				change = true;
+			}
+		} else {
+			for(i_per = 0; met->possible_periods[i_per] >= 0; ++i_per){
+				// TODO make this a consistent standard among other eliminations.
+				met->possible_periods[i_per] *= met->room->disponibility[i_per];
+				change = true;
+			}
+		}
+	} else if(node->type == NODE_PERIOD){
+		if(met->room != NULL){
+			if(met->room->disponibility[ met->period ] == 0){
+				node->is_consistent = false;
+				change = true;
+			}
+		} else {
+			for(i_room = 0; met->possible_rooms[i_room] >= 0; ++i_room){
+				met->possible_rooms[i_room] *= school->rooms[i_room].disponibility[i_per];
+			}
+		}
+	}
+	return change;
+}
+
+/* ROOT ELIMINATION
+ * 		Blackbox functions for eliminating possibilities, for the initial
+ *		node created.
+ *
+ * Development Status:
+ *		Implemented.
+ */
 bool root_elimination(const School * const school, DecisionNode * node){
+	LMH_ASSERT(school != NULL && node != NULL);
 	/* TODO expand to encompass more restrictions */
 	elim_analogous_ordering(school,node);
 	return true;
 }
 
+/* NEW NODE ELIMINATION
+ * 		Blackbox functions for eliminating possibilities, based on the
+ *		type of node created.
+ *
+ * Development Status:
+ *		Implemented.
+ */
 bool new_node_elimination(const School * const school, DecisionNode * node){
 	bool change = false, changed = false;
 
-	if(node == NULL){
-		printf("wtf null node man\n");
-	}
+	LMH_ASSERT(school != NULL && node != NULL);
 
 	switch(node->type){
 		case NODE_TEACHER:{
@@ -611,6 +713,9 @@ bool new_node_elimination(const School * const school, DecisionNode * node){
 			break;
 		}
 	}
+
+	room_period_elimination(school, node);
+
 	do{
 		change = false;
 		/* TODO: basic elimination. Improve over time. */

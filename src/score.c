@@ -15,9 +15,12 @@
 
 #include "types.h"
 #include "decisions.h"
+#include "assert.h"
 
 int get_max_teacher_score_discrepancy(const School * const school, const DecisionNode * const parent, int * res_index){
 	int max_disc = -1, curr_disc = -1, i = 0, max_i = 0;
+
+	LMH_ASSERT(school != NULL && parent != NULL && res_index != NULL);
 
 	for(i = 0; parent->conclusion[i].class != NULL; ++i){
 		if(parent->conclusion[i].teacher != NULL){
@@ -38,6 +41,8 @@ int get_max_teacher_score_discrepancy(const School * const school, const Decisio
 int get_max_room_score_discrepancy(const School * const school, const DecisionNode * const parent, int * res_index){
 	int max_disc = -1, curr_disc = -1, i = 0, max_i = 0;
 
+	LMH_ASSERT(school != NULL && parent != NULL && res_index != NULL);
+
 	for(i = 0; parent->conclusion[i].class != NULL; ++i){
 		if(parent->conclusion[i].room != NULL){
 			continue;
@@ -57,6 +62,8 @@ int get_max_room_score_discrepancy(const School * const school, const DecisionNo
 int get_max_period_score_discrepancy(const School * const school, const DecisionNode * const parent, int * res_index){
 	int max_disc = -1, curr_disc = -1, i = 0, max_i = 0;
 
+	LMH_ASSERT(school != NULL && parent != NULL && res_index != NULL);
+
 	for(i = 0; parent->conclusion[i].class != NULL; ++i){
 		if(parent->conclusion[i].period != -1){
 			continue;
@@ -73,10 +80,18 @@ int get_max_period_score_discrepancy(const School * const school, const Decision
 	return max_disc;
 }
 
+/* SCORE POSSIBLE CHILDREN
+ *		Ranks and orders possible children before they are created.
+ *
+ * Development Status:
+ *		Implemented.
+ */
 bool score_possible_children(const School * const school, DecisionNode * parent){
 	int i_child, max_period, max_room, max_teacher, i_max_per, i_max_room, i_max_teacher;
 	int i_list, * list; /* generalization tool. not allocated. */
+	int alloc_sz;
 
+	LMH_ASSERT(school != NULL && parent != NULL);
 
 	max_period = get_max_period_score_discrepancy(school, parent, &i_max_per);
 	max_room = get_max_room_score_discrepancy(school, parent, &i_max_room);
@@ -90,18 +105,20 @@ bool score_possible_children(const School * const school, DecisionNode * parent)
 		parent->next_node_type = NODE_PERIOD;
 		parent->next_affected_meeting_index = i_max_per;
 		list = parent->conclusion[i_max_per].possible_periods;
+		parent->children_score = calloc(school->n_periods +1, sizeof(int));
 	} else if(max_room >= max_period && max_room >= max_teacher){
 		parent->next_node_type = NODE_ROOM;
 		parent->next_affected_meeting_index = i_max_room;
 		list = parent->conclusion[i_max_room].possible_rooms;
+		parent->children_score = calloc(school->n_rooms + 1, sizeof(int));
 	} else if(max_teacher >= max_period && max_teacher >= max_room){
 		parent->next_node_type = NODE_TEACHER;
 		parent->next_affected_meeting_index = i_max_teacher;
 		list = parent->conclusion[i_max_teacher].possible_teachers;
+		parent->children_score = calloc(school->n_rooms + 1, sizeof(int));
 	}
 
 	parent->children_score = calloc(32, sizeof(int));
-	parent->children_score_order = calloc(32, sizeof(int));
 	parent->children = calloc(32, sizeof(DecisionNode));
 	parent->children_alloc_sz = 31;
 
@@ -109,7 +126,6 @@ bool score_possible_children(const School * const school, DecisionNode * parent)
 
 	for(i_child = 0; i_child < 32; ++i_child){
 		parent->children_score[i_child] = -1;
-		parent->children_score_order[i_child] = -1;
 	}
 
 	for(i_list = 0; list[i_list] >= 0; ++i_list){
@@ -121,7 +137,16 @@ bool score_possible_children(const School * const school, DecisionNode * parent)
 	return true;
 }
 
+/* NEW NODE EVALUATION
+ * 		Gives this node its score.
+ *
+ * Developent status:
+ *		Implemented.
+ */
 bool new_node_evaluation(const School * const school, DecisionNode * node){
+
+	LMH_ASSERT(school != NULL && node != NULL);
+
 	if(node->parent == NULL){
 		printf("Error. null parent\n");
 		node->score = 1;

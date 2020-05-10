@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "assert.h"
 #include "types.h"
 
 void print_int_list(FILE * out, const int * const list){
@@ -136,4 +137,30 @@ int * int_list_copy(const int * const list){
 		copy[i] = list[i];
 	}
 	return copy;
+}
+
+void free_meetings_list(Meeting * list){
+	int i_met;
+	if(list != NULL){
+		for(i_met = 0; list[i_met].class != NULL; ++i_met){
+			free(list[i_met].possible_teachers);
+			free(list[i_met].possible_periods);
+			free(list[i_met].possible_rooms);
+		}
+	}
+	free(list);
+}
+
+void free_node(DecisionNode * node){
+	int i = 0;
+
+	for(i = 0; i < node->n_children; ++i){
+		free_node(&node->children[i]);
+	}
+	// if(node->children != NULL){
+		free(node->children);
+		free(node->children_score);
+		free(node->children_score_order);
+		free_meetings_list(node->conclusion);
+	// }/
 }

@@ -42,12 +42,4 @@ bool leaf_node_evaluation(School * school, DecisionNode * node);
  */
 bool score_possible_children(const School * const school, DecisionNode * node);
 
-/* Chooses the next direct children of node to be created.
- * Returns -1 if there is no more direct children to be created.
- *
- * TODO: Implement.
- */
-int  pick_next_creation(School * school, DecisionNode * node);
-
-
 #endif /* SCORE_H */
