@@ -1,49 +1,59 @@
 # Commands
 RM 		:= -rm
 CC 		:= gcc
+CXX		:= g++
 # Folders
 SRCDIR 	:= src
 OBJDIR 	:= obj
 BINDIR 	:= bin
 TSTDIR  := test
 # Files
-SRC 	:= $(wildcard $(SRCDIR)/*.c)
+CSRC 	:= $(wildcard $(SRCDIR)/*.c)
+CPPSRC  := $(wildcard $(SRCDIR)/*.cpp)
 MAIN 	:= $(SRCDIR)/main.c
+MAINO 	:= $(OBJDIR)/main.o
 TARGET 	:= $(BINDIR)/main
-OBJ 	:= $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+COBJ 	:= $(CSRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+CPPOBJ  := $(CPPSRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 # Flags
 CFLAGS 	:= -Wall -g
+CXXFLAGS:= -Wall -g
 LIB 	:= -lsqlite3
 TSTFLAG :=
 # Test
-NMAIN	:= $(filter-out $(MAIN), $(SRC))
-NMAINOB := $(NMAIN:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
-TSTSRC	:= $(wildcard $(TSTDIR)/*.c)
-TSTOBJ	:= $(TSTSRC:$(TSTDIR)/%.c=$(OBJDIR)/%.o)
+NMAINOBJ:= $(filter-out $(MAINO), $(COBJ)) $(filter-out $(MAINO), $(CPPOBJ))
+
+TSRCC	:= $(wildcard $(TSTDIR)/*.c)
+TOBJC	:= $(TSRCC:$(TSTDIR)/%.c=$(OBJDIR)/%.o)
+
+TSRCCPP := $(wildcard $(TSTDIR)/*.cpp)
+TOBJCPP := $(TSRCCPP:$(TSTDIR)/%.cpp=$(OBJDIR)/%.o)
 TSTGET  := $(BINDIR)/test
 
-# print : $(OBJ)
-# 	echo $(OBJ)
 all: $(TARGET)
 
 clean:
-	$(RM) $(OBJ) $(TSTOBJ)
+	$(RM) $(COBJ) $(TOBJC) $(CPPOBJ) $(TOBJCPP)
 
-$(OBJ): $(SRC)
+$(COBJ): $(CSRC)
 	$(CC)  $(CFLAGS) -c $(@:$(OBJDIR)/%.o=$(SRCDIR)/%.c) -o $@
 
-$(TARGET) : $(OBJ)
-	$(CC) -o $(TARGET) $(OBJ) $(LIB)
+$(CPPOBJ) : $(CPPSRC)
+	$(CXX)  $(CXXFLAGS) -c $(@:$(OBJDIR)/%.o=$(SRCDIR)/%.cpp) -o $@
+
+$(TARGET) : $(COBJ) $(CPPOBJ)
+	$(CXX) -o $(TARGET) $(COBJ) $(CPPOBJ) $(LIB)
 
 test: $(TSTGET)
 
-$(TSTGET): $(TSTOBJ)
-	$(CC) $(CFLAGS) $(TSTFLAG) -o $(TSTGET) $(TSTOBJ) $(NMAINOB) $(LIB)
+$(TSTGET): $(COBJ) $(CPPOBJ) $(TOBJC) $(TOBJCPP)
+	$(CXX) $(CXXFLAGS) $(TSTFLAG) -o $(TSTGET) $(NMAINOBJ) $(TOBJC) $(TOBJCPP) $(LIB) -I $(SRCDIR)
 
-$(TSTOBJ): $(TSTSRC)
+$(TOBJC): $(TSRCC)
 	$(CC) $(CFLAGS) $(TSTFLAG) -I $(SRCDIR) -c $(@:$(OBJDIR)/%.o=$(TSTDIR)/%.c) -o $@
 
-$(TSTSRC): $(TARGET)
+$(TOBJCPP): $(TSRCCPP)
+	$(CXX) $(CXXFLAGS) $(TSTFLAG) -I $(SRCDIR) -c $(@:$(OBJDIR)/%.o=$(TSTDIR)/%.cpp) -o $@
 
-theo:
-	$(shell echo $(NMAINOB))
+
+$(TSTSRC): $(TARGET)
