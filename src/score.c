@@ -89,7 +89,6 @@ int get_max_period_score_discrepancy(const School * const school, const Decision
 bool score_possible_children(const School * const school, DecisionNode * parent){
 	int i_child, max_period, max_room, max_teacher, i_max_per, i_max_room, i_max_teacher;
 	int i_list, * list; /* generalization tool. not allocated. */
-	int alloc_sz;
 
 	LMH_ASSERT(school != NULL && parent != NULL);
 
@@ -105,26 +104,25 @@ bool score_possible_children(const School * const school, DecisionNode * parent)
 		parent->next_node_type = NODE_PERIOD;
 		parent->next_affected_meeting_index = i_max_per;
 		list = parent->conclusion[i_max_per].possible_periods;
-		parent->children_score = calloc(school->n_periods +1, sizeof(int));
+		parent->children_alloc_sz = school->n_periods;
 	} else if(max_room >= max_period && max_room >= max_teacher){
 		parent->next_node_type = NODE_ROOM;
 		parent->next_affected_meeting_index = i_max_room;
 		list = parent->conclusion[i_max_room].possible_rooms;
-		parent->children_score = calloc(school->n_rooms + 1, sizeof(int));
+		parent->children_alloc_sz = school->n_rooms;
 	} else if(max_teacher >= max_period && max_teacher >= max_room){
 		parent->next_node_type = NODE_TEACHER;
 		parent->next_affected_meeting_index = i_max_teacher;
 		list = parent->conclusion[i_max_teacher].possible_teachers;
-		parent->children_score = calloc(school->n_rooms + 1, sizeof(int));
+		parent->children_alloc_sz = school->n_teachers;
 	}
 
-	parent->children_score = calloc(32, sizeof(int));
-	parent->children = calloc(32, sizeof(DecisionNode));
-	parent->children_alloc_sz = 31;
+	parent->children_score = calloc(parent->children_alloc_sz +1, sizeof(int));
+	parent->children = calloc(parent->children_alloc_sz +1, sizeof(DecisionNode));
 
 	i_child = 0;
 
-	for(i_child = 0; i_child < 32; ++i_child){
+	for(i_child = 0; i_child < parent->children_alloc_sz; ++i_child){
 		parent->children_score[i_child] = -1;
 	}
 
