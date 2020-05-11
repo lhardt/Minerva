@@ -16,9 +16,9 @@ TARGET 	:= $(BINDIR)/main
 COBJ 	:= $(CSRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 CPPOBJ  := $(CPPSRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 # Flags
-CFLAGS 	:= -Wall -g
-CXXFLAGS:= -Wall -g
-LIB 	:= -lsqlite3
+CFLAGS 	:= -Wall -g $(shell wx-config --cflags)
+CXXFLAGS:= -Wall -g $(shell wx-config --cxxflags)
+LIB 	:= -lsqlite3 $(shell wx-config --libs)
 TSTFLAG :=
 # Test
 NMAINOBJ:= $(filter-out $(MAINO), $(COBJ)) $(filter-out $(MAINO), $(CPPOBJ))

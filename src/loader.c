@@ -315,8 +315,6 @@ const char * const INSERT_TABLE_TEACHES_TWIN_PREFERENCE =
 const char * const LASTID_CLASS_TEACHES_TWIN_PREFERENCE =
 			("SELECT id FROM TeachesTwinPreference where rowid = last_insert_rowid()");
 
-
-
 /**
  * Creates a table based on one of the strings above.
  *
