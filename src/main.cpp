@@ -35,6 +35,14 @@ void Application::SwitchForm(AppFormType next){
 			m_form_create_school->Show();
 			break;
 		}
+		case FORM_MAIN_MENU:{
+			m_form_main_menu = new MainMenuForm(this);
+			m_form_main_menu->Show();
+			break;
+		}
+		default: {
+			printf("No form under this name.\n");
+		}
 	}
 }
 

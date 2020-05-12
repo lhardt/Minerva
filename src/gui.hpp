@@ -13,13 +13,16 @@
 
 #include <wx/wx.h>
 #include <wx/grid.h>
+#include <wx/ribbon/bar.h>
+
 
 class Application;
 
 enum AppFormType {
 	FORM_NULL = 0,
 	FORM_WELCOME,
-	FORM_CREATE_SCHOOL
+	FORM_CREATE_SCHOOL,
+	FORM_MAIN_MENU
 };
 
 class WelcomeForm : public wxFrame {
@@ -53,7 +56,9 @@ public:
 	/* Components */
 	wxButton *		m_button_create = nullptr;
 	wxButton *		m_button_back = nullptr;
-	wxGrid * 		grid = nullptr;
+	wxGrid * 		m_grid = nullptr;
+	wxSpinCtrl * 	m_number_of_periods_text = nullptr;
+	wxSpinCtrl * 	m_number_of_days_text = nullptr;
 
 	Application * m_owner;
 
@@ -62,12 +67,29 @@ public:
 	void OnCreateClicked(wxCommandEvent &);
 	void OnBackClicked(wxCommandEvent &);
 	void OnGridLeftClick(wxGridEvent &);
+	void OnGridSizeUpdated(wxSpinEvent &);
+
+private:
+	void GridRemake();
+};
+
+class MainMenuForm : public wxFrame{
+public:
+	MainMenuForm(Application * owner);
+	~MainMenuForm();
+
+	wxRibbonBar * m_ribbon;
+	wxRibbonPage * m_ribbon_pages[7];
+	// wxRibbonPanel * m_ribbon_panels[15][5];
+
+	Application * m_owner;
 };
 
 class Application : public wxApp {
 private:
 	WelcomeForm * 		m_form_welcome = nullptr;
 	CreateSchoolForm * 	m_form_create_school = nullptr;
+	MainMenuForm * 		m_form_main_menu = nullptr;
 
 
 public:

@@ -18,7 +18,7 @@ CPPOBJ  := $(CPPSRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 # Flags
 CFLAGS 	:= -Wall -g $(shell wx-config --cflags)
 CXXFLAGS:= -Wall -g $(shell wx-config --cxxflags)
-LIB 	:= -lsqlite3 $(shell wx-config --libs)
+LIB 	:= -lsqlite3 $(shell wx-config --libs) -lwx_gtk3u_ribbon-3.0
 TSTFLAG :=
 # Test
 NMAINOBJ:= $(filter-out $(MAINO), $(COBJ)) $(filter-out $(MAINO), $(CPPOBJ))
