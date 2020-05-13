@@ -18,6 +18,10 @@ bool Application::OnInit(){
 	m_small_font = new wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
 	m_page_title_font = new wxFont(18, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true);
 
+	m_island_image = new wxImage(400,400);
+	m_island_image->AddHandler(new wxPNGHandler);
+	m_island_image->LoadFile("res/floating.png", wxBITMAP_TYPE_PNG);
+
 	m_form_welcome = new WelcomeForm(this);
 	m_form_welcome->Show();
 	return true;

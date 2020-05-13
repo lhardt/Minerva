@@ -80,9 +80,38 @@ public:
 
 	wxRibbonBar * m_ribbon;
 	wxRibbonPage * m_ribbon_pages[7];
-	// wxRibbonPanel * m_ribbon_panels[15][5];
+
+	wxPanel * m_open_pane = nullptr;
+
+	Application * m_owner = nullptr;
+
+private:
+	void OnCreateCharacteristicClicked(wxCommandEvent &);
+	void OnCreateRoomClicked(wxCommandEvent &);
+
+	void OnMenuItemClicked(wxCommandEvent&);
+};
+
+class CreateCharacteristicPane : public wxPanel {
+public:
+	CreateCharacteristicPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~CreateCharacteristicPane();
+
+
 
 	Application * m_owner;
+private:
+};
+
+class CreateRoomPane : public wxPanel {
+public:
+	CreateRoomPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~CreateRoomPane();
+
+
+
+	Application * m_owner;
+private:
 };
 
 class Application : public wxApp {
@@ -101,6 +130,9 @@ public:
 	wxFont * 		m_page_title_font = nullptr;
 	wxFont * 		m_text_font = nullptr;
 	wxFont * 		m_small_font = nullptr;
+
+	wxImage *		m_island_image = nullptr;
 };
+
 
 #endif /* GUI_H */

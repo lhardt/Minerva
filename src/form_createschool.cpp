@@ -3,6 +3,9 @@
 #include <wx/spinctrl.h>
 CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, "Horário Escolar Minerva", wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
+	
+	SetMinSize(wxSize(800,600));
+	SetBackgroundColour(wxColour(240,240,240));
 
 	wxPanel * m_right_pane = new wxPanel(this, wxID_ANY, wxPoint(500,0), wxSize(300,575));
 	m_right_pane->SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
