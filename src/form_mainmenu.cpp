@@ -167,6 +167,26 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new AddSubjectGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
+		case LHID_OF(LHN_ADD_TEACHER):{
+			CloseOpenedPane();
+			m_open_pane = new AddTeacherPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_ADD_TEACHER_GROUP):{
+			CloseOpenedPane();
+			m_open_pane = new AddTeacherGroupPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_ADD_CLASS):{
+			CloseOpenedPane();
+			m_open_pane = new AddClassPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_ADD_CLASS_GROUP):{
+			CloseOpenedPane();
+			m_open_pane = new AddClassGroupPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
 		default:{
 			printf("Event not implemented.\n");
 			break;
@@ -177,4 +197,5 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		center_sizer->Add(m_open_pane,1, wxEXPAND | wxALL, 15);
 		m_center_pane->SetSizerAndFit(center_sizer);
 	}
+	Layout();
 }

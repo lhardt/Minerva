@@ -55,7 +55,7 @@ int* make_possible_room_list(School * school, Meeting * meeting){
 
 	for(i_room = 0; i_room < school->n_rooms; i_room++){
 		room = &(school->rooms[i_room]);
-		if(room->size >= meeting->class->size){
+		if(room->size >= meeting->m_class->size){
 			list[i_room] = 1;
 		}
 		i_list++;
@@ -70,7 +70,7 @@ int * make_possible_period_list(School * school, Meeting * meeting){
 	int * possible_periods = calloc(school->n_periods + 1, sizeof(int));
 
 	for(i_per = 0; i_per < school->n_periods; i_per++){
-		possible_periods[i_per] = school->periods[i_per]?(meeting->class->periods[i_per]):0;
+		possible_periods[i_per] = school->periods[i_per]?(meeting->m_class->periods[i_per]):0;
 	}
 	possible_periods[school->n_periods] = -1;
 	return possible_periods;
@@ -113,7 +113,7 @@ DecisionTree * init_decision_tree(School * school){
 		class = &(school->classes[i_class]);
 		for(i_need = 0; class->needs[i_need].subject != NULL; i_need++){
 			for(i_quant = 0; i_quant < class->needs[i_need].quantity; i_quant++){
-				conclusion[i_meet].class = class;
+				conclusion[i_meet].m_class = class;
 				conclusion[i_meet].subj  = class->needs[i_need].subject;
 				conclusion[i_meet].teacher = NULL;
 				conclusion[i_meet].room = NULL;

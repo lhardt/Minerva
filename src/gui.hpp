@@ -16,6 +16,7 @@
 #include <wx/ribbon/bar.h>
 
 
+
 class Application;
 
 enum AppFormType {
@@ -27,7 +28,7 @@ enum AppFormType {
 
 
 class ChoiceGrid : public wxGrid {
-public:
+ public:
 	ChoiceGrid(wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 	~ChoiceGrid();
 
@@ -49,13 +50,12 @@ public:
 	void GridRemake(int n_cols, int n_rows);
 	void SetPossibleValues(wxVector<wxString> values);
 	void SetBackgroundColors(wxVector<wxColor> values);
-private:
+ private:
 	void OnLeftClick(wxGridEvent &);
 };
 
-
 class WelcomeForm : public wxFrame {
-public:
+ public:
 	WelcomeForm(Application * owner);
 	~WelcomeForm();
 
@@ -79,7 +79,7 @@ public:
 };
 
 class CreateSchoolForm : public wxFrame {
-public:
+ public:
 	CreateSchoolForm(Application * owner);
 	~CreateSchoolForm();
 	/* Components */
@@ -99,12 +99,11 @@ public:
 	void OnGridLeftClick(wxGridEvent &);
 	void OnGridSizeUpdated(wxSpinEvent &);
 
-private:
-
+ private:
 };
 
 class MainMenuForm : public wxFrame{
-public:
+ public:
 	MainMenuForm(Application * owner);
 	~MainMenuForm();
 
@@ -115,14 +114,14 @@ public:
 	wxPanel * m_center_pane = nullptr;
 	Application * m_owner = nullptr;
 
-private:
+ private:
 	void OnMenuItemClicked(wxCommandEvent&);
 
 	void CloseOpenedPane();
 };
 
 class AddCharacteristicPane : public wxPanel {
-public:
+ public:
 	AddCharacteristicPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~AddCharacteristicPane();
 
@@ -130,12 +129,12 @@ public:
 
 
 	Application * m_owner;
-private:
+ private:
 	void OnCreateButtonClicked(wxCommandEvent &);
 };
 
 class AddRoomPane : public wxScrolledWindow {
-public:
+ public:
 	AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~AddRoomPane();
 
@@ -148,24 +147,24 @@ public:
 	wxListBox  * m_added_characteristics;
 
 	Application * m_owner;
-private:
+ private:
 	void OnCreateButtonClicked(wxCommandEvent &);
 };
 
 class AddSubjectPane : public wxScrolledWindow {
-public:
+ public:
 	AddSubjectPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddSubjectPane();
 
 	wxTextCtrl * m_name_text;
 
 	Application * m_owner;
-private:
+ private:
 	void OnCreateButtonClicked(wxCommandEvent &);
 };
 
 class AddSubjectGroupPane : public wxScrolledWindow	 {
-public:
+ public:
 	AddSubjectGroupPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddSubjectGroupPane();
 
@@ -174,20 +173,87 @@ public:
 	wxListBox * subjects_list_box;
 
 	Application * m_owner;
-private:
+ private:
 	void OnCreateButtonClicked(wxCommandEvent &);
 };
 
+class AddTeacherPane : public wxScrolledWindow {
+public:
+	AddTeacherPane(Application * owner, wxWindow* parent, wxPoint pos);
+	~AddTeacherPane();
+private:
+
+	wxTextCtrl * m_name_text;
+	wxComboBox * m_all_subjects_list;
+	wxListBox  * m_teaches_subjects_list;
+
+	Application * m_owner;
+
+	void OnAddButtonClicked(wxCommandEvent &);
+
+};
+
+class AddTeacherGroupPane : public wxScrolledWindow {
+public:
+	AddTeacherGroupPane(Application * owner, wxWindow* parent, wxPoint pos);
+	~AddTeacherGroupPane();
+private:
+
+	wxTextCtrl * m_name_text;
+	wxComboBox * m_all_teachers_list;
+	wxListBox  * m_selected_teachers_list;
+
+	Application * m_owner;
+
+	void OnAddButtonClicked(wxCommandEvent &);
+};
+
+class AddClassPane : public wxScrolledWindow {
+public:
+	AddClassPane(Application * owner, wxWindow* parent, wxPoint pos);
+	~AddClassPane();
+private:
+
+	wxTextCtrl * m_name_text;
+	ChoiceGrid * m_periods;
+	wxComboBox * m_all_subjects_list;
+	wxListBox  * m_selected_subjects_list;
+
+	Application * m_owner;
+
+	void OnAddButtonClicked(wxCommandEvent &);
+
+};
+
+class AddClassGroupPane : public wxScrolledWindow {
+public:
+	AddClassGroupPane(Application * owner, wxWindow* parent, wxPoint pos);
+	~AddClassGroupPane();
+private:
+	wxTextCtrl * m_name_text;
+	wxComboBox * m_all_classes_list;
+	wxListBox  * m_selected_classes_list;
+	Application * m_owner;
+
+	void OnAddButtonClicked(wxCommandEvent &);
+};
+
+// class GenTimetablePane : public wxScrolledWindow{
+//  public:
+// 	GenTimetablePane();
+// 	~GenTimetablePane();
+//  private:
+//
+// }
 
 
 class Application : public wxApp {
-private:
+ private:
 	WelcomeForm * 		m_form_welcome = nullptr;
 	CreateSchoolForm * 	m_form_create_school = nullptr;
 	MainMenuForm * 		m_form_main_menu = nullptr;
 
-
-public:
+ public:
 	virtual bool OnInit();
 	void SwitchForm(AppFormType next);
 	void ChildNotify(int messageCode);

@@ -36,14 +36,13 @@ typedef struct RoomFeatureQuantity RoomFeatureQuantity;
 /* TODO: preprocessing.
  * - Abstract classes need to be sorted out;
  * - Scores for lessons must be weighted;
- * - Disponibility of sub-/superordinate teachers/classes sorted out;
+ * - DONE: Disponibility of sub-/superordinate teachers/classes sorted out;
  * - Cascading specificity in values inserted by user;
  */
 
 typedef struct RoomFeature {
 	int id;
 	char * name;
-
 } RoomFeature;
 
 typedef struct Room {
@@ -85,7 +84,6 @@ struct Teacher{
 	ClassQuantity * classes;
 
 	int * subordinates;
-
 
 	int    		  * periods;
 	int 		  * days;
@@ -135,7 +133,7 @@ struct TeacherQuantity{
 
 
 struct ClassQuantity{
-	Class * class;
+	Class * m_class;
 	int 	quantity;
 };
 
@@ -169,7 +167,7 @@ typedef struct ExtendedTeacher{
  */
 typedef struct Meeting{
 	/* Initially fixed */
-	Class      	  * class;
+	Class      	  * m_class; /* Naming problem with c++ keyword */
 	Subject    	  * subj;
 	/* May be fixed */
 	Teacher    	  * teacher;

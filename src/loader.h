@@ -14,6 +14,7 @@
 
 #include "types.h"
 
+#include <stdio.h>
 #include <sqlite3.h>
 
 bool init_all_tables(FILE* console_out, char * db_filename);

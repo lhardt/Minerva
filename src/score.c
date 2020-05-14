@@ -22,7 +22,7 @@ int get_max_teacher_score_discrepancy(const School * const school, const Decisio
 
 	LMH_ASSERT(school != NULL && parent != NULL && res_index != NULL);
 
-	for(i = 0; parent->conclusion[i].class != NULL; ++i){
+	for(i = 0; parent->conclusion[i].m_class != NULL; ++i){
 		if(parent->conclusion[i].teacher != NULL){
 			continue;
 		}
@@ -43,7 +43,7 @@ int get_max_room_score_discrepancy(const School * const school, const DecisionNo
 
 	LMH_ASSERT(school != NULL && parent != NULL && res_index != NULL);
 
-	for(i = 0; parent->conclusion[i].class != NULL; ++i){
+	for(i = 0; parent->conclusion[i].m_class != NULL; ++i){
 		if(parent->conclusion[i].room != NULL){
 			continue;
 		}
@@ -64,7 +64,7 @@ int get_max_period_score_discrepancy(const School * const school, const Decision
 
 	LMH_ASSERT(school != NULL && parent != NULL && res_index != NULL);
 
-	for(i = 0; parent->conclusion[i].class != NULL; ++i){
+	for(i = 0; parent->conclusion[i].m_class != NULL; ++i){
 		if(parent->conclusion[i].period != -1){
 			continue;
 		}

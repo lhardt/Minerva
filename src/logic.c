@@ -362,7 +362,7 @@ bool is_node_inconsistent(const School * const school, const DecisionNode * cons
 
 	LMH_ASSERT(school != NULL && node != NULL);
 
-	for(i_met = 0; node->conclusion[i_met].class != NULL; i_met++){
+	for(i_met = 0; node->conclusion[i_met].m_class != NULL; i_met++){
 		ref_met = &node->conclusion[i_met];
 		/* Values must be set or have possibilities to be in */
 		if(    (ref_met->room == NULL	 && 0 == non_zero_int_list_count(ref_met->possible_rooms))
@@ -390,7 +390,7 @@ bool is_node_final(const School * const school, const DecisionNode * const node)
 
 	LMH_ASSERT(school != NULL && node != NULL);
 
-	for(i = 0; node->conclusion[i].class != NULL; ++i){
+	for(i = 0; node->conclusion[i].m_class != NULL; ++i){
 		curr = node->conclusion[i];
 		if(curr.period < 0 || curr.room == NULL || curr.teacher == NULL){
 			return false;
@@ -414,10 +414,10 @@ bool elim_analogous_ordering(const School * const school, DecisionNode * node){
 	/* Reference to shorten indirection */
 	Meeting * meetings = node->conclusion;
 	/* Ascending */
-	for(i_meet = 0; meetings[i_meet].class != NULL; i_meet++){
-		for(j_meet = i_meet+1; meetings[j_meet].class != NULL; j_meet++){
+	for(i_meet = 0; meetings[i_meet].m_class != NULL; i_meet++){
+		for(j_meet = i_meet+1; meetings[j_meet].m_class != NULL; j_meet++){
 			/* If they are analogous and not fixed */
-			if(   meetings[i_meet].class == meetings[j_meet].class
+			if(   meetings[i_meet].m_class == meetings[j_meet].m_class
 			   && meetings[i_meet].subj == meetings[j_meet].subj
 		       && meetings[i_meet].period == -1
 		       && meetings[j_meet].period == -1){
@@ -456,7 +456,7 @@ bool elim_search_fixed_meeting(const School * const school, DecisionNode * node)
 	int * changed_meetings = calloc(node->owner->n_meetings + 1, sizeof(int));
 	changed_meetings[node->owner->n_meetings] = -1;
 
-	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
+	for(i_meet = 0; node->conclusion[i_meet].m_class != NULL; i_meet++){
 		meeting = &node->conclusion[i_meet];
 		/* Check for fixed teachers */
 		if(meeting->teacher == NULL && 1 == non_zero_int_list_count(meeting->possible_teachers)){
@@ -480,7 +480,7 @@ bool elim_search_fixed_meeting(const School * const school, DecisionNode * node)
 		}
 	}
 
-	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
+	for(i_meet = 0; node->conclusion[i_meet].m_class != NULL; i_meet++){
 		if(changed_meetings[i_meet]){
 			elim_fixed_meeting(school, node, i_meet);
 		}
@@ -504,7 +504,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 	Meeting * fixed = &node->conclusion[fix_meet_i];
 	Meeting * meeting;
 
-	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
+	for(i_meet = 0; node->conclusion[i_meet].m_class != NULL; i_meet++){
 		if(i_meet == fix_meet_i){
 			continue;
 		}
@@ -519,7 +519,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 			change = true;
 		}
 		/* Rule 2. C cannot attend any other lecture at P */
-		if(meeting->class == fixed->class
+		if(meeting->m_class == fixed->m_class
 				&& fixed->period != -1
 				&& meeting->period == -1
 				&& meeting->possible_periods[fixed->period] > 0){
@@ -536,7 +536,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 			change = true;
 		}
 		/* Rule 4. T teaches C in all periods of S for C */
-		if(meeting->class == fixed->class
+		if(meeting->m_class == fixed->m_class
 				&& meeting->subj == fixed->subj
 				&& meeting->teacher == NULL
 				&& fixed->teacher != NULL){
@@ -544,7 +544,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 			change = true;
 		}
 		/* Rule 5. R accomodates every period of S to C */
-		if(meeting->class == fixed->class
+		if(meeting->m_class == fixed->m_class
 				&& meeting->subj == fixed->subj
 				&& meeting->room == NULL
 				&& fixed->room != NULL){
@@ -563,7 +563,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 		/* Rule 7. No super/subordinate of C can attend lectures at P. */
 		if(fixed->period != -1
 				&& meeting->period == -1
-				&& have_classes_relation(school, meeting->class, fixed->class) != 0){
+				&& have_classes_relation(school, meeting->m_class, fixed->m_class) != 0){
 			meeting->possible_periods[fixed->period] = 0;
 			change = true;
 		}
@@ -597,7 +597,7 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 		room_remainders[i_room] = school->n_periods;
 	}
 
-	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
+	for(i_meet = 0; node->conclusion[i_meet].m_class != NULL; i_meet++){
 		// for()
 		meet = &node->conclusion[i_meet];
 		if(meet->room != NULL){
@@ -606,7 +606,7 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 	}
 	room_remainders[school->n_rooms] = -1;
 
-	for(i_meet = 0; node->conclusion[i_meet].class != NULL; i_meet++){
+	for(i_meet = 0; node->conclusion[i_meet].m_class != NULL; i_meet++){
 		meet = &node->conclusion[i_meet];
 		if(meet->room == NULL){
 			for(i_room = 0; i_room < school->n_rooms; i_room++){
@@ -638,7 +638,7 @@ bool room_period_elimination(const School * const school, DecisionNode * node){
 	met = &node->conclusion[node->affected_meeting_index];
 	if(node->type == NODE_ROOM){
 		if(met->period >= 0){
-			if(met->class->periods[met->period] == 0){
+			if(met->m_class->periods[met->period] == 0){
 				// Selected a period that the class does not support.
 				// Theoretically, no nodes made by the program blocks
 				// tihs possibility by hindsight. But handmade, ...

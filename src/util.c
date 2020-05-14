@@ -73,10 +73,10 @@ void print_meeting_list(FILE * out, const Meeting * const meetings){
 		return;
 	}
 
-	for(i = 0; meetings[i].class != NULL; i++){
+	for(i = 0; meetings[i].m_class != NULL; i++){
 		fprintf(out, "Meeting %2d %s: T(%s) ",
 					i,
-					meetings[i].class->name,
+					meetings[i].m_class->name,
 					(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
 	    print_int_list(out,meetings[i].possible_teachers);
 		fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
@@ -95,10 +95,10 @@ void print_short_meeting_list(FILE * out, const Meeting * const meetings){
 		return;
 	}
 
-	for(i = 0; meetings[i].class != NULL; i++){
+	for(i = 0; meetings[i].m_class != NULL; i++){
 		fprintf(out, "Meeting %2d %s: T(%s) ",
 					i,
-					meetings[i].class->name,
+					meetings[i].m_class->name,
 					(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
 		fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
 		fprintf(out, "; P(%d) ", meetings[i].period);
@@ -109,7 +109,7 @@ void print_short_meeting_list(FILE * out, const Meeting * const meetings){
 Meeting * copy_meetings_list(const Meeting * const list){
 	Meeting * copy;
 	int i, n;
-	for(n = 0; list[n].class != NULL; ++n){ }
+	for(n = 0; list[n].m_class != NULL; ++n){ }
 
 	copy = calloc(n+1, sizeof(Meeting));
 	for(i = 0; i < n; ++i){
@@ -142,7 +142,7 @@ int * int_list_copy(const int * const list){
 void free_meetings_list(Meeting * list){
 	int i_met;
 	if(list != NULL){
-		for(i_met = 0; list[i_met].class != NULL; ++i_met){
+		for(i_met = 0; list[i_met].m_class != NULL; ++i_met){
 			free(list[i_met].possible_teachers);
 			free(list[i_met].possible_periods);
 			free(list[i_met].possible_rooms);
