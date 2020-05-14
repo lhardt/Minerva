@@ -108,55 +108,73 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, "H
     sizer->Add(m_ribbon, 0, wxEXPAND);
 
 
-	wxPanel * m_center_pane = new wxPanel(this, wxID_ANY, wxPoint(0,150), wxSize(800,425));
+	m_center_pane = new wxPanel(this, wxID_ANY, wxPoint(0,150), wxSize(800,425));
 	m_center_pane->SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
 	wxPanel * m_footer = new wxPanel(this, wxID_ANY, wxPoint(0,575), wxSize(800,25));
+
+	sizer->Add(m_center_pane, 1, wxEXPAND);
+
 	m_footer->SetBackgroundColour(wxColor(0x25,0x75,0xb0));
 	wxStaticText * m_footer_text = new wxStaticText(m_footer, wxID_ANY,wxT("Copyright (C) Léo Hardt 2019-2020. This program is free software protected by Mozilla Public License v2.0."),
-	wxPoint(0,5), wxSize(800,20), wxST_NO_AUTORESIZE |wxALIGN_CENTRE | wxALIGN_CENTRE_HORIZONTAL);
+													wxPoint(0,5), wxSize(800,20), wxST_NO_AUTORESIZE |wxALIGN_CENTRE | wxALIGN_CENTRE_HORIZONTAL);
 	m_footer_text->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_footer_text->SetFont(*m_owner->m_small_font);
 
+	wxSizer * footer_sizer = new wxBoxSizer(wxHORIZONTAL);
+	footer_sizer->Add(m_footer_text,1,wxALIGN_CENTER);
+	m_footer->SetSizerAndFit(footer_sizer);
+
+	sizer->Add(m_footer, 0, wxEXPAND);
 
 
 	m_ribbon->AddPageHighlight(m_ribbon->GetPageCount() - 1);
 	m_ribbon->Realize();
+
+	SetSizerAndFit(sizer);
 }
 
 MainMenuForm::~MainMenuForm(){
 
 }
 
-void MainMenuForm::OnCreateCharacteristicClicked(wxCommandEvent & ev){
-	printf("Hello Id: %d \n", ev.GetId());
-}
-
-void MainMenuForm::OnCreateRoomClicked(wxCommandEvent &){
-
+void MainMenuForm::CloseOpenedPane(){
+	if(m_open_pane != nullptr){
+		m_open_pane->Destroy();
+		m_open_pane = nullptr;
+	}
 }
 
 
 void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 	switch(ev.GetId()){
 		case LHID_OF(LHN_ADD_ROOM): {
-			if(m_open_pane != nullptr){
-				m_open_pane->Destroy();
-				m_open_pane = nullptr;
-			}
-			m_open_pane = new CreateRoomPane(m_owner, this, wxPoint(100,165));
+			CloseOpenedPane();
+			m_open_pane = new AddRoomPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_ADD_CHARACTERISTIC): {
-			if(m_open_pane != nullptr){
-				m_open_pane->Destroy();
-				m_open_pane = nullptr;
-			}
-			m_open_pane = new CreateCharacteristicPane(m_owner, this, wxPoint(100,165));
+			CloseOpenedPane();
+			m_open_pane = new AddCharacteristicPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_ADD_SUBJECT):{
+			CloseOpenedPane();
+			m_open_pane = new AddSubjectPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_ADD_SUBJECT_GROUP):{
+			CloseOpenedPane();
+			m_open_pane = new AddSubjectGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		default:{
 			printf("Event not implemented.\n");
 			break;
 		}
+	}
+	if(m_open_pane != nullptr){
+		wxSizer * center_sizer = new wxBoxSizer(wxVERTICAL);
+		center_sizer->Add(m_open_pane,1, wxEXPAND | wxALL, 15);
+		m_center_pane->SetSizerAndFit(center_sizer);
 	}
 }

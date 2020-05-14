@@ -25,6 +25,35 @@ enum AppFormType {
 	FORM_MAIN_MENU
 };
 
+
+class ChoiceGrid : public wxGrid {
+public:
+	ChoiceGrid(wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
+	~ChoiceGrid();
+
+	int m_n_cols;
+	int m_n_rows;
+
+	wxString m_basic_col_name = L"Coluna";
+	wxString m_basic_row_name = L"Linha";
+	wxVector<wxString> m_col_names;
+	wxVector<wxString> m_row_names;
+
+	wxVector<wxString> m_value_names;
+	wxVector<wxColor>  m_background_colors;
+	wxVector<int> possible_values;
+
+	wxVector<int> GetValues(int i_day);
+	wxVector<int> GetValues();
+
+	void GridRemake(int n_cols, int n_rows);
+	void SetPossibleValues(wxVector<wxString> values);
+	void SetBackgroundColors(wxVector<wxColor> values);
+private:
+	void OnLeftClick(wxGridEvent &);
+};
+
+
 class WelcomeForm : public wxFrame {
 public:
 	WelcomeForm(Application * owner);
@@ -56,9 +85,10 @@ public:
 	/* Components */
 	wxButton *		m_button_create = nullptr;
 	wxButton *		m_button_back = nullptr;
-	wxGrid * 		m_grid = nullptr;
+	ChoiceGrid * 		m_grid = nullptr;
 	wxSpinCtrl * 	m_number_of_periods_text = nullptr;
 	wxSpinCtrl * 	m_number_of_days_text = nullptr;
+	wxTextCtrl * 	m_school_name_text;
 
 	Application * m_owner;
 
@@ -70,7 +100,7 @@ public:
 	void OnGridSizeUpdated(wxSpinEvent &);
 
 private:
-	void GridRemake();
+
 };
 
 class MainMenuForm : public wxFrame{
@@ -82,37 +112,73 @@ public:
 	wxRibbonPage * m_ribbon_pages[7];
 
 	wxPanel * m_open_pane = nullptr;
-
+	wxPanel * m_center_pane = nullptr;
 	Application * m_owner = nullptr;
 
 private:
-	void OnCreateCharacteristicClicked(wxCommandEvent &);
-	void OnCreateRoomClicked(wxCommandEvent &);
-
 	void OnMenuItemClicked(wxCommandEvent&);
+
+	void CloseOpenedPane();
 };
 
-class CreateCharacteristicPane : public wxPanel {
+class AddCharacteristicPane : public wxPanel {
 public:
-	CreateCharacteristicPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~CreateCharacteristicPane();
+	AddCharacteristicPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~AddCharacteristicPane();
 
+	wxTextCtrl * m_name_text;
 
 
 	Application * m_owner;
 private:
+	void OnCreateButtonClicked(wxCommandEvent &);
 };
 
-class CreateRoomPane : public wxPanel {
+class AddRoomPane : public wxScrolledWindow {
 public:
-	CreateRoomPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~CreateRoomPane();
+	AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~AddRoomPane();
 
+	wxTextCtrl * m_name_text;
+	wxSpinCtrl * m_capacity_text;
+	ChoiceGrid * m_grid;
 
+	wxComboBox * m_characteristics;
+	wxSpinCtrl * m_score_text;
+	wxListBox  * m_added_characteristics;
 
 	Application * m_owner;
 private:
+	void OnCreateButtonClicked(wxCommandEvent &);
 };
+
+class AddSubjectPane : public wxScrolledWindow {
+public:
+	AddSubjectPane(Application * owner, wxWindow* parent, wxPoint pos);
+	~AddSubjectPane();
+
+	wxTextCtrl * m_name_text;
+
+	Application * m_owner;
+private:
+	void OnCreateButtonClicked(wxCommandEvent &);
+};
+
+class AddSubjectGroupPane : public wxScrolledWindow	 {
+public:
+	AddSubjectGroupPane(Application * owner, wxWindow* parent, wxPoint pos);
+	~AddSubjectGroupPane();
+
+	wxTextCtrl * m_name_text;
+	wxComboBox * m_subjects;
+	wxListBox * subjects_list_box;
+
+	Application * m_owner;
+private:
+	void OnCreateButtonClicked(wxCommandEvent &);
+};
+
+
 
 class Application : public wxApp {
 private:

@@ -3,7 +3,7 @@
 #include <wx/spinctrl.h>
 CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, "Horário Escolar Minerva", wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
-	
+
 	SetMinSize(wxSize(800,600));
 	SetBackgroundColour(wxColour(240,240,240));
 
@@ -26,7 +26,7 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	wxStaticText * m_school_name_label = new wxStaticText(this, wxID_ANY, wxT("Nome da Escola"), wxPoint(30,90), wxSize(200,15));
 	m_school_name_label->SetFont(*m_owner->m_small_font);
 	m_school_name_label->SetForegroundColour(wxColor(0x00, 0x00, 0x00));
-	wxTextCtrl * m_school_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxPoint(30,105), wxSize(200,25));
+	m_school_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxPoint(30,105), wxSize(200,25));
 
 	wxStaticText * m_number_of_days_label = new wxStaticText(this, wxID_ANY, wxT("Número de Dias em um Ciclo"), wxPoint(30,145), wxSize(200,15));
 	m_number_of_days_label->SetFont(*m_owner->m_small_font);
@@ -45,15 +45,25 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	m_names_label->SetFont(*m_owner->m_small_font);
 	m_names_label->SetForegroundColour(wxColor(0x00, 0x00, 0x00));
 
-	// wxScrolledWindow * m_days_window = new wxScrolledWindow(this,wxID_ANY, wxPoint(30,270), wxSize(400, 300));
-	// m_days_window->SetBackgroundColour(wxColor(0xC5, 0xC5, 0xC5));
+	m_grid = new ChoiceGrid(this, wxID_ANY, wxPoint(30,270), wxSize(400,200));
 
-	m_grid = new wxGrid(this, wxID_ANY, wxPoint(30,270), wxSize(400,200));
-	m_grid->Bind(wxEVT_GRID_CELL_LEFT_CLICK, &CreateSchoolForm::OnGridLeftClick, this);
-	m_grid->HideColLabels();
-	m_grid->HideRowLabels();
-	m_grid->CreateGrid(1,1);
-	GridRemake();
+	wxVector<wxString> grid_values = wxVector<wxString>();
+	grid_values.push_back(wxT("Aberta"));
+	grid_values.push_back(wxT("Fechada"));
+	m_grid->SetPossibleValues(grid_values);
+
+	wxVector<wxColor> grid_colors = wxVector<wxColor>();
+	grid_colors.push_back(wxColor(200,200,255));
+	grid_colors.push_back(wxColor(255,200,200)); 
+	m_grid->SetBackgroundColors(grid_colors);
+
+	m_grid->m_basic_col_name = wxT("Dia");
+	m_grid->m_basic_row_name = wxT("Período");
+
+
+	m_grid->GridRemake(m_number_of_days_text->GetValue(), m_number_of_periods_text->GetValue());
+
+
 
 	m_button_create = new wxButton(this, wxID_ANY, wxT("Criar"), wxPoint(350, 500), wxSize(80,30));
 	m_button_back = new wxButton(this, wxID_ANY, wxT("Voltar"), wxPoint(260, 500), wxSize(80,30));
@@ -68,66 +78,8 @@ CreateSchoolForm::~CreateSchoolForm(){
 
 }
 
-void CreateSchoolForm::OnGridLeftClick(wxGridEvent & evt){
-	if(evt.GetCol() > 0 && evt.GetRow() > 0){
-		if(m_grid->GetCellValue(evt.GetRow(), evt.GetCol()).IsSameAs("Aberta")){
-			m_grid->SetCellBackgroundColour(evt.GetRow(), evt.GetCol(), wxColor(250,200,200));
-			m_grid->SetCellValue(evt.GetRow(), evt.GetCol(), wxT("Fechada"));
-		} else {
-			m_grid->SetCellBackgroundColour(evt.GetRow(), evt.GetCol(), wxColor(200,200,250));
-			m_grid->SetCellValue(evt.GetRow(), evt.GetCol(), wxT("Aberta"));
-		}
-		evt.Skip();
-		m_grid->Refresh();
-	}
-}
-
-void CreateSchoolForm::GridRemake(){
-	int i,j;
-
-	int n_i = 1+ m_number_of_periods_text->GetValue();
-	int n_j = 1+ m_number_of_days_text->GetValue();
-
-	int old_n_i = m_grid->GetNumberRows();
-	int old_n_j = m_grid->GetNumberCols();
-
-	m_grid->SetCellBackgroundColour(0,0,wxColor(200,200,200));
-
-	if(n_i > old_n_i){
-		m_grid->AppendRows(n_i - old_n_i);
-		for(i = old_n_i; i < n_i; ++i){
-			m_grid->SetCellValue(i, 0, wxString::Format(wxT("Período %d"), i));
-			for(j = 1; j < old_n_j; ++j){
-				m_grid->SetCellBackgroundColour(i, j, wxColor(200,200,250));
-				m_grid->SetCellValue(i, j, wxT("Aberta"));
-				m_grid->SetReadOnly(i,j,true);
-			}
-		}
-	} else if(n_i < old_n_i) {
-		m_grid->DeleteRows(n_i, old_n_i - n_i);
-	}
-
-
-
-	if(n_j > old_n_j){
-		m_grid->AppendCols(n_j - old_n_j);
-		for(j = old_n_j; j < n_j; ++j){
-			m_grid->SetCellValue(0, j, wxString::Format(wxT("Dia %d"), j));
-			for(i = 1; i < n_i; ++i){
-				m_grid->SetCellBackgroundColour(i, j, wxColor(200,200,250));
-				m_grid->SetCellValue(i, j, wxT("Aberta"));
-				m_grid->SetReadOnly(i,j,true);
-			}
-		}
-	} else if(n_j < old_n_j){
-		m_grid->DeleteCols(n_j, old_n_j - n_j);
-	}
-
-	m_grid->Refresh();
-}
-
 void CreateSchoolForm::OnGridSizeUpdated(wxSpinEvent & ev){
-	GridRemake();
+	m_grid->GridRemake(m_number_of_days_text->GetValue(),m_number_of_periods_text->GetValue());
 }
 
 void CreateSchoolForm::OnBackClicked(wxCommandEvent & ev){
