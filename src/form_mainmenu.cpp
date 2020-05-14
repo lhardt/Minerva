@@ -45,17 +45,16 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, "H
 	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_SCHOOL_DATA),wxT("Dados da Escola"), image);
 	m_rib_bbars[0][2]->AddButton(LHID_OF(LHN_OPEN_SCHOOL_MANUAL),wxT("Abrir Manual"), image);
 	/* SALAS E CARACTERISTICAS DE SALAS */
-	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_CHARACTERISTICS), wxT("Ver Características"), image);
+	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_FEATURES), wxT("Ver Características"), image);
 	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_ROOMS), wxT("Ver Salas"), image);
-	m_rib_bbars[1][1]->AddButton(LHID_OF(LHN_ADD_CHARACTERISTIC), wxT("Adicionar Característica"), image);
+	m_rib_bbars[1][1]->AddButton(LHID_OF(LHN_ADD_FEATURE), wxT("Adicionar Característica"), image);
 	m_rib_bbars[1][1]->AddButton(LHID_OF(LHN_ADD_ROOM), wxT("Adicionar Sala"), image);
 	m_rib_bbars[1][2]->AddButton(LHID_OF(LHN_ROOM_PERIOD_PREF), wxT("Preferência por Períodos"), image);
 	m_rib_bbars[1][3]->AddButton(LHID_OF(LHN_CHECK_ALL_ROOMS), wxT("Conferir Tudo"), image);
 	m_rib_bbars[1][4]->AddButton(LHID_OF(LHN_OPEN_ROOMS_MANUAL), wxT("Abrir Manual"), image);
 
 	m_ribbon->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &MainMenuForm::OnMenuItemClicked, this);
-	// m_rib_bbars[0][0]->GetItem(0)->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &MainMenuForm::OnCreateCharacteristicClicked, this);
-
+	
 	/* DISCIPLINAS */
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECTS), wxT("Ver Disciplinas"), image);
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECT_GROUPS), wxT("Ver Grupos Disciplinares"), image);
@@ -152,9 +151,9 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new AddRoomPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-		case LHID_OF(LHN_ADD_CHARACTERISTIC): {
+		case LHID_OF(LHN_ADD_FEATURE): {
 			CloseOpenedPane();
-			m_open_pane = new AddCharacteristicPane(m_owner, m_center_pane, wxPoint(100,15));
+			m_open_pane = new AddFeaturePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_ADD_SUBJECT):{

@@ -1,7 +1,7 @@
 #include "gui.hpp"
 
 
-AddCharacteristicPane::AddCharacteristicPane(Application * owner, wxWindow * parent, wxPoint pos)  : wxPanel(parent, wxID_ANY, pos, wxSize(600,400)){
+AddFeaturePane::AddFeaturePane(Application * owner, wxWindow * parent, wxPoint pos)  : wxPanel(parent, wxID_ANY, pos, wxSize(600,400)){
 	this->m_owner = owner;
 	SetBackgroundColour(wxColour(240,240,240));
 
@@ -14,13 +14,13 @@ AddCharacteristicPane::AddCharacteristicPane(Application * owner, wxWindow * par
 
 	wxButton * button_go = new wxButton(this,wxID_ANY, wxT("Adicionar"), wxPoint(30,135), wxSize(200,30));
 
-	button_go->Bind(wxEVT_BUTTON, &AddCharacteristicPane::OnCreateButtonClicked, this);
+	button_go->Bind(wxEVT_BUTTON, &AddFeaturePane::OnCreateButtonClicked, this);
 }
 
-AddCharacteristicPane::~AddCharacteristicPane(){
+AddFeaturePane::~AddFeaturePane(){
 
 }
 
-void AddCharacteristicPane::OnCreateButtonClicked(wxCommandEvent & ev){
+void AddFeaturePane::OnCreateButtonClicked(wxCommandEvent & ev){
 	printf("Button clicked!\n");
 }

@@ -120,10 +120,10 @@ class MainMenuForm : public wxFrame{
 	void CloseOpenedPane();
 };
 
-class AddCharacteristicPane : public wxPanel {
+class AddFeaturePane : public wxPanel {
  public:
-	AddCharacteristicPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~AddCharacteristicPane();
+	AddFeaturePane(Application * owner, wxWindow * parent, wxPoint pos);
+	~AddFeaturePane();
 
 	wxTextCtrl * m_name_text;
 
@@ -142,9 +142,9 @@ class AddRoomPane : public wxScrolledWindow {
 	wxSpinCtrl * m_capacity_text;
 	ChoiceGrid * m_grid;
 
-	wxComboBox * m_characteristics;
+	wxComboBox * m_features;
 	wxSpinCtrl * m_score_text;
-	wxListBox  * m_added_characteristics;
+	wxListBox  * m_added_features;
 
 	Application * m_owner;
  private:
