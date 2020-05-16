@@ -17,16 +17,21 @@
 #include <stdio.h>
 #include <sqlite3.h>
 
-bool init_all_tables(FILE* console_out, char * db_filename);
+sqlite3* init_all_tables(FILE* console_out, char * db_filename);
 
-bool insert_school(FILE * console_out, sqlite3* db, School * school);
+/* Inserts and returns the id. Negative in case of failure. */
+int insert_school(FILE * console_out, sqlite3* db, School * school);
+int insert_class(FILE * console_out, sqlite3* db, Class * c, School * school);
+int insert_teacher(FILE * console_out, sqlite3* db, Teacher * t, School * school);
+int insert_feature(FILE * console_out, sqlite3* db, const char * const feature, School * school);
+int insert_room(FILE * console_out, sqlite3* db, Room * room, School * school);
+int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * school);
 
-bool  load_school(char * db_filename, int id, School ** load_ptr);
-bool  load_all_schools(char * db_filename, School ** load_ptr);
-
-bool  save_state(char * db_filename, School * school);
+char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
+School * select_school_by_id(FILE * console_out, sqlite3* db, int id);
 
 bool  load_xml(char * xml_filename, School ** load_ptr);
 bool  export_to_xml(char * xml_filename, School * school);
+
 
 #endif /* DATA_LOADER_H */

@@ -69,13 +69,15 @@ typedef struct Subject {
 
 typedef struct Teaches Teaches;
 typedef struct Teacher Teacher;
-struct Teacher{
+struct Teacher {
 	int    			id;
 	char 		  * name;
 	char 		  * short_name;
 
-	int    			max_meetings_per_day;
+	int				max_days;
 	int    			max_meetings;
+	int    			max_meetings_per_day;
+	int				max_meetings_per_class_per_day;
 	int    			num_planning_periods;
 	// bool   			one_day_planning_periods; DEFAULT TO YES.
 
@@ -86,7 +88,6 @@ struct Teacher{
 	int * subordinates;
 
 	int    		  * periods;
-	int 		  * days;
 	int 		  * rooms;
 };
 
@@ -165,7 +166,8 @@ typedef struct ExtendedTeacher{
 /* TODO: The possible_* vectors create a significant overhead
  * on the memory used by the tree.
  */
-typedef struct Meeting{
+typedef struct Meeting {
+	int id;
 	/* Initially fixed */
 	Class      	  * m_class; /* Naming problem with c++ keyword */
 	Subject    	  * subj;
