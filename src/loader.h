@@ -17,12 +17,27 @@
 #include <stdio.h>
 #include <sqlite3.h>
 
+/* INIT ALL TABLES
+ *		Initializes, if they don't exist, all tables in the file.
+ *		Also a convenient way of opening a database.
+ *
+ * Development Status:
+ *		Implemented.
+ */
 sqlite3* init_all_tables(FILE* console_out, char * db_filename);
 
-/* Inserts and returns the id. Negative in case of failure. */
+/*	INSERT SCHOOL
+ *		Inserts a school in the database, disregarding null pointers.
+ * 		If school.classes = null, then does not insert classes, for ex.
+ *
+ * Development Status:
+ *		Implemented
+ **/
 int insert_school(FILE * console_out, sqlite3* db, School * school);
+
 int insert_class(FILE * console_out, sqlite3* db, Class * c, School * school);
 int insert_teacher(FILE * console_out, sqlite3* db, Teacher * t, School * school);
+int insert_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school);
 int insert_feature(FILE * console_out, sqlite3* db, const char * const feature, School * school);
 int insert_room(FILE * console_out, sqlite3* db, Room * room, School * school);
 int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * school);

@@ -91,7 +91,7 @@ struct Teacher {
 	int 		  * rooms;
 };
 
-struct Teaches{
+struct Teaches {
 	int id;
 	Teacher * teacher;
 	Subject * subject;
