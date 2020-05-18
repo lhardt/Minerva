@@ -61,9 +61,6 @@ typedef struct Subject {
 	char * name;
 	char * short_name;
 
-	int * gemini_score;  	   // TODO is it necessary? Not present in diagram
-	int * week_position_score; // TODO is it necessary? Not present in diagram
-
 	int   in_groups[MAX_GROUPS];
 } Subject;
 
@@ -80,6 +77,9 @@ struct Teacher {
 	int				max_meetings_per_class_per_day;
 	int    			num_planning_periods;
 	// bool   			one_day_planning_periods; DEFAULT TO YES.
+
+	int				day_max_meetings[MAX_DAYS + 1];
+	int				day_scores[MAX_DAYS + 1];
 
 	Teaches      ** teaches;
 	ClassQuantity * possible_classes;
@@ -220,18 +220,20 @@ typedef struct School {
 
 	Class      * classes;
 	Teacher    * teachers;
+	Subject	   * subjects;
 	Room       * rooms;
 	Teaches    * teaches;
 	Meeting    * all_meetings;
 
 	int 		 n_periods;
-	int 		 n_days;
-	int 		 n_periods_per_day;
 	int 		 n_features;
+	int 		 n_classes;
+	int 		 n_teachers;
+	int			 n_subjects;
 	int 		 n_rooms;
 	int			 n_teaches;
-	int 		 n_teachers;
-	int 		 n_classes;
+	int 		 n_days;
+	int 		 n_periods_per_day;
 
 	bool 		 periods[MAX_PERIODS_PER_WEEK];
 
