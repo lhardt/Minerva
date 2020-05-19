@@ -8,10 +8,24 @@
  *
  * This module contains functions that start the program.
  */
-#include <wx/wx.h>
 #include "gui.hpp"
 
+#include <wx/wx.h>
+#include <clocale>
+
+extern "C" {
+	#include "loader.h"
+};
+
+char * copy_wx_string(wxString str){
+	int len = strlen(str.ToUTF8().data());
+	char * copy = (char*) calloc(len + 1, sizeof(char*));
+	strncpy(copy, str.ToUTF8().data(), len);
+	return copy;
+}
+
 bool Application::OnInit(){
+	m_database = init_all_tables(stdout, "db/teste.db");
 
 	m_title_font = new wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, true);
 	m_text_font  = new wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);

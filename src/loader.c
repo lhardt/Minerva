@@ -961,6 +961,7 @@ int insert_school(FILE * console_out, sqlite3* db, School * school){
 	LMH_ASSERT(db != NULL && school != NULL && school->name != NULL);
 
 	if(school){
+		school->id = -1;
 		if(console_out && (school->name)){
 			fprintf(console_out, "Inserting school (%s) into school table.\n", school->name);
 		}

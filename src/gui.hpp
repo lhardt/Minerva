@@ -11,11 +11,17 @@
 #ifndef GUI_H
 #define GUI_H
 
+#include <sqlite3.h>
+
 #include <wx/wx.h>
 #include <wx/grid.h>
 #include <wx/ribbon/bar.h>
 
+extern "C"{
+	#include "types.h"
+};
 
+char * copy_wx_string(wxString str);
 
 class Application;
 
@@ -59,15 +65,21 @@ class WelcomeForm : public wxFrame {
 	WelcomeForm(Application * owner);
 	~WelcomeForm();
 
+private:
 	/* Components */
 	wxButton * 		m_button_create = nullptr;
 	wxButton * 		m_button_delete = nullptr;
 	wxButton * 		m_button_import = nullptr;
 	wxButton * 		m_button_open   = nullptr;
-	wxComboBox * 	m_dropdown = nullptr;
+	wxChoice *	 	m_dropdown = nullptr;
 	wxStaticBitmap * m_image;
 
 	Application * m_owner;
+
+	int * 			m_school_ids;
+	char * * 		m_school_names;
+
+
 
 	/* Handlers */
 	void OnButtonClicked(wxCommandEvent&);
@@ -85,10 +97,12 @@ class CreateSchoolForm : public wxFrame {
 	/* Components */
 	wxButton *		m_button_create = nullptr;
 	wxButton *		m_button_back = nullptr;
-	ChoiceGrid * 		m_grid = nullptr;
+	ChoiceGrid *	m_grid = nullptr;
 	wxSpinCtrl * 	m_number_of_periods_text = nullptr;
 	wxSpinCtrl * 	m_number_of_days_text = nullptr;
-	wxTextCtrl * 	m_school_name_text;
+	wxTextCtrl * 	m_school_name_text = nullptr;
+
+	wxStaticText* 	m_err_msg = nullptr;
 
 	Application * m_owner;
 
@@ -127,6 +141,7 @@ class AddFeaturePane : public wxPanel {
 
 	wxTextCtrl * m_name_text;
 
+	wxStaticText * m_err_msg;
 
 	Application * m_owner;
  private:
@@ -138,17 +153,23 @@ class AddRoomPane : public wxScrolledWindow {
 	AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~AddRoomPane();
 
+private:
 	wxTextCtrl * m_name_text;
 	wxSpinCtrl * m_capacity_text;
 	ChoiceGrid * m_grid;
 
-	wxComboBox * m_features;
+	wxChoice   * m_features;
 	wxSpinCtrl * m_score_text;
 	wxListBox  * m_added_features;
 
+	wxStaticText * m_err_msg;
+
 	Application * m_owner;
- private:
+
+	int m_feature_values[MAX_FEATURES];
+
 	void OnCreateButtonClicked(wxCommandEvent &);
+	void OnAddFeatureClicked(wxCommandEvent &);
 };
 
 class AddSubjectPane : public wxScrolledWindow {
@@ -238,13 +259,25 @@ private:
 	void OnAddButtonClicked(wxCommandEvent &);
 };
 
-// class GenTimetablePane : public wxScrolledWindow{
-//  public:
-// 	GenTimetablePane();
-// 	~GenTimetablePane();
-//  private:
-//
-// }
+class DescSchoolPane : public wxScrolledWindow {
+ public:
+	DescSchoolPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~DescSchoolPane();
+
+ private:
+
+	Application * m_owner;
+};
+
+class ListFeaturesPane : public wxScrolledWindow {
+ public:
+	ListFeaturesPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListFeaturesPane();
+ private:
+
+	wxListBox * m_features_list;
+	Application * m_owner;
+};
 
 
 class Application : public wxApp {
@@ -264,6 +297,9 @@ class Application : public wxApp {
 	wxFont * 		m_small_font = nullptr;
 
 	wxImage *		m_island_image = nullptr;
+
+	sqlite3 *		m_database = nullptr;
+	School *		m_school = nullptr;
 };
 
 

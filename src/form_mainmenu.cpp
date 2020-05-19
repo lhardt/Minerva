@@ -54,7 +54,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, "H
 	m_rib_bbars[1][4]->AddButton(LHID_OF(LHN_OPEN_ROOMS_MANUAL), wxT("Abrir Manual"), image);
 
 	m_ribbon->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &MainMenuForm::OnMenuItemClicked, this);
-	
+
 	/* DISCIPLINAS */
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECTS), wxT("Ver Disciplinas"), image);
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECT_GROUPS), wxT("Ver Grupos Disciplinares"), image);
@@ -184,6 +184,11 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		case LHID_OF(LHN_ADD_CLASS_GROUP):{
 			CloseOpenedPane();
 			m_open_pane = new AddClassGroupPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_SEE_FEATURES):{
+			CloseOpenedPane();
+			m_open_pane = new ListFeaturesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		default:{

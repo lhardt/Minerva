@@ -1,6 +1,14 @@
 #include "gui.hpp"
+
+#include <iostream>
+
 #include <wx/grid.h>
 #include <wx/spinctrl.h>
+
+extern "C"{
+	#include "loader.h"
+}
+
 CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, "Horário Escolar Minerva", wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
 
@@ -54,15 +62,18 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 
 	wxVector<wxColor> grid_colors = wxVector<wxColor>();
 	grid_colors.push_back(wxColor(200,200,255));
-	grid_colors.push_back(wxColor(255,200,200)); 
+	grid_colors.push_back(wxColor(255,200,200));
 	m_grid->SetBackgroundColors(grid_colors);
 
 	m_grid->m_basic_col_name = wxT("Dia");
-	m_grid->m_basic_row_name = wxT("Período");
+	m_grid->m_basic_row_name = wxString::FromUTF8("Período");
 
 
 	m_grid->GridRemake(m_number_of_days_text->GetValue(), m_number_of_periods_text->GetValue());
 
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxPoint(30,480), wxSize(300,30));
+	m_err_msg->SetFont(*m_owner->m_small_font);
+	m_err_msg->SetForegroundColour(wxColor(0xF0, 0x50, 0x50));
 
 
 	m_button_create = new wxButton(this, wxID_ANY, wxT("Criar"), wxPoint(350, 500), wxSize(80,30));
@@ -88,6 +99,49 @@ void CreateSchoolForm::OnBackClicked(wxCommandEvent & ev){
 }
 
 void CreateSchoolForm::OnCreateClicked(wxCommandEvent & ev){
-	m_owner->SwitchForm(FORM_MAIN_MENU);
-	this->Destroy();
+	int i, str_sz;
+	if(!m_school_name_text->IsEmpty() && m_number_of_periods_text->GetValue() > 0 && m_number_of_days_text->GetValue() > 0 ){
+		School * school = new School();
+		str_sz = strlen(m_school_name_text->GetValue().ToUTF8().data());
+		school->name = (char *) calloc(str_sz + 1, sizeof(char));
+		strncpy(school->name, m_school_name_text->GetValue().ToUTF8().data(), str_sz);
+
+		school->n_days = m_number_of_days_text->GetValue();
+		school->n_periods_per_day = m_number_of_periods_text->GetValue();
+
+		school->day_names = (char **) calloc(school->n_days, sizeof(char*));
+		for(i = 0; i < school->n_days; ++i){
+			str_sz = strlen(m_grid->GetCellValue(0,1 + i).ToUTF8().data());
+			school->day_names[i] = (char *) calloc(1 + str_sz, sizeof(char));
+			strncpy(school->day_names[i], m_grid->GetCellValue(0,1 + i).ToUTF8().data(), str_sz);
+		}
+
+		school->daily_period_names = (char**) calloc(school->n_periods_per_day, sizeof(char*));
+		for(i = 0; i < school->n_periods_per_day; ++i){
+			str_sz = strlen((m_grid->GetCellValue(1 + i,0).ToUTF8().data()));
+			school->daily_period_names[i] = (char*) calloc( 1 + str_sz, sizeof(char));
+			strncpy(school->daily_period_names[i],m_grid->GetCellValue(1+i,0).ToUTF8().data(), str_sz);
+			printf("Daily period name: %s. Theoretical name %s\n",school->daily_period_names[i],m_grid->GetCellValue(1+i,0).ToUTF8().data());
+		}
+
+		school->n_periods = school->n_days * school->n_periods_per_day;
+		school->period_names = (char**) calloc( school->n_periods + 1, sizeof(char*));
+		for(i = 0; i < school->n_periods; ++i){
+			school->period_names[i] = (char*)calloc(1,sizeof(char));
+			school->periods[i] = wxT("Aberta") == m_grid->GetCellValue(1 + (i % school->n_periods_per_day), 1 +  (i / school->n_periods_per_day));
+		}
+
+		int errc = insert_school(stdout, m_owner->m_database, school);
+
+		if(errc != -1){
+			m_owner->m_school = school;
+			m_owner->SwitchForm(FORM_MAIN_MENU);
+			this->Destroy();
+		} else {
+			printf("Could not insert school.\n");
+		}
+	} else {
+		m_err_msg->SetLabel(wxT("Preencha todos os campos corretamente"));
+	}
+
 }

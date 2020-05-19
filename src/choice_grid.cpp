@@ -26,7 +26,7 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 		for(i = old_n_rows; i < n_rows; ++i){
 
 			if(m_row_names.size() <= i){
-				SetCellValue(i,0, m_basic_row_name  + wxString::Format(" %d",i));
+				SetCellValue(i,0, m_basic_row_name + wxString::Format(" %d",i));
 			} else {
 				SetCellValue(i,0, m_row_names[j]);
 			}

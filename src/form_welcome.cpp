@@ -1,8 +1,15 @@
 #include "gui.hpp"
 
 #include <wx/wx.h>
+#include <sqlite3.h>
+
+extern "C" {
+	#include "loader.h"
+};
 
 WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, "HorÃ¡rio Escolar Minerva", wxPoint(30,30), wxSize(800,600)) {
+	int i = 0;
+
 	m_owner = owner;
 
 	SetMinSize(wxSize(800,600));
@@ -25,22 +32,30 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, "HorÃ
 	m_description->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_description->SetFont(*m_owner->m_text_font);
 
+	m_school_names = select_all_school_names(stdout, m_owner->m_database, &m_school_ids);
+	wxArrayString arr;
+	for(i = 0; m_school_names[i] != NULL; ++i){
+		arr.push_back(wxString::FromUTF8(m_school_names[i]));
+	}
+
 	m_image = new wxStaticBitmap(this, wxID_ANY, wxBitmap(*owner->m_island_image), wxPoint(400,50));
-	m_dropdown = new wxComboBox(this, wxID_ANY, "Projetos Anteriores", wxPoint(50,260), wxSize(240,30));
+	m_dropdown = new wxChoice(this, wxID_ANY, wxPoint(50,260), wxSize(240,30), arr);
+	m_dropdown->SetSelection(0);
+
 	m_button_open = new wxButton(this, wxID_ANY, "Abrir", wxPoint(300, 260), wxSize(55,30));
 	m_button_import = new wxButton(this, wxID_ANY, "Importar", wxPoint(50, 305), wxSize(95,30));
 	m_button_delete = new wxButton(this, wxID_ANY, "Apagar", wxPoint(155, 305), wxSize(95,30));
 	m_button_create = new wxButton(this, wxID_ANY, "Criar", wxPoint(260, 305), wxSize(95,30));
 
+	if(i == 0){
+		m_button_open->Disable();
+		m_button_delete->Disable();
+	}
+
 	m_button_open->Bind(wxEVT_BUTTON, &WelcomeForm::OnOpenClicked, this);
 	m_button_import->Bind(wxEVT_BUTTON, &WelcomeForm::OnImportClicked, this);
 	m_button_delete->Bind(wxEVT_BUTTON, &WelcomeForm::OnDeleteClicked, this);
 	m_button_create->Bind(wxEVT_BUTTON, &WelcomeForm::OnCreateClicked, this);
-
-	int number_of_schools = 4;
-	for(int i = 0; i < number_of_schools; i ++){
-		m_dropdown->Append(wxT("School"));
-	}
 
 	this->Refresh();
 }
@@ -52,7 +67,18 @@ void WelcomeForm::OnCreateClicked(wxCommandEvent & ev){
 }
 
 void WelcomeForm::OnOpenClicked(wxCommandEvent & ev){
-	printf("Not Implemented\n");
+	printf("Index: %d\n", m_dropdown->GetCurrentSelection());
+	if( wxNOT_FOUND == m_dropdown->GetCurrentSelection()){
+		printf("No item selected\n");
+	} else {
+		m_owner->m_school = select_school_by_id( stdout, m_owner->m_database, m_school_ids[ m_dropdown->GetCurrentSelection() ] );
+		if(m_owner->m_school == NULL){
+			printf("Could not load school.\n");
+		} else {
+			m_owner->SwitchForm(FORM_MAIN_MENU);
+			this->Destroy();
+		}
+	}
 	ev.Skip();
 }
 
@@ -67,5 +93,12 @@ void WelcomeForm::OnDeleteClicked(wxCommandEvent & ev){
 }
 
 WelcomeForm::~WelcomeForm(){
-
+	int i = 0;
+	if(m_school_names != nullptr){
+		for(i = 0; m_school_names[i] != NULL; ++i){
+			free(m_school_names[i]);
+		}
+		free(m_school_names);
+		free(m_school_ids);
+	}
 }
