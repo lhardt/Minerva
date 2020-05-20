@@ -667,7 +667,7 @@ int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 	sqlite3_finalize(stmt);
 
 	sqlite3_prepare(db, INSERT_TABLE_ROOM_FEATURE, -1, &stmt, NULL);
-	for(int i = 0; room->room_features[i] >= 0; ++i){
+	for(int i = 0; i < school->n_features && room->room_features[i] >= 0; ++i){
 		if(room->room_features[i] != 0){
 			sqlite3_bind_int(stmt,1, room->id);
 			sqlite3_bind_int(stmt,2, school->feature_ids[i]);
@@ -1132,11 +1132,11 @@ char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids){
 			strncpy(strings[i], aux, str_sz);
 
 			i++;
-			if(i == alloc_sz){
+			if(i >= alloc_sz){
 				alloc_sz += 10;
-				strings = realloc(strings, alloc_sz);
+				strings = realloc(strings, (alloc_sz)*sizeof(char*));
 				if(*ids != NULL){
-					*ids = realloc(*ids, alloc_sz);
+					*ids = realloc(*ids, alloc_sz*sizeof(int));
 				}
 			}
 			errc = sqlite3_step(stmt);
@@ -1259,32 +1259,37 @@ static Room * select_all_rooms_by_school_id(FILE * console_out, sqlite3* db, int
 		errc = sqlite3_step(stmt);
 
 		alloc_sz = 10;
-		rooms = calloc(alloc_sz, sizeof(Room));
+		rooms = calloc(alloc_sz + 1, sizeof(Room));
 		i = 0;
 		while(errc == SQLITE_ROW){
+			if(i >= alloc_sz -1){
+				alloc_sz += 10;
+				rooms = realloc(rooms, (1+ alloc_sz)*sizeof(Room));
+				printf("Rooms is not null. %x", rooms);
+			}
+
 			printf("I = %d\n", i);
 			rooms[i].id = sqlite3_column_int(stmt,0);
 
-			aux = (const char *) sqlite3_column_text(stmt,1);
-			rooms[i].name = calloc( sqlite3_column_bytes(stmt,1), sizeof(char));
-			strncpy(rooms[i].name, aux, sqlite3_column_bytes(stmt,1));
+			rooms[i].name = calloc( sqlite3_column_bytes(stmt,1) + 1, sizeof(char));
+			strncpy(rooms[i].name, sqlite3_column_text(stmt,1), sqlite3_column_bytes(stmt,1));
 
-			aux = (const char *) sqlite3_column_text(stmt,2);
-			rooms[i].short_name = calloc( sqlite3_column_bytes(stmt,2), sizeof(char));
-			strncpy(rooms[i].short_name, aux, sqlite3_column_bytes(stmt,2));
+
+			rooms[i].short_name = calloc( sqlite3_column_bytes(stmt,2) + 1, sizeof(char));
+			strncpy(rooms[i].short_name, sqlite3_column_text(stmt,2), sqlite3_column_bytes(stmt,2));
 
 			errc = sqlite3_step(stmt);
-			++i;
+			printf("Consoleout é stdout? %s\n", (console_out == stdout)?("Sim"):("Não"));
+			printf("Db é nulo? %x\n", db);
+			printf("School é nula? %s\n", school->name);
+			printf("Valor de i %d\n", i);
 
-			if(i == alloc_sz){
-				alloc_sz += 10;
-				rooms = realloc(rooms, alloc_sz);
-			}
+			select_room_availibility(console_out, db, rooms[i].id, school);
+			select_all_room_features_by_room_id(console_out, db, &rooms[i], school);
+			++i;
 		}
 		sqlite3_finalize(stmt);
 
-		select_room_availibility(console_out, db, rooms[i].id, school);
-		select_all_room_features_by_room_id(console_out, db, &rooms[i], school);
 	}
 	if(n_rooms != NULL){
 		*n_rooms = i;
@@ -1310,9 +1315,9 @@ static Teacher * select_all_teachers_by_school_id(FILE * console_out, sqlite3* d
 		alloc_sz = 10;
 		teachers = calloc(alloc_sz, sizeof(Teacher));
 		while(errc == SQLITE_ROW){
-			if(i == alloc_sz){
+			if(i >= alloc_sz){
 				alloc_sz += 10;
-				teachers = realloc(teachers,alloc_sz);
+				teachers = realloc(teachers,(alloc_sz)*sizeof(Teacher));
 			}
 			teachers[i].id = sqlite3_column_int(stmt,0);
 
@@ -1356,6 +1361,7 @@ bool select_all_class_subject_by_class_id(FILE * console_out, sqlite3* db, Class
 		sqlite3_bind_int(stmt,1, class->id);
 		sqlite3_step(stmt);
 
+		class->needs = calloc(alloc_sz + 1, sizeof(Class));
 		while(errc == SQLITE_ROW){
 			subj_id = sqlite3_column_int(stmt,2);
 			for(i_subj = 0; i_subj < school->n_subjects; ++i_subj){
@@ -1367,9 +1373,9 @@ bool select_all_class_subject_by_class_id(FILE * console_out, sqlite3* db, Class
 
 			++i;
 			sqlite3_step(stmt);
-			if(i == alloc_sz){
+			if(i >= alloc_sz){
 				alloc_sz += 10;
-				class->needs = realloc(class->needs, alloc_sz);
+				class->needs = realloc(class->needs, (alloc_sz+1)*sizeof(SubjectQuantity));
 			}
 		}
 		return true;
@@ -1399,6 +1405,11 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 		classes = calloc(alloc_sz, sizeof(Class));
 
 		while(errc == SQLITE_ROW){
+			if(i >= alloc_sz){
+				alloc_sz += 10;
+				classes = realloc(classes, alloc_sz * sizeof(Class));
+			}
+
 			classes[i].id = sqlite3_column_int(stmt,0);
 
 			aux = (const char *)sqlite3_column_text(stmt,1);
@@ -1418,10 +1429,10 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 			classes[i].minimal_exit_period = sqlite3_column_int(stmt,7);
 
 			int * attendance = select_attendance(console_out, db, SELECT_CLASS_ATTENDANCE_BY_CLASS_ID, classes[i].id, school);
-			for(j = 0; attendance[j] >= 0; ++j){
+			for(j = 0; attendance[j] >= 0 && j < school->n_periods; ++j){
 				classes[i].periods[j] = attendance[j];
 			}
-			classes[i].periods[j] = attendance[j];
+			classes[i].periods[j] = -1;
 			free(attendance);
 
 			select_all_class_subject_by_class_id(console_out, db, &classes[i], school);
@@ -1429,10 +1440,6 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 			++i;
 			errc = sqlite3_step(stmt);
 
-			if(i == alloc_sz){
-				alloc_sz += 10;
-				classes = realloc(classes, alloc_sz);
-			}
 		}
 	}
 
@@ -1613,9 +1620,15 @@ static bool select_all_days_by_school_id(FILE * console_out, sqlite3 * db, int i
 		sqlite3_bind_int(stmt,1, id);
 		errc = sqlite3_step(stmt);
 
-		school->day_names = calloc(10, sizeof(char*));
-		school->day_ids = calloc(10, sizeof(int));
+		alloc_sz = 10;
+		school->day_names = calloc(alloc_sz + 1, sizeof(char*));
+		school->day_ids = calloc(alloc_sz + 1, sizeof(int));
 		while(errc == SQLITE_ROW){
+			if(i >= alloc_sz){
+				alloc_sz += 10;
+				school->day_names = realloc(school->day_names, (1 + alloc_sz)*sizeof(char*));
+				school->day_ids = realloc(school->day_ids, (1 + alloc_sz)*sizeof(int));
+			}
 			school->day_ids[i] = sqlite3_column_int(stmt,0);
 
 			aux = (const char *)sqlite3_column_text(stmt,1);
@@ -1624,11 +1637,6 @@ static bool select_all_days_by_school_id(FILE * console_out, sqlite3 * db, int i
 			strncpy(school->day_names[i], aux, str_sz);
 			errc = sqlite3_step(stmt);
 			++i;
-			if(i == alloc_sz){
-				alloc_sz += 10;
-				school->day_names = realloc(school->day_names,alloc_sz);
-				school->day_ids = realloc(school->day_ids, alloc_sz);
-			}
 		}
 
 		if(n_days != NULL){
@@ -1655,9 +1663,15 @@ static bool select_all_daily_periods_by_school_id(FILE * console_out, sqlite3 * 
 		sqlite3_bind_int(stmt,1, id);
 		errc = sqlite3_step(stmt);
 
-		school->daily_period_names = calloc(10, sizeof(char*));
-		school->daily_period_ids = calloc(10, sizeof(int));
+		alloc_sz = 10;
+		school->daily_period_names = calloc(1 + alloc_sz, sizeof(char*));
+		school->daily_period_ids = calloc(1 + alloc_sz, sizeof(int));
 		while(errc == SQLITE_ROW){
+			if(i >= alloc_sz){
+				alloc_sz += 10;
+				school->daily_period_names = realloc(school->daily_period_names,(1 + alloc_sz)*sizeof(char*));
+				school->daily_period_ids = realloc(school->daily_period_ids, (1 +alloc_sz)*sizeof(int));
+			}
 			school->daily_period_ids[i] = sqlite3_column_int(stmt,0);
 
 			aux = (const char *)sqlite3_column_text(stmt,1);
@@ -1667,11 +1681,6 @@ static bool select_all_daily_periods_by_school_id(FILE * console_out, sqlite3 * 
 
 			errc = sqlite3_step(stmt);
 			++i;
-			if(i == alloc_sz){
-				alloc_sz += 10;
-				school->daily_period_names = realloc(school->daily_period_names,alloc_sz);
-				school->daily_period_ids = realloc(school->daily_period_ids, alloc_sz);
-			}
 		}
 		if( n_daily_periods != NULL) {
 			*n_daily_periods = i;

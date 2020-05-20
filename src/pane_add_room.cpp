@@ -11,6 +11,10 @@ extern "C" {
 AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos)  : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
 	int i;
 
+	for(i = 0; i < MAX_FEATURES; ++i){
+		m_feature_values[i] = 0;
+	}
+	m_feature_values[MAX_FEATURES] = -1;
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
@@ -48,8 +52,8 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos)  :
 	m_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 
 	for(i = 0; i < school->n_periods; ++i){
-		if(school->periods[i] == 0){
-			m_grid->SetCellImmutable(1 +  (i / school->n_periods_per_day),1 + (i % school->n_periods_per_day));
+		if(school->periods[i] == false){
+			m_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 		}
 	}
 
@@ -58,7 +62,7 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos)  :
 	button_go->Bind(wxEVT_BUTTON, &AddRoomPane::OnCreateButtonClicked, this);
 
 	wxArrayString arr;
-	for(i = 0; i < m_owner->m_school->n_features != NULL; ++i){
+	for(i = 0; (i < m_owner->m_school->n_features) && (NULL != m_owner->m_school->feature_names[i]) ; ++i){
 		arr.push_back(wxString::FromUTF8(m_owner->m_school->feature_names[i]));
 	}
 
@@ -115,36 +119,45 @@ AddRoomPane::~AddRoomPane(){
 }
 
 void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
-	int i, j;
+	int i;
 	School * school = m_owner->m_school;
 	if(!m_name_text->GetValue().IsEmpty() && (m_capacity_text->GetValue() > 0)){
 		Room room;
 		room.name = copy_wx_string(m_name_text->GetValue());
+		room.short_name = copy_wx_string(m_name_text->GetValue());
 		room.size = m_capacity_text->GetValue();
 
 		for(i = 0; i < school->n_features; ++i){
 			room.room_features[i] = m_feature_values[i];
 		}
+		room.room_features[school->n_features] = -1;
 
 		for(i = 0; i < school->n_periods; ++i){
 			room.disponibility[i] =
-					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day), 1 +  (i / school->n_periods_per_day))==wxT("Aberta") ? 1:0);
+					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==wxT("Aberta") ? 1:0);
 		}
+		room.disponibility[school->n_periods] = -1;
 
+		printf("Iniciando inserção\n");
 		int id = insert_room(stdout, m_owner->m_database, &room, school);
+		printf("Inserção terminada.\n");
 		if(id != -1){
+			printf("Alocando espaço\n");
 			room.id = id;
-			if(school->rooms == NULL){
-				school->rooms = (Room*) calloc(10, sizeof(Room));
+			printf("School n rooms: %d\n", school->n_rooms);
+			if(school->n_rooms == 0){
+				printf("CAlocou \n");
+				school->rooms = (Room*) calloc(2, sizeof(Room));
 			} else {
-				if(school->n_rooms % 10 == 0){
-					school->rooms = (Room *) realloc(school->rooms, school->n_rooms + 10);
-				}
+				printf("REAlocou \n");
+				school->rooms = (Room *) realloc(school->rooms, (school->n_rooms + 1)*sizeof(Room));
+				printf("REAlocou é nul? %x \n", school->rooms);
 			}
 			school->rooms[school->n_rooms] = room;
 			school->n_rooms++;
+			printf("Terminou de inserir quant %d\n", school->n_rooms);
 		} else {
-
+			printf("ID inválido\n");
 		}
 	} else {
 		m_err_msg->SetLabel(wxT("Uma sala precisa ao menos de um nome e da sua capacidade."));
@@ -157,6 +170,7 @@ void AddRoomPane::OnAddFeatureClicked(wxCommandEvent & ev){
 		/* As the items in the list box were put in order, we may safely assume
 		 * school->features[i] is the same feature as m_feature_values[i]		*/
 		m_feature_values[ m_features->GetSelection() ] = m_score_text->GetValue();
+		m_score_text->SetValue(0);
 
 		wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[  m_features->GetSelection() ]) << wxT(": ") << m_score_text->GetValue();
 		m_added_features->InsertItems(1,&to_be_inserted, m_added_features->GetCount() );
