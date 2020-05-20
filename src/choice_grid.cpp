@@ -20,6 +20,9 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 	int old_n_rows = GetNumberRows();
 	int old_n_cols = GetNumberCols();
 
+	m_immutable_cell_text = wxT("");
+	m_immutable_cell_color = wxColor(200, 200, 200);
+
 	SetCellBackgroundColour(0,0,wxColor(200,200,200));
 	if(n_rows > old_n_rows){
 		AppendRows(n_rows - old_n_rows);
@@ -92,22 +95,26 @@ void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
 					break;
 				}
 			}
-			if(i == m_value_names.size()){
-				printf("Did not found this value\n");
+			if(i != m_value_names.size()){
+				// Loop to zero if necessary -- goes to zero if not found
+				i = (i + 1)%(m_value_names.size());
+				if(m_background_colors.size() > i){
+					SetCellBackgroundColour(evt.GetRow(), evt.GetCol(), m_background_colors.at(i));
+				} else {
+					SetCellBackgroundColour(evt.GetRow(), evt.GetCol(), wxColor(255,255,255));
+				}
+				SetCellValue(evt.GetRow(), evt.GetCol(), m_value_names.at(i));
+					evt.Skip();
+				Refresh();
 			}
-			// Loop to zero if necessary -- goes to zero if not found
-			i = (i + 1)%(m_value_names.size());
-			if(m_background_colors.size() > i){
-				SetCellBackgroundColour(evt.GetRow(), evt.GetCol(), m_background_colors.at(i));
-			} else {
-				SetCellBackgroundColour(evt.GetRow(), evt.GetCol(), wxColor(255,255,255));
-			}
-			SetCellValue(evt.GetRow(), evt.GetCol(), m_value_names.at(i));
-			evt.Skip();
-			Refresh();
 		}
 	} else {
 		printf("No possible values. \n");
 	}
 
+}
+
+void ChoiceGrid::SetCellImmutable(int i, int j){
+	SetCellValue(i,j, m_immutable_cell_text);
+	SetCellBackgroundColour(i,j,m_immutable_cell_color);
 }

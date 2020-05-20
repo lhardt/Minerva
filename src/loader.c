@@ -1743,10 +1743,6 @@ static bool select_all_periods_by_school_id(FILE * console_out, sqlite3 * db, in
 
 		}
 		sqlite3_finalize(stmt);
-
-		if(n_periods != NULL){
-			*n_periods = i;
-		}
 		return true;
 	}
 	return false;

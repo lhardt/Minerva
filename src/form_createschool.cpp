@@ -15,7 +15,7 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	SetMinSize(wxSize(800,600));
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxPanel * m_right_pane = new wxPanel(this, wxID_ANY, wxPoint(500,0), wxSize(300,575));
+	wxPanel * m_right_pane = new wxPanel(this, wxID_ANY, wxPoint(450,0), wxSize(350,575));
 	m_right_pane->SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
 
 	wxPanel * m_footer = new wxPanel(this, wxID_ANY, wxPoint(0,575), wxSize(800,25));
@@ -27,7 +27,7 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	m_footer_text->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_footer_text->SetFont(*m_owner->m_small_font);
 
-	wxStaticText * m_title = new wxStaticText(this, wxID_ANY, wxT("Cadastrar Escola"), wxPoint(30,50), wxSize(100,25));
+	wxStaticText * m_title = new wxStaticText(this, wxID_ANY, wxT("Cadastrar Escola"), wxPoint(30,30), wxSize(100,25));
 	m_title->SetFont(*m_owner->m_page_title_font);
 	m_title->SetForegroundColour(wxColor(0x00, 0x00, 0x00));
 
@@ -81,6 +81,26 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 
 	m_button_create->Bind(wxEVT_BUTTON, &CreateSchoolForm::OnCreateClicked, this);
 	m_button_back->Bind(wxEVT_BUTTON, &CreateSchoolForm::OnBackClicked, this);
+
+	wxStaticText* tutorial_title = new wxStaticText(m_right_pane, wxID_ANY, wxT("Cadastrar Escola"), wxPoint(30,30), wxSize(240,30));
+	tutorial_title->SetFont(*m_owner->m_page_title_font);
+	tutorial_title->SetForegroundColour(wxColor(255,255,255));
+	wxStaticText* tutorial_text = new wxStaticText(m_right_pane, wxID_ANY, wxT(
+			"Seja bem vindo ao software Minerva. Agradecemos por testá-lo e pedimos o favor que se encontrares algum erro, "
+			"faça a gentileza de entrar em contato.\n\n"
+			"Em caso de dúvidas, o software dispõe de um manual, esclarecendo o uso de suas funções.\n\n"
+			"Para cadastrar uma escola, preencha os campos ao lado. Pense em cada \"escola\" aqui como uma entidade que "
+			"precisa de um cronograma diferente. Esse nome será usado na tela inicial e no horário. Recomendamos um nome "
+			"curto, como \"Escola Dom Pedro - Noite.\"\n\n"
+			"O tamanho do ciclo é tamanho do horário, em dias. Geralmente são cinco dias. Se a escola só funcionar "
+			"em três dias da semana, são três dias no ciclo. Se o horário será bisemanal, são 10 dias. E assim por diante. "
+			"Caso tenha dificuldade para decidir, pense \"quantos dias demora para o horário voltar ao início?\".\n\n"
+			"Por último, clique em qualquer período em que a escola não estiver aberta para fazer com que ela esteja fechada. Algumas escolas, por "
+			"exemplo, ficam fechadas no 5º período das sexta-feira. Para fazer com que a escola volte a estar aberta, clique novamente."
+		),
+		wxPoint(30,70), wxSize(290,500)
+	);
+	tutorial_text->SetForegroundColour(wxColor(255,255,255));
 
 	Refresh();
 }

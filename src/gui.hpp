@@ -41,6 +41,9 @@ class ChoiceGrid : public wxGrid {
 	int m_n_cols;
 	int m_n_rows;
 
+	wxString m_immutable_cell_text;
+	wxColor  m_immutable_cell_color;
+
 	wxString m_basic_col_name = L"Coluna";
 	wxString m_basic_row_name = L"Linha";
 	wxVector<wxString> m_col_names;
@@ -56,6 +59,7 @@ class ChoiceGrid : public wxGrid {
 	void GridRemake(int n_cols, int n_rows);
 	void SetPossibleValues(wxVector<wxString> values);
 	void SetBackgroundColors(wxVector<wxColor> values);
+	void SetCellImmutable(int i_col, int i_row);
  private:
 	void OnLeftClick(wxGridEvent &);
 };
@@ -277,6 +281,28 @@ class ListFeaturesPane : public wxScrolledWindow {
 
 	wxListBox * m_features_list;
 	Application * m_owner;
+};
+
+class ListClassesPane : public wxScrolledWindow {
+ public:
+	ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListClassesPane();
+ private:
+
+	wxListBox * m_classes_list;
+
+	Application * m_owner;
+};
+
+class ListRoomsPane : public wxScrolledWindow {
+ public:
+   ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos);
+   ~ListRoomsPane();
+ private:
+
+   wxListBox * m_rooms_list;
+
+   Application * m_owner;
 };
 
 

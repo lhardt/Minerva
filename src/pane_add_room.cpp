@@ -3,10 +3,16 @@
 #include <wx/spinctrl.h>
 #include <wx/combobox.h>
 
+extern "C" {
+	#include "loader.h"
+};
+
+
 AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos)  : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
 	int i;
-	
+
 	this->m_owner = owner;
+	School * school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Sala"), wxPoint(30,30), wxSize(200,25));
@@ -39,7 +45,13 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos)  :
 	m_grid->m_basic_col_name = wxT("Dia");
 	m_grid->m_basic_row_name = wxT("Período");
 
-	m_grid->GridRemake(7,5);
+	m_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
+
+	for(i = 0; i < school->n_periods; ++i){
+		if(school->periods[i] == 0){
+			m_grid->SetCellImmutable(1 +  (i / school->n_periods_per_day),1 + (i % school->n_periods_per_day));
+		}
+	}
 
 	wxButton * button_go = new wxButton(this,wxID_ANY, wxT("Adicionar Sala"), wxPoint(30,425), wxSize(200,30));
 
@@ -59,8 +71,6 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos)  :
 	add_sizer->Add(m_features,0,wxRIGHT,10);
 	add_sizer->Add(m_score_text,0,wxRIGHT,10);
 	add_sizer->Add(add_feature,0,wxRIGHT,10);
-
-
 
 	add_feature->Bind(wxEVT_BUTTON, &AddRoomPane::OnAddFeatureClicked, this);
 
@@ -107,13 +117,34 @@ AddRoomPane::~AddRoomPane(){
 void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 	int i, j;
 	School * school = m_owner->m_school;
-	if(!m_name_text->GetValue().IsEmpty() && !(m_capacity_text->GetValue() > 0)){
+	if(!m_name_text->GetValue().IsEmpty() && (m_capacity_text->GetValue() > 0)){
 		Room room;
 		room.name = copy_wx_string(m_name_text->GetValue());
 		room.size = m_capacity_text->GetValue();
 
 		for(i = 0; i < school->n_features; ++i){
 			room.room_features[i] = m_feature_values[i];
+		}
+
+		for(i = 0; i < school->n_periods; ++i){
+			room.disponibility[i] =
+					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day), 1 +  (i / school->n_periods_per_day))==wxT("Aberta") ? 1:0);
+		}
+
+		int id = insert_room(stdout, m_owner->m_database, &room, school);
+		if(id != -1){
+			room.id = id;
+			if(school->rooms == NULL){
+				school->rooms = (Room*) calloc(10, sizeof(Room));
+			} else {
+				if(school->n_rooms % 10 == 0){
+					school->rooms = (Room *) realloc(school->rooms, school->n_rooms + 10);
+				}
+			}
+			school->rooms[school->n_rooms] = room;
+			school->n_rooms++;
+		} else {
+
 		}
 	} else {
 		m_err_msg->SetLabel(wxT("Uma sala precisa ao menos de um nome e da sua capacidade."));

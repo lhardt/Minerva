@@ -4,6 +4,7 @@ ListFeaturesPane::ListFeaturesPane(Application * owner, wxWindow * parent, wxPoi
 	int i = 0;
 	School * school = NULL;
 	this->m_owner = owner;
+	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
@@ -13,9 +14,7 @@ ListFeaturesPane::ListFeaturesPane(Application * owner, wxWindow * parent, wxPoi
 
 	m_features_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300));
 
-	school = m_owner->m_school;
 	wxArrayString list;
-	printf("Is school null? %s\n", school==NULL?("Yes"):("No"));
 	for(i = 0; i < school->n_features; ++i){
 		list.Add(wxString::FromUTF8(school->feature_names[i]));
 	}
@@ -31,7 +30,6 @@ ListFeaturesPane::ListFeaturesPane(Application * owner, wxWindow * parent, wxPoi
 	ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_ALWAYS);
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
-
 }
 
 ListFeaturesPane::~ListFeaturesPane(){

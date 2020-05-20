@@ -191,6 +191,16 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new ListFeaturesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
+		case LHID_OF(LHN_SEE_ROOMS):{
+			CloseOpenedPane();
+			m_open_pane = new ListRoomsPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_SEE_CLASSES):{
+			CloseOpenedPane();
+			m_open_pane = new ListClassesPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
 		default:{
 			printf("Event not implemented.\n");
 			break;
