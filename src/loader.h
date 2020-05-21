@@ -41,6 +41,8 @@ int insert_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school
 int insert_feature(FILE * console_out, sqlite3* db, const char * const feature, School * school);
 int insert_room(FILE * console_out, sqlite3* db, Room * room, School * school);
 int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * school);
+int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * school);
+
 
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);

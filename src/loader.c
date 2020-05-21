@@ -713,19 +713,19 @@ int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * 
 	sqlite3_stmt * stmt = NULL;
 
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_SUBJECT, -1, &stmt, NULL);
-	if(errc != SQLITE_OK){
+	if(errc == SQLITE_OK){
 		sqlite3_bind_text(stmt,1, subject->name, -1, SQLITE_TRANSIENT);
 		sqlite3_bind_text(stmt,2, subject->short_name, -1, SQLITE_TRANSIENT);
 		sqlite3_bind_int(stmt,3, school->id);
 
 		errc = sqlite3_step(stmt);
-		if(errc != SQLITE_OK){
-			fprintf(console_out,"Could not insert subject.\n");
+		if(errc == SQLITE_OK){
+			fprintf(console_out,"Could not insert subject. %s\n", sqlite3_errmsg(db));
 		} else {
 			errc = sqlite3_exec(db, LASTID_TABLE_SUBJECT, get_id_callback, &subject->id, NULL);
 		}
 	} else {
-		fprintf(console_out,"Could not insert subject.\n");
+		fprintf(console_out,"Could not insert subject. %s\n", sqlite3_errmsg(db));
 	}
 	return subject->id;
 }
@@ -1265,7 +1265,6 @@ static Room * select_all_rooms_by_school_id(FILE * console_out, sqlite3* db, int
 			if(i >= alloc_sz -1){
 				alloc_sz += 10;
 				rooms = realloc(rooms, (1+ alloc_sz)*sizeof(Room));
-				printf("Rooms is not null. %x", rooms);
 			}
 
 			printf("I = %d\n", i);
@@ -1279,10 +1278,6 @@ static Room * select_all_rooms_by_school_id(FILE * console_out, sqlite3* db, int
 			strncpy(rooms[i].short_name, sqlite3_column_text(stmt,2), sqlite3_column_bytes(stmt,2));
 
 			errc = sqlite3_step(stmt);
-			printf("Consoleout é stdout? %s\n", (console_out == stdout)?("Sim"):("Não"));
-			printf("Db é nulo? %x\n", db);
-			printf("School é nula? %s\n", school->name);
-			printf("Valor de i %d\n", i);
 
 			select_room_availibility(console_out, db, rooms[i].id, school);
 			select_all_room_features_by_room_id(console_out, db, &rooms[i], school);

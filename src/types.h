@@ -21,6 +21,7 @@
 #define MAX_DAYS 			  ((MAX_PERIODS_PER_WEEK)/(MAX_PERIODS_PER_DAY))
 #define MAX_ROOMS			  (256)
 #define MAX_GROUPS			  (128)
+#define MAX_SUBJECTS		  (128)
 
 typedef enum Period {
 	_NULL     = -1,
@@ -61,7 +62,7 @@ typedef struct Subject {
 	char * name;
 	char * short_name;
 
-	int   in_groups[MAX_GROUPS];
+	int   in_groups[MAX_GROUPS +1];
 } Subject;
 
 typedef struct Teaches Teaches;

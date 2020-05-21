@@ -27,17 +27,22 @@ char * copy_wx_string(wxString str){
 bool Application::OnInit(){
 	m_database = init_all_tables(stdout, "db/teste.db");
 
-	m_title_font = new wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, true);
-	m_text_font  = new wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
-	m_small_font = new wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
-	m_page_title_font = new wxFont(18, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true);
+	if(m_database == nullptr){
+		int err_response = wxMessageBox(wxT("Erro!"),wxT("Não foi possível abrir o banco de dados."), wxOK);
+		this->Exit();
+	} else {
+		m_title_font = new wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, true);
+		m_text_font  = new wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
+		m_small_font = new wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
+		m_page_title_font = new wxFont(18, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true);
 
-	m_island_image = new wxImage(400,400);
-	m_island_image->AddHandler(new wxPNGHandler);
-	m_island_image->LoadFile("res/floating.png", wxBITMAP_TYPE_PNG);
+		m_island_image = new wxImage(400,400);
+		m_island_image->AddHandler(new wxPNGHandler);
+		m_island_image->LoadFile("res/floating.png", wxBITMAP_TYPE_PNG);
 
-	m_form_welcome = new WelcomeForm(this);
-	m_form_welcome->Show();
+		m_form_welcome = new WelcomeForm(this);
+		m_form_welcome->Show();
+	}
 	return true;
 }
 

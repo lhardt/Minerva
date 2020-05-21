@@ -32,7 +32,6 @@ enum AppFormType {
 	FORM_MAIN_MENU
 };
 
-
 class ChoiceGrid : public wxGrid {
  public:
 	ChoiceGrid(wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
@@ -69,7 +68,7 @@ class WelcomeForm : public wxFrame {
 	WelcomeForm(Application * owner);
 	~WelcomeForm();
 
-private:
+ private:
 	/* Components */
 	wxButton * 		m_button_create = nullptr;
 	wxButton * 		m_button_delete = nullptr;
@@ -138,6 +137,8 @@ class MainMenuForm : public wxFrame{
 	void CloseOpenedPane();
 };
 
+/* ADD Panes. */
+
 class AddFeaturePane : public wxPanel {
  public:
 	AddFeaturePane(Application * owner, wxWindow * parent, wxPoint pos);
@@ -157,7 +158,7 @@ class AddRoomPane : public wxScrolledWindow {
 	AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~AddRoomPane();
 
-private:
+ private:
 	wxTextCtrl * m_name_text;
 	wxSpinCtrl * m_capacity_text;
 	ChoiceGrid * m_grid;
@@ -181,11 +182,15 @@ class AddSubjectPane : public wxScrolledWindow {
 	AddSubjectPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddSubjectPane();
 
-	wxTextCtrl * m_name_text;
 
-	Application * m_owner;
  private:
+
+	wxTextCtrl * m_name_text;
+	Application * m_owner;
+	wxStaticText * m_err_msg;
+
 	void OnCreateButtonClicked(wxCommandEvent &);
+
 };
 
 class AddSubjectGroupPane : public wxScrolledWindow	 {
@@ -203,26 +208,29 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 };
 
 class AddTeacherPane : public wxScrolledWindow {
-public:
+ public:
 	AddTeacherPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddTeacherPane();
-private:
+ private:
 
 	wxTextCtrl * m_name_text;
 	wxComboBox * m_all_subjects_list;
 	wxListBox  * m_teaches_subjects_list;
+	wxStaticText * m_err_msg;
+
+	bool m_teaches_subj[MAX_SUBJECTS];
 
 	Application * m_owner;
 
-	void OnAddButtonClicked(wxCommandEvent &);
-
+	void OnAddTeacherButtonClicked(wxCommandEvent &);
+	void OnAddSubjectButtonClicked(wxCommandEvent &);
 };
 
 class AddTeacherGroupPane : public wxScrolledWindow {
-public:
+ public:
 	AddTeacherGroupPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddTeacherGroupPane();
-private:
+ private:
 
 	wxTextCtrl * m_name_text;
 	wxComboBox * m_all_teachers_list;
@@ -234,10 +242,10 @@ private:
 };
 
 class AddClassPane : public wxScrolledWindow {
-public:
+ public:
 	AddClassPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddClassPane();
-private:
+ private:
 
 	wxTextCtrl * m_name_text;
 	ChoiceGrid * m_periods;
@@ -251,10 +259,10 @@ private:
 };
 
 class AddClassGroupPane : public wxScrolledWindow {
-public:
+ public:
 	AddClassGroupPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddClassGroupPane();
-private:
+ private:
 	wxTextCtrl * m_name_text;
 	wxComboBox * m_all_classes_list;
 	wxListBox  * m_selected_classes_list;
@@ -263,12 +271,14 @@ private:
 	void OnAddButtonClicked(wxCommandEvent &);
 };
 
+/* LIST Panes. */
+
 class DescSchoolPane : public wxScrolledWindow {
- public:
+public:
 	DescSchoolPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~DescSchoolPane();
 
- private:
+private:
 
 	Application * m_owner;
 };
@@ -283,17 +293,6 @@ class ListFeaturesPane : public wxScrolledWindow {
 	Application * m_owner;
 };
 
-class ListClassesPane : public wxScrolledWindow {
- public:
-	ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~ListClassesPane();
- private:
-
-	wxListBox * m_classes_list;
-
-	Application * m_owner;
-};
-
 class ListRoomsPane : public wxScrolledWindow {
  public:
    ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos);
@@ -305,6 +304,60 @@ class ListRoomsPane : public wxScrolledWindow {
    Application * m_owner;
 };
 
+class ListSubjectsPane : public wxScrolledWindow {
+ public:
+	ListSubjectsPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListSubjectsPane();
+ private:
+	Application * m_owner;
+	wxListBox * m_subjects_list;
+
+};
+
+class ListSubjectGroupsPane : public wxScrolledWindow {
+ public:
+	ListSubjectGroupsPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListSubjectGroupsPane();
+ private:
+	Application * m_owner;
+};
+
+class ListTeachersPane : public wxScrolledWindow {
+ public:
+	ListTeachersPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListTeachersPane();
+ private:
+   Application * m_owner;
+};
+
+class ListTeacherGroupsPane : public wxScrolledWindow {
+ public:
+	ListTeacherGroupsPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListTeacherGroupsPane();
+ private:
+   Application * m_owner;
+};
+
+class ListClassesPane : public wxScrolledWindow {
+ public:
+	ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListClassesPane();
+ private:
+
+	wxListBox * m_classes_list;
+
+	Application * m_owner;
+};
+
+class ListClassGroupsPane : public wxScrolledWindow {
+ public:
+	ListClassGroupsPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListClassGroupsPane();
+ private:
+   Application * m_owner;
+};
+
+/* Application */
 
 class Application : public wxApp {
  private:

@@ -115,7 +115,7 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos)  :
 }
 
 AddRoomPane::~AddRoomPane(){
-
+	
 }
 
 void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
