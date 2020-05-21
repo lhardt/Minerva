@@ -55,5 +55,4 @@ $(TOBJC): $(TSRCC)
 $(TOBJCPP): $(TSRCCPP)
 	$(CXX) $(CXXFLAGS) $(TSTFLAG) -I $(SRCDIR) -c $(@:$(OBJDIR)/%.o=$(TSTDIR)/%.cpp) -o $@
 
-
 $(TSTSRC): $(TARGET)

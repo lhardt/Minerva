@@ -217,6 +217,7 @@ class AddTeacherPane : public wxScrolledWindow {
 	wxComboBox * m_all_subjects_list;
 	wxListBox  * m_teaches_subjects_list;
 	wxStaticText * m_err_msg;
+	ChoiceGrid * m_grid;
 
 	bool m_teaches_subj[MAX_SUBJECTS];
 
@@ -224,6 +225,7 @@ class AddTeacherPane : public wxScrolledWindow {
 
 	void OnAddTeacherButtonClicked(wxCommandEvent &);
 	void OnAddSubjectButtonClicked(wxCommandEvent &);
+	void OnRemoveAllButtonClicked(wxCommandEvent &);
 };
 
 class AddTeacherGroupPane : public wxScrolledWindow {

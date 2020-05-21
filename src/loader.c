@@ -234,7 +234,7 @@ const char * const SELECT_CLASS_SUBJECT_BY_CLASS_ID =
 
 const char * const CREATE_TABLE_TEACHER =
 			("CREATE TABLE IF NOT EXISTS Teacher("
-				"id 					integer primary key,"
+				"id 					integer primary key autoincrement not null,"
 				"name					text,"
 				"short_name				text,"
 				"max_days				integer,"
@@ -246,7 +246,7 @@ const char * const CREATE_TABLE_TEACHER =
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
 const char * const INSERT_TABLE_TEACHER =
-			("INSERT INTO Teacher VALUES (?,?,?,?,?,?,?)");
+			("INSERT INTO Teacher VALUES (?,?,?,?,?,?,?,?,?)");
 const char * const LASTID_TABLE_TEACHER =
 			("SELECT id FROM Teacher where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_BY_SCHOOL_ID =
@@ -271,7 +271,7 @@ const char * const SELECT_TEACHER_DAY_BY_TEACHER_ID =
 
 const char * const CREATE_TABLE_TEACHES =
 			("CREATE TABLE IF NOT EXISTS Teaches("
-				"id 					integer primary key,"
+				"id 					integer primary key autoincrement not null,"
 				"id_teacher				integer,"
 				"id_subject				integer,"
 				"score  				integer,"
@@ -279,7 +279,7 @@ const char * const CREATE_TABLE_TEACHES =
 				"FOREIGN KEY (id_subject) REFERENCES Subject(id)"
 			")");
 const char * const INSERT_TABLE_TEACHES =
-			("INSERT INTO Teaches VALUES (?,?,?)");
+			("INSERT INTO Teaches(id, id_teacher, id_subject, score) VALUES (?,?,?,?)");
 const char * const LASTID_TABLE_TEACHES =
 			("SELECT id FROM Teaches where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHES_BY_SCHOOL_ID =
@@ -305,7 +305,7 @@ const char * const SELECT_TEACHER_SUBORDINATION_BY_SUP_ID =
 
 const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
 			("CREATE TABLE IF NOT EXISTS TeacherAttendance("
-				"id						integer primary key,"
+				"id						integer primary key autoincrement not null,"
 				"id_teacher				integer,"
 				"id_period				integer,"
 				"id_att_type			integer,"
@@ -315,7 +315,7 @@ const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
 				"FOREIGN KEY (id_att_type) REFERENCES AttendanceType(id)"
 			")");
 const char * const INSERT_TABLE_TEACHER_ATTENDANCE =
-			("INSERT INTO TeacherAttendance VALUES (?,?,?,?,?)");
+			("INSERT INTO TeacherAttendance(id_teacher, id_period, id_att_type, score) VALUES (?,?,?,?)");
 const char * const LASTID_TEACHER_ATTENDANCE =
 			("SELECT id FROM TeacherAttendance where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_ATTENDANCE_BY_TEAHCER_ID =
@@ -483,14 +483,13 @@ static int get_id_callback(void* id_field_ptr,int no_columns,char** text_columns
 	if(no_columns == 1 && id_field_ptr != NULL){
 		*((int *)id_field_ptr) = strtol(text_columns[0], NULL,10);
 		printf("%s: %d\n", name_columns[0], *((int *)id_field_ptr));
-		return true;
+		return 0;
 	}
 	printf("CALLBACK FUNCTION MISUSE!");
-	return false;
+	return -1;
 
 }
 
-// NOTE negative-terminated list
 static bool insert_attendance(FILE * console_out, sqlite3* db, const char* const table_insert, int * period_ids, int * period_scores, int obj_id, School * school){
 	int i = 0;
 	int errc = 0;
@@ -503,23 +502,18 @@ static bool insert_attendance(FILE * console_out, sqlite3* db, const char* const
 	LMH_ASSERT(school != NULL);
 
 	sqlite3_prepare(db, table_insert, -1, &stmt, NULL);
-	for(i = 0; period_scores[i] >= 0 && errc == 0; ++i){
-		sqlite3_bind_int(stmt,1,obj_id);
+	errc=SQLITE_DONE;
+	for(i = 0; (i < school->n_periods) && (period_scores[i] >= 0) && (errc == SQLITE_DONE); ++i){
+		sqlite3_bind_int(stmt,1, obj_id);
 		sqlite3_bind_int(stmt,2, period_ids[i]);
 		sqlite3_bind_int(stmt,3, 1);
 		sqlite3_bind_int(stmt,4, period_scores[i]);
 		errc = sqlite3_step(stmt);
 
-		if(errc != SQLITE_DONE){
-			if(console_out){
-				fprintf(console_out, "Errc %d %s\n", errc, sqlite3_errmsg(db));
-			}
-			return false;
-		} else {
-			errc = 0;
-		}
 		sqlite3_reset(stmt);
-
+	}
+	if(errc != SQLITE_DONE){
+		printf("Error inserting attendance.%d %s\n", errc, sqlite3_errmsg(db));
 	}
 	return true;
 }
@@ -543,17 +537,31 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 	sqlite3_bind_int(stmt, 9, school->id);
 
 	errc = sqlite3_step(stmt);
-	errc |= sqlite3_exec(db, LASTID_TABLE_TEACHER, get_id_callback, &(teacher->id), NULL);
 
 	if(errc != SQLITE_DONE){
 		if(console_out){
-			fprintf(console_out, "Errc %d %s\n", errc, sqlite3_errmsg(db));
+			fprintf(console_out, "Insert Teacher Errc %d %s\n", errc, sqlite3_errmsg(db));
 		}
 		return -1;
 	}
 	sqlite3_finalize(stmt);
 
+	errc = sqlite3_exec(db, LASTID_TABLE_TEACHER, get_id_callback, &(teacher->id), NULL);
+	if(errc != SQLITE_OK){
+		if(console_out){
+			fprintf(console_out, "Insert Teacher Lastid Errc %d %s\n", errc, sqlite3_errmsg(db));
+		}
+		return -1;
+	}
+
+	printf("to insert teacher attendace\n");
 	insert_attendance(console_out, db, INSERT_TABLE_TEACHER_ATTENDANCE, school->period_ids, teacher->periods, teacher->id, school);
+
+	if(teacher->teaches != NULL){
+		for(int i = 0;  (teacher->teaches[i] != NULL) && (teacher->teaches[i]->subject != NULL); ++i){
+			insert_teaches(console_out, db, teacher->teaches[i], school);
+		}
+	}
 
 	return teacher->id;
 }
@@ -566,7 +574,7 @@ int insert_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_TEACHES, -1, &stmt, NULL);
 
 	if(errc != SQLITE_OK){
-		fprintf(console_out, "Couldn't insert Teaches");
+		fprintf(console_out, "Couldn't insert Teaches %d %s\n", errc, sqlite3_errmsg(db));
 		return -1;
 	}
 
@@ -576,7 +584,7 @@ int insert_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school
 
 	errc = sqlite3_step(stmt);
 	errc |= sqlite3_exec(db, LASTID_TABLE_TEACHES, get_id_callback, &(t->id), NULL);
-	if(errc != SQLITE_OK){
+	if(errc != SQLITE_DONE){
 		fprintf(console_out, "Could not insert teaches. %s\n", sqlite3_errmsg(db));
 		return -1;
 	}
@@ -1475,7 +1483,7 @@ static Teaches * select_all_teaches_by_school_id(FILE * console_out, sqlite3 * d
 			}
 
 			teaches[i].score = sqlite3_column_int(stmt,3);
-			sqlite3_step(stmt);
+			errc = sqlite3_step(stmt);
 			++i;
 		}
 	} else {

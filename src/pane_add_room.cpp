@@ -115,7 +115,7 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos)  :
 }
 
 AddRoomPane::~AddRoomPane(){
-	
+
 }
 
 void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
@@ -142,20 +142,16 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		int id = insert_room(stdout, m_owner->m_database, &room, school);
 		printf("Inserção terminada.\n");
 		if(id != -1){
-			printf("Alocando espaço\n");
 			room.id = id;
-			printf("School n rooms: %d\n", school->n_rooms);
 			if(school->n_rooms == 0){
-				printf("CAlocou \n");
 				school->rooms = (Room*) calloc(2, sizeof(Room));
 			} else {
-				printf("REAlocou \n");
 				school->rooms = (Room *) realloc(school->rooms, (school->n_rooms + 1)*sizeof(Room));
-				printf("REAlocou é nul? %x \n", school->rooms);
 			}
 			school->rooms[school->n_rooms] = room;
 			school->n_rooms++;
-			printf("Terminou de inserir quant %d\n", school->n_rooms);
+
+			m_err_msg->SetLabel(wxT("Adicionado com sucesso."));
 		} else {
 			printf("ID inválido\n");
 		}
