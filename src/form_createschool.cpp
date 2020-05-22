@@ -96,7 +96,7 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 			"em três dias da semana, são três dias no ciclo. Se o horário será bisemanal, são 10 dias. E assim por diante. "
 			"Caso tenha dificuldade para decidir, pense \"quantos dias demora para o horário voltar ao início?\".\n\n"
 			"Por último, clique em qualquer período em que a escola não estiver aberta para fazer com que ela esteja fechada. Algumas escolas, por "
-			"exemplo, ficam fechadas no 5º período das sexta-feira. Para fazer com que a escola volte a estar aberta, clique novamente."
+			"exemplo, ficam fechadas no 5º período da sexta-feira. Para fazer com que a escola volte a estar aberta, clique novamente."
 		),
 		wxPoint(30,70), wxSize(290,500)
 	);
