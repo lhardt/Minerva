@@ -99,21 +99,27 @@ const char * const LASTID_TABLE_FEATURE =
 			("SELECT id FROM Feature where rowid = last_insert_rowid()");
 const char * const SELECT_FEATURE_BY_SCHOOL_ID =
 		("SELECT * FROM Feature WHERE school_id = ?");
+const char * const DELETE_FEATURE_BY_ID =
+		("DELETE FROM Feature WHERE id=?");
+
 
 const char * const CREATE_TABLE_ROOM =
 			("CREATE TABLE IF NOT EXISTS Room("
-				"id 					integer primary key,"
+				"id 					integer primary key autoincrement,"
 				"name 					text,"
 				"short_name 			text,"
+				"size		 			integer,"
 				"school_id 				integer,"
 				"FOREIGN KEY (school_id) REFERENCES School(id)"
 			")");
 const char * const INSERT_TABLE_ROOM =
-			("INSERT INTO Room VALUES(?,?,?,?)");
+			("INSERT INTO Room(name, short_name, size, school_id) VALUES(?,?,?,?)");
 const char * const LASTID_TABLE_ROOM =
 			("SELECT id FROM Room where rowid = last_insert_rowid()");
 const char * const SELECT_ROOM_BY_SCHOOL_ID =
 			("SELECT * FROM Room WHERE school_id = ?");
+const char * const DELETE_ROOM_BY_ID =
+			("DELETE FROM Room WHERE id=?");
 
 const char * const CREATE_TABLE_ROOM_FEATURE =
 			("CREATE TABLE IF NOT EXISTS RoomFeature("
@@ -130,6 +136,12 @@ const char * const LASTID_TABLE_ROOM_FEATURE =
 			("SELECT id FROM RoomFeature where rowid = last_insert_rowid()");
 const char * const SELECT_ROOM_FEATURE_BY_ROOM_ID =
 			("SELECT * FROM RoomFeature WHERE id_room=?");
+const char * const DELETE_ROOM_FEATURE_BY_FEATURE_ID =
+			("DELETE * FROM RoomFeature WHERE id_feature=?");
+const char * const DELETE_ROOM_FEATURE_BY_ROOM_ID =
+			("DELETE * FROM RoomFeature WHERE id_room=?");
+const char * const DELETE_ROOM_FEATURE_BY_ID =
+			("DELETE * FROM RoomFeature WHERE id=?");
 
 const char * const CREATE_TABLE_ROOM_AVALIBILITY =
 			("CREATE TABLE IF NOT EXISTS RoomAvalibility("
@@ -146,6 +158,8 @@ const char * const LASTID_TABLE_ROOM_AVALIBILITY =
 			("SELECT id FROM RoomAvalibility where rowid = last_insert_rowid()");
 const char * const SELECT_ROOM_AVAILIBILITY_BY_ROOM_ID =
 			("SELECT * FROM RoomAvalibility WHERE room_id=?");
+const char * const DELETE_ROOM_AVAILIBILITY_BY_ROOM_ID =
+			("DELETE FROM RoomAvalibility WHERE room_id=?");
 
 const char * const CREATE_TABLE_CLASS =
 			("CREATE TABLE IF NOT EXISTS Class("
@@ -349,6 +363,12 @@ const char * const LASTID_DEMAND =
 			("SELECT id FROM Demand where rowid = last_insert_rowid()");
 const char * const SELECT_DEMAND_BY_TEACHES_ID =
 			("SELECT * FROM Demand WHERE teaches_id=?");
+const char * const DELETE_DEMAND_BY_TEACHES_ID =
+ 			("DELETE FROM Demand WHERE teaches_id=?");
+const char * const DELETE_DEMAND_BY_FEATURE_ID =
+ 			("DELETE FROM Demand WHERE feature_id=?");
+const char * const DELETE_DEMAND_BY_ID =
+ 			("DELETE FROM Demand WHERE id=?");
 
 const char * const CREATE_TABLE_TEACHES_PERIOD_PREFERENCE =
 			("CREATE TABLE IF NOT EXISTS TeachesPeriodPreference("
@@ -404,6 +424,8 @@ const char * const LASTID_TABLE_MEETING =
 			("SELECT id FROM Meeting where rowid = last_insert_rowid()");
 const char * const SELECT_MEETING_BY_SCHOOL_ID =
 			("SELECT * FROM Meeting WHERE id_school=?");
+const char * const UNSET_MEETING_ROOM_BY_ROOM_ID =
+			("UPDATAE Meeting SET id_room=null where id_room=?");
 
 /**
  * Creates a table based on one of the strings above.
@@ -651,8 +673,9 @@ int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 	LMH_ASSERT(db != NULL && room != NULL && school != NULL);
 
 	sqlite3_prepare(db, INSERT_TABLE_ROOM, -1, &stmt, NULL);
+	sqlite3_bind_text(stmt, 1, room->name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt, 2, room->name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt, 3, room->name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 2, room->size, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_int(stmt, 4, school->id);
 
 	errc = sqlite3_step(stmt);
@@ -1287,6 +1310,8 @@ static Room * select_all_rooms_by_school_id(FILE * console_out, sqlite3* db, int
 			rooms[i].short_name = calloc( sqlite3_column_bytes(stmt,2) + 1, sizeof(char));
 			strncpy(rooms[i].short_name, (const char *)sqlite3_column_text(stmt,2), sqlite3_column_bytes(stmt,2));
 
+			rooms[i].size = sqlite3_column_int(stmt,3);
+
 			errc = sqlite3_step(stmt);
 
 			select_room_availibility(console_out, db, rooms[i].id, school);
@@ -1809,3 +1834,57 @@ School * select_school_by_id(FILE * console_out, sqlite3* db, int id){
 
 	return school;
 }
+
+// TODO More regard for error codes.
+bool remove_feature(FILE * console_out, sqlite3* db, int id){
+	sqlite3_stmt * stmt;
+
+	sqlite3_prepare_v2(db, DELETE_FEATURE_BY_ID, -1, &stmt, NULL);
+	sqlite3_bind_int(stmt,1,id);
+	sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+
+	sqlite3_prepare_v2(db, DELETE_DEMAND_BY_FEATURE_ID, -1, &stmt, NULL);
+	sqlite3_bind_int(stmt,1,id);
+	sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+
+	sqlite3_prepare_v2(db, DELETE_ROOM_FEATURE_BY_FEATURE_ID, -1, &stmt, NULL);
+	sqlite3_bind_int(stmt,1,id);
+	sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+
+	return true;
+}
+
+bool remove_room(FILE * console_out, sqlite3* db, int id){
+	sqlite3_stmt * stmt;
+
+	sqlite3_prepare_v2(db, DELETE_ROOM_BY_ID, -1, &stmt, NULL);
+	sqlite3_bind_int(stmt,1,id);
+	sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+
+	sqlite3_prepare_v2(db, DELETE_ROOM_FEATURE_BY_ROOM_ID, -1, &stmt, NULL);
+	sqlite3_bind_int(stmt,1,id);
+	sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+
+	sqlite3_prepare_v2(db, DELETE_ROOM_AVAILIBILITY_BY_ROOM_ID, -1, &stmt, NULL);
+	sqlite3_bind_int(stmt,1,id);
+	sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+
+	sqlite3_prepare_v2(db, UNSET_MEETING_ROOM_BY_ROOM_ID, -1, &stmt, NULL);
+	sqlite3_bind_int(stmt,1,id);
+	sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
+
+	return true;
+}
+
+// bool remove_class(FILE * console_out, sqlite3* db, int id);
+// bool remoe_teacher(FILE * console_out, sqlite3* db, int id);
+// bool remove_teaches(FILE * console_out, sqlite3* db, int id);
+// bool remove_meeting(FILE * console_out, sqlite3* db, int id);
+// bool remove_subject(FILE * console_out, sqlite3* db, int id);

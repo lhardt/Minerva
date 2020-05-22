@@ -44,6 +44,14 @@ int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * sch
 int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * school);
 
 
+bool remove_class(FILE * console_out, sqlite3* db, int id);
+bool remove_teacher(FILE * console_out, sqlite3* db, int id);
+bool remove_teaches(FILE * console_out, sqlite3* db, int id);
+bool remove_feature(FILE * console_out, sqlite3* db, int id);
+bool remove_room(FILE * console_out, sqlite3* db, int id);
+bool remove_meeting(FILE * console_out, sqlite3* db, int id);
+bool remove_subject(FILE * console_out, sqlite3* db, int id);
+
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);
 

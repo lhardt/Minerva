@@ -305,8 +305,17 @@ class ListFeaturesPane : public wxScrolledWindow {
 	~ListFeaturesPane();
  private:
 
+	wxStaticText*  m_name_text;
+
+
 	wxListBox * m_features_list;
 	Application * m_owner;
+
+	int m_selected_index;
+
+	void OnEditButtonClicked(wxCommandEvent &);
+	void OnRemoveButtonClicked(wxCommandEvent &);
+	void OnSelectionChange(wxCommandEvent &);
 };
 
 class ListRoomsPane : public wxScrolledWindow {
@@ -316,8 +325,16 @@ class ListRoomsPane : public wxScrolledWindow {
  private:
 
    wxListBox * m_rooms_list;
+   wxStaticText * m_name_text;
+   wxStaticText * m_size_text;
 
    Application * m_owner;
+
+   int m_selected_index;
+
+   void OnEditButtonClicked(wxCommandEvent &);
+   void OnDeleteButtonClicked(wxCommandEvent &);
+   void OnSelectionChanged(wxCommandEvent &);
 };
 
 class ListSubjectsPane : public wxScrolledWindow {
@@ -361,8 +378,13 @@ class ListClassesPane : public wxScrolledWindow {
  private:
 
 	wxListBox * m_classes_list;
+	wxStaticText * m_name_text;
 
 	Application * m_owner;
+
+	void OnSelectionChanged(wxCommandEvent &);
+	void OnEditButtonClicked(wxCommandEvent &);
+	void OnRemoveButtonClicked(wxCommandEvent &);
 };
 
 class ListClassGroupsPane : public wxScrolledWindow {
