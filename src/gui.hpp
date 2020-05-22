@@ -258,6 +258,8 @@ class AddClassPane : public wxScrolledWindow {
 	wxCheckBox * m_free_periods_checkbox;
 
 	int selected_subjects[MAX_SUBJECTS];
+	int last_entry, last_exit;
+
 
 	wxChoice * m_entry_text;
 	wxChoice * m_exit_text;
@@ -269,6 +271,7 @@ class AddClassPane : public wxScrolledWindow {
 	void OnAddSubjectButtonClicked(wxCommandEvent &);
 	void OnAddClassButtonClicked(wxCommandEvent &);
 	void OnRemoveAllButtonClicked(wxCommandEvent & ev);
+	void OnPeriodChoice(wxCommandEvent &);
 };
 
 class AddClassGroupPane : public wxScrolledWindow {

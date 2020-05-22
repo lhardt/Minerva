@@ -33,11 +33,16 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 		per_arr.push_back(wxString::FromUTF8(school->daily_period_names[i]));
 	}
 
-	wxStaticText * entry_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de entrada da turma?"), wxDefaultPosition, wxSize(200,15));
+	wxStaticText * entry_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de entrada da turma?"), wxDefaultPosition, wxSize(300,15));
 	m_entry_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), per_arr);
 
-	wxStaticText * exit_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de saída da turma?"), wxDefaultPosition, wxSize(200,15));
+
+	wxStaticText * exit_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de saída da turma?"), wxDefaultPosition, wxSize(300,15));
 	m_exit_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), per_arr);
+
+	m_entry_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
+	m_exit_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
+
 
 	m_free_periods_checkbox = new wxCheckBox(this, wxID_ANY, wxT("A turma pode ter períodos livres?"), wxDefaultPosition, wxSize(300, 30));
 
@@ -56,7 +61,13 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	m_periods->SetPossibleValues(possible_values);
 	m_periods->SetBackgroundColors(possible_backgrounds);
 
+	m_periods->m_basic_col_name = wxT("Dia");
+	m_periods->m_basic_row_name = wxT("Período");
+
 	m_periods->GridRemake(school->n_days,school->n_periods_per_day);
+
+	last_entry = 0;
+	last_exit = school->n_periods_per_day;
 
 	for(i = 0; i < school->n_periods; ++i){
 		if(school->periods[i] == false){
@@ -194,6 +205,51 @@ void AddClassPane::OnRemoveAllButtonClicked(wxCommandEvent & ev){
 		selected_subjects[i] = 0;
 	}
 	m_selected_subjects_list->Clear();
+}
+
+void AddClassPane::OnPeriodChoice(wxCommandEvent& ev){
+	School * school = m_owner->m_school;
+	if(m_entry_text->GetSelection() != wxNOT_FOUND){
+		int new_entry = m_entry_text->GetSelection();
+
+		if(new_entry > last_entry){
+			for(int i = last_entry; i < new_entry; ++i){
+				for(int j = 0; j < school->n_days; ++j){
+					m_periods->SetCellImmutable(1 + i, 1 + j);
+				}
+			}
+		} else {
+			for(int i = new_entry; i < last_entry; ++i){
+				for(int j = 0; j < school->n_days; ++j){
+					if(school->periods[j * school->n_periods_per_day + i]){
+						m_periods->SetCellValue(1 + i, 1 + j, wxT("Disponível"));
+						m_periods->SetCellBackgroundColour(1 + i, 1 + j, wxColor(200,200,255));
+					} /* Else the cell is immutable anyway */
+				}
+			}
+		}
+		last_entry = new_entry;
+	}
+	if(m_exit_text->GetSelection() != wxNOT_FOUND){
+		int new_exit = m_exit_text->GetSelection() + 1;
+		if(new_exit > last_exit){
+			for(int i = last_exit; i < new_exit; ++i){
+				for(int j = 0; j < school->n_days; ++j){
+					if(school->periods[j * school->n_periods_per_day + i]){
+						m_periods->SetCellValue(1 + i, 1 + j, wxT("Disponível"));
+						m_periods->SetCellBackgroundColour(1 + i, 1 + j, wxColor(200,200,255));
+					}
+				}
+			}
+		} else {
+			for(int i = new_exit; i < last_exit; ++i){
+				for(int j = 0; j < school->n_days; ++j){
+					m_periods->SetCellImmutable(1 + i, 1 + j);
+				}
+			}
+		}
+		last_exit = new_exit;
+	}
 }
 
 AddClassPane::~AddClassPane(){
