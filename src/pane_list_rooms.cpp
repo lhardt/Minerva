@@ -23,11 +23,12 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 
 	m_name_text = new wxStaticText(this, wxID_ANY, wxT("Nome:"), wxDefaultPosition, wxSize(300,30));
 	m_size_text = new wxStaticText(this, wxID_ANY, wxT("Tamanho:"), wxDefaultPosition, wxSize(300,30));
+	m_features_text = new wxStaticText(this, wxID_ANY, wxT("Características:"), wxDefaultPosition, wxSize(300,30));
 
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"), wxDefaultPosition, wxSize(200,30));
 
-	delete_btn->Disable();
+	edit_btn->Disable();
 
 	wxArrayString list;
 	for(i = 0; i < school->n_rooms; ++i){
@@ -40,8 +41,9 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
 	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
 
-	desc_sz->Add(m_name_text, 0, wxBOTTOM, 15);
-	desc_sz->Add(m_size_text, 0, wxBOTTOM, 15);
+	desc_sz->Add(m_name_text, 0, wxBOTTOM, 5);
+	desc_sz->Add(m_size_text, 0, wxBOTTOM, 5);
+	desc_sz->Add(m_features_text, 0, wxBOTTOM, 5);
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(butn_sz, 0, 0);
 
@@ -69,20 +71,46 @@ void ListRoomsPane::OnEditButtonClicked(wxCommandEvent &){
 void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 	printf("Delete clicked\n");
 	School * school = m_owner->m_school;
+	int i;
 	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
 		int del_i = m_rooms_list->GetSelection();
 		bool success = remove_room(stdout, m_owner->m_database, school->rooms[del_i].id);
 
+		if(success){
+			if(school->all_meetings != nullptr){
+				for(i = 0; school->all_meetings[i].m_class != nullptr; ++i){
+					if(school->all_meetings[i].room->id == school->rooms[del_i].id){
+						school->all_meetings[i].room = nullptr;
+					}
+				}
+			}
+			for(i = del_i; i < school->n_rooms; ++i){
+				school->rooms[i] = school->rooms[i+ 1];
+			}
+			m_rooms_list->Delete(m_selected_index);
+		} else {
+			printf("Não foi possível apagar.");
+		}
 	}
 }
 
 void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 	printf("Selection chagned");
+	int i;
+	School * school = m_owner->m_school;
 	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
-		Room * room = & m_owner->m_school->rooms[m_rooms_list->GetSelection()];
+		Room * room = & school->rooms[m_rooms_list->GetSelection()];
 		m_selected_index = m_rooms_list->GetSelection();
 		m_name_text->SetLabel(wxString::Format(wxT("Nome: %s"), wxString::FromUTF8( room->name )));
 		m_size_text->SetLabel(wxString::Format(wxT("Tamanho: %d"), ( room->size )));
+		m_features_text->SetLabel(wxT("Características: "));
+
+		for(i = 0; i < school->n_features && room->room_features[i] >= 0; ++i){
+			if(room->room_features[i] > 0){
+
+				m_features_text->SetLabel(m_features_text->GetLabel().Append(wxString::Format("\n\t%s: %d", school->feature_names[i], room->room_features[i])));
+			}
+		}
 	}
 }
 

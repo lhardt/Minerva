@@ -7,7 +7,7 @@ extern "C" {
 	#include "loader.h"
 };
 
-WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, "Horário Escolar Minerva", wxPoint(30,30), wxSize(800,600)) {
+WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)) {
 	int i = 0;
 
 	m_owner = owner;
@@ -17,12 +17,12 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, "Hor�
 
 	wxPanel * m_footer = new wxPanel(this, wxID_ANY, wxPoint(0,575), wxSize(800,25));
 	m_footer->SetBackgroundColour(wxColor(0x25,0x75,0xb0));
-	wxStaticText * m_footer_text = new wxStaticText(m_footer, wxID_ANY,wxT("Copyright (C) Léo Hardt 2019-2020. This program is free software protected by Mozilla Public License v2.0."),
+	wxStaticText * m_footer_text = new wxStaticText(m_footer, wxID_ANY,wxT("Copyright (C) Léo Hardt 2020. Licença a ser definida."),
 				wxPoint(0,5), wxSize(800,20), wxST_NO_AUTORESIZE |wxALIGN_CENTRE | wxALIGN_CENTRE_HORIZONTAL);
 	m_footer_text->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_footer_text->SetFont(*m_owner->m_small_font);
 
-	wxStaticText * m_title = new wxStaticText(this, wxID_ANY,wxT("Horário Escolar Minerva"), wxPoint(20,140), wxSize(300,40));
+	wxStaticText * m_title = new wxStaticText(this, wxID_ANY,wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(20,140), wxSize(300,40));
 	m_title->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_title->SetFont(*m_owner->m_title_font);
 

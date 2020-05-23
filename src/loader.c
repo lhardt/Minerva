@@ -504,7 +504,6 @@ sqlite3* init_all_tables(FILE * console_out, char * db_filename){
 static int get_id_callback(void* id_field_ptr,int no_columns,char** text_columns,char** name_columns){
 	if(no_columns == 1 && id_field_ptr != NULL){
 		*((int *)id_field_ptr) = strtol(text_columns[0], NULL,10);
-		printf("%s: %d\n", name_columns[0], *((int *)id_field_ptr));
 		return 0;
 	}
 	printf("CALLBACK FUNCTION MISUSE!");
@@ -576,7 +575,6 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 		return -1;
 	}
 
-	printf("to insert teacher attendace\n");
 	insert_attendance(console_out, db, INSERT_TABLE_TEACHER_ATTENDANCE, school->period_ids, teacher->periods, teacher->id, school);
 
 	if(teacher->teaches != NULL){
@@ -667,19 +665,26 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 /* TODO test. */
 int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 	sqlite3_stmt * stmt;
-	int id = -1;
 	int errc;
 
 	LMH_ASSERT(db != NULL && room != NULL && school != NULL);
+	room->id = -1;
 
 	sqlite3_prepare(db, INSERT_TABLE_ROOM, -1, &stmt, NULL);
 	sqlite3_bind_text(stmt, 1, room->name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt, 2, room->name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt, 2, room->size, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_int(stmt, 4, school->id);
+	sqlite3_bind_int(stmt,  3, room->size);
+	sqlite3_bind_int(stmt,  4, school->id);
 
 	errc = sqlite3_step(stmt);
-	errc |= sqlite3_exec(db, LASTID_TABLE_ROOM, get_id_callback, &id, NULL);
+	if(errc != SQLITE_DONE){
+		if(console_out){
+			fprintf(console_out, "Errc %d %s\n", errc, sqlite3_errmsg(db));
+		}
+		return -1;
+	}
+
+	errc |= sqlite3_exec(db, LASTID_TABLE_ROOM, get_id_callback, &(room->id), NULL);
 
 	if(errc != SQLITE_DONE){
 		if(console_out){
@@ -708,11 +713,12 @@ int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 			sqlite3_bind_int(stmt,3, room->room_features[i]);
 
 			sqlite3_step(stmt);
+			sqlite3_reset(stmt);
 		}
 	}
 	sqlite3_finalize(stmt);
 
-	return id;
+	return room->id;
 }
 
 /* TODO test. */
@@ -1247,24 +1253,28 @@ static bool select_all_room_features_by_room_id(FILE * console_out, sqlite3* db,
 	int errc = 0, id_feature, j;
 	sqlite3_stmt * stmt = NULL;
 
-	errc = sqlite3_prepare_v2(db, SELECT_ROOM_FEATURE_BY_ROOM_ID, -1, &stmt, NULL);
-
 	fprintf(console_out, "Selecting room features by room id.\n");
+
+	errc = sqlite3_prepare_v2(db, SELECT_ROOM_FEATURE_BY_ROOM_ID, -1, &stmt, NULL);
 	if(errc != SQLITE_OK){
 		printf("Could not select room features. %s\n", sqlite3_errmsg(db));
 		return false;
 	}
 	sqlite3_bind_int(stmt, 1, room->id);
 	errc = sqlite3_step(stmt);
-
+	/*	"id						integer primary key autoincrement not null,"
+		"id_room				integer,"
+		"id_feature				integer,"
+		"score					integer,"
+	*/
 	if(errc == SQLITE_ROW){
-
 		id_feature = sqlite3_column_int(stmt,2);
 		bool found_correspondence = false;
 		for(j = 0; j < school->n_features; ++j){
 			if(school->feature_ids[j] == id_feature){
 				found_correspondence = true;
 				room->room_features[j] = sqlite3_column_int(stmt,3);
+				printf("Score: %d\n", room->room_features[j]);
 				break;
 			}
 		}
@@ -1300,7 +1310,6 @@ static Room * select_all_rooms_by_school_id(FILE * console_out, sqlite3* db, int
 				rooms = realloc(rooms, (1+ alloc_sz)*sizeof(Room));
 			}
 
-			printf("I = %d\n", i);
 			rooms[i].id = sqlite3_column_int(stmt,0);
 
 			rooms[i].name = calloc( sqlite3_column_bytes(stmt,1) + 1, sizeof(char));
@@ -1490,21 +1499,22 @@ static Teaches * select_all_teaches_by_school_id(FILE * console_out, sqlite3 * d
 		sqlite3_bind_int(stmt,1, id);
 		errc = sqlite3_step(stmt);
 
-		teaches = calloc(111, sizeof(Teaches));
+		teaches = calloc(11, sizeof(Teaches));
 		while(errc == SQLITE_ROW){
 			teaches[i].id = sqlite3_column_int(stmt,0);
 
 			teacher_id = sqlite3_column_int(stmt,1);
 			for(j = 0; j < school->n_teachers; ++j){
-				if(school->teachers[i].id == teacher_id){
-					teaches[i].teacher = &(school->teachers[i]);
+				if(school->teachers[j].id == teacher_id){
+					teaches[i].teacher = &(school->teachers[j]);
 
 				}
 			}
+
 			subject_id = sqlite3_column_int(stmt,2);
-			for(j = 0; j < school->n_subjects && school->subjects != NULL && school->subjects[i].name != NULL; ++j){
-				if(school->subjects[i].id == subject_id){
-					teaches[i].subject = &(school->subjects[i]);
+			for(j = 0; (j < school->n_subjects) && (school->subjects != NULL) && (school->subjects[j].name != NULL); ++j){
+				if(school->subjects[j].id == subject_id){
+					teaches[i].subject = &(school->subjects[j]);
 				}
 			}
 
@@ -1589,9 +1599,8 @@ static bool select_all_features_by_school_id(FILE * console_out, sqlite3* db, in
 
 /* TODO test */
 static bool select_all_subjects_by_school_id(FILE * console_out, sqlite3* db, int id, int * n_subjects, School * school){
-	int i = 0, sz = 0, errc = 0, alloc_sz = 0;
+	int i = 0, sz = 0, errc = 0;
 	sqlite3_stmt * stmt;
-	const char * aux;
 
 	fprintf(console_out, "Selecting all features.\n");
 
@@ -1601,31 +1610,28 @@ static bool select_all_subjects_by_school_id(FILE * console_out, sqlite3* db, in
 	} else {
 		sqlite3_bind_int(stmt,1,id);
 		errc = sqlite3_step(stmt);
-		/*
-		"id						integer primary key,"
-		"name					text,"
-		"short_name				text,"
-		"school_id				integer,"
-		*/
 
-		alloc_sz = 10;
-		school->subjects = calloc(alloc_sz, sizeof(Subject));
+		school->subjects = calloc(11, sizeof(Subject));
 
 		while(errc == SQLITE_ROW){
 			school->subjects[i].id = sqlite3_column_int(stmt,0);
 
-			aux = (const char *)sqlite3_column_text(stmt,1);
+			sqlite3_column_text(stmt,1);
 			sz = sqlite3_column_bytes(stmt,1);
 			school->subjects[i].name = calloc(1 + sz, sizeof(char));
-			strncpy(school->subjects[i].name, aux, sz);
+			strncpy(school->subjects[i].name, (const char *)sqlite3_column_text(stmt,1), sz);
 
-			aux = (const char *)sqlite3_column_text(stmt,2);
+			sqlite3_column_text(stmt,2);
 			sz = sqlite3_column_bytes(stmt,2);
 			school->subjects[i].short_name = calloc(2 + sz, sizeof(char));
-			strncpy(school->subjects[i].short_name, aux, sz);
+			strncpy(school->subjects[i].short_name, (const char *)sqlite3_column_text(stmt,2), sz);
 
 			errc = sqlite3_step(stmt);
 			++i;
+
+			if(i % 10 == 0){
+				school->subjects = realloc(school->subjects, (11 + i)*sizeof(Subject));
+			}
 		}
 
 		if(n_subjects != NULL){

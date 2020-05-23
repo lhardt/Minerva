@@ -4,6 +4,7 @@
 #include <wx/combobox.h>
 
 extern "C" {
+	#include "types.h"
 	#include "loader.h"
 };
 
@@ -166,10 +167,10 @@ void AddRoomPane::OnAddFeatureClicked(wxCommandEvent & ev){
 		/* As the items in the list box were put in order, we may safely assume
 		 * school->features[i] is the same feature as m_feature_values[i]		*/
 		m_feature_values[ m_features->GetSelection() ] = m_score_text->GetValue();
-		m_score_text->SetValue(0);
 
 		wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[  m_features->GetSelection() ]) << wxT(": ") << m_score_text->GetValue();
 		m_added_features->InsertItems(1,&to_be_inserted, m_added_features->GetCount() );
+		m_score_text->SetValue(0);
 	} else {
 		m_err_msg->SetLabel(wxT("Não é possivel adicionar sem selecionar uma caracterísitca."));
 	}

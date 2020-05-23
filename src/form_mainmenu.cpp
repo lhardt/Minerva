@@ -8,7 +8,7 @@
 
 #include "gui_language.hpp"
 
-MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, "Horário Escolar Minerva", wxPoint(30,30), wxSize(800,600)){
+MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
 
 	SetMinSize(wxSize(800,600));
@@ -47,9 +47,9 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, "H
 
 //wxART_INFORMATION
 	/* ESCOLA */
-	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AS),wxT("Salvar Como"), image_save);
-	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AND_CLOSE),wxT("Fechar e Salvar"), image_save);
-	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_CLOSE_WITHOUT_SAVE),wxT("Fechar sem Salvar"), image_close);
+	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AS),wxT("Salvar Como"), image_save);
+	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AND_CLOSE),wxT("Fechar e Salvar"), image_save);
+	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_CLOSE_WITHOUT_SAVE),wxT("Fechar sem Salvar"), image_close);
 	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_SCHOOL_DATA),wxT("Dados da Escola"), image_detail);
 	m_rib_bbars[0][2]->AddButton(LHID_OF(LHN_OPEN_SCHOOL_MANUAL),wxT("Abrir Manual"), image_help);
 	/* SALAS E CARACTERISTICAS DE SALAS */
@@ -234,6 +234,13 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		case LHID_OF(LHN_SEE_CLASS_GROUPS):{
 			CloseOpenedPane();
 			m_open_pane = new ListClassGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_OPEN_SCHOOL_MANUAL):{
+			if(m_owner->m_window_manual == nullptr){
+				m_owner->m_window_manual = new ManualWindow(m_owner);
+				m_owner->m_window_manual->Show();
+			}
 			break;
 		}
 		default:{

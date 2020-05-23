@@ -16,6 +16,8 @@
 #include <wx/wx.h>
 #include <wx/grid.h>
 #include <wx/ribbon/bar.h>
+#include <wx/notebook.h>
+
 
 extern "C"{
 	#include "types.h"
@@ -327,6 +329,7 @@ class ListRoomsPane : public wxScrolledWindow {
    wxListBox * m_rooms_list;
    wxStaticText * m_name_text;
    wxStaticText * m_size_text;
+   wxStaticText * m_features_text;
 
    Application * m_owner;
 
@@ -395,6 +398,26 @@ class ListClassGroupsPane : public wxScrolledWindow {
    Application * m_owner;
 };
 
+/* Manual */
+
+class ManualWindow : public wxFrame {
+ public:
+	ManualWindow(Application * owner);
+	~ManualWindow();
+
+ private:
+	Application * m_owner;
+	wxNotebook * m_notebook;
+
+	wxWindow * PopulateSchoolWindow();
+
+	wxWindow * PopulateRoomsWindow();
+	wxWindow * PopulateSubjectsWindow();
+	wxWindow * PopulateTeachersWindow();
+	wxWindow * PopulateClassesWindow();
+	wxWindow * PopulateLecturesWindow();
+};
+
 /* Application */
 
 class Application : public wxApp {
@@ -403,11 +426,13 @@ class Application : public wxApp {
 	CreateSchoolForm * 	m_form_create_school = nullptr;
 	MainMenuForm * 		m_form_main_menu = nullptr;
 
+
  public:
 	virtual bool OnInit();
 	void SwitchForm(AppFormType next);
 	void ChildNotify(int messageCode);
 
+	ManualWindow *		m_window_manual = nullptr;
 	wxFont * 		m_title_font = nullptr;
 	wxFont * 		m_page_title_font = nullptr;
 	wxFont * 		m_text_font = nullptr;
