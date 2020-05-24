@@ -348,7 +348,11 @@ class ListSubjectsPane : public wxScrolledWindow {
  private:
 	Application * m_owner;
 	wxListBox * m_subjects_list;
+	wxStaticText* m_name_text;
 
+	void OnEditButtonClicked(wxCommandEvent &);
+    void OnDeleteButtonClicked(wxCommandEvent &);
+    void OnSelectionChanged(wxCommandEvent &);
 };
 
 class ListSubjectGroupsPane : public wxScrolledWindow {
