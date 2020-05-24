@@ -145,7 +145,7 @@ const char * const DELETE_ROOM_FEATURE_BY_ID =
 
 const char * const CREATE_TABLE_ROOM_AVALIBILITY =
 			("CREATE TABLE IF NOT EXISTS RoomAvalibility("
-				"id						integer primary key,"
+				"id						integer primary key autoincrement not null,"
 				"room_id				integer,"
 				"period_id				integer,"
 				"score					integer,"
@@ -153,7 +153,7 @@ const char * const CREATE_TABLE_ROOM_AVALIBILITY =
 				"FOREIGN KEY (period_id) REFERENCES Period(id)"
 			")");
 const char * const INSERT_TABLE_ROOM_AVALIBILITY =
-			("INSERT INTO RoomAvalibility values(?,?,?)");
+			("INSERT INTO RoomAvalibility(room_id, period_id, score) values(?,?,?)");
 const char * const LASTID_TABLE_ROOM_AVALIBILITY =
 			("SELECT id FROM RoomAvalibility where rowid = last_insert_rowid()");
 const char * const SELECT_ROOM_AVAILIBILITY_BY_ROOM_ID =
@@ -696,9 +696,9 @@ int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 
 	sqlite3_prepare(db, INSERT_TABLE_ROOM_AVALIBILITY, -1, &stmt, NULL);
 	for(int i = 0; i < school->n_periods; ++i){
-		sqlite3_bind_int(stmt, 2, room->id);
-		sqlite3_bind_int(stmt, 3, school->period_ids[i]);
-		sqlite3_bind_int(stmt, 4, room->disponibility[i]);
+		sqlite3_bind_int(stmt, 1, room->id);
+		sqlite3_bind_int(stmt, 2, school->period_ids[i]);
+		sqlite3_bind_int(stmt, 3, room->disponibility[i]);
 
 		sqlite3_step(stmt);
 		sqlite3_reset(stmt);
@@ -1129,6 +1129,7 @@ static int * select_room_availibility(FILE * console_out, sqlite3* db, int room_
 			for(i_per = 0; i_per < school->n_periods; ++i_per){
 				if(school->period_ids[i_per] == id_period){
 					arr[i_per] = sqlite3_column_int(stmt,3);
+					printf("Selected  score %d at iper %d.\n", arr[i_per], i_per);
 					break;
 				}
 			}
@@ -1323,7 +1324,13 @@ static Room * select_all_rooms_by_school_id(FILE * console_out, sqlite3* db, int
 
 			errc = sqlite3_step(stmt);
 
-			select_room_availibility(console_out, db, rooms[i].id, school);
+			int * tmp = select_room_availibility(console_out, db, rooms[i].id, school);
+			int j = 0;
+			for(j = 0; tmp != NULL && j <  school->n_periods && tmp[j] >= 0; ++j){
+				rooms[i].disponibility[j]= tmp[j];
+			}
+			rooms[i].disponibility[j] = -1;
+
 			select_all_room_features_by_room_id(console_out, db, &rooms[i], school);
 			++i;
 		}
@@ -1394,7 +1401,6 @@ bool select_all_class_subject_by_class_id(FILE * console_out, sqlite3* db, Class
 	int i = 0, errc = 0, subj_id, i_subj, alloc_sz = 0;
 	sqlite3_stmt * stmt;
 
-
 	errc = sqlite3_prepare_v2(db, SELECT_CLASS_SUBJECT_BY_CLASS_ID, -1, &stmt, NULL);
 	if(errc == SQLITE_OK){
 		sqlite3_bind_int(stmt,1, class->id);
@@ -1403,11 +1409,18 @@ bool select_all_class_subject_by_class_id(FILE * console_out, sqlite3* db, Class
 		class->needs = calloc(alloc_sz + 1, sizeof(Class));
 		while(errc == SQLITE_ROW){
 			subj_id = sqlite3_column_int(stmt,2);
+			bool found = false;
 			for(i_subj = 0; i_subj < school->n_subjects; ++i_subj){
 				if(school->subjects[i_subj].id == subj_id){
+					found = true;
 					class->needs[i].subject = &(school->subjects[i_subj]);
 					class->needs[i].quantity = sqlite3_column_int(stmt,3);
+
+					printf("Found it sir.\n");
 				}
+			}
+			if(! found){
+				printf("did not found it sr\n");
 			}
 
 			++i;

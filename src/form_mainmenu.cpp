@@ -236,6 +236,11 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new ListClassGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
+		case LHID_OF(LHN_GENERATE_TIMETABLE):{
+			CloseOpenedPane();
+			m_open_pane = new GenerateTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
 		case LHID_OF(LHN_OPEN_SCHOOL_MANUAL):{
 			if(m_owner->m_window_manual == nullptr){
 				m_owner->m_window_manual = new ManualWindow(m_owner);

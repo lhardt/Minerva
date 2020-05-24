@@ -97,7 +97,7 @@ bool score_possible_children(const School * const school, DecisionNode * parent)
 	max_teacher = get_max_teacher_score_discrepancy(school, parent, &i_max_teacher);
 	// TODO use weights. (ex. 3*max_room).
 	if(max_period <= 0 && max_room <= 0 && max_teacher <= 0){
-		printf("nowhere to go\n");
+		printf("nowhere to go %d %d %d \n", max_period, max_room, max_teacher);
 		return false;
 	}
 	if(max_period >= max_room && max_period >= max_teacher){

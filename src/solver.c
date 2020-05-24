@@ -111,7 +111,9 @@ DecisionTree * init_decision_tree(School * school){
 
 	for(i_class = 0; i_class < school->n_classes; i_class++){
 		class = &(school->classes[i_class]);
+		printf("Maybe needs!!!!!\n");
 		for(i_need = 0; class->needs[i_need].subject != NULL; i_need++){
+			printf("Neeeds!!!!!\n");
 			for(i_quant = 0; i_quant < class->needs[i_need].quantity; i_quant++){
 				conclusion[i_meet].m_class = class;
 				conclusion[i_meet].subj  = class->needs[i_need].subject;
@@ -133,10 +135,11 @@ DecisionTree * init_decision_tree(School * school){
 DecisionNode * make_decision(const School * const school, DecisionNode * parent){
 	int i_child = 0;
 	DecisionNode * child;
+	bool has_children = true;
 
 	if(!parent->is_final && parent->is_consistent){
 		if(parent->children_score == NULL){
-			score_possible_children(school, parent);
+			has_children = score_possible_children(school, parent);
 			child = &parent->children[0];
 		} else {
 			/* Find first not initialized */
@@ -152,7 +155,7 @@ DecisionNode * make_decision(const School * const school, DecisionNode * parent)
 			}
 			child = &parent->children[i_child];
 		}
-		if( parent->children_score_order[i_child] < 0){
+		if( !has_children || parent->children_score_order[i_child] < 0){
 			return NULL;
 		}
 		*child = (DecisionNode){

@@ -330,6 +330,7 @@ class ListRoomsPane : public wxScrolledWindow {
    wxStaticText * m_name_text;
    wxStaticText * m_size_text;
    wxStaticText * m_features_text;
+   ChoiceGrid * m_periods_grid;
 
    Application * m_owner;
 
@@ -396,6 +397,18 @@ class ListClassGroupsPane : public wxScrolledWindow {
 	~ListClassGroupsPane();
  private:
    Application * m_owner;
+};
+
+/* Generation */
+
+class GenerateTimetablePane : public wxScrolledWindow {
+ public:
+	GenerateTimetablePane(Application * owner, wxWindow * parent, wxPoint pos);
+	~GenerateTimetablePane();
+ private:
+
+	Application * m_owner;
+	void OnButtonClicked(wxCommandEvent &);
 };
 
 /* Manual */

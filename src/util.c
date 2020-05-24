@@ -73,17 +73,21 @@ void print_meeting_list(FILE * out, const Meeting * const meetings){
 		return;
 	}
 
-	for(i = 0; meetings[i].m_class != NULL; i++){
-		fprintf(out, "Meeting %2d %s: T(%s) ",
-					i,
-					meetings[i].m_class->name,
-					(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
-	    print_int_list(out,meetings[i].possible_teachers);
-		fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
-		print_int_list(out,meetings[i].possible_rooms);
-		fprintf(out, "; P(%d) ", meetings[i].period);
-		print_int_list(out,meetings[i].possible_periods);
-		fprintf(out,"\n");
+	if(meetings[0].m_class == NULL){
+		printf("No meetings\n");
+	} else {
+		for(i = 0; meetings[i].m_class != NULL; i++){
+			fprintf(out, "Meeting %2d %s: T(%s) ",
+			i,
+			meetings[i].m_class->name,
+			(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
+			print_int_list(out,meetings[i].possible_teachers);
+			fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
+			print_int_list(out,meetings[i].possible_rooms);
+			fprintf(out, "; P(%d) ", meetings[i].period);
+			print_int_list(out,meetings[i].possible_periods);
+			fprintf(out,"\n");
+		}
 	}
 }
 
@@ -163,4 +167,22 @@ void free_node(DecisionNode * node){
 		free(node->children_score_order);
 		free_meetings_list(node->conclusion);
 	// }/
+}
+
+void print_school(FILE * out, const School * const s){
+	if(s && out){
+		printf("School:\n\tname:	 %s\n", s->name);
+		printf("\tn_periods: 		 %d\n", s->n_periods);
+		printf("\tn_periods_per_day: %d\n", s->n_periods_per_day);
+		printf("\tn_days: 			 %d\n", s->n_days);
+		printf("\tn_per: 			 %d\n", s->n_periods);
+		printf("\tn_features: 		 %d\n", s->n_features);
+		printf("\tn_classes: 		 %d\n", s->n_classes);
+		printf("\tn_teachers: 	 	 %d\n", s->n_teachers);
+		printf("\tn_subjects: 	 	 %d\n", s->n_subjects);
+		printf("\tn_rooms:	 	 	 %d\n", s->n_rooms);
+		printf("\tn_teaches: 	 	 %d\n", s->n_teaches);
+
+		// printf("\t\t")
+	}
 }
