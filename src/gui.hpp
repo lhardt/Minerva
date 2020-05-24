@@ -368,7 +368,21 @@ class ListTeachersPane : public wxScrolledWindow {
 	ListTeachersPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListTeachersPane();
  private:
-   Application * m_owner;
+
+	wxListBox    * m_teachers_list;
+	wxStaticText * m_name_text;
+	wxStaticText * m_max_days_text;
+	wxStaticText * m_max_periods_text;
+	wxStaticText * m_max_ppd_text;
+	wxStaticText * m_planning_periods_text;
+	wxStaticText * m_teaches_text;
+	ChoiceGrid   * m_periods_grid;
+
+	Application * m_owner;
+
+	void OnEditButtonClicked(wxCommandEvent &);
+    void OnDeleteButtonClicked(wxCommandEvent &);
+    void OnSelectionChanged(wxCommandEvent &);
 };
 
 class ListTeacherGroupsPane : public wxScrolledWindow {
@@ -376,7 +390,14 @@ class ListTeacherGroupsPane : public wxScrolledWindow {
 	ListTeacherGroupsPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListTeacherGroupsPane();
  private:
-   Application * m_owner;
+	Application * m_owner;
+
+	wxListBox * m_groups_list; 
+	wxStaticText * m_members_text;
+
+	void OnEditButtonClicked(wxCommandEvent &);
+	void OnDeleteButtonClicked(wxCommandEvent &);
+	void OnSelectionChanged(wxCommandEvent &);
 };
 
 class ListClassesPane : public wxScrolledWindow {

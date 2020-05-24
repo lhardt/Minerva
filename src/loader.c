@@ -137,11 +137,11 @@ const char * const LASTID_TABLE_ROOM_FEATURE =
 const char * const SELECT_ROOM_FEATURE_BY_ROOM_ID =
 			("SELECT * FROM RoomFeature WHERE id_room=?");
 const char * const DELETE_ROOM_FEATURE_BY_FEATURE_ID =
-			("DELETE * FROM RoomFeature WHERE id_feature=?");
+			("DELETE FROM RoomFeature WHERE id_feature=?");
 const char * const DELETE_ROOM_FEATURE_BY_ROOM_ID =
-			("DELETE * FROM RoomFeature WHERE id_room=?");
+			("DELETE FROM RoomFeature WHERE id_room=?");
 const char * const DELETE_ROOM_FEATURE_BY_ID =
-			("DELETE * FROM RoomFeature WHERE id=?");
+			("DELETE FROM RoomFeature WHERE id=?");
 
 const char * const CREATE_TABLE_ROOM_AVALIBILITY =
 			("CREATE TABLE IF NOT EXISTS RoomAvalibility("
@@ -180,6 +180,8 @@ const char * const LASTID_TABLE_CLASS =
 			("SELECT id FROM Class where rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_BY_SCHOOL_ID =
 			("SELECT * FROM Class WHERE school_id=?");
+const char * const DELETE_CLASS_BY_ID =
+		("DELETE FROM Class WHERE id=?");
 
 const char * const CREATE_TABLE_CLASS_ATTENDANCE =
 			("CREATE TABLE IF NOT EXISTS ClassAttendance("
@@ -198,6 +200,8 @@ const char * const LASTID_TABLE_CLASS_ATTENDANCE =
 			("SELECT id FROM ClassAttendance where rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_ATTENDANCE_BY_CLASS_ID =
 			("SELECT * FROM ClassAttendance WHERE id_class = ?");
+const char * const DELETE_CLASS_ATTENDANCE_BY_CLASS_ID =
+			("DELETE FROM ClassAttendance WHERE id_class=?");
 
 const char * const CREATE_TABLE_CLASS_SUBORDINATION =
 			("CREATE TABLE IF NOT EXISTS ClassSubordination("
@@ -213,6 +217,10 @@ const char * const LASTID_TABLE_CLASS_SUBORDINATION =
 			("SELECT id FROM ClassSubordination where rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_SUBORDINATION_BY_SUP_ID =
 			("SELECT * FROM ClassSubordination WHERE id_sup=?");
+const char * const DELETE_CLASS_SUBORDINATION_BY_SUP_ID =
+			("DELETE FROM ClassSubordination WHERE id_sup = ?");
+const char * const DELETE_CLASS_SUBORDINATION_BY_SUB_ID =
+			("DELETE FROM ClassSubordination WHERE id_sub = ?");
 
 const char * const CREATE_TABLE_SUBJECT =
 			("CREATE TABLE IF NOT EXISTS Subject("
@@ -248,6 +256,8 @@ const char * const LASTID_CLASS_SUBJECT =
 const char * const SELECT_CLASS_SUBJECT_BY_CLASS_ID =
 			("SELECT * FROM ClassSubject WHERE class_id = ?");
 const char * const DELETE_CLASS_SUBJECT_BY_CLASS_ID =
+			("DELETE FROM ClassSubject WHERE class_id = ?");
+const char * const DELETE_CLASS_SUBJECT_BY_SUBJECT_ID =
 			("DELETE FROM ClassSubject WHERE subject_id = ?");
 
 const char * const CREATE_TABLE_TEACHER =
@@ -269,6 +279,8 @@ const char * const LASTID_TABLE_TEACHER =
 			("SELECT id FROM Teacher where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_BY_SCHOOL_ID =
 			("SELECT * FROM Teacher WHERE school_id = ?");
+const char * const DELETE_TEACHER_BY_ID =
+			("DELETE FROM Teacher WHERE id=?");
 
 const char * const CREATE_TABLE_TEACHER_DAY =
 			("CREATE TABLE IF NOT EXISTS TeacherDay("
@@ -286,6 +298,8 @@ const char * const LASTID_TABLE_TEACHER_DAY =
 			("SELECT id from TeacherDay where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_DAY_BY_TEACHER_ID =
 			("SELECT * FROM TeacherDay WHERE id_teacher = ?");
+const char * const DELETE_TEACHER_DAY_BY_TEACHER_ID =
+			("DELETE FROM TeacherDay WHERE id_teacher = ?");
 
 const char * const CREATE_TABLE_TEACHES =
 			("CREATE TABLE IF NOT EXISTS Teaches("
@@ -307,6 +321,8 @@ const char * const SELECT_TEACHES_BY_SCHOOL_ID =
 			);
 const char * const DELETE_TEACHES_BY_SUBJECT_ID =
 			("DELETE FROM Teaches WHERE id_subject = ?");
+const char * const DELETE_TEACHES_BY_TEACHER_ID =
+			("DELETE FROM Teaches WHERE id_teacher = ?");
 
 const char * const CREATE_TABLE_TEACHER_SUBORDINATION =
 			("CREATE TABLE IF NOT EXISTS TeacherSubordination("
@@ -322,6 +338,10 @@ const char * const LASTID_TEACHER_SUBORDINATION =
 			("SELECT id FROM TeacherSubordination where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_SUBORDINATION_BY_SUP_ID =
 			("SELECT * FROM TeacherSubordination WHERE id_sup=?");
+const char * const DELETE_TEACHER_SUBORDINATION_BY_SUP_ID =
+			("DELETE FROM TeacherSubordination WHERE id_sup = ?");
+const char * const DELETE_TEACHER_SUBORDINATION_BY_SUB_ID =
+			("DELETE FROM TeacherSubordination WHERE id_sub = ?");
 
 const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
 			("CREATE TABLE IF NOT EXISTS TeacherAttendance("
@@ -338,8 +358,10 @@ const char * const INSERT_TABLE_TEACHER_ATTENDANCE =
 			("INSERT INTO TeacherAttendance(id_teacher, id_period, id_att_type, score) VALUES (?,?,?,?)");
 const char * const LASTID_TEACHER_ATTENDANCE =
 			("SELECT id FROM TeacherAttendance where rowid = last_insert_rowid()");
-const char * const SELECT_TEACHER_ATTENDANCE_BY_TEAHCER_ID =
+const char * const SELECT_TEACHER_ATTENDANCE_BY_TEACHER_ID =
 			("SELECT * FROM TeacherAttendance WHERE id_teacher=?");
+const char * const DELETE_TEACHER_ATTENDANCE_BY_TEACHER_ID =
+			("DELETE FROM TeacherAttendance WHERE id_teacher = ?");
 
 const char * const CREATE_TABLE_ATTENDANCE_TYPE =
 			("CREATE TABLE IF NOT EXISTS AttendanceType("
@@ -380,6 +402,11 @@ const char * const DELETE_DEMAND_BY_SUBJECT_ID =
 				"SELECT id from Teaches WHERE Teaches.id = Demand.teaches_id "
 					"AND Teaches.id_subject = ?"
 			")");
+const char * const DELETE_DEMAND_BY_TEACHER_ID =
+			("DELETE FROM Demand WHERE EXISTS ("
+				"SELECT id FROM Teaches WHERE Teaches.id = Demand.teaches_id "
+					"AND Teaches.id_teacher = ?"
+			")");
 
 const char * const CREATE_TABLE_TEACHES_PERIOD_PREFERENCE =
 			("CREATE TABLE IF NOT EXISTS TeachesPeriodPreference("
@@ -401,6 +428,11 @@ const char * const DELETE_TEACHES_PERIOD_PREFERENCE_BY_SUBJECT_ID =
 				"SELECT id from Teaches WHERE Teaches.id = TeachesPeriodPreference.id_teaches "
 					"AND Teaches.id_subject = ?"
 			")");
+const char * const DELETE_TEACHES_PERIOD_PREFERENCE_BY_TEACHER_ID =
+			("DELETE FROM TeachesPeriodPreference WHERE EXISTS ("
+				"SELECT id FROM Teaches WHERE Teaches.id = TeachesPeriodPreference.id_teaches "
+					"AND Teaches.id_teacher = ?"
+			")");
 
 const char * const CREATE_TABLE_TEACHES_TWIN_PREFERENCE =
 			("CREATE TABLE IF NOT EXISTS TeachesTwinPreference("
@@ -420,6 +452,11 @@ const char * const DELETE_TEACHES_TWIN_PREFERENCE_BY_SUBJECT_ID =
 			("DELETE FROM TeachesTwinPreference WHERE EXISTS ("
 				"SELECT id from Teaches WHERE Teaches.id = TeachesTwinPreference.id_teaches "
 					"AND Teaches.id_subject = ?"
+			")");
+const char * const DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID =
+			("DELETE FROM TeachesTwinPreference WHERE EXISTS ("
+				"SELECT id FROM Teaches WHERE Teaches.id = TeachesTwinPreference.id_teaches "
+					"AND Teaches.id_teacher = ?"
 			")");
 
 
@@ -447,9 +484,13 @@ const char * const LASTID_TABLE_MEETING =
 const char * const SELECT_MEETING_BY_SCHOOL_ID =
 			("SELECT * FROM Meeting WHERE id_school=?");
 const char * const UNSET_MEETING_ROOM_BY_ROOM_ID =
-			("UPDATAE Meeting SET id_room=null where id_room=?");
+			("UPDATE Meeting SET id_room=null where id_room=?");
 const char * const DELETE_MEETING_BY_SUBJECT_ID =
 			("DELETE FROM Meeting WHERE id_subject = ?");
+const char * const UNSET_MEETING_TEACHER_BY_TEACHER_ID =
+			("DELETE FROM Meeting WHERE id_teacher = ?");
+const char * const DELETE_MEETING_BY_CLASS_ID =
+			("DELETE FROM Meeting WHERE id_class = ?");
 
 
 /**
@@ -1408,7 +1449,7 @@ static Teacher * select_all_teachers_by_school_id(FILE * console_out, sqlite3* d
 			teachers[i].max_meetings = sqlite3_column_int(stmt,6);
 			teachers[i].num_planning_periods = sqlite3_column_int(stmt,7);
 
-			teachers[i].periods = select_attendance(console_out, db, SELECT_TEACHER_ATTENDANCE_BY_TEAHCER_ID, teachers[i].id, school);
+			teachers[i].periods = select_attendance(console_out, db, SELECT_TEACHER_ATTENDANCE_BY_TEACHER_ID, teachers[i].id, school);
 			errc = sqlite3_step(stmt);
 			++i;
 		}
@@ -1879,91 +1920,77 @@ School * select_school_by_id(FILE * console_out, sqlite3* db, int id){
 	return school;
 }
 
-// TODO More regard for error codes.
-bool remove_feature(FILE * console_out, sqlite3* db, int id){
+static bool exec_and_check(sqlite3 * db, const char * const sql, int id){
 	sqlite3_stmt * stmt;
+	int errc = 0;
+	bool retc = true;
 
-	sqlite3_prepare_v2(db, DELETE_FEATURE_BY_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
+	errc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+	if(errc == SQLITE_OK){
+		sqlite3_bind_int(stmt,1,id);
+		errc =sqlite3_step(stmt);
+		if(errc != SQLITE_DONE){
+			printf("Could not execute. %d %s.\n", errc, sqlite3_errmsg(db));
+			retc = false;
+		}
+		sqlite3_finalize(stmt);
+	} else {
+		printf("Could not execute. %d %s.\n", errc, sqlite3_errmsg(db));
+		retc = false;
+	}
 
-	sqlite3_prepare_v2(db, DELETE_DEMAND_BY_FEATURE_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
+	return retc;
+}
 
-	sqlite3_prepare_v2(db, DELETE_ROOM_FEATURE_BY_FEATURE_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	return true;
+bool remove_feature(FILE * console_out, sqlite3* db, int id){
+	return  !exec_and_check(db, DELETE_FEATURE_BY_ID, id)?false:
+			!exec_and_check(db, DELETE_DEMAND_BY_FEATURE_ID, id)?false:
+			!exec_and_check(db, DELETE_ROOM_FEATURE_BY_FEATURE_ID, id)?false:
+			true;
 }
 
 bool remove_room(FILE * console_out, sqlite3* db, int id){
-	sqlite3_stmt * stmt;
-
-	sqlite3_prepare_v2(db, DELETE_ROOM_BY_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	sqlite3_prepare_v2(db, DELETE_ROOM_FEATURE_BY_ROOM_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	sqlite3_prepare_v2(db, DELETE_ROOM_AVAILIBILITY_BY_ROOM_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	sqlite3_prepare_v2(db, UNSET_MEETING_ROOM_BY_ROOM_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	return true;
+	return  !exec_and_check(db, DELETE_ROOM_BY_ID, id)?false:
+			!exec_and_check(db, DELETE_ROOM_FEATURE_BY_ROOM_ID, id)?false:
+			!exec_and_check(db, DELETE_ROOM_AVAILIBILITY_BY_ROOM_ID, id)?false:
+			!exec_and_check(db, UNSET_MEETING_ROOM_BY_ROOM_ID, id)?false:
+			true;
 }
 
 bool remove_subject(FILE * console_out, sqlite3* db, int id){
-	sqlite3 * stmt;
-
-	sqlite3_prepare_v2(db, DELETE_MEETING_BY_SUBJECT_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	sqlite3_prepare_v2(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_SUBJECT_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	sqlite3_prepare_v2(db, DELETE_TEACHES_PERIOD_PREFERENCE_BY_SUBJECT_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	sqlite3_prepare_v2(db, DELETE_DEMAND_BY_SUBJECT_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	sqlite3_prepare_v2(db, DELETE_TEACHES_BY_SUBJECT_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	sqlite3_prepare_v2(db, DELETE_SUBJECT_BY_ID, -1, &stmt, NULL);
-	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
-	sqlite3_finalize(stmt);
-
-	return true;
+	return  !exec_and_check(db,DELETE_MEETING_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_TEACHES_TWIN_PREFERENCE_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_TEACHES_PERIOD_PREFERENCE_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_CLASS_SUBJECT_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_DEMAND_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_TEACHES_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_SUBJECT_BY_ID, id)?false:
+			true;
 }
 
-// bool remove_class(FILE * console_out, sqlite3* db, int id);
-// bool remoe_teacher(FILE * console_out, sqlite3* db, int id);
+bool remove_teacher(FILE * console_out, sqlite3* db, int id) {
+	return  !exec_and_check(db, UNSET_MEETING_TEACHER_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_PERIOD_PREFERENCE_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_DEMAND_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_ATTENDANCE_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SUB_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SUP_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_DAY_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_BY_ID, id)?false:
+			true;
+}
+
+bool remove_class(FILE * console_out, sqlite3* db, int id) {
+	return  !exec_and_check(db, DELETE_MEETING_BY_CLASS_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_SUBJECT_BY_CLASS_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_SUBORDINATION_BY_SUB_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_SUBORDINATION_BY_SUP_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_ATTENDANCE_BY_CLASS_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_BY_ID, id)?false:
+			true;
+}
+
 // bool remove_teaches(FILE * console_out, sqlite3* db, int id);
 // bool remove_meeting(FILE * console_out, sqlite3* db, int id);

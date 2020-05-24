@@ -13,7 +13,7 @@ ChoiceGrid::~ChoiceGrid(){
 }
 
 void ChoiceGrid::GridRemake(int n_cols, int n_rows){
-	int i,j;
+	unsigned int i = 0,j = 0;
 
 	++n_cols; ++n_rows;
 

@@ -46,11 +46,11 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 
 	edit_btn->Disable();
 
-	wxArrayString list;
-	for(i = 0; i < school->n_rooms; ++i){
-		list.Add(wxString::FromUTF8(school->rooms[i].name));
-	}
 	if(school->n_rooms > 0){
+		wxArrayString list;
+		for(i = 0; i < school->n_rooms; ++i){
+			list.Add(wxString::FromUTF8(school->rooms[i].name));
+		}
 		m_rooms_list->InsertItems(list,0);
 	}
 
