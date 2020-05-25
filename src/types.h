@@ -112,8 +112,8 @@ struct Class {
 	int 		    periods[MAX_PERIODS_PER_WEEK+1];
 	int 		  * rooms;
 	bool 			can_have_free_periods_flag;
-	int 			minimal_exit_period;
 	int 			maximal_entry_period;
+	int 			minimal_exit_period;
 	/* If the class is abstract, the features are inherited,
 	 *  but the classes dont need to be together. For preprocessing.
 	 * Before the nucleus is ran, this should already have been substituted

@@ -1464,13 +1464,13 @@ static Teacher * select_all_teachers_by_school_id(FILE * console_out, sqlite3* d
 
 
 bool select_all_class_subject_by_class_id(FILE * console_out, sqlite3* db, Class * class, School * school){
-	int i = 0, errc = 0, subj_id, i_subj, alloc_sz = 0;
+	int i = 0, errc = 0, subj_id, i_subj = 0, alloc_sz = 0;
 	sqlite3_stmt * stmt;
 
 	errc = sqlite3_prepare_v2(db, SELECT_CLASS_SUBJECT_BY_CLASS_ID, -1, &stmt, NULL);
 	if(errc == SQLITE_OK){
 		sqlite3_bind_int(stmt,1, class->id);
-		sqlite3_step(stmt);
+		errc = sqlite3_step(stmt);
 
 		class->needs = calloc(alloc_sz + 1, sizeof(Class));
 		while(errc == SQLITE_ROW){
@@ -1490,7 +1490,7 @@ bool select_all_class_subject_by_class_id(FILE * console_out, sqlite3* db, Class
 			}
 
 			++i;
-			sqlite3_step(stmt);
+			errc = sqlite3_step(stmt);
 			if(i >= alloc_sz){
 				alloc_sz += 10;
 				class->needs = realloc(class->needs, (alloc_sz+1)*sizeof(SubjectQuantity));

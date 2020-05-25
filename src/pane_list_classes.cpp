@@ -25,16 +25,44 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	body_sizer->Add(description_sizer, 1, wxEXPAND|wxALL, 15);
 
 	m_name_text = new wxStaticText(this, wxID_ANY, wxT("Nome:"), wxDefaultPosition, wxSize(300,30));
+	m_size_text = new wxStaticText(this, wxID_ANY, wxT("Tamanho: "), wxDefaultPosition, wxSize(300,30));
+	m_free_periods_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Pode ter Períodos Livres: "), wxDefaultPosition, wxSize(300,30));
+	m_entry_period_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Período de Entrada: "), wxDefaultPosition, wxSize(300,30));
+	m_exit_period_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Período de Saída: "), wxDefaultPosition, wxSize(300,30));
+	m_subjects_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Disciplinas Requeridas: "), wxDefaultPosition, wxSize(300,-1));
+
+	wxStaticText * periods_text = new wxStaticText(this, wxID_ANY, wxT("Períodos em que ele está disponível"), wxDefaultPosition,wxSize(300,20));
+	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(300,200));
+
+	wxVector<wxString> grid_values = wxVector<wxString>();
+	grid_values.push_back(wxT("Disponível"));
+	grid_values.push_back(wxT("Indisponível"));
+	m_periods_grid->SetPossibleValues(grid_values);
+
+	wxVector<wxColor> grid_colors = wxVector<wxColor>();
+	grid_colors.push_back(wxColor(200,200,255));
+	grid_colors.push_back(wxColor(255,200,200));
+	m_periods_grid->SetBackgroundColors(grid_colors);
+
+	m_periods_grid->m_basic_col_name = wxT("Dia");
+	m_periods_grid->m_basic_row_name = wxT("Período");
 
 	wxSizer * btn_sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"), wxDefaultPosition, wxSize(200,30));
 
-	delete_btn->Disable();
+	edit_btn->Disable();
 	btn_sizer->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
 	btn_sizer->Add(delete_btn, 1, wxEXPAND|wxALL,5);
 
-	description_sizer->Add(m_name_text, 0, 0);
+	description_sizer->Add(m_name_text, 0, wxBOTTOM, 5);
+	description_sizer->Add(m_size_text, 0, wxBOTTOM, 5);
+	description_sizer->Add(m_free_periods_text, 0, wxBOTTOM, 5);
+	description_sizer->Add(m_entry_period_text, 0, wxBOTTOM, 5);
+	description_sizer->Add(m_exit_period_text, 0, wxBOTTOM, 5);
+	description_sizer->Add(m_subjects_text, 1, wxBOTTOM, 5);
+	description_sizer->Add(periods_text, 0, wxBOTTOM, 1);
+	description_sizer->Add(m_periods_grid, 0, wxBOTTOM, 5);
 	description_sizer->AddStretchSpacer();
 	description_sizer->Add(btn_sizer, 0, 0);
 
@@ -62,9 +90,27 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 }
 
 void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
+	int i;
 	if(m_classes_list->GetSelection() != wxNOT_FOUND){
 		Class * c = &m_owner->m_school->classes[m_classes_list->GetSelection()];
-		m_name_text->SetLabel(wxT("Nome: " + wxString::FromUTF8(c->name)));
+		m_name_text->SetLabel(wxT("Nome: ") + wxString::FromUTF8(c->name));
+		m_size_text->SetLabel(wxT("Tamanho: ") + wxString::Format("%d",c->size));
+		m_free_periods_text->SetLabel(wxString::FromUTF8("Pode ter Períodos Livres: ") + wxString(c->can_have_free_periods_flag?"Sim":"Não"));
+		m_entry_period_text->SetLabel(wxString::FromUTF8("Período de Entrada: ") + wxString::Format("%d",c->maximal_entry_period));
+		m_exit_period_text->SetLabel(wxString::FromUTF8("Período de Saída: ") + wxString::Format("%d",c->minimal_exit_period));
+		m_subjects_text->SetLabel(wxString::FromUTF8("Disciplinas Requeridas: "));
+		if(c->needs != NULL){
+			for(i = 0; c->needs[i].subject != NULL; ++i){
+				m_subjects_text->SetLabel(m_subjects_text->GetLabel() +
+						wxString::FromUTF8(c->needs[i].subject->name) + wxString::Format(": %d;\n", c->needs[i].quantity));
+			}
+
+		}
+		m_subjects_text->Wrap(300);
+		//m_periods_grid
+
+		FitInside();
+
 	}
 }
 
@@ -73,7 +119,35 @@ void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
 }
 
 void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
-	printf("Remove clicked.\n");
+	int i, j, del_i;
+	bool success = false;
+	School * school = m_owner->m_school;
+	Class * c;
+
+	del_i = m_classes_list->GetSelection();
+	if(del_i != wxNOT_FOUND){
+		c = &school->classes[del_i];
+		success = remove_class(stdout, m_owner->m_database, c->id);
+
+		if(success) {
+			/* TODO: Check for subordinates too. */
+			for(i = 0; school->all_meetings[i].m_class != NULL; ++i){
+				if(school->all_meetings[i].m_class->id == c->id){
+					for(j = i; school->all_meetings[j].m_class != NULL; ++j){
+						school->all_meetings[j] = school->all_meetings[j+1];
+					}
+				}
+			}
+			for(i = del_i; i < school->n_classes; ++i){
+				school->classes[i] = school->classes[i+1];
+			}
+
+			m_classes_list->Delete(del_i);
+		} else {
+			printf("Não foi possível deletar.\n");
+		}
+
+	}
 }
 
 ListClassesPane::~ListClassesPane(){

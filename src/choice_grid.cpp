@@ -6,7 +6,6 @@ ChoiceGrid::ChoiceGrid(wxWindow * parent, wxWindowID id, wxPoint position, wxSiz
 	CreateGrid(1,1);
 	HideColLabels();
 	HideRowLabels();
-	// GridRemake(0,0);
 }
 ChoiceGrid::~ChoiceGrid(){
 

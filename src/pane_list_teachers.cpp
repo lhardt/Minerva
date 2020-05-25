@@ -27,12 +27,11 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_planning_periods_text = new wxStaticText(this, wxID_ANY, wxT("N° de Períodos de Planejamento: "), wxDefaultPosition,wxSize(300,20));
 	m_teaches_text = new wxStaticText(this, wxID_ANY, wxT("Ensina: "), wxDefaultPosition,wxSize(300,-1), wxST_NO_AUTORESIZE);
 
-	wxStaticText * periods_text = new wxStaticText(this, wxID_ANY, wxT("Períodos em que ele está disponível"), wxDefaultPosition,wxSize(300,20));
-	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(300,200));
-
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"), wxDefaultPosition, wxSize(200,30));
 
+	wxStaticText * periods_text = new wxStaticText(this, wxID_ANY, wxT("Períodos em que ele está disponível"), wxDefaultPosition,wxSize(300,20));
+	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(300,200));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
 	grid_values.push_back(wxT("Disponível"));
@@ -99,6 +98,8 @@ void ListTeachersPane::OnDeleteButtonClicked(wxCommandEvent &) {
 	if(i_select != wxNOT_FOUND){
 		success = remove_teacher(stdout, m_owner->m_database, school->teachers[i_select].id);
 		if(success){
+			/* TODO Check for subordinates too. */
+
 			for(i = 0; i < school->n_teaches; ++i){
 				if(school->teaches[i].teacher->id == school->teachers[i_select].id){
 					for(j = i; j < school->n_teaches; ++j){
@@ -119,6 +120,8 @@ void ListTeachersPane::OnDeleteButtonClicked(wxCommandEvent &) {
 				school->teachers[i] = school->teachers[i+1];
 			}
 			--school->n_teachers;
+
+
 		} else {
 			printf("Couldn't delete teacher\n");
 		}
@@ -139,9 +142,10 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		if(t->teaches != NULL){
 			for(int i = 0; t->teaches[i] != NULL; ++i){
 				m_teaches_text->SetLabel(m_teaches_text->GetLabel() +
-							wxString::Format("\t%s\n ", wxString::FromUTF8(t->teaches[i]->subject->name)));
+							wxString::Format(" %s;", wxString::FromUTF8(t->teaches[i]->subject->name)));
 			}
 		}
+		m_teaches_text->Wrap(300);
 
 		m_periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 		for(int i = 0; i < school->n_periods; ++i){
