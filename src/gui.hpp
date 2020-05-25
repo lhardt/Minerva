@@ -392,7 +392,7 @@ class ListTeacherGroupsPane : public wxScrolledWindow {
  private:
 	Application * m_owner;
 
-	wxListBox * m_groups_list; 
+	wxListBox * m_groups_list;
 	wxStaticText * m_members_text;
 
 	void OnEditButtonClicked(wxCommandEvent &);
@@ -408,7 +408,27 @@ class ListClassesPane : public wxScrolledWindow {
 
 	wxListBox * m_classes_list;
 	wxStaticText * m_name_text;
+	wxStaticText * m_size_text;
+	wxStaticText * m_free_periods_text;
+	wxStaticText * m_entry_period_text;
+	wxStaticText * m_exit_period_text;
+	wxStaticText * m_subjects_text;
+	ChoiceGrid * m_periods_grid;
+/*
+	int 			id;
+	char 		  * name;
+	char 		  * short_name;
 
+	int 			size;
+	int 		    periods[MAX_PERIODS_PER_WEEK+1];
+	int 		  * rooms;
+	bool 			can_have_free_periods_flag;
+	int 			minimal_exit_period;
+	int 			maximal_entry_period;
+
+	SubjectQuantity * needs;
+	int max_per_day_group[MAX_GROUPS];
+*/
 	Application * m_owner;
 
 	void OnSelectionChanged(wxCommandEvent &);
@@ -467,6 +487,7 @@ class Application : public wxApp {
 
  public:
 	virtual bool OnInit();
+	virtual int  OnExit();
 	void SwitchForm(AppFormType next);
 	void ChildNotify(int messageCode);
 

@@ -85,6 +85,7 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 						school->teaches[j] = school->teaches[j+1];
 					}
 					--school->n_teaches;
+					--i;
 				}
 			}
 
@@ -106,6 +107,7 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 						for(j = i; school->all_meetings[j].m_class != NULL; ++j){
 							school->all_meetings[j] = school->all_meetings[j+1];
 						}
+						--i;
 					}
 				}
 			}

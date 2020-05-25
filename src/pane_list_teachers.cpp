@@ -25,13 +25,27 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_max_periods_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("N° Máximo de Períodos: "), wxDefaultPosition, wxSize(300,20));
 	m_max_ppd_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("N° Máximo de Períodos por Dia: "), wxDefaultPosition,wxSize(300,20));
 	m_planning_periods_text = new wxStaticText(this, wxID_ANY, wxT("N° de Períodos de Planejamento: "), wxDefaultPosition,wxSize(300,20));
-	m_teaches_text = new wxStaticText(this, wxID_ANY, wxT("Ensina: "), wxDefaultPosition,wxSize(300,20));
+	m_teaches_text = new wxStaticText(this, wxID_ANY, wxT("Ensina: "), wxDefaultPosition,wxSize(300,-1), wxST_NO_AUTORESIZE);
 
 	wxStaticText * periods_text = new wxStaticText(this, wxID_ANY, wxT("Períodos em que ele está disponível"), wxDefaultPosition,wxSize(300,20));
-	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(300,20));
+	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(300,200));
 
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"), wxDefaultPosition, wxSize(200,30));
+
+
+	wxVector<wxString> grid_values = wxVector<wxString>();
+	grid_values.push_back(wxT("Disponível"));
+	grid_values.push_back(wxT("Ocupado"));
+	m_periods_grid->SetPossibleValues(grid_values);
+
+	wxVector<wxColor> grid_colors = wxVector<wxColor>();
+	grid_colors.push_back(wxColor(200,200,255));
+	grid_colors.push_back(wxColor(255,200,200));
+	m_periods_grid->SetBackgroundColors(grid_colors);
+
+	m_periods_grid->m_basic_col_name = wxT("Dia");
+	m_periods_grid->m_basic_row_name = wxT("Período");
 
 	edit_btn->Disable();
 
@@ -56,9 +70,9 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	desc_sz->Add(m_max_periods_text, 0, wxBOTTOM, 5);
 	desc_sz->Add(m_max_ppd_text, 0, wxBOTTOM, 5);
 	desc_sz->Add(m_planning_periods_text, 0, wxBOTTOM, 5);
-	desc_sz->Add(m_teaches_text, 0, wxBOTTOM, 5);
-	desc_sz->Add(periods_text, 0, wxTOP | wxLEFT, 15);
-	desc_sz->Add(m_periods_grid, 0, wxBOTTOM|wxLEFT, 15);
+	desc_sz->Add(m_teaches_text, 10, wxEXPAND | wxBOTTOM, 5);
+	desc_sz->Add(periods_text, 0, wxTOP, 15);
+	desc_sz->Add(m_periods_grid, 0, wxBOTTOM, 15);
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(butn_sz, 0, 0);
 
@@ -66,7 +80,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	body_sz->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
 
 	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(body_sz, 1, wxALL, 15);
+	sizer->Add(body_sz, 1, wxEXPAND |wxALL, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -79,15 +93,34 @@ void ListTeachersPane::OnEditButtonClicked(wxCommandEvent &) {
 	printf("Not Implemented.\n");
 }
 void ListTeachersPane::OnDeleteButtonClicked(wxCommandEvent &) {
-	int i_select = m_teachers_list->GetSelection();
+	int i,j, i_select = m_teachers_list->GetSelection();
 	School * school = m_owner->m_school;
 	bool success = false;
 	if(i_select != wxNOT_FOUND){
 		success = remove_teacher(stdout, m_owner->m_database, school->teachers[i_select].id);
 		if(success){
-			printf("Deleted successfully\n");
+			for(i = 0; i < school->n_teaches; ++i){
+				if(school->teaches[i].teacher->id == school->teachers[i_select].id){
+					for(j = i; j < school->n_teaches; ++j){
+						school->teaches[j] = school->teaches[j+1];
+					}
+					--i;
+					--school->n_teaches;
+				}
+			}
+			if(school->all_meetings != NULL){
+				for(i = 0; NULL != school->all_meetings[i].m_class; ++i){
+					if(school->all_meetings[i].teacher->id == school->teachers[i_select].id){
+						school->all_meetings[i].teacher = NULL;
+					}
+				}
+			}
+			for(i = i_select; i < school->n_teachers; ++i){
+				school->teachers[i] = school->teachers[i+1];
+			}
+			--school->n_teachers;
 		} else {
-			printf("Couldn't\n");
+			printf("Couldn't delete teacher\n");
 		}
 	}
 }
@@ -103,13 +136,27 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		m_max_ppd_text->SetLabel(wxString::Format(wxString::FromUTF8("N° Máximo de Períodos por Dia: %d"), (t->max_meetings_per_day)));
 		m_planning_periods_text->SetLabel(wxString::Format(wxString::FromUTF8("N° de Períodos de Planejamento: %d"), (t->num_planning_periods)));
 		m_teaches_text->SetLabel(wxT("Ensina: "));
-
 		if(t->teaches != NULL){
 			for(int i = 0; t->teaches[i] != NULL; ++i){
 				m_teaches_text->SetLabel(m_teaches_text->GetLabel() +
-							wxString::Format("\n\t%s", wxString::FromUTF8(t->teaches[i]->subject->name)));
+							wxString::Format("\t%s\n ", wxString::FromUTF8(t->teaches[i]->subject->name)));
 			}
 		}
+
+		m_periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
+		for(int i = 0; i < school->n_periods; ++i){
+			if(school->periods[i] == false){
+				m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+			} else {
+				m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+						wxString::Format("%s" , (t->periods[i] > 0?wxT("Disponível"):wxT("Ocupado")) ));
+				m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+						(t->periods[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
+			}
+			m_periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
+		}
+		// m_teaches_text->Refresh();
+		FitInside();
 	}
 }
 

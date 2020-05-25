@@ -186,3 +186,23 @@ void print_school(FILE * out, const School * const s){
 		// printf("\t\t")
 	}
 }
+
+void free_school(School * s){
+	int i;
+	if(s != NULL){
+		if(s->teachers != NULL){
+			for(i = 0; i < s->n_teachers; ++i){
+				free(s->teachers[i].periods);
+			}
+			free(s->teachers);
+		}
+		if(s->classes != NULL){
+			for(i = 0; i < s->n_classes; ++i){
+				free(s->classes[i].needs);
+			}
+			free(s->classes);
+		}
+
+		free(s);
+	}
+}

@@ -140,8 +140,8 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 			 * to the number of true elements in m_teaches_subj */
 			for(i = 0; i < school->n_subjects; ++i){
 				if(m_teaches_subj[i] == true){
-					t.teaches[i_teaches] = (Teaches*) calloc(1,sizeof(Teaches)); // TODO free after insertion
-					t.teaches[i_teaches]->teacher = &t; // TODO after insertion, correct to school.teachers[nteachers];
+					t.teaches[i_teaches] = (Teaches*) calloc(1,sizeof(Teaches));
+					t.teaches[i_teaches]->teacher = &t;
 					t.teaches[i_teaches]->subject = &(school->subjects[i]);
 					t.teaches[i_teaches]->score = 1;
 					/* Anull features */
@@ -189,11 +189,14 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 			}
 
 			int i_subj = 0;
+			i = 0;
 			for(i_subj = 0; i_subj < school->n_subjects; ++i_subj){
-				if(m_teaches_subj[i] == true){
+				if(m_teaches_subj[i_subj] == true){
 					school->teaches[school->n_teaches] = * t.teaches[i];
 					free(t.teaches[i]);
+					t.teaches[i] = & school->teaches[school->n_teaches];
 					school->n_teaches++;
+					++i;
 				}
 			}
 

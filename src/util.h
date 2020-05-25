@@ -40,8 +40,10 @@ void print_teacher(FILE * out, const Teacher * const t);
 void print_class(FILE * out, const Class * const c);
 
 void print_school(FILE * out, const School * const s);
+
 School * copy_school(const School * const school);
 
+void free_school(School * school);
 
 void free_meetings_list(Meeting * list);
 

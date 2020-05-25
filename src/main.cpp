@@ -11,10 +11,10 @@
 #include "gui.hpp"
 
 #include <wx/wx.h>
-#include <clocale>
 
 extern "C" {
 	#include "loader.h"
+	#include "util.h"
 };
 
 char * copy_wx_string(wxString str){
@@ -66,6 +66,20 @@ void Application::SwitchForm(AppFormType next){
 		default: {
 			printf("No form under this name.\n");
 		}
+	}
+}
+
+int Application::OnExit(){
+	sqlite3_close(m_database);
+
+	delete m_title_font;
+	delete m_text_font;
+	delete m_small_font;
+	delete m_page_title_font;
+	delete m_island_image;
+
+	if(m_school != NULL){
+		free_school(m_school);
 	}
 }
 

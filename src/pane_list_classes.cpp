@@ -48,7 +48,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	}
 
 	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(body_sizer, 1, wxALL, 15);
+	sizer->Add(body_sizer, 1, wxEXPAND | wxALL, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -62,7 +62,10 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 }
 
 void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
-	printf("Selection changed.\n");
+	if(m_classes_list->GetSelection() != wxNOT_FOUND){
+		Class * c = &m_owner->m_school->classes[m_classes_list->GetSelection()];
+		m_name_text->SetLabel(wxT("Nome: " + wxString::FromUTF8(c->name)));
+	}
 }
 
 void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){

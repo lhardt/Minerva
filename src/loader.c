@@ -1874,6 +1874,27 @@ static bool select_all_periods_by_school_id(FILE * console_out, sqlite3 * db, in
 	return false;
 }
 
+static void link_all_teaches(School * school){
+	int i, j, n;
+	for(int i = 0; i < school->n_teachers; ++i){
+		n = 0;
+		for(j = 0; j < school->n_teaches; ++j){
+			if(school->teaches[j].teacher->id == school->teachers[i].id){
+				++n;
+			}
+		}
+		school->teachers[i].teaches = calloc(n+1, sizeof(Teaches*));
+
+		n = 0;
+		for(j = 0; j < school->n_teaches; ++j){
+			if(school->teaches[j].teacher->id == school->teachers[i].id){
+				school->teachers[i].teaches[n] = & school->teaches[j];
+				++n;
+			}
+		}
+	}
+}
+
 /* TODO more or less tested. */
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id){
 	int errc;
@@ -1913,6 +1934,7 @@ School * select_school_by_id(FILE * console_out, sqlite3* db, int id){
 		school->classes = select_all_classes_by_school_id(stdout, db, id, &(school->n_classes), school);
 		school->teachers = select_all_teachers_by_school_id(stdout, db, id, &(school->n_teachers), school);
 		school->teaches = select_all_teaches_by_school_id(stdout, db, id, &(school->n_teaches), school);
+		link_all_teaches(school);
 		select_all_meetings(stdout, db, school);
 	}
 	sqlite3_finalize(stmt);
