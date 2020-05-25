@@ -30,11 +30,13 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 	DecisionTree * tree = init_decision_tree(m_owner->m_school);
 	print_meeting_list(stdout,tree->start[0].conclusion);
 
-	// Meeting * generated_timetable = create_timetable(m_owner->m_school);
-	//
-	// if(generated_timetable != nullptr){
-	// 	print_meeting_list(stdout,generated_timetable);
-	// }
+	Meeting * generated_timetable = create_timetable(m_owner->m_school);
+
+	if(generated_timetable != nullptr){
+		print_meeting_list(stdout,generated_timetable);
+	} else {
+		printf("Was nullptr\n");
+	}
 }
 
 GenerateTimetablePane::~GenerateTimetablePane(){

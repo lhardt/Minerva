@@ -542,6 +542,7 @@ sqlite3* init_all_tables(FILE * console_out, char * db_filename){
 	create_table(console_out,db,"RoomFeature", CREATE_TABLE_ROOM_FEATURE)?1:
 	create_table(console_out,db,"Class", CREATE_TABLE_CLASS)?1:
 	create_table(console_out,db,"ClassAttendance", CREATE_TABLE_CLASS_ATTENDANCE)?1:
+	create_table(console_out,db,"ClassSubordination", CREATE_TABLE_CLASS_SUBORDINATION)?1:
 	create_table(console_out,db,"Subject", CREATE_TABLE_SUBJECT)?1:
 	create_table(console_out,db,"ClassSubject", CREATE_TABLE_CLASS_SUBJECT)?1:
 	create_table(console_out,db,"Teacher", CREATE_TABLE_TEACHER)?1:
@@ -686,7 +687,13 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 
 	LMH_ASSERT(db != NULL && class != NULL && school != NULL);
 
-	sqlite3_prepare(db, INSERT_TABLE_CLASS, -1, &stmt, NULL);
+	errc = sqlite3_prepare(db, INSERT_TABLE_CLASS, -1, &stmt, NULL);
+	if(errc != SQLITE_OK){
+		if(console_out){
+			fprintf(console_out, "Errc %d %s\n", errc, sqlite3_errmsg(db));
+		}
+		return -1;
+	}
 	sqlite3_bind_text(stmt, 1, class->name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt, 2, class->short_name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_int(stmt, 3, class->size);
@@ -709,20 +716,22 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 
 	insert_attendance(console_out, db, INSERT_TABLE_CLASS_ATTENDANCE, school->period_ids, class->periods, class->id, school);
 
-	errc = 	sqlite3_prepare_v2(db,INSERT_TABLE_CLASS_SUBJECT, -1, &stmt, NULL);
-	if(errc == SQLITE_OK){
-		for(i_sub = 0;class->needs[i_sub].subject != NULL; ++i_sub){
-			sqlite3_bind_int(stmt,1, class->id);
-			sqlite3_bind_int(stmt,2, class->needs[i_sub].subject->id);
-			sqlite3_bind_int(stmt,3, class->needs[i_sub].quantity);
-			sqlite3_bind_int(stmt,4, -1);
-			sqlite3_step(stmt);
-			sqlite3_reset(stmt);
+	if(class->needs != NULL){
+		errc = 	sqlite3_prepare_v2(db,INSERT_TABLE_CLASS_SUBJECT, -1, &stmt, NULL);
+		if(errc == SQLITE_OK){
+			for(i_sub = 0;class->needs[i_sub].subject != NULL; ++i_sub){
+				sqlite3_bind_int(stmt,1, class->id);
+				sqlite3_bind_int(stmt,2, class->needs[i_sub].subject->id);
+				sqlite3_bind_int(stmt,3, class->needs[i_sub].quantity);
+				sqlite3_bind_int(stmt,4, -1);
+				sqlite3_step(stmt);
+				sqlite3_reset(stmt);
+			}
+			sqlite3_finalize(stmt);
+		} else {
+			fprintf(console_out, "Could not insert ClassSubject %s\n", sqlite3_errmsg(db));
+			return -1;
 		}
-		sqlite3_finalize(stmt);
-	} else {
-		fprintf(console_out, "Could not insert ClassSubject %s\n", sqlite3_errmsg(db));
-		return -1;
 	}
 
 	return class->id;

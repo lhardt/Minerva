@@ -22,13 +22,13 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 	m_footer_text->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_footer_text->SetFont(*m_owner->m_small_font);
 
-	wxStaticText * m_title = new wxStaticText(this, wxID_ANY,wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(20,140), wxSize(300,40));
+	wxStaticText * m_title = new wxStaticText(this, wxID_ANY,wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(50,140), wxSize(300,40));
 	m_title->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_title->SetFont(*m_owner->m_title_font);
 
 	wxStaticText * m_description = new wxStaticText(this, wxID_ANY,
 		wxT("Comece agora a criar seu próprio horário escolar.\nSobre qual escola estamos falando hoje?"),
-			wxPoint(30,190), wxSize(300,50));
+			wxPoint(50,190), wxSize(300,50));
 	m_description->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_description->SetFont(*m_owner->m_text_font);
 

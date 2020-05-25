@@ -180,6 +180,8 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 				school->classes = (Class*)realloc(school->classes,(school->n_classes + 11) * sizeof(Class));
 			}
 			school->classes[ school->n_classes ] = c;
+
+			++school->n_classes;
 		} else {
 			m_err_msg->SetLabel(wxString::FromUTF8("Erro no banco. Não foi possível inserir."));
 		}

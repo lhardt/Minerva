@@ -7,14 +7,20 @@
 #include <wx/artprov.h>
 
 #include "gui_language.hpp"
+#include "art_metro.h"
 
 MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
+
+	#ifdef __WXMSW__
+		SetIcon(wxICON(aaaaaaaa));
+	#endif
 
 	SetMinSize(wxSize(800,600));
 	SetBackgroundColour(wxColour(240,240,240));
 
 	wxRibbonBar * m_ribbon = new wxRibbonBar(this,-1,wxDefaultPosition, wxSize(800,150), wxRIBBON_BAR_FLOW_HORIZONTAL | wxRIBBON_BAR_SHOW_PAGE_LABELS);
+	m_ribbon->SetArtProvider(new wxRibbonMetroArtProvider());
 
 	wxRibbonButtonBar * m_rib_bbars[7][5];
 
@@ -64,15 +70,15 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_ribbon->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &MainMenuForm::OnMenuItemClicked, this);
 
 	/* DISCIPLINAS */
-	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECTS), wxT("Ver Disciplinas"), image);
-	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECT_GROUPS), wxT("Ver Grupos Disciplinares"), image);
-	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT), wxT("Adicionar Disciplina"), image);
-	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT_GROUP), wxT("Adicionar Grupo Disciplinar"), image);
-	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_PERIOD_PREF), wxT("Preferência por Períodos"), image);
-	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_TWIN_PREF), wxT("Preferência por Geminação"), image);
-	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_ROOM_PREF), wxT("Preferência por Sala"), image);
+	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECTS), wxT("Ver Disciplinas"), image_list);
+	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECT_GROUPS), wxT("Ver Grupos Disciplinares"), image_list);
+	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT), wxT("Adicionar Disciplina"), image_add);
+	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT_GROUP), wxT("Adicionar Grupo Disciplinar"), image_add);
+	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_PERIOD_PREF), wxT("Preferência por Períodos"), image_detail);
+	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
+	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
 	m_rib_bbars[2][3]->AddButton(LHID_OF(LHN_CHECK_ALL_SUBJECTS), wxT("Conferir Tudo"), image);
-	m_rib_bbars[2][4]->AddButton(LHID_OF(LHN_OPEN_SUBJECTS_MANUAL), wxT("Abrir Manual"), image);
+	m_rib_bbars[2][4]->AddButton(LHID_OF(LHN_OPEN_SUBJECTS_MANUAL), wxT("Abrir Manual"), image_help);
 	/* PROFESSORES */
 	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHERS), wxT("Ver Professores"), image);
 	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHER_GROUPS), wxT("Ver Grupos de Professores"), image);
