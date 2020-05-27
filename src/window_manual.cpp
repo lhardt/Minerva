@@ -213,8 +213,6 @@ wxWindow * ManualWindow::PopulateSoftwareWindow(){
 	return man_win;
 }
 
-
-
 ManualWindow::~ManualWindow(){
 	m_owner->m_window_manual = NULL;
 }

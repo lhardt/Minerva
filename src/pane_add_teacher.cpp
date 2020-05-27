@@ -105,8 +105,6 @@ void AddTeacherPane::OnAddSubjectButtonClicked(wxCommandEvent & ev){
 		wxString text = wxString::FromUTF8(m_owner->m_school->subjects[ m_all_subjects_list->GetSelection() ].name);
 		m_teaches_subj[ m_all_subjects_list->GetSelection() ] = true;
 		m_teaches_subjects_list->InsertItems(1, &text, m_teaches_subjects_list->GetCount());
-	} else {
-		printf("não passou no teste;\n");
 	}
 }
 
@@ -202,8 +200,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 
 			m_err_msg->SetLabel(wxT("Adicionado com sucesso."));
 		} else {
-
-			m_err_msg->SetLabel(wxT("Não foi possível adicionar. Erro no banco."));
+			m_err_msg->SetLabel(wxT("Não foi possível adicionar. Erro no banco de dados."));
 		}
 	} else {
 		m_err_msg->SetLabel(wxT("Preencha ao menos o nome do professor."));

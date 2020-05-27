@@ -152,6 +152,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			c.periods[i] =
 					(m_periods->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==wxT("Disponível") ? 1:0);
 		}
+		c.periods[school->n_periods] = -1;
 		c.rooms = nullptr;
 		c.can_have_free_periods_flag = m_free_periods_checkbox->GetValue();
 		c.maximal_entry_period = m_entry_text->GetSelection();
@@ -166,8 +167,9 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 					c.needs[i_need].quantity = selected_subjects[i];
 					++i_need;
 				}
-
 			}
+			c.needs[i_need].subject = NULL;
+			c.needs[i_need].quantity = -1; 
 		} else {
 			c.needs = nullptr;
 		}
@@ -184,10 +186,12 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			++school->n_classes;
 			m_err_msg->SetLabel(wxString::FromUTF8("Inserido com sucesso."));
 		} else {
+			free(c.name);
+			free(c.short_name);
 			m_err_msg->SetLabel(wxString::FromUTF8("Erro no banco. Não foi possível inserir."));
 		}
 	} else {
-		printf("invalid creation parameters");
+		m_err_msg->SetLabel(wxT("Preencha todos os dados antes."));
 	}
 }
 

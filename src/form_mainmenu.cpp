@@ -55,7 +55,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AS),wxT("Salvar Como"), image_save);
 	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AND_CLOSE),wxT("Fechar e Salvar"), image_save);
 	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_CLOSE_WITHOUT_SAVE),wxT("Fechar sem Salvar"), image_close);
-	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_SCHOOL_DATA),wxT("Dados da Escola"), image_detail);
+	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_SCHOOL_DATA),wxT("Dados da Escola"), image_list);
 	m_rib_bbars[0][2]->AddButton(LHID_OF(LHN_OPEN_SCHOOL_MANUAL),wxT("Abrir Manual"), image_help);
 	/* SALAS E CARACTERISTICAS DE SALAS */
 	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_FEATURES), wxT("Ver Características"), image_list);
@@ -70,7 +70,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 
 	/* DISCIPLINAS */
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECTS), wxT("Ver Disciplinas"), image_list);
-	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECT_GROUPS), wxT("Ver Grupos Disciplinares"), image_list);
+	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECT_GROUPS), wxT("Ver Grupos Disciplinares"), image_detail);
 	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT), wxT("Adicionar Disciplina"), image_add);
 	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT_GROUP), wxT("Adicionar Grupo Disciplinar"), image_add);
 	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_PERIOD_PREF), wxT("Preferência por Períodos"), image_detail);
@@ -80,9 +80,9 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[2][4]->AddButton(LHID_OF(LHN_OPEN_SUBJECTS_MANUAL), wxT("Abrir Manual"), image_help);
 	/* PROFESSORES */
 	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHERS), wxT("Ver Professores"), image_list);
-	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHER_GROUPS), wxT("Ver Grupos de Professores"), image_list);
+	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHER_GROUPS), wxT("Ver Grupos de Professores"), image_detail);
 	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER), wxT("Adicionar Professor"), image_add);
-	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER_GROUP), wxT("Adicionar Grupo de Professores"), image_add);
+	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER_GROUP), wxT("Adicionar Grupo de Professores"), image_detail);
 	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_SUBJECT_PREF), wxT("Preferência por Disciplina"), image_detail);
 	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_PERIOD_PREF), wxT("Disponibilidade por Períodos"), image_detail);
 	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
@@ -91,9 +91,9 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[3][4]->AddButton(LHID_OF(LHN_OPEN_TEACHERS_MANUAL), wxT("Abrir Manual"), image_help);
 	/* TURMAS */
 	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASSES), wxT("Ver Turmas"), image_list);
-	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASS_GROUPS), wxT("Ver Grupos de Turmas"), image_list);
+	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASS_GROUPS), wxT("Ver Grupos de Turmas"), image_detail);
 	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS), wxT("Adicionar Turma"), image_add);
-	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS_GROUP), wxT("Adicionar Grupo de Turmas"), image_add);
+	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS_GROUP), wxT("Adicionar Grupo de Turmas"), image_detail);
 	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_PERIOD_PREF), wxT("Disponibilidade por Períodos"), image_detail);
 	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TEACHER_PREF), wxT("Preferência por Professores"), image_detail);
 	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);

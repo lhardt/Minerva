@@ -51,7 +51,6 @@ void AddSubjectPane::OnCreateButtonClicked(wxCommandEvent & ev){
 
 		int id = insert_subject(stdout, m_owner->m_database, &subject, school);
 		if(id != -1){
-
 			if(school->subjects == nullptr || school->n_subjects == 0){
 				school->subjects = (Subject*)calloc(10, sizeof(Subject));
 				school->n_subjects = 0;
@@ -65,7 +64,6 @@ void AddSubjectPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		} else {
 			m_err_msg->SetLabel(wxT("Erro no banco de dados. Não foi possível inserir."));
 		}
-
 	} else {
 		m_err_msg->SetLabel(wxT("Não é possível criar uma disciplina sem nome."));
 	}

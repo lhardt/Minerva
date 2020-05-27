@@ -441,6 +441,7 @@ class GenerateTimetablePane : public wxScrolledWindow {
 	~GenerateTimetablePane();
  private:
 	Application * m_owner;
+	wxStaticText * m_err_msg;
 
 	void OnButtonClicked(wxCommandEvent &);
 };
