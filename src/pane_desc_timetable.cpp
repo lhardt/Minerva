@@ -110,10 +110,12 @@ void DescTimetablePane::OnRedrawGridRequest(wxCommandEvent & evt){
 		for(int i = 0; school->all_meetings[i].m_class != NULL; ++i){
 			if(school->all_meetings[i].m_class->id == chosen_class->id){
 				int i_per = school->all_meetings[i].period;
-				if(chosen_teacher == NULL){
-					m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), school->all_meetings[i].teacher->name);
-				} else {
-					m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxT("x"));
+				if(chosen_subject == NULL || (chosen_subject->id == school->all_meetings[i].subj->id)){
+					if(chosen_teacher == NULL){
+						m_grid->SetCellValue(1 + (i_per % school->n_periods_per_day),1 +  (i_per / school->n_periods_per_day), school->all_meetings[i].teacher->name);
+					} else if(school->all_meetings[i].teacher->id == chosen_teacher->id){
+						m_grid->SetCellValue(1 + (i_per % school->n_periods_per_day),1 +  (i_per / school->n_periods_per_day), wxT("x"));
+					}
 				}
 			}
 		}
@@ -121,7 +123,7 @@ void DescTimetablePane::OnRedrawGridRequest(wxCommandEvent & evt){
 		for(int i = 0; school->all_meetings[i].m_class != NULL; ++i){
 			if(school->all_meetings[i].teacher->id == chosen_teacher->id){
 				int i_per = school->all_meetings[i].period;
-				m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), school->all_meetings[i].m_class->name);
+				m_grid->SetCellValue(1 + (i_per % school->n_periods_per_day),1 +  (i_per / school->n_periods_per_day), school->all_meetings[i].m_class->name);
 			}
 		}
 	}
