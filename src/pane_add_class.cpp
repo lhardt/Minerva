@@ -182,6 +182,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			school->classes[ school->n_classes ] = c;
 
 			++school->n_classes;
+			m_err_msg->SetLabel(wxString::FromUTF8("Inserido com sucesso."));
 		} else {
 			m_err_msg->SetLabel(wxString::FromUTF8("Erro no banco. Não foi possível inserir."));
 		}
@@ -196,10 +197,7 @@ void AddClassPane::OnAddSubjectButtonClicked(wxCommandEvent & ev){
 		m_selected_subjects_list->InsertItems(1, &text, m_selected_subjects_list->GetCount());
 
 		selected_subjects[m_all_subjects_list->GetSelection()] = m_score_text->GetValue();
-	} else {
-		printf("No can do.\n");
 	}
-	m_err_msg->SetLabel(wxString::FromUTF8("Button clicked\n"));
 }
 
 void AddClassPane::OnRemoveAllButtonClicked(wxCommandEvent & ev){

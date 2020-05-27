@@ -12,6 +12,12 @@ extern "C"{
 CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
 
+
+	#ifdef __WXMSW__
+		SetIcon(wxICON(aaaaaaaa));
+	#endif
+
+
 	SetMinSize(wxSize(800,600));
 	SetBackgroundColour(wxColour(240,240,240));
 
@@ -158,7 +164,7 @@ void CreateSchoolForm::OnCreateClicked(wxCommandEvent & ev){
 			m_owner->SwitchForm(FORM_MAIN_MENU);
 			this->Destroy();
 		} else {
-			printf("Could not insert school.\n");
+			m_err_msg->SetLabel(wxT("Não foi possível inserir no banco.\n"));
 		}
 	} else {
 		m_err_msg->SetLabel(wxT("Preencha todos os campos corretamente"));

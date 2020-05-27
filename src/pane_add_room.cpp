@@ -139,9 +139,7 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		}
 		room.disponibility[school->n_periods] = -1;
 
-		printf("Iniciando inserção\n");
 		int id = insert_room(stdout, m_owner->m_database, &room, school);
-		printf("Inserção terminada.\n");
 		if(id != -1){
 			room.id = id;
 			if(school->n_rooms == 0){
@@ -154,7 +152,7 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 
 			m_err_msg->SetLabel(wxT("Adicionado com sucesso."));
 		} else {
-			printf("ID inválido\n");
+			m_err_msg->SetLabel(wxT("Não foi possível inserir no banco.\n"));
 		}
 	} else {
 		m_err_msg->SetLabel(wxT("Uma sala precisa ao menos de um nome e da sua capacidade."));

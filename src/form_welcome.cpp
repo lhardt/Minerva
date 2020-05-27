@@ -9,6 +9,10 @@ extern "C" {
 
 WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)) {
 	int i = 0;
+	
+	#ifdef __WXMSW__
+		SetIcon(wxICON(aaaaaaaa));
+	#endif
 
 	m_owner = owner;
 

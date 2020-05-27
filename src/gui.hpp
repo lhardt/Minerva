@@ -478,6 +478,8 @@ class ManualWindow : public wxFrame {
 	wxWindow * PopulateTeachersWindow();
 	wxWindow * PopulateClassesWindow();
 	wxWindow * PopulateLecturesWindow();
+	wxWindow * PopulateTimetableWindow();
+	wxWindow * PopulateSoftwareWindow();
 };
 
 /* Application */
