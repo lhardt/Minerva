@@ -51,7 +51,6 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	auto image_close  = wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, wxSize(32,32));
 	auto image_detail = wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, wxSize(32,32));
 
-//wxART_INFORMATION
 	/* ESCOLA */
 	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AS),wxT("Salvar Como"), image_save);
 	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AND_CLOSE),wxT("Fechar e Salvar"), image_save);
@@ -77,45 +76,45 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_PERIOD_PREF), wxT("Preferência por Períodos"), image_detail);
 	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
 	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
-	m_rib_bbars[2][3]->AddButton(LHID_OF(LHN_CHECK_ALL_SUBJECTS), wxT("Conferir Tudo"), image);
+	m_rib_bbars[2][3]->AddButton(LHID_OF(LHN_CHECK_ALL_SUBJECTS), wxT("Conferir Tudo"), image_detail);
 	m_rib_bbars[2][4]->AddButton(LHID_OF(LHN_OPEN_SUBJECTS_MANUAL), wxT("Abrir Manual"), image_help);
 	/* PROFESSORES */
-	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHERS), wxT("Ver Professores"), image);
-	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHER_GROUPS), wxT("Ver Grupos de Professores"), image);
-	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER), wxT("Adicionar Professor"), image);
-	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER_GROUP), wxT("Adicionar Grupo de Professores"), image);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_SUBJECT_PREF), wxT("Preferência por Disciplina"), image);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_PERIOD_PREF), wxT("Disponibilidade por Períodos"), image);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_TWIN_PREF), wxT("Preferência por Geminação"), image);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_ROOM_PREF), wxT("Preferência por Sala"), image);
-	m_rib_bbars[3][3]->AddButton(LHID_OF(LHN_CHECK_ALL_TEACHERS), wxT("Conferir Tudo"), image);
-	m_rib_bbars[3][4]->AddButton(LHID_OF(LHN_OPEN_TEACHERS_MANUAL), wxT("Abrir Manual"), image);
+	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHERS), wxT("Ver Professores"), image_list);
+	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHER_GROUPS), wxT("Ver Grupos de Professores"), image_list);
+	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER), wxT("Adicionar Professor"), image_add);
+	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER_GROUP), wxT("Adicionar Grupo de Professores"), image_add);
+	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_SUBJECT_PREF), wxT("Preferência por Disciplina"), image_detail);
+	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_PERIOD_PREF), wxT("Disponibilidade por Períodos"), image_detail);
+	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
+	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
+	m_rib_bbars[3][3]->AddButton(LHID_OF(LHN_CHECK_ALL_TEACHERS), wxT("Conferir Tudo"), image_detail);
+	m_rib_bbars[3][4]->AddButton(LHID_OF(LHN_OPEN_TEACHERS_MANUAL), wxT("Abrir Manual"), image_help);
 	/* TURMAS */
-	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASSES), wxT("Ver Turmas"), image);
-	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASS_GROUPS), wxT("Ver Grupos de Turmas"), image);
-	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS), wxT("Adicionar Turma"), image);
-	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS_GROUP), wxT("Adicionar Grupo de Turmas"), image);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_PERIOD_PREF), wxT("Disponibilidade por Períodos"), image);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TEACHER_PREF), wxT("Preferência por Professores"), image);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TWIN_PREF), wxT("Preferência por Geminação"), image);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_ROOM_PREF), wxT("Preferência por Sala"), image);
-	m_rib_bbars[4][3]->AddButton(LHID_OF(LHN_CHECK_ALL_CLASSES), wxT("Conferir Tudo"), image);
-	m_rib_bbars[4][4]->AddButton(LHID_OF(LHN_OPEN_CLASSES_MANUAL), wxT("Abrir Manual"), image);
+	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASSES), wxT("Ver Turmas"), image_list);
+	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASS_GROUPS), wxT("Ver Grupos de Turmas"), image_list);
+	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS), wxT("Adicionar Turma"), image_add);
+	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS_GROUP), wxT("Adicionar Grupo de Turmas"), image_add);
+	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_PERIOD_PREF), wxT("Disponibilidade por Períodos"), image_detail);
+	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TEACHER_PREF), wxT("Preferência por Professores"), image_detail);
+	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
+	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
+	m_rib_bbars[4][3]->AddButton(LHID_OF(LHN_CHECK_ALL_CLASSES), wxT("Conferir Tudo"), image_detail);
+	m_rib_bbars[4][4]->AddButton(LHID_OF(LHN_OPEN_CLASSES_MANUAL), wxT("Abrir Manual"), image_help);
 	/* AULAS */
-	m_rib_bbars[5][0]->AddButton(LHID_OF(LHN_SEE_LECTURES), wxT("Ver Aulas por Turma"), image);
-	m_rib_bbars[5][1]->AddButton(LHID_OF(LHN_ADD_LECTURES), wxT("Adicionar Aulas por Turma"), image);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_PERIOD_PREF), wxT("Preferência por Períodos"), image);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TEACHER_PREF), wxT("Preferência por Professores"), image);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TWIN_PREF), wxT("Preferência por Geminação"), image);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_ROOM_PREF), wxT("Preferência por Sala"), image);
-	m_rib_bbars[5][3]->AddButton(LHID_OF(LHN_CHECK_ALL_LECTURES), wxT("Conferir Tudo"), image);
-	m_rib_bbars[5][4]->AddButton(LHID_OF(LHN_OPEN_LECTURES_MAUAL), wxT("Abrir Manual"), image);
+	m_rib_bbars[5][0]->AddButton(LHID_OF(LHN_SEE_LECTURES), wxT("Ver Aulas por Turma"), image_list);
+	m_rib_bbars[5][1]->AddButton(LHID_OF(LHN_ADD_LECTURES), wxT("Adicionar Aulas por Turma"), image_add);
+	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_PERIOD_PREF), wxT("Preferência por Períodos"), image_detail);
+	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TEACHER_PREF), wxT("Preferência por Professores"), image_detail);
+	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
+	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
+	m_rib_bbars[5][3]->AddButton(LHID_OF(LHN_CHECK_ALL_LECTURES), wxT("Conferir Tudo"), image_detail);
+	m_rib_bbars[5][4]->AddButton(LHID_OF(LHN_OPEN_LECTURES_MAUAL), wxT("Abrir Manual"), image_help);
 	/* HORÁRIO */
-	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_SEE_TIMETABLE), wxT("Visualizar Horário"), image);
-	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_EXPORT_TIMETABLE), wxT("Exportar Horário"), image);
-	m_rib_bbars[6][1]->AddButton(LHID_OF(LHN_GENERATE_TIMETABLE), wxT("Gerar"), image);
-	m_rib_bbars[6][1]->AddButton(LHID_OF(LHN_CREATE_TIMETABLE), wxT("Criar Manualmente"), image);
-	m_rib_bbars[6][2]->AddButton(LHID_OF(LHN_OPEN_TIMETABLE_MANUAL), wxT("Abrir Manual"), image);
+	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_SEE_TIMETABLE), wxT("Visualizar Horário"), image_list);
+	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_EXPORT_TIMETABLE), wxT("Exportar Horário"), image_detail);
+	m_rib_bbars[6][1]->AddButton(LHID_OF(LHN_GENERATE_TIMETABLE), wxT("Gerar"), image_detail);
+	m_rib_bbars[6][1]->AddButton(LHID_OF(LHN_CREATE_TIMETABLE), wxT("Criar Manualmente"), image_add);
+	m_rib_bbars[6][2]->AddButton(LHID_OF(LHN_OPEN_TIMETABLE_MANUAL), wxT("Abrir Manual"), image_help);
 
 	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add(m_ribbon, 0, wxEXPAND);
@@ -247,7 +246,23 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new GenerateTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-		case LHID_OF(LHN_OPEN_SCHOOL_MANUAL):{
+		case LHID_OF(LHN_SEE_TIMETABLE):{
+			CloseOpenedPane();
+			m_open_pane = new DescTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_SCHOOL_DATA): {
+			CloseOpenedPane();
+			m_open_pane = new DescSchoolPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_OPEN_SCHOOL_MANUAL):
+		case LHID_OF(LHN_OPEN_ROOMS_MANUAL):
+		case LHID_OF(LHN_OPEN_SUBJECTS_MANUAL):
+		case LHID_OF(LHN_OPEN_TEACHERS_MANUAL):
+		case LHID_OF(LHN_OPEN_CLASSES_MANUAL):
+		case LHID_OF(LHN_OPEN_LECTURES_MAUAL):
+		case LHID_OF(LHN_OPEN_TIMETABLE_MANUAL):{
 			if(m_owner->m_window_manual == nullptr){
 				m_owner->m_window_manual = new ManualWindow(m_owner);
 				m_owner->m_window_manual->Show();

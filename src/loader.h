@@ -43,6 +43,7 @@ int insert_room(FILE * console_out, sqlite3* db, Room * room, School * school);
 int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * school);
 int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * school);
 
+bool insert_all_meetings(FILE * console_out, sqlite3 * db, School * school);
 
 bool remove_class(FILE * console_out, sqlite3* db, int id);
 bool remove_teacher(FILE * console_out, sqlite3* db, int id);

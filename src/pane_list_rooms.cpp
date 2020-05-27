@@ -127,7 +127,7 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 				m_features_text->SetLabel(m_features_text->GetLabel().Append(wxString::Format("\n\t%s: %d", school->feature_names[i], room->room_features[i])));
 			}
 		}
-		m_periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
+		m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 		for(i = 0; i < school->n_periods; ++i){
 			if(school->periods[i] == false){
 				m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));

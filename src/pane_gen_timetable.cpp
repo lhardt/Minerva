@@ -34,6 +34,12 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 
 	if(generated_timetable != nullptr){
 		print_meeting_list(stdout,generated_timetable);
+
+		m_owner->m_school->all_meetings = generated_timetable;
+		bool success = insert_all_meetings(stdout, m_owner->m_database, m_owner->m_school);
+		if(!success){
+			free_meetings_list(generated_timetable);
+		}
 	} else {
 		printf("Was nullptr\n");
 	}

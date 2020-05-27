@@ -440,9 +440,24 @@ class GenerateTimetablePane : public wxScrolledWindow {
 	GenerateTimetablePane(Application * owner, wxWindow * parent, wxPoint pos);
 	~GenerateTimetablePane();
  private:
-
 	Application * m_owner;
+
 	void OnButtonClicked(wxCommandEvent &);
+};
+
+class DescTimetablePane : public wxScrolledWindow {
+ public:
+	DescTimetablePane(Application * owner, wxWindow * parent, wxPoint pos);
+	~DescTimetablePane();
+ private:
+	Application * m_owner;
+
+	wxChoice * m_class_choice;
+	wxChoice * m_teacher_choice;
+	wxChoice * m_subject_choice;
+	wxGrid   * m_grid;
+
+	void OnRedrawGridRequest(wxCommandEvent &);
 };
 
 /* Manual */

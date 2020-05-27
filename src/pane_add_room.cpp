@@ -9,7 +9,7 @@ extern "C" {
 };
 
 
-AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos)  : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
+AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
 	int i;
 
 	for(i = 0; i < MAX_FEATURES; ++i){

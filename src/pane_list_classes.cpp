@@ -91,26 +91,38 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 
 void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 	int i;
+	School * school = m_owner->m_school;
 	if(m_classes_list->GetSelection() != wxNOT_FOUND){
-		Class * c = &m_owner->m_school->classes[m_classes_list->GetSelection()];
+		Class * c = &school->classes[m_classes_list->GetSelection()];
 		m_name_text->SetLabel(wxT("Nome: ") + wxString::FromUTF8(c->name));
 		m_size_text->SetLabel(wxT("Tamanho: ") + wxString::Format("%d",c->size));
-		m_free_periods_text->SetLabel(wxString::FromUTF8("Pode ter Períodos Livres: ") + wxString(c->can_have_free_periods_flag?"Sim":"Não"));
+		m_free_periods_text->SetLabel(wxString::FromUTF8("Pode ter Períodos Livres: ") + wxString(c->can_have_free_periods_flag?wxT("Sim"):wxString::FromUTF8("Não")));
 		m_entry_period_text->SetLabel(wxString::FromUTF8("Período de Entrada: ") + wxString::Format("%d",c->maximal_entry_period));
 		m_exit_period_text->SetLabel(wxString::FromUTF8("Período de Saída: ") + wxString::Format("%d",c->minimal_exit_period));
 		m_subjects_text->SetLabel(wxString::FromUTF8("Disciplinas Requeridas: "));
 		if(c->needs != NULL){
 			for(i = 0; c->needs[i].subject != NULL; ++i){
-				m_subjects_text->SetLabel(m_subjects_text->GetLabel() +
-						wxString::FromUTF8(c->needs[i].subject->name) + wxString::Format(": %d;\n", c->needs[i].quantity));
+				m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxString::FromUTF8(c->needs[i].subject->name) +
+						wxString::Format(wxString::FromUTF8(": %d períodos;\n"), c->needs[i].quantity));
 			}
 
 		}
 		m_subjects_text->Wrap(300);
-		//m_periods_grid
 
+		m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
+
+		for(i = 0; i < school->n_periods; ++i){
+			if(school->periods[i] == false){
+				m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+			} else {
+				m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+						wxString::Format("%s" , (c->periods[i] > 0?wxT("Aberta"):wxT("Fechada")) ));
+				m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+						(c->periods[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
+			}
+			m_periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
+		}
 		FitInside();
-
 	}
 }
 

@@ -846,7 +846,7 @@ int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * 
 }
 
 /* TODO test. */
-static bool insert_all_meetings(FILE * console_out, sqlite3 * db, School * school){
+bool insert_all_meetings(FILE * console_out, sqlite3 * db, School * school){
 	int i, errc = 0;
 	sqlite3_stmt * stmt;
 	printf("Inserting all meetings.\n");
@@ -862,6 +862,13 @@ static bool insert_all_meetings(FILE * console_out, sqlite3 * db, School * schoo
 		sqlite3_bind_int(stmt, 7, school->id);
 
 		errc = sqlite3_step(stmt);
+		if(errc != SQLITE_DONE){
+			if(console_out){
+				fprintf(console_out, "Errc %d %s\n", errc, sqlite3_errmsg(db));
+			}
+			return false;
+		}
+
 		errc |= sqlite3_exec(db, LASTID_TABLE_MEETING, get_id_callback, &(school->feature_ids[i]), NULL);
 
 		if(errc != SQLITE_DONE){
@@ -1265,57 +1272,63 @@ char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids){
 }
 
 static int select_all_meetings(FILE * console_out, sqlite3* db, School * school){
-	int i = 0, errc, alloc_sz = 0, id, j;
+	int i = 0, errc, id, j;
 	sqlite3_stmt* stmt;
 
 	errc = sqlite3_prepare_v2(db, SELECT_MEETING_BY_SCHOOL_ID, -1, &stmt, NULL);
 	if(errc == SQLITE_OK){
 		sqlite3_bind_int(stmt,1, school->id);
 		errc = sqlite3_step(stmt);
+		/* Double check because we can't alloc if there aren't any */
+		if(errc == SQLITE_ROW){
+			school->all_meetings = calloc(11, sizeof(Meeting));
+			while(errc == SQLITE_ROW){
+				school->all_meetings[i].id = sqlite3_column_int(stmt,0);
 
-		alloc_sz = 10;
-		school->all_meetings = calloc(alloc_sz, sizeof(Meeting));
-
-		while(errc == SQLITE_ROW){
-			school->all_meetings[i].id = sqlite3_column_int(stmt,0);
-
-			id = sqlite3_column_int(stmt,2);
-			for(j = 0; j < school->n_periods; ++j){
-				if(school->period_ids[j] == id){
-					school->all_meetings[i].period = j;
-					break;
+				id = sqlite3_column_int(stmt,2);
+				for(j = 0; j < school->n_periods; ++j){
+					if(school->period_ids[j] == id){
+						school->all_meetings[i].period = j;
+						break;
+					}
 				}
-			}
 
-			id = sqlite3_column_int(stmt,3);
-			for(j = 0; j < school->n_classes; ++j){
-				if(school->classes[j].id == id){
-					school->all_meetings[i].m_class = &(school->classes[j]);
-					break;
+				id = sqlite3_column_int(stmt,3);
+				for(j = 0; j < school->n_classes; ++j){
+					if(school->classes[j].id == id){
+						school->all_meetings[i].m_class = &(school->classes[j]);
+						break;
+					}
 				}
-			}
 
-			id = sqlite3_column_int(stmt,4);
-			for(j = 0; j < school->n_teachers; ++j){
-				if(school->teachers[j].id == id){
-					school->all_meetings[i].teacher = &(school->teachers[j]);
-					break;
+				id = sqlite3_column_int(stmt,4);
+				for(j = 0; j < school->n_teachers; ++j){
+					if(school->teachers[j].id == id){
+						school->all_meetings[i].teacher = &(school->teachers[j]);
+						break;
+					}
 				}
-			}
 
-			id = sqlite3_column_int(stmt,5);
-			for(j = 0; j < school->n_subjects; ++j) {
-				if(school->subjects[j].id == id){
-					school->all_meetings[i].subj = &(school->subjects[j]);
-					break;
+				id = sqlite3_column_int(stmt,5);
+				for(j = 0; j < school->n_subjects; ++j) {
+					if(school->subjects[j].id == id){
+						school->all_meetings[i].subj = &(school->subjects[j]);
+						break;
+					}
 				}
-			}
 
-			id = sqlite3_column_int(stmt,6);
-			for(j = 0; j < school->n_rooms; ++j){
-				if(school->rooms[j].id == id){
-					school->all_meetings[i].room = &(school->rooms[j]);
-					break;
+				id = sqlite3_column_int(stmt,6);
+				for(j = 0; j < school->n_rooms; ++j){
+					if(school->rooms[j].id == id){
+						school->all_meetings[i].room = &(school->rooms[j]);
+						break;
+					}
+				}
+
+				errc = sqlite3_step(stmt);
+				++i;
+				if(i % 10 == 0){
+					school->all_meetings = realloc(school->all_meetings, (i + 11)*sizeof(Meeting));
 				}
 			}
 		}
