@@ -186,6 +186,14 @@ typedef struct Meeting {
 	int			  * possible_teachers;
 } Meeting;
 
+typedef struct Solution {
+	int 	  id;
+	char 	* name;
+	char 	* desc;
+	Meeting * meetings;
+	int 	  n_meetings;
+} Solution;
+
 typedef enum EditActionActionType {
 	kTestEmptyEnum
 } EditActionActionType;
@@ -224,7 +232,7 @@ typedef struct School {
 	Subject	   * subjects;
 	Room       * rooms;
 	Teaches    * teaches;
-	Meeting    * all_meetings;
+	Solution   * solutions;
 
 	int 		 n_periods;
 	int 		 n_features;
@@ -235,6 +243,7 @@ typedef struct School {
 	int			 n_teaches;
 	int 		 n_days;
 	int 		 n_periods_per_day;
+	int			 n_solutions;
 
 	bool 		 periods[MAX_PERIODS_PER_WEEK];
 

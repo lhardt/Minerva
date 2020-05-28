@@ -89,16 +89,19 @@ void ListRoomsPane::OnEditButtonClicked(wxCommandEvent &){
 void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 	printf("Delete clicked\n");
 	School * school = m_owner->m_school;
-	int i;
+	int i,j;
 	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
 		int del_i = m_rooms_list->GetSelection();
 		bool success = remove_room(stdout, m_owner->m_database, school->rooms[del_i].id);
 
 		if(success){
-			if(school->all_meetings != nullptr){
-				for(i = 0; school->all_meetings[i].m_class != nullptr; ++i){
-					if(school->all_meetings[i].room->id == school->rooms[del_i].id){
-						school->all_meetings[i].room = nullptr;
+			if(school->solutions != nullptr){
+				for(i = 0; i < school->n_solutions; ++i){
+					Meeting * m_list = school->solutions[i].meetings;
+					for(j = 0; m_list[j].m_class != nullptr; ++j){
+						if(m_list[j].room->id == school->rooms[del_i].id){
+							m_list[j].room = nullptr;
+						}
 					}
 				}
 			}

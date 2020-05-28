@@ -9,7 +9,7 @@ extern "C" {
 
 WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)) {
 	int i = 0;
-	
+
 	#ifdef __WXMSW__
 		SetIcon(wxICON(aaaaaaaa));
 	#endif
@@ -47,7 +47,7 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 	m_dropdown->SetSelection(0);
 
 	m_button_open = new wxButton(this, wxID_ANY, "Abrir", wxPoint(300, 260), wxSize(55,30));
-	m_button_import = new wxButton(this, wxID_ANY, "Importar", wxPoint(50, 305), wxSize(95,30));
+	m_button_import = new wxButton(this, wxID_ANY, "Ajuda", wxPoint(50, 305), wxSize(95,30));
 	m_button_delete = new wxButton(this, wxID_ANY, "Apagar", wxPoint(155, 305), wxSize(95,30));
 	m_button_create = new wxButton(this, wxID_ANY, "Criar", wxPoint(260, 305), wxSize(95,30));
 
@@ -57,7 +57,7 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 	}
 
 	m_button_open->Bind(wxEVT_BUTTON, &WelcomeForm::OnOpenClicked, this);
-	m_button_import->Bind(wxEVT_BUTTON, &WelcomeForm::OnImportClicked, this);
+	m_button_import->Bind(wxEVT_BUTTON, &WelcomeForm::OnHelpClicked, this);
 	m_button_delete->Bind(wxEVT_BUTTON, &WelcomeForm::OnDeleteClicked, this);
 	m_button_create->Bind(wxEVT_BUTTON, &WelcomeForm::OnCreateClicked, this);
 
@@ -86,9 +86,11 @@ void WelcomeForm::OnOpenClicked(wxCommandEvent & ev){
 	ev.Skip();
 }
 
-void WelcomeForm::OnImportClicked(wxCommandEvent & ev){
-	printf("Not Implemented\n");
-	ev.Skip();
+void WelcomeForm::OnHelpClicked(wxCommandEvent & ev){
+	if(m_owner->m_window_manual == nullptr){
+		m_owner->m_window_manual = new ManualWindow(m_owner);
+		m_owner->m_window_manual->Show();
+	}
 }
 
 void WelcomeForm::OnDeleteClicked(wxCommandEvent & ev){

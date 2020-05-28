@@ -84,41 +84,33 @@ class WelcomeForm : public wxFrame {
 	int * 			m_school_ids;
 	char * * 		m_school_names;
 
-
-
 	/* Handlers */
-	void OnButtonClicked(wxCommandEvent&);
-	void OnQuitClicked(wxCommandEvent &);
 	void OnCreateClicked(wxCommandEvent &);
 	void OnDeleteClicked(wxCommandEvent &);
-	void OnImportClicked(wxCommandEvent &);
 	void OnOpenClicked(wxCommandEvent &);
+	void OnHelpClicked(wxCommandEvent &);
 };
 
 class CreateSchoolForm : public wxFrame {
  public:
 	CreateSchoolForm(Application * owner);
 	~CreateSchoolForm();
+ private:
+	Application  * m_owner;
 	/* Components */
-	wxButton *		m_button_create = nullptr;
-	wxButton *		m_button_back = nullptr;
-	ChoiceGrid *	m_grid = nullptr;
-	wxSpinCtrl * 	m_number_of_periods_text = nullptr;
-	wxSpinCtrl * 	m_number_of_days_text = nullptr;
-	wxTextCtrl * 	m_school_name_text = nullptr;
-
-	wxStaticText* 	m_err_msg = nullptr;
-
-	Application * m_owner;
-
+	wxButton     *	m_button_create = nullptr;
+	wxButton     *	m_button_back = nullptr;
+	ChoiceGrid   *	m_grid = nullptr;
+	wxSpinCtrl   * 	m_number_of_periods_text = nullptr;
+	wxSpinCtrl   * 	m_number_of_days_text = nullptr;
+	wxTextCtrl   * 	m_school_name_text = nullptr;
+	wxStaticText * 	m_err_msg = nullptr;
 
 	/* Handlers */
 	void OnCreateClicked(wxCommandEvent &);
 	void OnBackClicked(wxCommandEvent &);
 	void OnGridLeftClick(wxGridEvent &);
 	void OnGridSizeUpdated(wxSpinEvent &);
-
- private:
 };
 
 class MainMenuForm : public wxFrame{
@@ -453,6 +445,7 @@ class DescTimetablePane : public wxScrolledWindow {
  private:
 	Application * m_owner;
 
+	wxChoice * m_solution_choice;
 	wxChoice * m_class_choice;
 	wxChoice * m_teacher_choice;
 	wxChoice * m_subject_choice;

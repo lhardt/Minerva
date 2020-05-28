@@ -35,7 +35,7 @@ wxWindow * ManualWindow::PopulateSchoolWindow(){
 	wxStaticText * introd = new wxStaticText(man_win, wxID_ANY,
 			wxT("Gostaríamos mais uma vez de estar testando essa novidade. Todo feedback nos é importante.\n\n"
 				"Para usar este programa, é importante notar que todos os dados são salvos automaticamente. "
-				"No entanto, ainda não criamos uma função de desfazer. Há uma variedade de outras funções que não operam ainda.\n\n "
+				"No entanto, ainda não criamos uma função de desfazer. Há uma variedade de outras funções que não operam ainda.\n\n"
 				"Por ser uma versão preliminar, o programa que você está usando serve mais para ser julgado (incluindo dar dicas, fazer reclamações, etc) "
 				"do que realmente para fazer o horário. Ainda assim, a geração do horário está disponível e, a princípio, deve dar um resultado válido."
 			), wxDefaultPosition, wxSize(450,500));

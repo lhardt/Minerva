@@ -71,7 +71,7 @@ void ListSubjectsPane::OnEditButtonClicked(wxCommandEvent & ev){
 
 void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
-	int i,j, del_i;
+	int i,j,k, del_i;
 	bool success;
 	if(m_subjects_list->GetSelection() != wxNOT_FOUND){
 		del_i = m_subjects_list->GetSelection();
@@ -89,25 +89,28 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 				}
 			}
 
-			if(school->all_meetings != NULL){
-				for(i = 0; school->all_meetings[i].m_class != NULL; ++i){
-					Meeting * meet = & school->all_meetings[i];
-					if(meet->subj->id == school->subjects[del_i].id){
-						/* No need to set to null. Will be overwritten anyway. */
-						if(meet->possible_periods != NULL){
-							free(school->all_meetings[i].possible_periods);
-						}
-						if(meet->possible_rooms != NULL){
-							free(school->all_meetings[i].possible_rooms);
-						}
-						if(meet->possible_teachers != NULL){
-							free(school->all_meetings[i].possible_teachers);
-						}
+			if(school->solutions != NULL){
+				for(i = 0; i < school->n_solutions; ++i){
+					Meeting * m_list = school->solutions[i].meetings;
+					for(j = 0; m_list[j].m_class != NULL; ++j){
+						Meeting * meet = & m_list[j];
+						if(meet->subj->id == school->subjects[del_i].id){
+							if(meet->possible_periods != NULL){
+								free(meet->possible_periods);
+							}
+							if(meet->possible_rooms != NULL){
+								free(meet->possible_rooms);
+							}
+							if(meet->possible_teachers != NULL){
+								free(meet->possible_teachers);
+							}
 
-						for(j = i; school->all_meetings[j].m_class != NULL; ++j){
-							school->all_meetings[j] = school->all_meetings[j+1];
+
+							for(k = j; m_list[k].m_class != NULL; ++k){
+								m_list[k] = m_list[k+1];
+							}
+							--j;
 						}
-						--i;
 					}
 				}
 			}

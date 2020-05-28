@@ -143,10 +143,14 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 
 		if(success) {
 			/* TODO: Check for subordinates too. */
-			for(i = 0; school->all_meetings[i].m_class != NULL; ++i){
-				if(school->all_meetings[i].m_class->id == c->id){
-					for(j = i; school->all_meetings[j].m_class != NULL; ++j){
-						school->all_meetings[j] = school->all_meetings[j+1];
+			Meeting * m_list;
+			for(i = 0; i < school->n_solutions; ++i){
+				m_list=  school->solutions[i].meetings;
+				for(j = 0; m_list[j].m_class != NULL; ++j){
+					if(m_list[i].m_class->id == c->id){
+						for(j = i; m_list[j].m_class != NULL; ++j){
+							m_list[j] = m_list[j+1];
+						}
 					}
 				}
 			}

@@ -109,10 +109,13 @@ void ListTeachersPane::OnDeleteButtonClicked(wxCommandEvent &) {
 					--school->n_teaches;
 				}
 			}
-			if(school->all_meetings != NULL){
-				for(i = 0; NULL != school->all_meetings[i].m_class; ++i){
-					if(school->all_meetings[i].teacher->id == school->teachers[i_select].id){
-						school->all_meetings[i].teacher = NULL;
+			if(school->solutions != NULL){
+				for(i = 0; i < school->n_solutions; ++i){
+					Meeting * m_list = school->solutions[i].meetings;
+					for(j = 0; m_list[j].m_class != NULL; ++j ){
+						if(m_list[j].teacher->id == school->teachers[i_select].id){
+							m_list[j].teacher = NULL;
+						}
 					}
 				}
 			}
