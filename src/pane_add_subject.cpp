@@ -35,6 +35,10 @@ AddSubjectPane::~AddSubjectPane(){
 
 }
 
+void AddSubjectPane::ClearInsertedData(){
+	m_name_text->Clear();
+}
+
 void AddSubjectPane::OnCreateButtonClicked(wxCommandEvent & ev){
 	int i;
 	School * school = m_owner->m_school;
@@ -61,6 +65,7 @@ void AddSubjectPane::OnCreateButtonClicked(wxCommandEvent & ev){
 			school->n_subjects++;
 
 			m_err_msg->SetLabel(wxT("Inserido com sucesso."));
+			ClearInsertedData();
 		} else {
 			m_err_msg->SetLabel(wxT("Erro no banco de dados. Não foi possível inserir."));
 		}

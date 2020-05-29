@@ -116,6 +116,27 @@ void AddTeacherPane::OnRemoveAllButtonClicked(wxCommandEvent & ev){
 	m_teaches_subjects_list->Clear();
 }
 
+void AddTeacherPane::ClearInsertedData(){
+	School * school = m_owner->m_school;
+	int i;
+	m_name_text->Clear();
+	m_teaches_subjects_list->Clear();
+
+	for(i = 0; i < MAX_SUBJECTS; ++i){
+		m_teaches_subj[i] = false;
+	}
+
+	for(i = 0; i < school->n_periods; ++i){
+		if(school->periods[i] == false){
+			m_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+		} else {
+			m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxT("Disponível"));
+			m_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxColor(200,200,255));
+		}
+	}
+
+}
+
 void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 	int i;
 	School * school = m_owner->m_school;
@@ -199,6 +220,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 			}
 
 			m_err_msg->SetLabel(wxT("Adicionado com sucesso."));
+			ClearInsertedData();
 		} else {
 			m_err_msg->SetLabel(wxT("Não foi possível adicionar. Erro no banco de dados."));
 		}

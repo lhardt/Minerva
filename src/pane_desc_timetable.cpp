@@ -25,9 +25,9 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 		}
 
 	}
-	m_solution_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(200,30), solution_arr);
+	m_solution_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30), solution_arr);
 	m_solution_choice->SetSelection(0);
-	wxStaticText * solution_choice_label = new wxStaticText(this, wxID_ANY, wxT("Escolha Uma Grade Gerada"), wxDefaultPosition, wxSize(200,20));
+	wxStaticText * solution_choice_label = new wxStaticText(this, wxID_ANY, wxT("Escolha Uma Grade Gerada"), wxDefaultPosition, wxSize(170,20));
 
 	wxArrayString class_arr;
 	class_arr.push_back("Nenhuma");
@@ -37,9 +37,9 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 		}
 
 	}
-	m_class_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(200,30), class_arr);
+	m_class_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30), class_arr);
 	m_class_choice->SetSelection(0);
-	wxStaticText * class_choice_label = new wxStaticText(this, wxID_ANY, wxT("Escolha Uma Turma"), wxDefaultPosition, wxSize(200,20));
+	wxStaticText * class_choice_label = new wxStaticText(this, wxID_ANY, wxT("Escolha Uma Turma"), wxDefaultPosition, wxSize(170,20));
 
 	wxArrayString teacher_arr;
 	teacher_arr.push_back("Nenhum");
@@ -49,9 +49,9 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 		}
 
 	}
-	m_teacher_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(200,30), teacher_arr);
+	m_teacher_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30), teacher_arr);
 	m_teacher_choice->SetSelection(0);
-	wxStaticText * teacher_choice_label = new wxStaticText(this, wxID_ANY, wxT("Ou um Professor"), wxDefaultPosition, wxSize(200,20));
+	wxStaticText * teacher_choice_label = new wxStaticText(this, wxID_ANY, wxT("Ou um Professor"), wxDefaultPosition, wxSize(170,20));
 
 	wxArrayString subj_arr;
 	subj_arr.push_back("Nenhum");
@@ -61,9 +61,9 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 		}
 
 	}
-	m_subject_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(200,30), subj_arr);
+	m_subject_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30), subj_arr);
 	m_subject_choice->SetSelection(0);
-	wxStaticText * subject_choice_label = new wxStaticText(this, wxID_ANY, wxT("(opc.) uma Disciplina"), wxDefaultPosition, wxSize(200,20));
+	wxStaticText * subject_choice_label = new wxStaticText(this, wxID_ANY, wxT("(opc.) uma Disciplina"), wxDefaultPosition, wxSize(170,20));
 
 	m_grid = new wxGrid(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 

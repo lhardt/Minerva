@@ -44,7 +44,7 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	m_exit_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
 
 
-	m_free_periods_checkbox = new wxCheckBox(this, wxID_ANY, wxT("A turma pode ter períodos livres?"), wxDefaultPosition, wxSize(300, 30));
+	m_free_periods_checkbox = new wxCheckBox(this, wxID_ANY, wxT("A turma pode ter períodos livres?"), wxDefaultPosition, wxSize(300, 30), wxALIGN_RIGHT);
 
 	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, wxT("Em Quais Períodos a Turma está Disponível?"), wxDefaultPosition, wxSize(350,15));
 
@@ -157,7 +157,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.can_have_free_periods_flag = m_free_periods_checkbox->GetValue();
 		c.maximal_entry_period = m_entry_text->GetSelection();
 		c.minimal_exit_period = m_exit_text->GetSelection();
-
+		c.abstract = false;
 		if(m_selected_subjects_list->GetCount() > 0){
 			c.needs = (SubjectQuantity*) calloc(m_selected_subjects_list->GetCount() + 1, sizeof(SubjectQuantity));
 			int i_need = 0;
@@ -169,10 +169,11 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 				}
 			}
 			c.needs[i_need].subject = NULL;
-			c.needs[i_need].quantity = -1; 
+			c.needs[i_need].quantity = -1;
 		} else {
 			c.needs = nullptr;
 		}
+		c.subordinates = nullptr;
 
 		int id = insert_class(stdout, m_owner->m_database, &c, school);
 		if(id != -1){
@@ -185,6 +186,8 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 
 			++school->n_classes;
 			m_err_msg->SetLabel(wxString::FromUTF8("Inserido com sucesso."));
+
+			ClearInsertedData();
 		} else {
 			free(c.name);
 			free(c.short_name);
@@ -202,6 +205,35 @@ void AddClassPane::OnAddSubjectButtonClicked(wxCommandEvent & ev){
 
 		selected_subjects[m_all_subjects_list->GetSelection()] = m_score_text->GetValue();
 	}
+}
+
+void AddClassPane::ClearInsertedData(){
+	School * school = m_owner->m_school;
+	int i = 0;
+	m_name_text->Clear();
+	for(i = 0; i < school->n_periods; ++i){
+		if(school->periods[i] == false){
+			m_periods->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+		} else {
+			m_periods->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), "Disponível");
+			m_periods->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxColor(200,200,255));
+		}
+	}
+	m_selected_subjects_list->Clear();
+	m_score_text->SetValue(0);
+	m_size_text->SetValue(0);
+	m_free_periods_checkbox->SetValue(false);
+
+	for(i = 0; i < MAX_SUBJECTS; ++i){
+		selected_subjects[i] = 0;
+	}
+	selected_subjects[MAX_SUBJECTS-1] = -1;
+
+	last_entry = -1;
+	last_exit = -1;
+
+	m_entry_text->Clear();
+	m_exit_text->Clear();
 }
 
 void AddClassPane::OnRemoveAllButtonClicked(wxCommandEvent & ev){

@@ -145,6 +145,7 @@ class AddFeaturePane : public wxPanel {
 	Application * m_owner;
  private:
 	void OnCreateButtonClicked(wxCommandEvent &);
+	void ClearInsertedData();
 };
 
 class AddRoomPane : public wxScrolledWindow {
@@ -169,6 +170,7 @@ class AddRoomPane : public wxScrolledWindow {
 
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void OnAddFeatureClicked(wxCommandEvent &);
+	void ClearInsertedData();
 };
 
 class AddSubjectPane : public wxScrolledWindow {
@@ -184,7 +186,7 @@ class AddSubjectPane : public wxScrolledWindow {
 	wxStaticText * m_err_msg;
 
 	void OnCreateButtonClicked(wxCommandEvent &);
-
+	void ClearInsertedData();
 };
 
 class AddSubjectGroupPane : public wxScrolledWindow	 {
@@ -199,6 +201,7 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 	Application * m_owner;
  private:
 	void OnCreateButtonClicked(wxCommandEvent &);
+	void ClearInsertedData();
 };
 
 class AddTeacherPane : public wxScrolledWindow {
@@ -220,6 +223,7 @@ class AddTeacherPane : public wxScrolledWindow {
 	void OnAddTeacherButtonClicked(wxCommandEvent &);
 	void OnAddSubjectButtonClicked(wxCommandEvent &);
 	void OnRemoveAllButtonClicked(wxCommandEvent &);
+	void ClearInsertedData();
 };
 
 class AddTeacherGroupPane : public wxScrolledWindow {
@@ -235,6 +239,7 @@ class AddTeacherGroupPane : public wxScrolledWindow {
 	Application * m_owner;
 
 	void OnAddButtonClicked(wxCommandEvent &);
+	void ClearInsertedData();
 };
 
 class AddClassPane : public wxScrolledWindow {
@@ -266,6 +271,7 @@ class AddClassPane : public wxScrolledWindow {
 	void OnAddClassButtonClicked(wxCommandEvent &);
 	void OnRemoveAllButtonClicked(wxCommandEvent & ev);
 	void OnPeriodChoice(wxCommandEvent &);
+	void ClearInsertedData();
 };
 
 class AddClassGroupPane : public wxScrolledWindow {
@@ -279,6 +285,7 @@ class AddClassGroupPane : public wxScrolledWindow {
 	Application * m_owner;
 
 	void OnAddButtonClicked(wxCommandEvent &);
+	void ClearInsertedData();
 };
 
 /* LIST Panes. */
@@ -434,7 +441,7 @@ class GenerateTimetablePane : public wxScrolledWindow {
  private:
 	Application * m_owner;
 	wxStaticText * m_err_msg;
-
+	wxTextCtrl * m_tt_name_text;
 	void OnButtonClicked(wxCommandEvent &);
 };
 

@@ -15,7 +15,7 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	for(i = 0; i < MAX_FEATURES; ++i){
 		m_feature_values[i] = 0;
 	}
-	m_feature_values[MAX_FEATURES] = -1;
+	m_feature_values[MAX_FEATURES-1] = -1;
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
@@ -115,6 +115,29 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 
 }
 
+void AddRoomPane::ClearInsertedData(){
+	School * school = m_owner->m_school;
+	int i;
+	m_name_text->Clear();
+	m_capacity_text->SetValue(0);
+	for(i = 0; i < school->n_periods; ++i){
+		if(school->periods[i] == false){
+			m_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+		} else {
+			m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), "Aberta");
+			m_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxColor(200,200,255));
+		}
+	}
+	m_features->SetSelection(wxNOT_FOUND);
+	m_added_features->Clear();
+	m_score_text->SetValue(0);
+
+    for(i = 0; i < MAX_FEATURES; ++i){
+		m_feature_values[i] = 0;
+	}
+	m_feature_values[MAX_FEATURES-1] = -1;
+}
+
 AddRoomPane::~AddRoomPane(){
 
 }
@@ -127,7 +150,6 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		room.name = copy_wx_string(m_name_text->GetValue());
 		room.short_name = copy_wx_string(m_name_text->GetValue());
 		room.size = m_capacity_text->GetValue();
-
 		for(i = 0; i < school->n_features; ++i){
 			room.room_features[i] = m_feature_values[i];
 		}
@@ -151,6 +173,7 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 			school->n_rooms++;
 
 			m_err_msg->SetLabel(wxT("Adicionado com sucesso."));
+			ClearInsertedData();
 		} else {
 			m_err_msg->SetLabel(wxT("Não foi possível inserir no banco.\n"));
 		}

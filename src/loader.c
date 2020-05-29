@@ -1202,10 +1202,10 @@ int insert_school(FILE * console_out, sqlite3* db, School * school){
 
 static char * copy_sqlite_string(sqlite3_stmt * stmt, int col_i){
 	char * str;
-	sqlite3_column_text(stmt,1); /* Defines the type to utf8 */
-	int sz = (sqlite3_column_bytes(stmt,1));
+	sqlite3_column_text(stmt,col_i); /* Defines the type to utf8 */
+	int sz = (sqlite3_column_bytes(stmt,col_i));
 	str = calloc(sz + 1, sizeof(char));
-	strncpy(str,(const char * )sqlite3_column_text(stmt,1),sz);
+	strncpy(str,(const char * )sqlite3_column_text(stmt,col_i),sz);
 	return str;
 }
 

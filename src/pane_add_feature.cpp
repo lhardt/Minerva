@@ -44,7 +44,7 @@ void AddFeaturePane::OnCreateButtonClicked(wxCommandEvent & ev){
 
 			school->n_features++;
 
-			m_name_text->SetValue("");
+			ClearInsertedData();
 			m_err_msg->SetLabel(wxT("Inserido com sucesso."));
 		} else {
 			m_err_msg->SetLabel(wxT("Não foi possível inserir.\n Possível erro no banco de dados"));
@@ -52,4 +52,8 @@ void AddFeaturePane::OnCreateButtonClicked(wxCommandEvent & ev){
 	} else {
 		m_err_msg->SetLabel(wxT("Não é possível adicionar uma característica sem nome."));
 	}
+}
+
+void AddFeaturePane::ClearInsertedData(){
+	m_name_text->SetValue("");
 }

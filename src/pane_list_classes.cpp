@@ -97,8 +97,8 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		m_name_text->SetLabel(wxT("Nome: ") + wxString::FromUTF8(c->name));
 		m_size_text->SetLabel(wxT("Tamanho: ") + wxString::Format("%d",c->size));
 		m_free_periods_text->SetLabel(wxString::FromUTF8("Pode ter Períodos Livres: ") + wxString(c->can_have_free_periods_flag?wxT("Sim"):wxString::FromUTF8("Não")));
-		m_entry_period_text->SetLabel(wxString::FromUTF8("Período de Entrada: ") + wxString::Format("%d",c->maximal_entry_period));
-		m_exit_period_text->SetLabel(wxString::FromUTF8("Período de Saída: ") + wxString::Format("%d",c->minimal_exit_period));
+		m_entry_period_text->SetLabel(wxString::FromUTF8("Período de Entrada: ") + wxString::Format("%s",school->period_names[c->maximal_entry_period]));
+		m_exit_period_text->SetLabel(wxString::FromUTF8("Período de Saída: ") + wxString::Format("%s",school->period_names[c->minimal_exit_period]));
 		m_subjects_text->SetLabel(wxString::FromUTF8("Disciplinas Requeridas: "));
 		if(c->needs != NULL){
 			for(i = 0; c->needs[i].subject != NULL; ++i){
