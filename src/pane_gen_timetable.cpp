@@ -66,13 +66,12 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 
 		if(gen_solution.meetings != nullptr){
 			for(i = 0; gen_solution.meetings[i].m_class != NULL; ++i){
-
+				/* Blank counter */
 			}
 			gen_solution.n_meetings = i;
 
 			print_meeting_list(stdout,gen_solution.meetings);
 
-			// m_owner->m_school->all_meetings = generated_timetable;
 			bool success = insert_solution(stdout, m_owner->m_database, school, &gen_solution);
 			if(success){
 				if(school->solutions == NULL || school->n_solutions == 0){

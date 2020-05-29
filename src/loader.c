@@ -498,7 +498,7 @@ const char * const INSERT_TABLE_MEETING =
 const char * const LASTID_TABLE_MEETING =
 			("SELECT id FROM Meeting where rowid = last_insert_rowid()");
 const char * const SELECT_MEETING_BY_SOLUTION_ID =
-			("SELECT * FROM Meeting WHERE id_school=?");
+			("SELECT * FROM Meeting WHERE id_solution=?");
 const char * const UNSET_MEETING_ROOM_BY_ROOM_ID =
 			("UPDATE Meeting SET id_room=null where id_room=?");
 const char * const DELETE_MEETING_BY_SUBJECT_ID =
@@ -885,7 +885,7 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 		}
 
 		errc = sqlite3_exec(db, LASTID_TABLE_SOLUTION, get_id_callback, &(sol->id), NULL);
-		if(errc != SQLITE_DONE){
+		if(errc != SQLITE_OK){
 			fprintf(console_out, "Could not fetch lastid solution. %d %s", errc, sqlite3_errmsg(db));
 			sqlite3_finalize(stmt);
 			return -1;
@@ -897,6 +897,10 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 	}
 
 	errc = sqlite3_prepare(db, INSERT_TABLE_MEETING, -1, &stmt, NULL);
+	if(errc != SQLITE_OK){
+		fprintf(console_out, "Could not insert all meetings. %d %s", errc, sqlite3_errmsg(db));
+		return -1;
+	}
 	for(i = 0; sol->meetings[i].m_class != NULL; ++i){
 		sqlite3_bind_int(stmt, 1, sol->id);
 		sqlite3_bind_int(stmt, 2, school->period_ids[ sol->meetings[i].period ]);
@@ -914,7 +918,7 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 			break;
 		}
 
-		errc |= sqlite3_exec(db, LASTID_TABLE_MEETING, get_id_callback, &(school->feature_ids[i]), NULL);
+		errc |= sqlite3_exec(db, LASTID_TABLE_MEETING, get_id_callback, &(sol->meetings[i].id), NULL);
 
 		if(errc != SQLITE_DONE){
 			if(console_out){
@@ -1327,7 +1331,6 @@ char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids){
 static int select_all_meetings_by_solution_id(FILE * console_out, sqlite3* db, School * school, Solution * sol){
 	int i = 0, errc, id, j;
 	sqlite3_stmt* stmt;
-
 	errc = sqlite3_prepare_v2(db, SELECT_MEETING_BY_SOLUTION_ID, -1, &stmt, NULL);
 	if(errc == SQLITE_OK){
 		sqlite3_bind_int(stmt,1, sol->id);
@@ -1384,6 +1387,7 @@ static int select_all_meetings_by_solution_id(FILE * console_out, sqlite3* db, S
 					sol->meetings = realloc(sol->meetings, (i + 11)*sizeof(Meeting));
 				}
 			}
+			sol->n_meetings = i;
 		}
 	} else {
 		fprintf(console_out, "Could not select all meetings. %s\n", sqlite3_errmsg(db));
@@ -1397,11 +1401,11 @@ static int select_all_solutions(FILE * console_out, sqlite3* db, School * school
 
 	LMH_ASSERT(school != NULL && db != NULL);
 
-	fprintf(console_out,"Selecting all solutions");
+	fprintf(console_out,"Selecting all solutions\n");
 
 	errc = sqlite3_prepare_v2(db, SELECT_SOLUTION_BY_SCHOOL_ID, -1, &stmt, NULL);
 	if(errc != SQLITE_OK){
-		fprintf(console_out, "Could not select solutions. %d %s", errc, sqlite3_errmsg(db));
+		fprintf(console_out, "Could not prepare select solutions. %d %s\n", errc, sqlite3_errmsg(db));
 		return -1;
 	}
 	sqlite3_bind_int(stmt,1,school->id);
@@ -1409,22 +1413,22 @@ static int select_all_solutions(FILE * console_out, sqlite3* db, School * school
 
 	if(errc == SQLITE_ROW){
 		school->solutions = calloc(11, sizeof(Solution));
-	}
-	while(errc == SQLITE_ROW){
-		school->solutions[i].id = sqlite3_column_int(stmt,0);
-		school->solutions[i].name = copy_sqlite_string(stmt,2);
-		school->solutions[i].desc = copy_sqlite_string(stmt,3);
+		while(errc == SQLITE_ROW){
+			school->solutions[i].id = sqlite3_column_int(stmt,0);
+			school->solutions[i].name = copy_sqlite_string(stmt,2);
+			school->solutions[i].desc = copy_sqlite_string(stmt,3);
 
-		++i;
-		errc = sqlite3_step(stmt);
+			++i;
+			errc = sqlite3_step(stmt);
 
-		if(i % 10 == 0){
-			school->solutions = realloc(school->solutions, (i + 11)*sizeof(Solution));
+			if(i % 10 == 0){
+				school->solutions = realloc(school->solutions, (i + 11)*sizeof(Solution));
+			}
 		}
-	}
-	school->n_solutions = i;
-	for(i = 0; i < school->n_solutions; ++i){
-		select_all_meetings_by_solution_id(console_out, db, school, &school->solutions[i]);
+		school->n_solutions = i;
+		for(i = 0; i < school->n_solutions; ++i){
+			select_all_meetings_by_solution_id(console_out, db, school, &school->solutions[i]);
+		}
 	}
 	return school->n_solutions;
 }
