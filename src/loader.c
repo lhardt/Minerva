@@ -510,6 +510,60 @@ const char * const DELETE_MEETING_BY_CLASS_ID =
 const char * const DELETE_MEETING_BY_SOLUTION_ID =
 			("DELETE FROM Meeting WHERE id_solution = ?");
 
+const char * const CREATE_TABLE_POSSIBLE_TEACHER =
+			("CREATE TABLE IF NOT EXISTS PossibleTeacher("
+				"id integer primary key autoincrement not null,"
+				"score integer,"
+				"id_meeting integer,"
+				"id_teacher integer,"
+				"FOREIGN KEY (id_meeting) REFERENCES Meeting(id),"
+				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id)"
+			")");
+const char * const INSERT_TABLE_POSSIBLE_TEACHER =
+			("INSERT INTO PossibleTeacher(score, id_meeting, id_teacher) VALUES (?,?,?)");
+const char * const LASTID_TABLE_POSSIBLE_TEACHER =
+			("SELECT id FROM PossibleTeacher WHERE rowid=last_insert_rowid()");
+const char * const SELECT_TABLE_POSSIBLE_TEACHER_BY_MEETING_ID =
+			("SELECT * FROM PossibleTeacher WHERE id_meeting=?");
+const char * const DELETE_TABLE_POSSIBLE_TEACHER_BY_MEETING_ID =
+			("DELETE FROM PossibleTeacher WHERE id_meeting=?");
+
+const char * const CREATE_TABLE_POSSIBLE_ROOM =
+			("CREATE TABLE IF NOT EXISTS PossibleRoom("
+				"id integer primary key autoincrement not null,"
+				"score integer,"
+				"id_meeting integer,"
+				"id_room integer,"
+				"FOREIGN KEY (id_meeting) REFERENCES Meeting(id),"
+				"FOREIGN KEY (id_room) REFERENCES Room(id)"
+			")");
+const char * const INSERT_TABLE_POSSIBLE_ROOM =
+			("INSERT INTO PossibleRoom(score, id_meeting, id_room) VALUES (?,?,?)");
+const char * const LASTID_TABLE_POSSIBLE_ROOM =
+			("SELECT id FROM PossibleRoom WHERE rowid = last_insert_rowid()");
+const char * const SELECT_TABLE_POSSIBLE_ROOM_BY_MEETING_ID =
+			("SELECT * FROM PossibleRoom WHERE id_meeting = ?");
+const char * const DELETE_TABLE_POSSIBLE_ROOM_BY_MEETING_ID =
+			("DELETE FROM PossibleRoom WHERE id_meeting = ?");
+
+const char * const CREATE_TABLE_POSSIBLE_PERIOD =
+			("CREATE TABLE IF NOT EXISTS PossiblePeriod("
+				"id integer primary key autoincrement not null,"
+				"score integer,"
+				"id_meeting integer,"
+				"id_period integer,"
+				"FOREIGN KEY (id_meeting) REFERENCES Meeting(id),"
+				"FOREIGN KEY (id_period)  REFERENCES Period(id)"
+			")");
+const char * const INSERT_TABLE_POSSIBLE_PERIOD =
+			("INSERT INTO PossiblePeriod(score, id_meeting, id_period) VALUES (?,?,?)");
+const char * const LASTID_TABLE_POSSIBLE_PERIOD =
+			("SELECT id FROM PossiblePeriod WHERE rowid = last_insert_rowid()");
+const char * const SELECT_TABLE_POSSIBLE_PERIOD_BY_MEETING_ID =
+			("SELECT * FROM PossiblePeriod WHERE id_meeting = ?");
+const char * const DELETE_TABLE_POSSIBLE_PERIOD_BY_MEETING_ID =
+			("DELETE FROM PossiblePeriod WHERE id_meeting = ?");
+
 
 /**
  * Creates a table based on one of the strings above.
@@ -572,7 +626,10 @@ sqlite3* init_all_tables(FILE * console_out, char * db_filename){
 			create_table(console_out,db,"TeachesPeriodPreference", CREATE_TABLE_TEACHES_PERIOD_PREFERENCE)?1:
 			create_table(console_out,db,"TeachesTwinPreference", CREATE_TABLE_TEACHES_TWIN_PREFERENCE)?1:
 			create_table(console_out,db,"Solution", CREATE_TABLE_SOLUTION)?1:
-			create_table(console_out,db,"Meeting", CREATE_TABLE_MEETING)?1:0;
+			create_table(console_out,db,"Meeting", CREATE_TABLE_MEETING)?1:
+			create_table(console_out,db,"PossibleRoom", CREATE_TABLE_POSSIBLE_ROOM)?1:
+			create_table(console_out,db,"PossiblePeriod", CREATE_TABLE_POSSIBLE_PERIOD)?1:
+			create_table(console_out,db,"PossibleTeacher", CREATE_TABLE_POSSIBLE_TEACHER)?1:0;
 	if(iserr){
 		sqlite3_close(db);
 		return NULL;

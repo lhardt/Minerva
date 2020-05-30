@@ -28,7 +28,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	const wchar_t * const smenu_names[10][10] = {
 		{L"Arquivo", L"Dados", L"Ajuda", NULL},
 		{L"Visualização", L"Cadastro", L"Preferências", L"Conferência", L"Ajuda", NULL},
-		{L"Visualização", L"Cadastro", L"Preferências", L"Conferência", L"Ajuda", NULL},
+		{L"Visualização", L"Cadastro", L"Conferência", L"Ajuda", NULL},
 		{L"Visualização", L"Cadastro", L"Preferências", L"Conferência", L"Ajuda", NULL},
 		{L"Visualização", L"Cadastro", L"Preferências", L"Conferência", L"Ajuda", NULL},
 		{L"Visualização", L"Cadastro", L"Preferências", L"Conferência", L"Ajuda", NULL},
@@ -41,6 +41,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 			m_rib_bbars[i][j] = new wxRibbonButtonBar(new wxRibbonPanel(m_ribbon_pages[i], wxID_ANY, wxString(smenu_names[i][j])));
 		}
 	}
+	m_ribbon->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &MainMenuForm::OnMenuItemClicked, this);
 
 	auto image	      = wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, wxSize(32,32));
 	auto image_add    = wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, wxSize(32,32));
@@ -65,19 +66,13 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[1][2]->AddButton(LHID_OF(LHN_ROOM_PERIOD_PREF), wxT("Preferência por Períodos"), image_detail);
 	m_rib_bbars[1][3]->AddButton(LHID_OF(LHN_CHECK_ALL_ROOMS), wxT("Conferir Tudo"), image_detail);
 	m_rib_bbars[1][4]->AddButton(LHID_OF(LHN_OPEN_ROOMS_MANUAL), wxT("Abrir Manual"), image_detail);
-
-	m_ribbon->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &MainMenuForm::OnMenuItemClicked, this);
-
 	/* DISCIPLINAS */
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECTS), wxT("Ver Disciplinas"), image_list);
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECT_GROUPS), wxT("Ver Grupos Disciplinares"), image_detail);
 	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT), wxT("Adicionar Disciplina"), image_add);
 	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT_GROUP), wxT("Adicionar Grupo Disciplinar"), image_add);
-	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_PERIOD_PREF), wxT("Preferência por Períodos"), image_detail);
-	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
-	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_SUBJECT_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
-	m_rib_bbars[2][3]->AddButton(LHID_OF(LHN_CHECK_ALL_SUBJECTS), wxT("Conferir Tudo"), image_detail);
-	m_rib_bbars[2][4]->AddButton(LHID_OF(LHN_OPEN_SUBJECTS_MANUAL), wxT("Abrir Manual"), image_help);
+	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_CHECK_ALL_SUBJECTS), wxT("Conferir Tudo"), image_detail);
+	m_rib_bbars[2][3]->AddButton(LHID_OF(LHN_OPEN_SUBJECTS_MANUAL), wxT("Abrir Manual"), image_help);
 	/* PROFESSORES */
 	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHERS), wxT("Ver Professores"), image_list);
 	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHER_GROUPS), wxT("Ver Grupos de Professores"), image_detail);
@@ -96,7 +91,6 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS_GROUP), wxT("Adicionar Grupo de Turmas"), image_detail);
 	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_PERIOD_PREF), wxT("Disponibilidade por Períodos"), image_detail);
 	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TEACHER_PREF), wxT("Preferência por Professores"), image_detail);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
 	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
 	m_rib_bbars[4][3]->AddButton(LHID_OF(LHN_CHECK_ALL_CLASSES), wxT("Conferir Tudo"), image_detail);
 	m_rib_bbars[4][4]->AddButton(LHID_OF(LHN_OPEN_CLASSES_MANUAL), wxT("Abrir Manual"), image_help);
@@ -118,7 +112,6 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 
 	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add(m_ribbon, 0, wxEXPAND);
-
 
 	m_center_pane = new wxPanel(this, wxID_ANY, wxPoint(0,150), wxSize(800,425));
 	m_center_pane->SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
@@ -159,44 +152,21 @@ void MainMenuForm::CloseOpenedPane(){
 
 void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 	switch(ev.GetId()){
-		case LHID_OF(LHN_ADD_ROOM): {
+		/* School */
+		case LHID_OF(LHN_SCHOOL_DATA): {
 			CloseOpenedPane();
-			m_open_pane = new AddRoomPane(m_owner, m_center_pane, wxPoint(100,15));
+			m_open_pane = new DescSchoolPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
+		/* Room */
 		case LHID_OF(LHN_ADD_FEATURE): {
 			CloseOpenedPane();
 			m_open_pane = new AddFeaturePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-		case LHID_OF(LHN_ADD_SUBJECT):{
+		case LHID_OF(LHN_ADD_ROOM): {
 			CloseOpenedPane();
-			m_open_pane = new AddSubjectPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_ADD_SUBJECT_GROUP):{
-			CloseOpenedPane();
-			m_open_pane = new AddSubjectGroupPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_ADD_TEACHER):{
-			CloseOpenedPane();
-			m_open_pane = new AddTeacherPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_ADD_TEACHER_GROUP):{
-			CloseOpenedPane();
-			m_open_pane = new AddTeacherGroupPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_ADD_CLASS):{
-			CloseOpenedPane();
-			m_open_pane = new AddClassPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_ADD_CLASS_GROUP):{
-			CloseOpenedPane();
-			m_open_pane = new AddClassGroupPane(m_owner, m_center_pane, wxPoint(100,15));
+			m_open_pane = new AddRoomPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_FEATURES):{
@@ -209,15 +179,58 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new ListRoomsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
+		case LHID_OF(LHN_ROOM_PERIOD_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new RoomPeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_CHECK_ALL_ROOMS):{
+			break;
+		}
+		/* Subject */
+		case LHID_OF(LHN_ADD_SUBJECT):{
+			CloseOpenedPane();
+			m_open_pane = new AddSubjectPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_ADD_SUBJECT_GROUP):{
+			CloseOpenedPane();
+			m_open_pane = new AddSubjectGroupPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
 		case LHID_OF(LHN_SEE_SUBJECTS):{
 			CloseOpenedPane();
 			m_open_pane = new ListSubjectsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-
 		case LHID_OF(LHN_SEE_SUBJECT_GROUPS):{
 			CloseOpenedPane();
 			m_open_pane =new ListSubjectGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_SUBJECT_PERIOD_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new SubjectPeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_SUBJECT_ROOM_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new SubjectRoomPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_CHECK_ALL_SUBJECTS):{
+			printf("Not there yet.\n");
+			break;
+		}
+		/* Teacher */
+		case LHID_OF(LHN_ADD_TEACHER):{
+			CloseOpenedPane();
+			m_open_pane = new AddTeacherPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_ADD_TEACHER_GROUP):{
+			CloseOpenedPane();
+			m_open_pane = new AddTeacherGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_TEACHERS):{
@@ -225,10 +238,44 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new ListTeachersPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-
 		case LHID_OF(LHN_SEE_TEACHER_GROUPS):{
 			CloseOpenedPane();
 			m_open_pane = new ListTeacherGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_TEACHER_SUBJECT_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new TeacherSubjPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_TEACHER_PERIOD_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new TeacherPeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_TEACHER_TWIN_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new TeacherTwinPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_TEACHER_ROOM_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new TeacherRoomPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_CHECK_ALL_TEACHERS):{
+			printf("Not there yet.\n");
+			break;
+		}
+		/* Class */
+		case LHID_OF(LHN_ADD_CLASS):{
+			CloseOpenedPane();
+			m_open_pane = new AddClassPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_ADD_CLASS_GROUP):{
+			CloseOpenedPane();
+			m_open_pane = new AddClassGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_CLASSES):{
@@ -241,6 +288,61 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new ListClassGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
+		case LHID_OF(LHN_CLASS_PERIOD_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new ClassPeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_CLASS_TEACHER_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new ClassTeacherPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_CLASS_ROOM_PREF):{
+			CloseOpenedPane();
+			m_open_pane = new ClassRoomPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_CHECK_ALL_CLASSES):{
+			printf("Not there yet.\n");
+			break;
+		}
+		/* Lecture */
+		case LHID_OF(LHN_SEE_LECTURES): {
+			CloseOpenedPane();
+			m_open_pane = new ListLecturesPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_ADD_LECTURES): {
+			CloseOpenedPane();
+			m_open_pane = new AddLecturePane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_LECTURE_PERIOD_PREF): {
+			CloseOpenedPane();
+			m_open_pane = new AddLecturePane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_LECTURE_TEACHER_PREF): {
+			CloseOpenedPane();
+			m_open_pane = new LectureTeacherPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_LECTURE_TWIN_PREF): {
+			CloseOpenedPane();
+			m_open_pane = new LectureTwinPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_LECTURE_ROOM_PREF): {
+			CloseOpenedPane();
+			m_open_pane = new LectureRoomPrefPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
+		case LHID_OF(LHN_CHECK_ALL_LECTURES): {
+			printf("Not there yet.\n");
+			break;
+		}
+		/* Timetable */
 		case LHID_OF(LHN_GENERATE_TIMETABLE):{
 			CloseOpenedPane();
 			m_open_pane = new GenerateTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
@@ -251,11 +353,7 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new DescTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-		case LHID_OF(LHN_SCHOOL_DATA): {
-			CloseOpenedPane();
-			m_open_pane = new DescSchoolPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
+		/* Manual */
 		case LHID_OF(LHN_OPEN_SCHOOL_MANUAL):
 		case LHID_OF(LHN_OPEN_ROOMS_MANUAL):
 		case LHID_OF(LHN_OPEN_SUBJECTS_MANUAL):

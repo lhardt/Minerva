@@ -288,15 +288,23 @@ class AddClassGroupPane : public wxScrolledWindow {
 	void ClearInsertedData();
 };
 
+class AddLecturePane : public wxScrolledWindow {
+ public:
+	AddLecturePane(Application * owner, wxWindow * parent, wxPoint pos);
+	~AddLecturePane();
+
+ private:
+	Application * m_owner;
+};
+
 /* LIST Panes. */
 
 class DescSchoolPane : public wxScrolledWindow {
-public:
+ public:
 	DescSchoolPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~DescSchoolPane();
 
-private:
-
+ private:
 	Application * m_owner;
 };
 
@@ -413,10 +421,7 @@ class ListClassesPane : public wxScrolledWindow {
 	wxStaticText * m_exit_period_text;
 	wxStaticText * m_subjects_text;
 	ChoiceGrid   * m_periods_grid;
-/*
-	SubjectQuantity * needs;
-	int max_per_day_group[MAX_GROUPS];
-*/
+
 	Application * m_owner;
 
 	void OnSelectionChanged(wxCommandEvent &);
@@ -432,7 +437,141 @@ class ListClassGroupsPane : public wxScrolledWindow {
    Application * m_owner;
 };
 
-/* Generation */
+class ListLecturesPane : public wxScrolledWindow {
+ public:
+	ListLecturesPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListLecturesPane();
+
+ private:
+	Application * m_owner;
+};
+
+/* PREFERENCE Panes. */
+
+class RoomPeriodPrefPane : public wxScrolledWindow {
+ public:
+	RoomPeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~RoomPeriodPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class SubjectPeriodPrefPane : public wxScrolledWindow {
+ public:
+	SubjectPeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~SubjectPeriodPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class SubjectRoomPrefPane : public wxScrolledWindow {
+ public:
+	SubjectRoomPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~SubjectRoomPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class TeacherSubjPrefPane : public wxScrolledWindow {
+ public:
+	TeacherSubjPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~TeacherSubjPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class TeacherTwinPrefPane : public wxScrolledWindow {
+public:
+	TeacherTwinPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~TeacherTwinPrefPane();
+private:
+	Application * m_owner;
+};
+
+class TeacherPeriodPrefPane : public wxScrolledWindow {
+ public:
+	TeacherPeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~TeacherPeriodPrefPane();
+ private:
+	Application * m_owner;
+};
+
+class TeacherRoomPrefPane : public wxScrolledWindow {
+ public:
+	TeacherRoomPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~TeacherRoomPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class ClassPeriodPrefPane : public wxScrolledWindow {
+ public:
+	ClassPeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ClassPeriodPrefPane();
+ private:
+	Application * m_owner;
+};
+
+class ClassTeacherPrefPane : public wxScrolledWindow {
+ public:
+	ClassTeacherPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ClassTeacherPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class ClassRoomPrefPane : public wxScrolledWindow {
+ public:
+	ClassRoomPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ClassRoomPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class LecturePeriodPrefPane : public wxScrolledWindow {
+ public:
+	LecturePeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~LecturePeriodPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class LectureTeacherPrefPane : public wxScrolledWindow {
+ public:
+	LectureTeacherPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~LectureTeacherPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class LectureTwinPrefPane : public wxScrolledWindow {
+ public:
+	LectureTwinPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~LectureTwinPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+class LectureRoomPrefPane : public wxScrolledWindow {
+ public:
+	LectureRoomPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~LectureRoomPrefPane();
+
+ private:
+	Application * m_owner;
+};
+
+/* GENERATION Panes. */
 
 class GenerateTimetablePane : public wxScrolledWindow {
  public:
