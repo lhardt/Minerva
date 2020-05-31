@@ -194,12 +194,16 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 	AddSubjectGroupPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddSubjectGroupPane();
 
+ private:
 	wxTextCtrl * m_name_text;
 	wxComboBox * m_subjects;
-	wxListBox * subjects_list_box;
+	wxListBox * m_subjects_list_box;
+
+	bool added_subjects[MAX_SUBJECTS];
 
 	Application * m_owner;
- private:
+	void OnAddSubjectButtonClicked(wxCommandEvent &);
+	void OnRemoveAllButtonClicked(wxCommandEvent &);
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };

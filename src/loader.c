@@ -239,6 +239,39 @@ const char * const SELECT_SUBJECT_BY_SCHOOL_ID =
 const char * const DELETE_SUBJECT_BY_ID =
 			("DELETE FROM Subject WHERE id=?");
 
+const char * const CREATE_TABLE_SUBJECT_GROUP =
+			("CREATE TABLE IF NOT EXISTS SubjectGroup("
+				"id 					integer primary key autoincrement not null,"
+				"name					text,"
+				"school_id				integer,"
+				"FOREIGN KEY (school_id) REFERENCES School(id)"
+			")");
+const char * const INSERT_TABLE_SUBJECT_GROUP =
+ 			("INSERT INTO SubjectGroup(name) VALUES (?)");
+const char * const LASTID_TABLE_SUBJECT_GROUP =
+			("SELECT id FROM SubjectGroup WHERE rowid = last_insert_rowid()");
+const char * const SELECT_TABLE_SUBJECT_GROUP_BY_SCHOOL_ID =
+			("SELECT * FROM SubjectGroup WHERE school_id = ?");
+const char * const DELETE_TABLE_SUBJECT_GROUP_BY_SCHOOL_ID =
+			("DELETE FROM SubjectGroup WHERE school_id=?");
+
+const char * const CREATE_TABLE_SUBJECT_IN_GROUP =
+ 			("CREATE TABLE IF NOT EXISTS SubjectInGroup("
+				"id						integer primary key autoincrement not null,"
+				"id_subject				integer,"
+				"id_group				integer,"
+				"FOREIGN KEY (id_subject) REFERENCES Subject(id),"
+				"FOREIGN KEY (id_group)   REFERENCES SubjectGroup(id)"
+			")");
+const char * const INSERT_TABLE_SUBJECT_IN_GROUP =
+			("INSERT INTO SubjectInGroup(id_subject, id_group) VALUES (?,?)");
+const char * const LASTID_TABLE_SUBJECT_IN_GROUP =
+			("SELECT id FROM SubjectInGroup where rowid=last_insert_rowid()");
+const char * const SELECT_TABLE_SUBJECT_IN_GROUP_BY_SUBJECT_ID =
+			("SELECT * FROM SubjectInGroup WHERE id_subject=?");
+const char * const DELETE_TABLE_SUBJECT_IN_GROUP_BY_SUBJECT_ID =
+			("DELETE FROM SubjectInGroup WHERE id_subject = ?");
+
 const char * const CREATE_TABLE_CLASS_SUBJECT =
 			("CREATE TABLE IF NOT EXISTS ClassSubject("
 				"id 					integer primary key autoincrement not null,"
@@ -616,6 +649,8 @@ sqlite3* init_all_tables(FILE * console_out, char * db_filename){
 			create_table(console_out,db,"ClassAttendance", CREATE_TABLE_CLASS_ATTENDANCE)?1:
 			create_table(console_out,db,"ClassSubordination", CREATE_TABLE_CLASS_SUBORDINATION)?1:
 			create_table(console_out,db,"Subject", CREATE_TABLE_SUBJECT)?1:
+			create_table(console_out,db,"SubjectGroup", CREATE_TABLE_SUBJECT_GROUP)?1:
+			create_table(console_out,db,"SubjectInGroup", CREATE_TABLE_SUBJECT_IN_GROUP)?1:
 			create_table(console_out,db,"ClassSubject", CREATE_TABLE_CLASS_SUBJECT)?1:
 			create_table(console_out,db,"Teacher", CREATE_TABLE_TEACHER)?1:
 			create_table(console_out,db,"TeacherDay",CREATE_TABLE_TEACHER_DAY)?1:
@@ -898,9 +933,59 @@ int insert_feature(FILE * console_out, sqlite3 * db, const char * const feature,
 	return id;
 }
 
+int insert_subject_group(FILE * console_out,sqlite3 * db, School * school, char * group_name){
+	int errc, id;
+	sqlite3_stmt * stmt;
+
+	errc = sqlite3_prepare(db, INSERT_TABLE_SUBJECT_GROUP, -1, &stmt, NULL);
+	if(errc != SQLITE_OK){
+		fprintf(console_out,"Could not insert subject group. %s\n", sqlite3_errmsg(db));
+		return -1;
+	}
+	sqlite3_bind_text(stmt,1, group_name, -1, SQLITE_TRANSIENT);
+	errc = sqlite3_step(stmt);
+	if(errc != SQLITE_OK){
+		fprintf(console_out,"Could not insert subject group. %s\n", sqlite3_errmsg(db));
+		return -1;
+	}
+	errc = sqlite3_exec(db, LASTID_TABLE_SUBJECT_GROUP, get_id_callback, &id, NULL);
+	if(errc != SQLITE_DONE){
+		fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+		return -1;
+	}
+	return id;
+}
+
+int insert_subject_in_group(FILE * console_out,sqlite3 * db, int subj_id, int group_id){
+	int errc, id;
+	sqlite3_stmt * stmt;
+
+	errc = sqlite3_prepare(db, INSERT_TABLE_SUBJECT_IN_GROUP, -1, &stmt, NULL);
+	if(errc != SQLITE_OK){
+		fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+		return -1;
+	}
+
+	sqlite3_bind_int(stmt,1,subj_id);
+	sqlite3_bind_int(stmt,2,group_id);
+	errc = sqlite3_step(stmt);
+
+	if(errc != SQLITE_DONE){
+		fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+		return -1;
+	}
+	sqlite3_finalize(stmt);
+	errc = sqlite3_exec(db, LASTID_TABLE_SUBJECT_IN_GROUP, get_id_callback, &id, NULL);
+	if(errc != SQLITE_DONE){
+		fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+		return -1;
+	}
+	return id;
+}
+
 /* TODO test */
 int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * school){
-	int errc = 0;
+	int errc = 0, i = 0;
 	sqlite3_stmt * stmt = NULL;
 
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_SUBJECT, -1, &stmt, NULL);
@@ -910,11 +995,37 @@ int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * 
 		sqlite3_bind_int(stmt,3, school->id);
 
 		errc = sqlite3_step(stmt);
-		if(errc == SQLITE_OK){
+		if(errc != SQLITE_DONE){
 			fprintf(console_out,"Could not insert subject. %s\n", sqlite3_errmsg(db));
-		} else {
-			errc = sqlite3_exec(db, LASTID_TABLE_SUBJECT, get_id_callback, &subject->id, NULL);
+			return -1;
 		}
+		errc = sqlite3_exec(db, LASTID_TABLE_SUBJECT, get_id_callback, &subject->id, NULL);
+		if(errc != SQLITE_DONE){
+			fprintf(console_out,"Could not lastid subject. %s\n", sqlite3_errmsg(db));
+			return -1;
+		}
+		sqlite3_finalize(stmt);
+
+		errc = sqlite3_prepare(db, INSERT_TABLE_SUBJECT_IN_GROUP, -1, &stmt, NULL);
+		if(errc != SQLITE_OK){
+			fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+			return -1;
+		}
+		for(i = 0; i < school->n_subjects && subject->in_groups[i] >= 0 ; ++i){
+			if(subject->in_groups[i] > 0){
+				sqlite3_bind_int(stmt,1,subject->id);
+				sqlite3_bind_int(stmt,2,school->subject_group_ids[i]);
+				errc = sqlite3_step(stmt);
+
+				if(errc != SQLITE_DONE){
+					fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+					return -1;
+				}
+				sqlite3_reset(stmt);
+			}
+		}
+
+		sqlite3_finalize(stmt);
 	} else {
 		fprintf(console_out,"Could not insert subject. %s\n", sqlite3_errmsg(db));
 	}
@@ -1349,9 +1460,8 @@ static int * select_room_availibility(FILE * console_out, sqlite3* db, int room_
  * In case of error, returns null
  */
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids){
-	int i = 0, errc, str_sz, alloc_sz;
+	int i = 0, errc, alloc_sz;
 	sqlite3_stmt * stmt;
-	const char * aux;
 	char ** strings = NULL;
 
 	errc = sqlite3_prepare_v2(db, SELECT_SCHOOL_NAMES, -1, &stmt, NULL);
@@ -1847,14 +1957,14 @@ static bool select_all_features_by_school_id(FILE * console_out, sqlite3* db, in
 
 /* TODO test */
 static bool select_all_subjects_by_school_id(FILE * console_out, sqlite3* db, int id, int * n_subjects, School * school){
-	int i = 0, sz = 0, errc = 0;
+	int i = 0, n, sz = 0, errc = 0;
 	sqlite3_stmt * stmt;
 
-	fprintf(console_out, "Selecting all features.\n");
+	fprintf(console_out, "Selecting all subjects.\n");
 
 	errc = sqlite3_prepare(db, SELECT_SUBJECT_BY_SCHOOL_ID, -1, &stmt, NULL);
 	if(errc != SQLITE_OK){
-		fprintf(console_out, "Couldn't select all features");
+		fprintf(console_out, "Couldn't select all subjects %d %s\n", errc, sqlite3_errmsg(db));
 	} else {
 		sqlite3_bind_int(stmt,1,id);
 		errc = sqlite3_step(stmt);
@@ -1882,8 +1992,40 @@ static bool select_all_subjects_by_school_id(FILE * console_out, sqlite3* db, in
 			}
 		}
 
+		n = i;
 		if(n_subjects != NULL){
 			*n_subjects = i;
+		}
+		sqlite3_finalize(stmt);
+
+		errc = sqlite3_prepare(db, SELECT_TABLE_SUBJECT_IN_GROUP_BY_SUBJECT_ID, -1, &stmt, NULL);
+		if(errc == SQLITE_OK){
+			for(i = 0; i < n; ++i){
+				sqlite3_bind_int(stmt, 1, school->subjects[i].id);
+				errc = sqlite3_step(stmt);
+				while(errc == SQLITE_ROW){
+					bool found = false;
+					int id_group = sqlite3_column_int(stmt,0);
+					for(int j = 0; j < school->n_subject_groups; ++j){
+						if(id_group == school->subject_group_ids[j]){
+							found = true;
+							/* TODO FIXME is there any purpouse of scoring? Maybe a bool suffices. */
+							school->subjects[i].in_groups[j] = 1;
+							break;
+						}
+					}
+					if(!found){
+						fprintf(console_out, "Did not found subject_in_group groupid %d\n", id_group);
+					}
+					errc = sqlite3_step(stmt);
+				}
+				if(errc != SQLITE_DONE){
+					fprintf(console_out, "Could not select subject in group. %d %s", errc, sqlite3_errmsg(db));
+				}
+				sqlite3_reset(stmt);
+			}
+		} else {
+			fprintf(console_out, "Could not preapare select subject in group. %d %s", errc, sqlite3_errmsg(db));
 		}
 
 		return true;
@@ -2045,7 +2187,7 @@ static bool select_all_periods_by_school_id(FILE * console_out, sqlite3 * db, in
 
 static void link_all_teaches(School * school){
 	int i, j, n;
-	for(int i = 0; i < school->n_teachers; ++i){
+	for(i = 0; i < school->n_teachers; ++i){
 		n = 0;
 		for(j = 0; j < school->n_teaches; ++j){
 			if(school->teaches[j].teacher->id == school->teachers[i].id){
@@ -2062,6 +2204,40 @@ static void link_all_teaches(School * school){
 			}
 		}
 	}
+}
+
+int select_all_subject_groups_by_school_id(FILE * console_out, sqlite3 * db, int id, int * n_groups, School * school){
+	int i = 0, errc;
+	sqlite3_stmt * stmt;
+
+	errc = sqlite3_prepare_v2(db, SELECT_TABLE_SUBJECT_GROUP_BY_SCHOOL_ID, -1, &stmt, NULL);
+	if(errc != SQLITE_OK){
+		fprintf(console_out, "Could not prepare select subject group names. %d %s\n", errc, sqlite3_errmsg(db));
+		return 0;
+	}
+	sqlite3_bind_int(stmt, 1, id);
+	errc = sqlite3_step(stmt);
+	if(errc == SQLITE_ROW){
+		school->subject_group_ids = calloc(11, sizeof(int));
+		school->subject_group_names = calloc(11, sizeof(char*));
+
+		while(errc == SQLITE_ROW){
+			school->subject_group_names[i] = copy_sqlite_string(stmt,0);
+			school->subject_group_ids[i] = sqlite3_column_int(stmt,1);
+
+			++i;
+			errc = sqlite3_step(stmt);
+			if(i % 10 == 0){
+				school->subject_group_ids = realloc(school->subject_group_ids, (i+11)* sizeof(int));
+				school->subject_group_names = realloc(school->subject_group_ids, (i+11)* sizeof(char*));
+			}
+		}
+	}
+	if(errc != SQLITE_DONE) {
+		fprintf(console_out, "Could not step select subject group names %d %s\n", errc, sqlite3_errmsg(db));
+	}
+	*n_groups = i;
+	return i;
 }
 
 /* TODO more or less tested. */
@@ -2103,6 +2279,7 @@ School * select_school_by_id(FILE * console_out, sqlite3* db, int id){
 		school->classes = select_all_classes_by_school_id(stdout, db, id, &(school->n_classes), school);
 		school->teachers = select_all_teachers_by_school_id(stdout, db, id, &(school->n_teachers), school);
 		school->teaches = select_all_teaches_by_school_id(stdout, db, id, &(school->n_teaches), school);
+		select_all_subject_groups_by_school_id(stdout, db, id, &(school->n_subject_groups), school);
 		link_all_teaches(school);
 		select_all_solutions(stdout, db, school);
 	}

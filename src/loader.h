@@ -42,7 +42,8 @@ int insert_feature(FILE * console_out, sqlite3* db, const char * const feature, 
 int insert_room(FILE * console_out, sqlite3* db, Room * room, School * school);
 int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * school);
 int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * school);
-
+int insert_subject_in_group(FILE * console_out,sqlite3 * db, int subj_id, int group_id);
+int insert_subject_group(FILE * console_out,sqlite3 * db, School * school, char * group_name);
 int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution * sol);
 
 bool remove_class(FILE * console_out, sqlite3* db, int id);
