@@ -182,6 +182,7 @@ void print_school(FILE * out, const School * const s){
 		printf("\tn_subjects: 	 	 %d\n", s->n_subjects);
 		printf("\tn_rooms:	 	 	 %d\n", s->n_rooms);
 		printf("\tn_teaches: 	 	 %d\n", s->n_teaches);
+		printf("\tn_subj_groups: 	 %d\n", s->n_subject_groups);
 
 		// printf("\t\t")
 	}
@@ -195,6 +196,13 @@ void free_school(School * s){
 				free(s->teachers[i].periods);
 			}
 			free(s->teachers);
+		}
+		if(s->feature_names != NULL){
+			for(i = 0; i < s->n_features; ++i){
+				free(s->feature_names[i]);
+			}
+			free(s->feature_names);
+			free(s->feature_ids);
 		}
 		if(s->classes != NULL){
 			for(i = 0; i < s->n_classes; ++i){

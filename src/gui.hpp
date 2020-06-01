@@ -196,8 +196,9 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 
  private:
 	wxTextCtrl * m_name_text;
-	wxComboBox * m_subjects;
-	wxListBox * m_subjects_list_box;
+	wxChoice * m_subjects_choice;
+	wxListBox * m_subjects_list;
+	wxStaticText * m_err_msg;
 
 	bool added_subjects[MAX_SUBJECTS];
 
@@ -372,6 +373,14 @@ class ListSubjectGroupsPane : public wxScrolledWindow {
 	~ListSubjectGroupsPane();
  private:
 	Application * m_owner;
+
+	wxListBox * m_groups_list;
+	wxStaticText * m_name_text;
+	wxStaticText * m_members_text;
+
+	void OnEditButtonClicked(wxCommandEvent &);
+    void OnDeleteButtonClicked(wxCommandEvent &);
+    void OnSelectionChanged(wxCommandEvent &);
 };
 
 class ListTeachersPane : public wxScrolledWindow {

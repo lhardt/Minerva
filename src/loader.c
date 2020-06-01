@@ -939,18 +939,19 @@ int insert_subject_group(FILE * console_out,sqlite3 * db, School * school, char 
 
 	errc = sqlite3_prepare(db, INSERT_TABLE_SUBJECT_GROUP, -1, &stmt, NULL);
 	if(errc != SQLITE_OK){
-		fprintf(console_out,"Could not insert subject group. %s\n", sqlite3_errmsg(db));
+		fprintf(console_out,"Could not prepare insert subject group. %d %s\n", errc, sqlite3_errmsg(db));
 		return -1;
 	}
 	sqlite3_bind_text(stmt,1, group_name, -1, SQLITE_TRANSIENT);
 	errc = sqlite3_step(stmt);
-	if(errc != SQLITE_OK){
-		fprintf(console_out,"Could not insert subject group. %s\n", sqlite3_errmsg(db));
+	if(errc != SQLITE_DONE){
+		fprintf(console_out,"Could not step insert subject group. %d %s\n", errc, sqlite3_errmsg(db));
 		return -1;
 	}
+	sqlite3_finalize(stmt);
 	errc = sqlite3_exec(db, LASTID_TABLE_SUBJECT_GROUP, get_id_callback, &id, NULL);
-	if(errc != SQLITE_DONE){
-		fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+	if(errc != SQLITE_OK){
+		fprintf(console_out,"Could not lastid insert subject group. %d %s\n", errc, sqlite3_errmsg(db));
 		return -1;
 	}
 	return id;
@@ -962,7 +963,7 @@ int insert_subject_in_group(FILE * console_out,sqlite3 * db, int subj_id, int gr
 
 	errc = sqlite3_prepare(db, INSERT_TABLE_SUBJECT_IN_GROUP, -1, &stmt, NULL);
 	if(errc != SQLITE_OK){
-		fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+		fprintf(console_out,"Could not prepare insert subjectingroup. %s\n", sqlite3_errmsg(db));
 		return -1;
 	}
 
@@ -971,13 +972,13 @@ int insert_subject_in_group(FILE * console_out,sqlite3 * db, int subj_id, int gr
 	errc = sqlite3_step(stmt);
 
 	if(errc != SQLITE_DONE){
-		fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+		fprintf(console_out,"Could not step insert subjectingroup. %s\n", sqlite3_errmsg(db));
 		return -1;
 	}
 	sqlite3_finalize(stmt);
 	errc = sqlite3_exec(db, LASTID_TABLE_SUBJECT_IN_GROUP, get_id_callback, &id, NULL);
-	if(errc != SQLITE_DONE){
-		fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
+	if(errc != SQLITE_OK){
+		fprintf(console_out,"Could not lastid insert subjectingroup. %s\n", sqlite3_errmsg(db));
 		return -1;
 	}
 	return id;
