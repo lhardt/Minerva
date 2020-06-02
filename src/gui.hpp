@@ -238,12 +238,17 @@ class AddTeacherGroupPane : public wxScrolledWindow {
  private:
 
 	wxTextCtrl * m_name_text;
-	wxComboBox * m_all_teachers_list;
+	wxChoice * m_all_teachers_list;
 	wxListBox  * m_selected_teachers_list;
 
 	Application * m_owner;
 
-	void OnAddButtonClicked(wxCommandEvent &);
+	bool * teachers_inside;
+
+	void OnRemoveTeacherButtonClicked(wxCommandEvent & evt);
+	void OnRemoveAllButtonClicked(wxCommandEvent &);
+	void OnAddTeacherButtonClicked(wxCommandEvent & evt);
+	void OnAddGroupButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };
 

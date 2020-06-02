@@ -15,7 +15,14 @@ ListTeacherGroupsPane::ListTeacherGroupsPane(Application * owner, wxWindow * par
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Grupos de Professores"), wxDefaultPosition, wxSize(400,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300));
+	wxArrayString group_names;
+	for(i = 0; i < school->n_teachers; ++i){
+		if(school->teachers[i].subordinates != NULL){
+			group_names.push_back(school->teachers[i].name);
+		}
+	}
+
+	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), group_names);
 	m_members_text = new wxStaticText(this, wxID_ANY, wxT("Membros do Grupo"), wxDefaultPosition, wxSize(400,25));
 
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));

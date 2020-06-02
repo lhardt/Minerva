@@ -127,6 +127,9 @@ void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
 }
 
 void AddSubjectGroupPane::ClearInsertedData(){
+	for(int i = 0; i < m_owner->m_school->n_subjects; ++i){
+		added_subjects[i] = false;
+	}
 	m_name_text->Clear();
 	m_subjects_list->Clear();
 }
