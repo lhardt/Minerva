@@ -261,7 +261,7 @@ class AddClassPane : public wxScrolledWindow {
 
 	wxTextCtrl * m_name_text;
 	ChoiceGrid * m_periods;
-	wxComboBox * m_all_subjects_list;
+	wxChoice   * m_all_subjects_list;
 	wxListBox  * m_selected_subjects_list;
 	wxSpinCtrl * m_score_text;
 	wxSpinCtrl * m_size_text;
@@ -290,12 +290,18 @@ class AddClassGroupPane : public wxScrolledWindow {
 	AddClassGroupPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddClassGroupPane();
  private:
-	wxTextCtrl * m_name_text;
-	wxComboBox * m_all_classes_list;
-	wxListBox  * m_selected_classes_list;
 	Application * m_owner;
 
-	void OnAddButtonClicked(wxCommandEvent &);
+	wxTextCtrl * m_name_text;
+	wxChoice * m_all_classes_list;
+	wxListBox  * m_selected_classes_list;
+	wxStaticText * m_err_msg;
+
+	bool * m_added_classes;
+
+	void OnAddGroupButtonClicked(wxCommandEvent &);
+	void OnAddClassButtonClicked(wxCommandEvent &);
+	void OnRemoveAllButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };
 

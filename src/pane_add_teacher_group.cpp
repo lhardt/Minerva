@@ -40,6 +40,8 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 
 	wxButton * add_group = new wxButton(this, wxID_ANY, wxT("Adicionar Grupo"), wxDefaultPosition, wxSize(180,30));
 
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
+
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
 	add_sizer->Add(m_all_teachers_list,0,wxRIGHT,10);
 	add_sizer->Add(add_teacher,0,wxRIGHT,10);
@@ -59,6 +61,7 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 	sizer->Add(add_sizer, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(teachers_sizer, 0, wxLEFT | wxBOTTOM, 15);
 	sizer->Add(add_group, 0, wxLEFT | wxBOTTOM, 15);
+	sizer->Add(m_err_msg, 0, wxLEFT | wxBOTTOM, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -73,7 +76,6 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 }
 
 void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
-	printf("add group\n");
 	School * school = m_owner->m_school;
 	if(!m_name_text->GetValue().IsEmpty() && m_selected_teachers_list->GetCount() > 0){
 		Teacher group;
@@ -142,8 +144,6 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 				++added_ctr;
 			}
 		}
-
-
 		bool success = insert_teacher(stdout, m_owner->m_database, &group, school);
 		if(success){
 			if(school->teachers == NULL || school->n_teachers == 0){
@@ -154,6 +154,11 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 			}
 			school->teachers[school->n_teachers] = group;
 			++school->n_teachers;
+
+			AddTeacherGroupPane::ClearInsertedData();
+			m_err_msg->SetLabel(wxT("Inserido com Sucesso"));
+		} else {
+			m_err_msg->SetLabel(wxT("Não foi possível inserir. Erro no Banco."));
 		}
 	}
 }
@@ -165,20 +170,23 @@ void AddTeacherGroupPane::OnAddTeacherButtonClicked(wxCommandEvent & evt){
 		teachers_inside[select_i] = true;
 		m_selected_teachers_list->InsertItems(1, &t_name, m_selected_teachers_list->GetCount());
 	}
-	printf("add teacher\n");
 }
 
 void AddTeacherGroupPane::OnRemoveTeacherButtonClicked(wxCommandEvent & evt){
-	printf("remove teacher\n");
+	/* TODO implement */
 }
 
 void AddTeacherGroupPane::OnRemoveAllButtonClicked(wxCommandEvent & evt){
-	printf("remove all\n");
 	int i = 0, n = m_owner->m_school->n_teachers;
 	for(i = 0; i < n; ++i){
 		teachers_inside[i] = false;
 	}
 	m_selected_teachers_list->Clear();
+}
+
+void AddTeacherGroupPane::ClearInsertedData(){
+	m_selected_teachers_list->Clear();
+	m_name_text->Clear();
 }
 
 AddTeacherGroupPane::~AddTeacherGroupPane(){

@@ -124,7 +124,7 @@ struct Class {
 	int * subordinates;
 
 	SubjectQuantity * needs;
-	int max_per_day_group[MAX_GROUPS];
+	int max_per_day_subject_group[MAX_GROUPS];
 };
 
 

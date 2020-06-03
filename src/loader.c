@@ -863,8 +863,8 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 	sqlite3_bind_int(stmt, 3, class->size);
 	sqlite3_bind_int(stmt, 4, class->abstract);
 	sqlite3_bind_int(stmt, 5, class->can_have_free_periods_flag);
-	sqlite3_bind_int(stmt, 6, school->period_ids[class->maximal_entry_period]);
-	sqlite3_bind_int(stmt, 7, school->period_ids[class->minimal_exit_period]);
+	sqlite3_bind_int(stmt, 6, school->daily_period_ids[class->maximal_entry_period]);
+	sqlite3_bind_int(stmt, 7, school->daily_period_ids[class->minimal_exit_period]);
 	sqlite3_bind_int(stmt, 8, school->id);
 
 	errc = sqlite3_step(stmt);
@@ -1774,12 +1774,9 @@ static int * select_teacher_subordinates_by_teacher_id(FILE * console_out, sqlit
 
 		while(errc == SQLITE_ROW){
 			sub_id = sqlite3_column_int(stmt,1);
-			printf("Subid: %d\n", sub_id);
 			for(j = 0; j < school->n_teachers; ++j){
-				printf("teacher j : %d\n", school->teachers[j].id);
 				if(sub_id == school->teachers[j].id){
 					t->subordinates[j] = 1;
-					printf("Set at teacher %d\n", j);
 					break;
 				}
 			}
@@ -1927,9 +1924,22 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 			classes[i].size = sqlite3_column_int(stmt,3);
 			classes[i].abstract = sqlite3_column_int(stmt,4);
 			classes[i].can_have_free_periods_flag = sqlite3_column_int(stmt,5);
+			/* Id, temporarily */
 			classes[i].maximal_entry_period = sqlite3_column_int(stmt,6);
+			for(j = 0; j < school->n_periods_per_day; ++j){
+				if(school->daily_period_ids[j] == classes[i].maximal_entry_period){
+					classes[i].maximal_entry_period = j;
+					break;
+				}
+			}
 			classes[i].minimal_exit_period = sqlite3_column_int(stmt,7);
-
+			for(j = 0; j < school->n_periods_per_day; ++j){
+				if(school->daily_period_ids[j] == classes[i].minimal_exit_period){
+					classes[i].minimal_exit_period = j;
+					break;
+				}
+			}
+			printf("To select attendance with id %d \n", classes[i].id);
 			int * attendance = select_attendance(console_out, db, SELECT_CLASS_ATTENDANCE_BY_CLASS_ID, classes[i].id, school);
 			for(j = 0; attendance[j] >= 0 && j < school->n_periods; ++j){
 				classes[i].periods[j] = attendance[j];

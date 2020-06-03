@@ -84,7 +84,7 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	subjects_label->SetFont(*m_owner->m_small_font);
 
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
-	m_all_subjects_list = new wxComboBox(this, wxID_ANY, wxT("Disciplinas"), wxDefaultPosition, wxSize(180,30), subj_arr);
+	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(180,30), subj_arr);
 	m_score_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(120,30));
 	wxButton * add_subject = new wxButton(this, wxID_ANY, wxT("Adicionar Disciplina"), wxDefaultPosition, wxSize(180,30));
 	add_sizer->Add(m_all_subjects_list,0,wxRIGHT,10);
