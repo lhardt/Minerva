@@ -2,23 +2,29 @@
 RM 		:= -rm
 CC 		:= gcc
 CXX		:= g++
+WXHOME  := # /C/wxWidgets-3.1.3/build-release/
+WXCONF  := $(WXHOME)wx-config
+WNDRES  := windres
 # Folders
 SRCDIR 	:= src
 OBJDIR 	:= obj
 BINDIR 	:= bin
 TSTDIR  := test
+INCDIR  := inc
+LIBDIR  := lib
 # Files
 CSRC 	:= $(wildcard $(SRCDIR)/*.c)
 CPPSRC  := $(wildcard $(SRCDIR)/*.cpp)
 MAIN 	:= $(SRCDIR)/main.c
 MAINO 	:= $(OBJDIR)/main.o
 TARGET 	:= $(BINDIR)/main
+LIBO	:= $(wildcard $(LIBDIR)/*.o)
 COBJ 	:= $(CSRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
-CPPOBJ  := $(CPPSRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+CPPOBJ  := $(CPPSRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.O)
 # Flags
-CFLAGS 	:= -Wall -g $(shell wx-config --cflags)
-CXXFLAGS:= -Wall -g $(shell wx-config --cxxflags)
-LIB 	:= -lsqlite3 $(shell wx-config --libs) -lwx_gtk3u_ribbon-3.0
+CFLAGS 	:= -Iinc -Wall -g $(shell $(WXCONF) --cflags)
+CXXFLAGS:= -Iinc -Wall -g $(shell $(WXCONF) --cxxflags)
+LIB 	:= -lsqlite3 $(shell $(WXCONF) --libs ) -lwx_gtk3u_ribbon-3.0
 TSTFLAG :=
 # Test
 NMAINOBJ:= $(filter-out $(MAINO), $(COBJ)) $(filter-out $(MAINO), $(CPPOBJ))
@@ -35,14 +41,14 @@ all: $(TARGET)
 clean:
 	$(RM) $(COBJ) $(TOBJC) $(CPPOBJ) $(TOBJCPP)
 
-$(COBJ): $(CSRC)
+obj/%.o: src/%.c
 	$(CC)  $(CFLAGS) -c $(@:$(OBJDIR)/%.o=$(SRCDIR)/%.c) -o $@
 
-$(CPPOBJ) : $(CPPSRC)
-	$(CXX)  $(CXXFLAGS) -c $(@:$(OBJDIR)/%.o=$(SRCDIR)/%.cpp) -o $@
+obj/%.O : src/%.cpp
+	$(CXX)  $(CXXFLAGS) -c $(@:$(OBJDIR)/%.O=$(SRCDIR)/%.cpp) -o $@
 
 $(TARGET) : $(COBJ) $(CPPOBJ)
-	$(CXX) -o $(TARGET) $(COBJ) $(CPPOBJ) $(LIB)
+	$(CXX) -o $(TARGET) $(COBJ) $(CPPOBJ) $(LIB) $(LIBO)
 
 test: $(TSTGET)
 

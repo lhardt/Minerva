@@ -1754,9 +1754,45 @@ static Room * select_all_rooms_by_school_id(FILE * console_out, sqlite3* db, int
 	return rooms;
 }
 
+static int * select_teacher_subordinates_by_teacher_id(FILE * console_out, sqlite3 * db, Teacher * t, School * school){
+	sqlite3_stmt * stmt;
+	int errc, i,j, sub_id;
+
+	errc = sqlite3_prepare_v2(db, SELECT_TEACHER_SUBORDINATION_BY_SUP_ID, -1, &stmt, NULL);
+	if(errc != SQLITE_OK){
+		fprintf(console_out, "Could not prepare select teacher sub. %d %s \n", errc, sqlite3_errmsg(db));
+		return NULL;
+	}
+	sqlite3_bind_int(stmt,1,t->id);
+	errc = sqlite3_step(stmt);
+	if(errc != SQLITE_DONE && errc != SQLITE_ROW){
+		fprintf(console_out, "Could not select teacher sub. %d %s \n", errc, sqlite3_errmsg(db));
+		return NULL;
+	}
+	if(errc == SQLITE_ROW) {
+		t->subordinates = calloc(1+ school->n_teachers, sizeof(int));
+
+		while(errc == SQLITE_ROW){
+			sub_id = sqlite3_column_int(stmt,1);
+			printf("Subid: %d\n", sub_id);
+			for(j = 0; j < school->n_teachers; ++j){
+				printf("teacher j : %d\n", school->teachers[j].id);
+				if(sub_id == school->teachers[j].id){
+					t->subordinates[j] = 1;
+					printf("Set at teacher %d\n", j);
+					break;
+				}
+			}
+			errc = sqlite3_step(stmt);
+			++i;
+		}
+	}
+	return t->subordinates;
+}
+
 /* TODO test. */
 static Teacher * select_all_teachers_by_school_id(FILE * console_out, sqlite3* db, int id, int * n_teachers, School * school){
-	int i = 0, alloc_sz = 0, str_sz = 0, errc = 0;
+	int i = 0, alloc_sz = 0, str_sz = 0, errc = 0, n = 0;
 	Teacher * teachers;
 	const char * aux;
 	sqlite3_stmt * stmt;
@@ -1795,13 +1831,18 @@ static Teacher * select_all_teachers_by_school_id(FILE * console_out, sqlite3* d
 			teachers[i].num_planning_periods = sqlite3_column_int(stmt,7);
 
 			teachers[i].periods = select_attendance(console_out, db, SELECT_TEACHER_ATTENDANCE_BY_TEACHER_ID, teachers[i].id, school);
+
 			errc = sqlite3_step(stmt);
 			++i;
 		}
 	}
-
+	school->teachers = teachers;
+	n = i;
 	if(n_teachers != NULL){
-		*n_teachers = i;
+		*n_teachers = n;
+	}
+	for(i = 0; i < n; ++i){
+		teachers[i].subordinates = select_teacher_subordinates_by_teacher_id(console_out, db, &teachers[i], school);
 	}
 	return teachers;
 }

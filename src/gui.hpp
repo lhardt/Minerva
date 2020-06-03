@@ -240,6 +240,7 @@ class AddTeacherGroupPane : public wxScrolledWindow {
 	wxTextCtrl * m_name_text;
 	wxChoice * m_all_teachers_list;
 	wxListBox  * m_selected_teachers_list;
+	wxStaticText * m_err_msg;
 
 	Application * m_owner;
 
@@ -418,7 +419,9 @@ class ListTeacherGroupsPane : public wxScrolledWindow {
 	Application * m_owner;
 
 	wxListBox * m_groups_list;
+	wxStaticText * m_name_text;
 	wxStaticText * m_members_text;
+	wxStaticText * m_err_msg;
 
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnDeleteButtonClicked(wxCommandEvent &);
