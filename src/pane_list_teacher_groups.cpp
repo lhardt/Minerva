@@ -59,7 +59,6 @@ ListTeacherGroupsPane::ListTeacherGroupsPane(Application * owner, wxWindow * par
 	m_groups_list->Bind(wxEVT_LISTBOX, &ListTeacherGroupsPane::OnSelectionChanged, this);
 	edit_btn->Bind(wxEVT_BUTTON, &ListTeacherGroupsPane::OnEditButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListTeacherGroupsPane::OnDeleteButtonClicked, this);
-
 }
 
 

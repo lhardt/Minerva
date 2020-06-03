@@ -461,7 +461,17 @@ class ListClassGroupsPane : public wxScrolledWindow {
 	ListClassGroupsPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListClassGroupsPane();
  private:
-   Application * m_owner;
+	Application * m_owner;
+
+	wxListBox * m_groups_list;
+	wxStaticText * m_name_text;
+	wxStaticText * m_members_text;
+	ChoiceGrid * m_periods_grid;
+	wxStaticText * m_err_msg;
+
+	void OnSelectionChanged(wxCommandEvent &);
+	void OnEditButtonClicked(wxCommandEvent &);
+	void OnDeleteButtonClicked(wxCommandEvent &);
 };
 
 class ListLecturesPane : public wxScrolledWindow {

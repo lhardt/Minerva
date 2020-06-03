@@ -722,19 +722,19 @@ int insert_class_sub(FILE * console_out, sqlite3 * db, int sup_id, int sub_id){
 
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_CLASS_SUBORDINATION, -1, &stmt, NULL);
 	if(errc != SQLITE_OK){
-		fprintf(console_out, "could not prepare insert teacher sub. %d %s", errc, sqlite3_errmsg(db));
+		fprintf(console_out, "could not prepare insert class sub. %d %s", errc, sqlite3_errmsg(db));
 		return -1;
 	}
 	sqlite3_bind_int(stmt,1,sub_id);
 	sqlite3_bind_int(stmt,2,sup_id);
 	errc = sqlite3_step(stmt);
 	if(errc != SQLITE_DONE){
-		fprintf(console_out, "could not step insert teacher sub. %d %s", errc, sqlite3_errmsg(db));
+		fprintf(console_out, "could not step insert class sub. %d %s", errc, sqlite3_errmsg(db));
 		return -1;
 	}
 	errc = sqlite3_exec(db, LASTID_TEACHER_SUBORDINATION, get_id_callback, &id, NULL);
 	if(errc != SQLITE_OK){
-		fprintf(console_out, "could not lastid insert teacher sub. %d %s", errc, sqlite3_errmsg(db));
+		fprintf(console_out, "could not lastid insert class sub. %d %s", errc, sqlite3_errmsg(db));
 	}
 	return id;
 }
@@ -1884,9 +1884,40 @@ bool select_all_class_subject_by_class_id(FILE * console_out, sqlite3* db, Class
 	return false;
 }
 
+static int * select_all_class_subordination_by_class_id(FILE * console_out, sqlite3* db, Class * class, School * school){
+	int errc, i, subid;
+	sqlite3_stmt * stmt;
+
+	errc = sqlite3_prepare_v2(db, SELECT_CLASS_SUBORDINATION_BY_SUP_ID, -1, &stmt, NULL);
+	if(errc != SQLITE_OK){
+		fprintf(console_out, "Could not prepare select classub. %d %s", errc, sqlite3_errmsg(db));
+		return NULL;
+	}
+	sqlite3_bind_int(stmt,1, class->id);
+	errc = sqlite3_step(stmt);
+	if(errc == SQLITE_ROW){
+		class->subordinates = calloc(school->n_classes + 1, sizeof(int));
+		class->subordinates[school->n_classes] = -1;
+		while(errc == SQLITE_ROW){
+			subid = sqlite3_column_int(stmt,1);
+			printf("Searching for subid %d \n", subid);
+			for(i = 0; i < school->n_classes; ++i){
+				printf("Comparing to subid %d \n", school->classes[i].id);
+				if(subid == school->classes[i].id){
+					printf("%s Subordinates %s.\n", class->name, school->classes[i].name);
+					class->subordinates[i] = 1;
+				}
+			}
+
+			errc = sqlite3_step(stmt);
+		}
+	}
+	return class->subordinates;
+}
+
 /* TODO test. */
 static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, int id, int * n_classes, School * school){
-	int i = 0, j, alloc_sz = 0, str_sz = 0, errc;
+	int i = 0, n, j, alloc_sz = 0, str_sz = 0, errc;
 	sqlite3_stmt * stmt;
 	const char * aux;
 	Class * classes = NULL;
@@ -1954,9 +1985,14 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 
 		}
 	}
-
+	school->classes = classes;
+	n = i;
 	if(n_classes != NULL){
 		*n_classes = i;
+	}
+
+	for(i = 0; i < n; ++i){
+		select_all_class_subordination_by_class_id(console_out, db, &classes[i], school);
 	}
 	return classes;
 }
