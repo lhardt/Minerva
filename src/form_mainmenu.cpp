@@ -1,9 +1,9 @@
 #include "gui.hpp"
 #include <wx/wx.h>
-#include "wx/ribbon/bar.h"
-#include "wx/ribbon/buttonbar.h"
-#include "wx/ribbon/gallery.h"
-#include "wx/ribbon/toolbar.h"
+#include <wx/ribbon/bar.h>
+#include <wx/ribbon/buttonbar.h>
+#include <wx/ribbon/gallery.h>
+#include <wx/ribbon/toolbar.h>
 #include <wx/artprov.h>
 
 #include "gui_language.hpp"

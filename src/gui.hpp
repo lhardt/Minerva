@@ -235,7 +235,7 @@ class AddTeacherPane : public wxScrolledWindow {
  private:
 
 	wxTextCtrl * m_name_text;
-	wxComboBox * m_all_subjects_list;
+	wxChoice   * m_all_subjects_list;
 	wxListBox  * m_teaches_subjects_list;
 	wxStaticText * m_err_msg;
 	ChoiceGrid * m_grid;
@@ -651,6 +651,7 @@ class DescTimetablePane : public wxScrolledWindow {
 	wxChoice * m_class_choice;
 	wxChoice * m_teacher_choice;
 	wxChoice * m_subject_choice;
+	wxChoice * m_room_choice;
 	wxGrid   * m_grid;
 
 	void OnRedrawGridRequest(wxCommandEvent &);

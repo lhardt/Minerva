@@ -1,4 +1,5 @@
 #include "gui.hpp"
+#include <wx/richtooltip.h>
 
 extern "C" {
 	#include "loader.h"
@@ -9,19 +10,31 @@ AddFeaturePane::AddFeaturePane(Application * owner, wxWindow * parent, wxPoint p
 	this->m_owner = owner;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Característica"), wxPoint(30,30), wxSize(200,25));
+	wxSizer * wrapper = new wxBoxSizer(wxVERTICAL);
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Característica"), wxDefaultPosition, wxSize(300,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome da Característica"), wxPoint(30,75), wxSize(200,15));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome da Característica"), wxDefaultPosition, wxSize(200,15));
 	name_label->SetFont(*m_owner->m_small_font);
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxPoint(30,90), wxSize(200,30));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
 
-	wxButton * button_go = new wxButton(this,wxID_ANY, wxT("Adicionar"), wxPoint(30,135), wxSize(200,30));
+	wxButton * button_add = new wxButton(this,wxID_ANY, wxT("Adicionar"), wxDefaultPosition, wxSize(200,30));
 
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxPoint(30, 180), wxSize(300,30));
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 	m_err_msg->SetFont(*m_owner->m_small_font);
 
-	button_go->Bind(wxEVT_BUTTON, &AddFeaturePane::OnCreateButtonClicked, this);
+	sizer->Add(title, 0, wxEXPAND |  wxTOP | wxLEFT | wxRIGHT, 15);
+	sizer->Add(name_label, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 15);
+	sizer->Add(m_name_text, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
+	sizer->Add(button_add, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
+	sizer->Add(m_err_msg, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 15);
+
+	wrapper->Add(sizer, 0, wxALL, 15);
+	SetSizerAndFit(wrapper);
+
+	button_add->Bind(wxEVT_BUTTON, &AddFeaturePane::OnCreateButtonClicked, this);
 }
 
 AddFeaturePane::~AddFeaturePane(){

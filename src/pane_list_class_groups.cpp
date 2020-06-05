@@ -1,5 +1,9 @@
 #include "gui.hpp"
 
+extern "C" {
+	#include "loader.h"
+};
+
 ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
 	int i = 0;
 	School * school = NULL;
@@ -109,8 +113,9 @@ void ListClassGroupsPane::OnDeleteButtonClicked(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	if(i_select != wxNOT_FOUND){
 		for(i_class = 0; i_class < school->n_classes && i_group <= i_select; ++i_class){
-
+			// TODO
 		}
+		// TODO
 	}
 }
 

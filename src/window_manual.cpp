@@ -28,9 +28,9 @@ wxWindow * ManualWindow::PopulateSchoolWindow(){
 
 	wxSizer * textsz = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(man_win, wxID_ANY, wxT("Por Onde Começar\n"), wxDefaultPosition, wxSize(300,30));
+	wxStaticText * title = new wxStaticText(man_win, wxID_ANY, wxT("Por Onde Começar\n"), wxDefaultPosition, wxSize(300,-1));
 	title->SetFont(*m_owner->m_page_title_font);
-	textsz->Add(title, 0, wxALIGN_CENTER | wxALL, 15);
+	textsz->Add(title, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 15);
 
 	wxStaticText * introd = new wxStaticText(man_win, wxID_ANY,
 			wxT("Gostaríamos mais uma vez de estar testando essa novidade. Todo feedback nos é importante.\n\n"
@@ -38,9 +38,9 @@ wxWindow * ManualWindow::PopulateSchoolWindow(){
 				"No entanto, ainda não criamos uma função de desfazer. Há uma variedade de outras funções que não operam ainda.\n\n"
 				"Por ser uma versão preliminar, o programa que você está usando serve mais para ser julgado (incluindo dar dicas, fazer reclamações, etc) "
 				"do que realmente para fazer o horário. Ainda assim, a geração do horário está disponível e, a princípio, deve dar um resultado válido."
-			), wxDefaultPosition, wxSize(450,500));
+			), wxDefaultPosition, wxSize(450,-1));
 	title->SetFont(*m_owner->m_page_title_font);
-	textsz->Add(introd, 0, wxALL, 15);
+	textsz->Add(introd, 1, wxEXPAND | wxALL, 15);
 
 	man_win->SetSizerAndFit(textsz);
 	return man_win;
