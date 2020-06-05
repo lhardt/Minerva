@@ -17,6 +17,8 @@
 #include <wx/grid.h>
 #include <wx/ribbon/bar.h>
 #include <wx/notebook.h>
+#include <wx/artprov.h>
+#include <wx/event.h>
 
 
 extern "C"{
@@ -63,6 +65,23 @@ class ChoiceGrid : public wxGrid {
 	void SetCellImmutable(int i_col, int i_row);
  private:
 	void OnLeftClick(wxGridEvent &);
+};
+
+class HoverToolTip : public wxStaticBitmap {
+ public:
+	HoverToolTip(wxWindow * parent,
+				wxWindowID  id = wxID_ANY,
+				wxString txt = wxT(""),
+				wxBitmap bmp = wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, wxSize(32,32)),
+				wxPoint pos = wxDefaultPosition,
+				wxSize sz = wxDefaultSize
+			);
+
+ 	~HoverToolTip();
+ private:
+
+	wxString m_text;
+	void OnHover(wxMouseEvent& evt);
 };
 
 class WelcomeForm : public wxFrame {
