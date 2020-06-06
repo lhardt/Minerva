@@ -1,6 +1,49 @@
 #ifndef GUI_LANGUAGE
 #define GUI_LANGUAGE
 
+
+/* Language per se */
+typedef struct Language {
+	const char * const str_hello_world;
+	const char * const str_language;
+	const char * const str_settings;
+	const char * const str_save;
+	const char * const str_back;
+} Language;
+
+const Language LANG_POR = {
+	.str_hello_world = "Olá, mundo!",
+	.str_language = "Linguagem",
+	.str_settings = "Configurações",
+	.str_save = "Salvar",
+	.str_back = "Voltar"
+};
+
+const Language LANG_ENG = {
+	.str_hello_world = "Hello, world!",
+	.str_language = "Language",
+	.str_settings = "Settings",
+	.str_save = "Save",
+	.str_back = "Back"
+};
+
+const Language LANG_SPA = {
+	.str_hello_world = "¡Hola, mundo!",
+	.str_language = "Lenguaje",
+	.str_settings = "Ajustes",
+	.str_save = "Salvar",
+	.str_back = "(?)"
+};
+
+const Language LANG_DEU = {
+	.str_hello_world = "Hallo, Welt!",
+	.str_language = "Sprache",
+	.str_settings = "Einsteillungen",
+	.str_back = "(?)"
+};
+
+/* IDs of buttons. */
+
 #define LH_ID_PADDING 10000
 
 #define LHID_OF(i) (LH_ID_PADDING + (i))

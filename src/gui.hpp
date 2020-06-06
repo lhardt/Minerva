@@ -20,6 +20,8 @@
 #include <wx/artprov.h>
 #include <wx/event.h>
 
+#include "gui_language.hpp"
+
 
 extern "C"{
 	#include "types.h"
@@ -33,7 +35,8 @@ enum AppFormType {
 	FORM_NULL = 0,
 	FORM_WELCOME,
 	FORM_CREATE_SCHOOL,
-	FORM_MAIN_MENU
+	FORM_MAIN_MENU,
+	FORM_SETTINGS
 };
 
 class ChoiceGrid : public wxGrid {
@@ -105,7 +108,7 @@ class WelcomeForm : public wxFrame {
 
 	/* Handlers */
 	void OnCreateClicked(wxCommandEvent &);
-	void OnDeleteClicked(wxCommandEvent &);
+	void OnSettingsClicked(wxCommandEvent &);
 	void OnOpenClicked(wxCommandEvent &);
 	void OnHelpClicked(wxCommandEvent &);
 };
@@ -137,17 +140,25 @@ class MainMenuForm : public wxFrame{
 	MainMenuForm(Application * owner);
 	~MainMenuForm();
 
+ private:
 	wxRibbonBar * m_ribbon;
 	wxRibbonPage * m_ribbon_pages[7];
 
 	wxPanel * m_open_pane = nullptr;
 	wxPanel * m_center_pane = nullptr;
 	Application * m_owner = nullptr;
-
- private:
 	void OnMenuItemClicked(wxCommandEvent&);
 
 	void CloseOpenedPane();
+};
+
+class SettingsForm : public wxFrame {
+ public:
+	SettingsForm(Application * owner);
+	~SettingsForm();
+ private:
+
+	Application * m_owner = nullptr;
 };
 
 /* ADD Panes. */
@@ -511,6 +522,8 @@ class RoomPeriodPrefPane : public wxScrolledWindow {
 
  private:
 	Application * m_owner;
+
+	wxChoice * m_room_choice;
 };
 
 class SubjectPeriodPrefPane : public wxScrolledWindow {
@@ -686,13 +699,15 @@ class Application : public wxApp {
 	WelcomeForm * 		m_form_welcome = nullptr;
 	CreateSchoolForm * 	m_form_create_school = nullptr;
 	MainMenuForm * 		m_form_main_menu = nullptr;
-
+	SettingsForm * 	m_form_settings = nullptr;
 
  public:
 	virtual bool OnInit();
 	virtual int  OnExit();
 	void SwitchForm(AppFormType next);
 	void ChildNotify(int messageCode);
+
+	const Language * m_lang;
 
 	ManualWindow *		m_window_manual = nullptr;
 	wxFont * 		m_title_font = nullptr;

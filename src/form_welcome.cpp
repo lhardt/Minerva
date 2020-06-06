@@ -46,10 +46,10 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 	m_dropdown = new wxChoice(this, wxID_ANY, wxPoint(50,260), wxSize(240,30), arr);
 	m_dropdown->SetSelection(0);
 
-	m_button_open = new wxButton(this, wxID_ANY, "Abrir", wxPoint(300, 260), wxSize(55,30));
-	m_button_import = new wxButton(this, wxID_ANY, "Ajuda", wxPoint(50, 305), wxSize(95,30));
-	m_button_delete = new wxButton(this, wxID_ANY, "Apagar", wxPoint(155, 305), wxSize(95,30));
-	m_button_create = new wxButton(this, wxID_ANY, "Criar", wxPoint(260, 305), wxSize(95,30));
+	m_button_open = new wxButton(this, wxID_ANY, wxT("Abrir"), wxPoint(300, 260), wxSize(55,30));
+	m_button_import = new wxButton(this, wxID_ANY, wxT("Ajuda"), wxPoint(50, 305), wxSize(95,30));
+	m_button_delete = new wxButton(this, wxID_ANY, wxT("Configurações"), wxPoint(155, 305), wxSize(95,30));
+	m_button_create = new wxButton(this, wxID_ANY, wxT("Criar"), wxPoint(260, 305), wxSize(95,30));
 
 	if(i == 0){
 		m_button_open->Disable();
@@ -58,7 +58,7 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 
 	m_button_open->Bind(wxEVT_BUTTON, &WelcomeForm::OnOpenClicked, this);
 	m_button_import->Bind(wxEVT_BUTTON, &WelcomeForm::OnHelpClicked, this);
-	m_button_delete->Bind(wxEVT_BUTTON, &WelcomeForm::OnDeleteClicked, this);
+	m_button_delete->Bind(wxEVT_BUTTON, &WelcomeForm::OnSettingsClicked, this);
 	m_button_create->Bind(wxEVT_BUTTON, &WelcomeForm::OnCreateClicked, this);
 
 	this->Refresh();
@@ -93,9 +93,9 @@ void WelcomeForm::OnHelpClicked(wxCommandEvent & ev){
 	}
 }
 
-void WelcomeForm::OnDeleteClicked(wxCommandEvent & ev){
-	printf("Not Implemented\n");
-	ev.Skip();
+void WelcomeForm::OnSettingsClicked(wxCommandEvent & ev){
+	m_owner->SwitchForm(FORM_SETTINGS);
+	Destroy();
 }
 
 WelcomeForm::~WelcomeForm(){

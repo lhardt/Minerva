@@ -31,6 +31,8 @@ bool Application::OnInit(){
 		int err_response = wxMessageBox(wxT("Erro!"),wxT("Não foi possível abrir o banco de dados."), wxOK);
 		this->Exit();
 	} else {
+		m_lang = &LANG_POR;
+
 		m_title_font = new wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, true);
 		m_text_font  = new wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
 		m_small_font = new wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
@@ -61,6 +63,11 @@ void Application::SwitchForm(AppFormType next){
 		case FORM_MAIN_MENU:{
 			m_form_main_menu = new MainMenuForm(this);
 			m_form_main_menu->Show();
+			break;
+		}
+		case FORM_SETTINGS:{
+			m_form_settings = new SettingsForm(this);
+			m_form_settings->Show();
 			break;
 		}
 		default: {
