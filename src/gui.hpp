@@ -157,8 +157,11 @@ class SettingsForm : public wxFrame {
 	SettingsForm(Application * owner);
 	~SettingsForm();
  private:
-
 	Application * m_owner = nullptr;
+	wxChoice * m_lang_choice;
+
+	void OnBackButtonClicked(wxCommandEvent& evt);
+	void OnSaveButtonClicked(wxCommandEvent& evt);
 };
 
 /* ADD Panes. */

@@ -4,42 +4,42 @@
 
 /* Language per se */
 typedef struct Language {
-	const char * const str_hello_world;
-	const char * const str_language;
-	const char * const str_settings;
-	const char * const str_save;
-	const char * const str_back;
+	const wchar_t * const str_system_config;
+	const wchar_t * const str_language;
+	const wchar_t * const str_settings;
+	const wchar_t * const str_save;
+	const wchar_t * const str_back;
 } Language;
 
 const Language LANG_POR = {
-	.str_hello_world = "Olá, mundo!",
-	.str_language = "Linguagem",
-	.str_settings = "Configurações",
-	.str_save = "Salvar",
-	.str_back = "Voltar"
+	.str_system_config = L"Configurações do Sistema",
+	.str_language = L"Linguagem",
+	.str_settings = L"Configurações",
+	.str_save = L"Salvar",
+	.str_back = L"Voltar"
 };
 
 const Language LANG_ENG = {
-	.str_hello_world = "Hello, world!",
-	.str_language = "Language",
-	.str_settings = "Settings",
-	.str_save = "Save",
-	.str_back = "Back"
+	.str_system_config = L"System Settings",
+	.str_language = L"Language",
+	.str_settings = L"Settings",
+	.str_save = L"Save",
+	.str_back = L"Back"
 };
 
 const Language LANG_SPA = {
-	.str_hello_world = "¡Hola, mundo!",
-	.str_language = "Lenguaje",
-	.str_settings = "Ajustes",
-	.str_save = "Salvar",
-	.str_back = "(?)"
+	.str_system_config = L"Ajustes del Sistema",
+	.str_language = L"Lenguaje",
+	.str_settings = L"Ajustes",
+	.str_save = L"Salvar",
+	.str_back = L"(?)"
 };
 
 const Language LANG_DEU = {
-	.str_hello_world = "Hallo, Welt!",
-	.str_language = "Sprache",
-	.str_settings = "Einsteillungen",
-	.str_back = "(?)"
+	.str_system_config = L"Systemeinstellungen",
+	.str_language = L"Sprache",
+	.str_settings = L"Einsteillungen",
+	.str_back = L"(?)"
 };
 
 /* IDs of buttons. */
