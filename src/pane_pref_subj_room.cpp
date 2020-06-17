@@ -9,5 +9,5 @@ SubjectRoomPrefPane::SubjectRoomPrefPane(Application * owner, wxWindow * parent,
 	SetBackgroundColour(wxColour(240,240,240));
 }
 SubjectRoomPrefPane::~SubjectRoomPrefPane(){
-	
+
 }

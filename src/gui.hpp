@@ -29,6 +29,19 @@ extern "C"{
 
 char * copy_wx_string(wxString str);
 
+class PreferenceClientData : public wxClientData{
+	int value;
+	const char * const name;
+	wxColor color;
+};
+
+class IntClientData : public wxClientData{
+public:
+	IntClientData(int value, wxString name);
+	int m_value;
+	wxString m_name;
+};
+
 class Application;
 
 enum AppFormType {
@@ -102,9 +115,6 @@ class WelcomeForm : public wxFrame {
 	wxStaticBitmap * m_image;
 
 	Application * m_owner;
-
-	int * 			m_school_ids;
-	char * * 		m_school_names;
 
 	/* Handlers */
 	void OnCreateClicked(wxCommandEvent &);

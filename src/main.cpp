@@ -24,6 +24,11 @@ char * copy_wx_string(wxString str){
 	return copy;
 }
 
+IntClientData::IntClientData(int value, wxString name):
+		m_value(value), m_name(name){
+
+}
+
 bool Application::OnInit(){
 	m_database = init_all_tables(stdout, "db/teste.db");
 

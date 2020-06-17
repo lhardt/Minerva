@@ -9,6 +9,8 @@ extern "C" {
 
 WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)) {
 	int i = 0;
+	int * school_ids;
+	char ** school_names;
 
 	#ifdef __WXMSW__
 		SetIcon(wxICON(aaaaaaaa));
@@ -36,14 +38,15 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 	m_description->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_description->SetFont(*m_owner->m_text_font);
 
-	m_school_names = select_all_school_names(stdout, m_owner->m_database, &m_school_ids);
-	wxArrayString arr;
-	for(i = 0; m_school_names[i] != NULL; ++i){
-		arr.push_back(wxString::FromUTF8(m_school_names[i]));
-	}
+	school_names = select_all_school_names(stdout, m_owner->m_database, &school_ids);
 
 	m_image = new wxStaticBitmap(this, wxID_ANY, wxBitmap(*owner->m_island_image), wxPoint(400,50));
-	m_dropdown = new wxChoice(this, wxID_ANY, wxPoint(50,260), wxSize(240,30), arr);
+	m_dropdown = new wxChoice(this, wxID_ANY, wxPoint(50,260), wxSize(240,30));
+
+	for(i = 0; school_names[i] != NULL; ++i){
+		m_dropdown->Append(wxString(school_names[i]), new IntClientData(school_ids[i], wxString::FromUTF8(school_names[i])));
+	}
+
 	m_dropdown->SetSelection(0);
 
 	m_button_open = new wxButton(this, wxID_ANY, wxT("Abrir"), wxPoint(300, 260), wxSize(55,30));
@@ -62,6 +65,12 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 	m_button_create->Bind(wxEVT_BUTTON, &WelcomeForm::OnCreateClicked, this);
 
 	this->Refresh();
+
+	for(i = 0; school_names[i] != NULL; ++i){
+		free(school_names[i]);
+	}
+	free(school_names);
+	free(school_ids);
 }
 
 void WelcomeForm::OnCreateClicked(wxCommandEvent & ev){
@@ -71,11 +80,11 @@ void WelcomeForm::OnCreateClicked(wxCommandEvent & ev){
 }
 
 void WelcomeForm::OnOpenClicked(wxCommandEvent & ev){
-	printf("Index: %d\n", m_dropdown->GetCurrentSelection());
 	if( wxNOT_FOUND == m_dropdown->GetCurrentSelection()){
 		printf("No item selected\n");
 	} else {
-		m_owner->m_school = select_school_by_id( stdout, m_owner->m_database, m_school_ids[ m_dropdown->GetCurrentSelection() ] );
+		IntClientData * data = (IntClientData *) m_dropdown->GetClientObject( m_dropdown->GetSelection());
+		m_owner->m_school = select_school_by_id( stdout, m_owner->m_database, data->m_value);
 		if(m_owner->m_school == NULL){
 			printf("Could not load school.\n");
 		} else {
@@ -99,12 +108,5 @@ void WelcomeForm::OnSettingsClicked(wxCommandEvent & ev){
 }
 
 WelcomeForm::~WelcomeForm(){
-	int i = 0;
-	if(m_school_names != nullptr){
-		for(i = 0; m_school_names[i] != NULL; ++i){
-			free(m_school_names[i]);
-		}
-		free(m_school_names);
-		free(m_school_ids);
-	}
+
 }
