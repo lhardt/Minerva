@@ -10,6 +10,7 @@ typedef struct Language {
 	const wchar_t * const str_language;
 	const wchar_t * const str_settings;
 	const wchar_t * const str_save;
+	const wchar_t * const str_save_as;
 	const wchar_t * const str_back;
 	const wchar_t * const str_font_sz;
 	const wchar_t * const str_small_font;
@@ -19,6 +20,41 @@ typedef struct Language {
 	const wchar_t * const str_help;
 	const wchar_t * const str_create;
 	const wchar_t * const str_copyright_notice;
+	const wchar_t * const str_open_manual;
+	const wchar_t * const str_school_data;
+	/* Header names */
+	const wchar_t * const str_school;
+	const wchar_t * const str_rooms;
+	const wchar_t * const str_subjects;
+	const wchar_t * const str_teachers;
+	const wchar_t * const str_classes;
+	const wchar_t * const str_lectures;
+	const wchar_t * const str_timetable;
+	/* Subheader names */
+	const wchar_t * const str_file;
+	const wchar_t * const str_data;
+	const wchar_t * const str_view;
+	const wchar_t * const str_add;
+	const wchar_t * const str_preferences;
+	const wchar_t * const str_check;
+	/* Listing */
+	const wchar_t * const str_list_features;
+	const wchar_t * const str_list_rooms;
+	const wchar_t * const str_list_subjects;
+	const wchar_t * const str_list_subject_groups;
+	const wchar_t * const str_list_teachers;
+	const wchar_t * const str_list_teacher_groups;
+	const wchar_t * const str_list_classes;
+	const wchar_t * const str_list_class_groups;
+	/* Adding */
+	const wchar_t * const str_add_feature;
+	const wchar_t * const str_add_room;
+	const wchar_t * const str_add_subject;
+	const wchar_t * const str_add_subject_group;
+	const wchar_t * const str_add_teacher;
+	const wchar_t * const str_add_teacher_group;
+	const wchar_t * const str_add_class;
+	const wchar_t * const str_add_class_group;
 } Language;
 
 const extern Language LANG_POR;
