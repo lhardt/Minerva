@@ -28,7 +28,7 @@ class WXDLLIMPEXP_FWD_CORE wxWindow;
 class wxRibbonMetroArtProvider : public wxRibbonMSWArtProvider
 {
 public:
-    wxRibbonMetroArtProvider(bool set_colour_scheme = true);
+	wxRibbonMetroArtProvider(bool set_colour_scheme = true, const wxFont * font = wxNORMAL_FONT);
     virtual ~wxRibbonMetroArtProvider();
     void SetFlags(long flags);
 

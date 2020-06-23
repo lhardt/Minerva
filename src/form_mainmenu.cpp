@@ -22,8 +22,8 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	SetBackgroundColour(wxColour(240,240,240));
 
 	wxRibbonBar * m_ribbon = new wxRibbonBar(this,-1,wxDefaultPosition, wxSize(800,150), wxRIBBON_BAR_FLOW_HORIZONTAL | wxRIBBON_BAR_SHOW_PAGE_LABELS);
-	m_ribbon->SetArtProvider(new wxRibbonMetroArtProvider());
-
+	m_ribbon->SetArtProvider(new wxRibbonMetroArtProvider(true, m_owner->m_small_font));
+	printf("diff");
 	wxRibbonButtonBar * m_rib_bbars[7][5];
 
 	const wchar_t * const menu_names[7] = {L"Escola", L"Salas", L"Disciplinas", L"Professores", L"Turmas", L"Aulas", L"Horário"};

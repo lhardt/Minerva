@@ -86,7 +86,7 @@ void Application::UpdateFonts(){
 	m_bold_text_font  = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
 	m_user_text_font  = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
 	m_text_font  = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
-	m_small_font = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
+	m_small_font = new wxFont(m_font_sz-2, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
 }
 
 char * copy_wx_string(wxString str){

@@ -44,10 +44,10 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 
 	m_dropdown->SetSelection(0);
 
-	m_button_open = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_open, wxPoint(300, 260), wxDefaultSize);
-	m_button_help = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_help, wxPoint(50, 305), wxDefaultSize);
-	m_button_settings = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_settings, wxPoint(155, 305), wxDefaultSize);
-	m_button_create = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_create, wxPoint(260, 305), wxDefaultSize);
+	m_button_open = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_open);
+	m_button_help = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_help);
+	m_button_settings = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_settings);
+	m_button_create = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_create);
 
 	if(i == 0){
 		m_button_open->Disable();
@@ -79,12 +79,12 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 	sizer->Add(center_sz, 1, wxCENTER|wxALL, 15);
 	sizer->Add(m_footer_text, 0, wxCENTER | wxALL, 5);
 
-	button_sz1->Add(m_dropdown, 1, wxALL, 5);
-	button_sz1->Add(m_button_open, 0, wxALL, 5);
+	button_sz1->Add(m_dropdown, 1, wxEXPAND | wxALL, 5);
+	button_sz1->Add(m_button_open, 0, wxEXPAND | wxALL, 5);
 
-	button_sz2->Add(m_button_help, 0, wxALL, 5);
-	button_sz2->Add(m_button_settings, 0, wxALL, 5);
-	button_sz2->Add(m_button_create, 0, wxALL, 5);
+	button_sz2->Add(m_button_help, 0, wxEXPAND | wxALL, 5);
+	button_sz2->Add(m_button_settings, 0, wxEXPAND | wxALL, 5);
+	button_sz2->Add(m_button_create, 0, wxEXPAND | wxALL, 5);
 
 	buttons_sz->Add(button_sz1, 0,wxEXPAND);
 	buttons_sz->Add(button_sz2, 0,wxEXPAND);
@@ -99,6 +99,7 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 	SetSize(wxSize(800,600));
 	frame_sz->Add(panel,1,wxEXPAND,0);
 	SetSizerAndFit(frame_sz);
+	SetSize(wxSize(800,600));
 
 
 	//
