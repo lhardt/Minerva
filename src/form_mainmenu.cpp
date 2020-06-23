@@ -12,6 +12,8 @@
 MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
 
+	SetFont(*m_owner->m_text_font);
+
 	#ifdef __WXMSW__
 		SetIcon(wxICON(aaaaaaaa));
 	#endif

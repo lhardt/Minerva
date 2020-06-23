@@ -30,6 +30,7 @@ extern "C"{
 char * copy_wx_string(wxString str);
 
 class PreferenceClientData : public wxClientData{
+public:
 	int value;
 	const char * const name;
 	wxColor color;
@@ -108,7 +109,7 @@ class WelcomeForm : public wxFrame {
  private:
 	/* Components */
 	wxButton * 		m_button_create = nullptr;
-	wxButton * 		m_button_delete = nullptr;
+	wxButton * 		m_button_settings = nullptr;
 	wxButton * 		m_button_import = nullptr;
 	wxButton * 		m_button_open   = nullptr;
 	wxChoice *	 	m_dropdown = nullptr;
@@ -169,6 +170,7 @@ class SettingsForm : public wxFrame {
  private:
 	Application * m_owner = nullptr;
 	wxChoice * m_lang_choice;
+	wxChoice * m_font_size_choice;
 
 	void OnBackButtonClicked(wxCommandEvent& evt);
 	void OnSaveButtonClicked(wxCommandEvent& evt);
@@ -719,14 +721,20 @@ class Application : public wxApp {
 	virtual int  OnExit();
 	void SwitchForm(AppFormType next);
 	void ChildNotify(int messageCode);
+	void OnConfigUpdate();
+	void LoadConfig();
+	void UpdateFonts();
 
 	const Language * m_lang;
+	int m_font_sz;
 
 	ManualWindow *		m_window_manual = nullptr;
 	wxFont * 		m_title_font = nullptr;
 	wxFont * 		m_page_title_font = nullptr;
-	wxFont * 		m_text_font = nullptr;
 	wxFont * 		m_small_font = nullptr;
+	wxFont * 		m_bold_text_font = nullptr;
+	wxFont * 		m_user_text_font = nullptr;
+	wxFont * 		m_text_font = nullptr;
 
 	wxImage *		m_island_image = nullptr;
 

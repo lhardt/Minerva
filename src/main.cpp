@@ -17,6 +17,85 @@ extern "C" {
 	#include "util.h"
 };
 
+void Application::OnConfigUpdate(){
+	FILE * conf_file = fopen(".config", "w");
+
+	if(conf_file){
+		int lang_code;
+
+		printf("Pointer to por: %lx\n", &LANG_POR);
+		printf("Pointer to eng: %lx\n", &LANG_ENG);
+		printf("Pointer to spa: %lx\n", &LANG_SPA);
+		printf("Pointer to deu: %lx\n", &LANG_DEU);
+		printf("\n");
+
+		lang_code = (m_lang == &LANG_POR)?0:
+		 			(m_lang == &LANG_ENG)?1:
+					(m_lang == &LANG_SPA)?2:
+					(m_lang == &LANG_DEU)?3:99;
+
+		fprintf(conf_file,"%d;%d", lang_code, m_font_sz);
+
+		fclose(conf_file);
+	}
+	UpdateFonts();
+}
+
+void Application::LoadConfig(){
+	int lang;
+	FILE * conf_file = fopen(".config", "r");
+	if(conf_file){
+		fscanf(conf_file,"%d;%d", &lang, &m_font_sz);
+
+		switch(lang){
+			case 0:{
+				m_lang = &LANG_POR;
+				break;
+			}
+			case 1:{
+				m_lang = &LANG_ENG;
+				break;
+			}
+			case 2:{
+				m_lang = &LANG_SPA;
+				break;
+			}
+			case 3:{
+				m_lang = &LANG_DEU;
+				break;
+			}
+			default:{
+				printf("wtf dude\n");
+			}
+		}
+
+		fclose(conf_file);
+	} else {
+		m_lang = &LANG_POR;
+		m_font_sz = 10;
+	}
+	OnConfigUpdate();
+}
+
+void Application::UpdateFonts(){
+
+	if(m_title_font != nullptr){
+		delete m_title_font;
+		delete m_page_title_font;
+		delete m_bold_text_font;
+		delete m_text_font;
+		delete m_user_text_font;
+		delete m_small_font;
+	}
+	printf("Fonts updated! Font size %d\n", m_font_sz);
+	m_title_font = new wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, true);
+	m_page_title_font = new wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+	m_bold_text_font  = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
+	m_user_text_font  = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
+	m_text_font  = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
+	m_small_font = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
+}
+
 char * copy_wx_string(wxString str){
 	int len = strlen(str.ToUTF8().data());
 	char * copy = (char*) calloc(len + 1, sizeof(char*));
@@ -31,22 +110,16 @@ IntClientData::IntClientData(int value, wxString name):
 
 bool Application::OnInit(){
 	m_database = init_all_tables(stdout, "db/teste.db");
-
 	if(m_database == nullptr){
 		int err_response = wxMessageBox(wxT("Erro!"),wxT("Não foi possível abrir o banco de dados."), wxOK);
 		this->Exit();
 	} else {
-		m_lang = &LANG_POR;
-
-		m_title_font = new wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, true);
-		m_text_font  = new wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
-		m_small_font = new wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
-		m_page_title_font = new wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
 
 		m_island_image = new wxImage(400,400);
 		m_island_image->AddHandler(new wxPNGHandler);
 		m_island_image->LoadFile("res/floating.png", wxBITMAP_TYPE_PNG);
 
+		LoadConfig();
 		m_form_welcome = new WelcomeForm(this);
 		m_form_welcome->Show();
 	}
@@ -85,6 +158,8 @@ int Application::OnExit(){
 	sqlite3_close(m_database);
 
 	delete m_title_font;
+	delete m_bold_text_font;
+	delete m_user_text_font;
 	delete m_text_font;
 	delete m_small_font;
 	delete m_page_title_font;

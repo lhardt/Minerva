@@ -4,15 +4,32 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
+	SetFont(*m_owner->m_text_font);
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Detalhes da Escola"), wxDefaultPosition, wxSize(300,25));
+
+	wxStaticText * school_name_label = new wxStaticText(this, wxID_ANY, wxT("Nome da Escola:"), wxDefaultPosition, wxDefaultSize);
+	wxStaticText * school_name_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8(school->name), wxDefaultPosition, wxDefaultSize);
+	wxStaticText * school_nppd_label = new wxStaticText(this, wxID_ANY, wxT("N° de Períodos por Dia: "), wxDefaultPosition, wxDefaultSize);
+	wxStaticText * school_nppd_text = new wxStaticText(this, wxID_ANY, wxString::Format(wxT("%d"),school->n_periods_per_day), wxDefaultPosition, wxDefaultSize);
+	wxStaticText * school_nday_label = new wxStaticText(this, wxID_ANY, wxT("N° de Dias:"), wxDefaultPosition,wxDefaultSize);
+	wxStaticText * school_nday_text = new wxStaticText(this, wxID_ANY, wxString::Format(wxT("%d"),school->n_days), wxDefaultPosition,wxDefaultSize);
+
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * school_name_text = new wxStaticText(this, wxID_ANY, wxString::Format(wxT("Nome da Escola: %s"),wxString::FromUTF8(school->name)), wxDefaultPosition, wxSize(300,20));
-	wxStaticText * school_nppd_text = new wxStaticText(this, wxID_ANY, wxString::Format(wxT("N° de Períodos por Dia: %d"),school->n_periods_per_day), wxDefaultPosition, wxSize(300,20));
-	wxStaticText * school_nday_text = new wxStaticText(this, wxID_ANY, wxString::Format(wxT("N° de Dias: %d"),school->n_days), wxDefaultPosition, wxSize(300,20));
+	school_name_label->SetFont(*m_owner->m_bold_text_font);
+	school_nppd_label->SetFont(*m_owner->m_bold_text_font);
+	school_nday_label->SetFont(*m_owner->m_bold_text_font);
+
+	wxGridSizer * text_sz = new wxGridSizer(2,10,10);
+
+	text_sz->Add(school_name_label,1,wxEXPAND);
+	text_sz->Add(school_name_text,1,wxEXPAND);
+	text_sz->Add(school_nppd_label,1,wxEXPAND);
+	text_sz->Add(school_nppd_text,1,wxEXPAND);
+	text_sz->Add(school_nday_label,1,wxEXPAND);
+	text_sz->Add(school_nday_text,1,wxEXPAND);
 
 	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, wxT("Períodos"), wxDefaultPosition, wxSize(250,15));
 	grid_label->SetFont(*m_owner->m_small_font);
@@ -44,13 +61,14 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 		}
 	}
 
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
+	wxSizer * content_sz = new wxBoxSizer(wxVERTICAL);
 
-	sizer->Add(title, 0, wxCENTER | wxALL, 15);
-	sizer->Add(school_name_text, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
-	sizer->Add(school_nppd_text, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
-	sizer->Add(school_nday_text, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
-	sizer->Add(grid_label, 0, wxLEFT | wxRIGHT, 15);
-	sizer->Add(m_grid, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
+	sizer->Add(content_sz, 0,  wxALL, 15);
+	content_sz->Add(title, 0, wxALL, 15);
+	content_sz->Add(text_sz, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 15);
+	content_sz->Add(grid_label, 0, wxLEFT | wxRIGHT, 15);
+	content_sz->Add(m_grid, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
 
 	SetSizerAndFit(sizer);
 }

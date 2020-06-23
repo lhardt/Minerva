@@ -9,38 +9,16 @@ typedef struct Language {
 	const wchar_t * const str_settings;
 	const wchar_t * const str_save;
 	const wchar_t * const str_back;
+	const wchar_t * const str_font_sz;
 } Language;
 
-const Language LANG_POR = {
-	.str_system_config = L"Configurações do Sistema",
-	.str_language = L"Linguagem",
-	.str_settings = L"Configurações",
-	.str_save = L"Salvar",
-	.str_back = L"Voltar"
-};
+const extern Language LANG_POR;
 
-const Language LANG_ENG = {
-	.str_system_config = L"System Settings",
-	.str_language = L"Language",
-	.str_settings = L"Settings",
-	.str_save = L"Save",
-	.str_back = L"Back"
-};
+const extern Language LANG_ENG;
 
-const Language LANG_SPA = {
-	.str_system_config = L"Ajustes del Sistema",
-	.str_language = L"Lenguaje",
-	.str_settings = L"Ajustes",
-	.str_save = L"Salvar",
-	.str_back = L"(?)"
-};
+const extern Language LANG_SPA;
 
-const Language LANG_DEU = {
-	.str_system_config = L"Systemeinstellungen",
-	.str_language = L"Sprache",
-	.str_settings = L"Einsteillungen",
-	.str_back = L"(?)"
-};
+const extern Language LANG_DEU;
 
 /* IDs of buttons. */
 
