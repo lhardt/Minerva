@@ -18,9 +18,9 @@ SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_lang_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), lang_names);
 
 	wxArrayString size_names;
-	size_names.Add(wxT("Pequena"));
-	size_names.Add(wxT("Média"));
-	size_names.Add(wxT("Grande"));
+	size_names.Add(m_owner->m_lang->str_small_font);
+	size_names.Add(m_owner->m_lang->str_medium_font);
+	size_names.Add(m_owner->m_lang->str_large_font);
 
 	wxStaticText * font_size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_font_sz, wxDefaultPosition, wxSize(300,20));
 	m_font_size_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), size_names);
@@ -82,12 +82,6 @@ SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 
 void SettingsForm::OnSaveButtonClicked(wxCommandEvent& evt){
 	if(m_lang_choice->GetSelection() != wxNOT_FOUND){
-		printf("Pointer to por: %lx\n", &LANG_POR);
-		printf("Pointer to eng: %lx\n", &LANG_ENG);
-		printf("Pointer to spa: %lx\n", &LANG_SPA);
-		printf("Pointer to deu: %lx\n", &LANG_DEU);
-		printf("\n");
-
 		switch(m_lang_choice->GetSelection()){
 			case 0: {
 				m_owner->m_lang = &LANG_DEU;

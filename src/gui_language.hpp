@@ -4,12 +4,21 @@
 
 /* Language per se */
 typedef struct Language {
+	const wchar_t * const str_minerva_school_timetables;
+	const wchar_t * const str_minerva_welcome_description;
 	const wchar_t * const str_system_config;
 	const wchar_t * const str_language;
 	const wchar_t * const str_settings;
 	const wchar_t * const str_save;
 	const wchar_t * const str_back;
 	const wchar_t * const str_font_sz;
+	const wchar_t * const str_small_font;
+	const wchar_t * const str_medium_font;
+	const wchar_t * const str_large_font;
+	const wchar_t * const str_open;
+	const wchar_t * const str_help;
+	const wchar_t * const str_create;
+	const wchar_t * const str_copyright_notice;
 } Language;
 
 const extern Language LANG_POR;

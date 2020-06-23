@@ -23,12 +23,6 @@ void Application::OnConfigUpdate(){
 	if(conf_file){
 		int lang_code;
 
-		printf("Pointer to por: %lx\n", &LANG_POR);
-		printf("Pointer to eng: %lx\n", &LANG_ENG);
-		printf("Pointer to spa: %lx\n", &LANG_SPA);
-		printf("Pointer to deu: %lx\n", &LANG_DEU);
-		printf("\n");
-
 		lang_code = (m_lang == &LANG_POR)?0:
 		 			(m_lang == &LANG_ENG)?1:
 					(m_lang == &LANG_SPA)?2:
@@ -87,8 +81,7 @@ void Application::UpdateFonts(){
 		delete m_user_text_font;
 		delete m_small_font;
 	}
-	printf("Fonts updated! Font size %d\n", m_font_sz);
-	m_title_font = new wxFont(22, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, true);
+	m_title_font = new wxFont(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, true);
 	m_page_title_font = new wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
 	m_bold_text_font  = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false);
 	m_user_text_font  = new wxFont(m_font_sz, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);

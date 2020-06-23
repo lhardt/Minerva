@@ -110,7 +110,7 @@ class WelcomeForm : public wxFrame {
 	/* Components */
 	wxButton * 		m_button_create = nullptr;
 	wxButton * 		m_button_settings = nullptr;
-	wxButton * 		m_button_import = nullptr;
+	wxButton * 		m_button_help = nullptr;
 	wxButton * 		m_button_open   = nullptr;
 	wxChoice *	 	m_dropdown = nullptr;
 	wxStaticBitmap * m_image;
