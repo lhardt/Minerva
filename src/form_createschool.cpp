@@ -20,7 +20,7 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	SetMinSize(wxSize(800,600));
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxScrolledWindow * m_right_pane = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(350,575));
+	wxScrolledWindow * m_right_pane = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(350,-1));
 	m_right_pane->SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
 
 	wxPanel * m_left_pane = new wxPanel(this, wxID_ANY, wxDefaultPosition);
@@ -31,21 +31,21 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	wxStaticText * m_footer_text = new wxStaticText(m_footer, wxID_ANY,m_owner->m_lang->str_copyright_notice, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE | wxALIGN_CENTRE_HORIZONTAL);
 	m_footer_text->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 
-	wxStaticText * m_title = new wxStaticText(m_left_pane, wxID_ANY, wxT("Cadastrar Escola"));
+	wxStaticText * m_title = new wxStaticText(m_left_pane, wxID_ANY, m_owner->m_lang->str_create_school);
 
-	wxStaticText * m_school_name_label = new wxStaticText(m_left_pane, wxID_ANY, wxT("Nome da Escola"), wxPoint(30,90), wxSize(200,15));
-	m_school_name_text = new wxTextCtrl(m_left_pane, wxID_ANY, wxT(""), wxPoint(30,105), wxSize(200,25));
+	wxStaticText * m_school_name_label = new wxStaticText(m_left_pane, wxID_ANY, m_owner->m_lang->str_school_name);
+	m_school_name_text = new wxTextCtrl(m_left_pane, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,-1));
 
-	wxStaticText * m_number_of_days_label = new wxStaticText(m_left_pane, wxID_ANY, wxT("Número de Dias em um Ciclo"), wxPoint(30,145), wxSize(200,15));
-	m_number_of_days_text = new wxSpinCtrl(m_left_pane, wxID_ANY, wxT(""), wxPoint(30,160), wxSize(200,25));
+	wxStaticText * m_number_of_days_label = new wxStaticText(m_left_pane, wxID_ANY, m_owner->m_lang->str_number_of_days_per_cycle);
+	m_number_of_days_text = new wxSpinCtrl(m_left_pane, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,-1));
 
-	wxStaticText * m_number_of_periods_label = new wxStaticText(m_left_pane, wxID_ANY, wxT("Número de Periodos por Dia"), wxPoint(30,200), wxSize(200,15));
-	m_number_of_periods_text = new wxSpinCtrl(m_left_pane, wxID_ANY, wxT(""), wxPoint(30,215), wxSize(200,25));
+	wxStaticText * m_number_of_periods_label = new wxStaticText(m_left_pane, wxID_ANY, m_owner->m_lang->str_number_of_periods_per_day);
+	m_number_of_periods_text = new wxSpinCtrl(m_left_pane, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,-1));
 
-	wxStaticText * m_names_label = new wxStaticText(m_left_pane, wxID_ANY, wxT("A Escola Funciona em Quais Períodos?"), wxPoint(30,255), wxSize(400,15));
+	wxStaticText * m_names_label = new wxStaticText(m_left_pane, wxID_ANY, m_owner->m_lang->str_in_what_periods_the_school_is_open);
 	m_names_label->SetFont(*m_owner->m_small_font);
 
-	m_grid = new ChoiceGrid(m_left_pane, wxID_ANY, wxPoint(30,270), wxSize(400,200));
+	m_grid = new ChoiceGrid(m_left_pane, wxID_ANY, wxDefaultPosition, wxSize(300,200));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
 	grid_values.push_back(wxT("Aberta"));
@@ -63,17 +63,17 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 
 	m_grid->GridRemake(m_number_of_days_text->GetValue(), m_number_of_periods_text->GetValue());
 
-	m_err_msg = new wxStaticText(m_left_pane, wxID_ANY, wxT(""), wxPoint(30,480), wxSize(300,30));
+	m_err_msg = new wxStaticText(m_left_pane, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
 	m_err_msg->SetFont(*m_owner->m_small_font);
 	m_err_msg->SetForegroundColour(wxColor(0xF0, 0x50, 0x50));
 
-	m_button_create = new wxButton(m_left_pane, wxID_ANY, wxT("Criar"), wxPoint(350, 500), wxSize(80,30));
-	m_button_back = new wxButton(m_left_pane, wxID_ANY, wxT("Voltar"), wxPoint(260, 500), wxSize(80,30));
+	m_button_create = new wxButton(m_left_pane, wxID_ANY, m_owner->m_lang->str_create, wxDefaultPosition, wxSize(80,30));
+	m_button_back = new wxButton(m_left_pane, wxID_ANY, m_owner->m_lang->str_back, wxDefaultPosition, wxSize(80,30));
 
 	m_button_create->Bind(wxEVT_BUTTON, &CreateSchoolForm::OnCreateClicked, this);
 	m_button_back->Bind(wxEVT_BUTTON, &CreateSchoolForm::OnBackClicked, this);
 
-	wxStaticText * m_tutorial_text = new wxStaticText(m_right_pane, wxID_ANY, m_owner->m_lang->str_create_school_manual_entry, wxDefaultPosition, wxSize(290,900));
+	wxStaticText * m_tutorial_text = new wxStaticText(m_right_pane, wxID_ANY, m_owner->m_lang->str_create_school_manual_entry, wxDefaultPosition, wxSize(290,-1));
 	m_tutorial_text->SetForegroundColour(wxColor(255,255,255));
 	m_tutorial_text->Wrap(m_tutorial_text->GetClientSize().GetWidth());
 
@@ -93,23 +93,23 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	button_sz->Add(m_button_create, 0, wxRIGHT, 5);
 	button_sz->Add(m_button_back, 0, 0);
 
-	left_pane_sz->Add(m_title, 0, wxALL, 15);
-	left_pane_sz->Add(m_school_name_label, 0,  wxLEFT | wxRIGHT | wxTOP, 15);
-	left_pane_sz->Add(m_school_name_text, 0, wxLEFT | wxRIGHT| wxBOTTOM, 15);
-	left_pane_sz->Add(m_number_of_days_label, 0, wxLEFT | wxRIGHT, 15);
-	left_pane_sz->Add(m_number_of_days_text, 0, wxLEFT | wxRIGHT| wxBOTTOM, 15);
-	left_pane_sz->Add(m_number_of_periods_label, 0, wxLEFT | wxRIGHT, 15);
-	left_pane_sz->Add(m_number_of_periods_text, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
-	left_pane_sz->Add(m_names_label, 0, wxLEFT | wxRIGHT, 15);
-	left_pane_sz->Add(m_grid, 0, wxEXPAND | wxLEFT | wxRIGHT| wxBOTTOM, 15);
-	left_pane_sz->Add(button_sz, 0, wxALIGN_RIGHT | wxLEFT | wxRIGHT, 15);
+	left_pane_sz->Add(m_title, 0, wxBOTTOM, 15);
+	left_pane_sz->Add(m_school_name_label, 0, wxBOTTOM, 5);
+	left_pane_sz->Add(m_school_name_text, 0, wxBOTTOM, 15);
+	left_pane_sz->Add(m_number_of_days_label, 0, wxBOTTOM, 5);
+	left_pane_sz->Add(m_number_of_days_text, 0, wxBOTTOM, 15);
+	left_pane_sz->Add(m_number_of_periods_label, 0, wxBOTTOM, 5);
+	left_pane_sz->Add(m_number_of_periods_text, 0, wxBOTTOM, 15);
+	left_pane_sz->Add(m_names_label, 0, wxBOTTOM, 5);
+	left_pane_sz->Add(m_grid, 0, wxEXPAND | wxBOTTOM, 15);
+	left_pane_sz->Add(button_sz, 0, wxALIGN_RIGHT);
 	left_pane_sz->Add(m_err_msg, 0,  wxLEFT | wxRIGHT, 15);
 	m_left_pane->SetSizer(left_pane_sz);
 
 	right_pane_sz->Add(m_tutorial_text, 1, wxALL, 20);
 	m_right_pane->SetSizer(right_pane_sz);
 
-	sizer2->Add(m_left_pane, 1, wxEXPAND);
+	sizer2->Add(m_left_pane, 1, wxEXPAND | wxALL, 30);
 	sizer2->Add(m_right_pane, 0, wxEXPAND);
 
 	footer_sz->Add(m_footer_text, 1, wxEXPAND | wxALL, 2);
@@ -118,29 +118,20 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	sizer->Add(sizer2, 1, wxEXPAND);
 	sizer->Add(m_footer, 0, wxEXPAND);
 
-	// m_right_pane->SetSizerAndFit(right_pane_sz);
 	m_right_pane->SetScrollRate(5,5);
 	m_right_pane->ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_ALWAYS);
-	// m_right_pane->GetSizer()->SetSizeHints(m_right_pane);
 	m_right_pane->Layout();
-	SetSizerAndFit(sizer);
+	SetSizer(sizer);
 
 	Layout();
 	SetSize(GetMinSize());
 	Refresh();
 
 	SetSize(GetMinSize());
-
-	Bind(wxEVT_SPINCTRL, &CreateSchoolForm::OnGridSizeUpdated, this);
-	m_number_of_days_text->Bind(wxEVT_SPINCTRL, &CreateSchoolForm::OnGridSizeUpdated, this);
 }
 
 CreateSchoolForm::~CreateSchoolForm(){
 
-}
-
-void CreateSchoolForm::OnGridSizeUpdated(wxSpinEvent & ev){
-	m_grid->GridRemake(m_number_of_days_text->GetValue(),m_number_of_periods_text->GetValue());
 }
 
 void CreateSchoolForm::OnBackClicked(wxCommandEvent & ev){

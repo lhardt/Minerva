@@ -23,11 +23,11 @@ const Language LANG_POR = {
 	.str_open_manual=L"Abrir Manual",
 	.str_school_data=L"Dados da Escola",
 	/* Create & view school */
-	.str_create_school=L"",
-	.str_school_name=L"",
-	.str_number_of_days_per_cycle=L"",
-	.str_number_of_periods_per_day=L"",
-	.str_in_what_periods_the_school_is_open=L"",
+	.str_create_school=L"Cadastrar Escola",
+	.str_school_name=L"Nome da Escola",
+	.str_number_of_days_per_cycle=L"Número de Dias por Ciclo",
+	.str_number_of_periods_per_day=L"Número de Períodos por dia",
+	.str_in_what_periods_the_school_is_open=L"Em que períodos a Escola está Aberta?",
 	.str_create_school_manual_entry=L"Seja bem vindo ao software Minerva. Agradecemos por testá-lo e pedimos o favor que se encontrares algum erro, "
 		"faça a gentileza de entrar em contato.\n\n"
 		"Em caso de dúvidas, o software dispõe de um manual, esclarecendo o uso de suas funções.\n\n"
@@ -96,22 +96,22 @@ const Language LANG_ENG = {
 	.str_open_manual=L"Open Manual",
 	.str_school_data=L"School data",
 	/* Create & view school */
-	.str_create_school=L"",
-	.str_school_name=L"",
-	.str_number_of_days_per_cycle=L"",
-	.str_number_of_periods_per_day=L"",
-	.str_in_what_periods_the_school_is_open=L"",
-	.str_create_school_manual_entry=L"Seja bem vindo ao software Minerva. Agradecemos por testá-lo e pedimos o favor que se encontrares algum erro, "
-		"faça a gentileza de entrar em contato.\n\n"
-		"Em caso de dúvidas, o software dispõe de um manual, esclarecendo o uso de suas funções.\n\n"
-		"Para cadastrar uma escola, preencha os campos ao lado. Pense em cada \"escola\" aqui como uma entidade que "
-		"precisa de um cronograma diferente. Esse nome será usado na tela inicial e no horário. Recomendamos um nome "
-		"curto, como \"Escola Dom Pedro - Noite.\"\n\n"
-		"O tamanho do ciclo é tamanho do horário, em dias. Geralmente são cinco dias. Se a escola só funcionar "
-		"em três dias da semana, são três dias no ciclo. Se o horário será bisemanal, são 10 dias. E assim por diante. "
-		"Caso tenha dificuldade para decidir, pense \"quantos dias demora para o horário voltar ao início?\".\n\n"
-		"Por último, clique em qualquer período em que a escola não estiver aberta para fazer com que ela esteja fechada. Algumas escolas, por "
-		"exemplo, ficam fechadas no 5º período da sexta-feira. Para fazer com que a escola volte a estar aberta, clique novamente.",
+	.str_create_school=L"Create school",
+	.str_school_name=L"School name",
+	.str_number_of_days_per_cycle=L"Number of days per cycle",
+	.str_number_of_periods_per_day=L"Number of periods per day",
+	.str_in_what_periods_the_school_is_open=L"In what periods is the school open?",
+	.str_create_school_manual_entry=L"Welcome to the Minerva software. We thank you for testing it and ask that if you find any error, "
+		"please come into contact.\n\n"
+		"When in doubt, this program has a manual, explaining the usage of its functions.\n\n"
+		"To create a school, fill the form at the side. See each \"school\" as an entity that requieres a different timetable. "
+		"Its name will be shown in the initial screen and on the timetable. We recommend a short name, such as "
+		" \"Oak St School - Morning\"\n\n"
+		"The cycle size is the size of the timetable, in days. Normally there are five days. If the school only operates "
+		"three days a week, it's three days in the cycle. If the timetable is bi-weekly, then 10 days are needed. And so on. "
+		"If you are having difficulty to decide, think \"how many days does it take for the timetable to repeat itself?\".\n\n"
+		"At last, click in any period in which the school is not open to mark it as closed. Some schools, for example, "
+		"don't open at the last period of friday. To mark the period as open, just click again.",
 	/* Header names */
 	.str_school=L"School",
 	.str_rooms=L"Rooms",
@@ -170,7 +170,7 @@ const Language LANG_SPA = {
 	.str_school_data=L"Datos de la escuela",
 	/* Create & view school */
 	.str_create_school=L"Crear escuela",
-	.str_school_name=L"Nome de la escuela",
+	.str_school_name=L"Nombre de la escuela",
 	.str_number_of_days_per_cycle=L"Número de días en un ciclo",
 	.str_number_of_periods_per_day=L"Número de períodos por día ",
 	.str_in_what_periods_the_school_is_open=L"En que períodos la escuela está abierta?",
