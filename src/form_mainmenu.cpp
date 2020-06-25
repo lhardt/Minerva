@@ -34,7 +34,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add,  m_owner->m_lang->str_help, NULL}
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_help, NULL}
 	};
 
 	for(int i = 0; i < 7; ++i){
@@ -55,9 +55,9 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	auto image_detail = wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, wxSize(32,32));
 
 	/* ESCOLA */
-	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AS),wxT("Salvar Como"), image_save);
-	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AND_CLOSE),wxT("Fechar e Salvar"), image_save);
-	// m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_CLOSE_WITHOUT_SAVE),wxT("Fechar sem Salvar"), image_close);
+	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AS),m_owner->m_lang->str_save_as, image_save);
+	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AND_CLOSE),m_owner->m_lang->str_close_and_save, image_save);
+	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_CLOSE_WITHOUT_SAVE),m_owner->m_lang->str_close_without_saving, image_close);
 	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_SCHOOL_DATA),m_owner->m_lang->str_school_data, image_list);
 	m_rib_bbars[0][2]->AddButton(LHID_OF(LHN_OPEN_SCHOOL_MANUAL),m_owner->m_lang->str_open_manual, image_help);
 	/* SALAS E CARACTERISTICAS DE SALAS */

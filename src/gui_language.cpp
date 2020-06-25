@@ -9,6 +9,8 @@ const Language LANG_POR = {
 	.str_settings = L"Configurações",
 	.str_save = L"Salvar",
 	.str_save_as = L"Salvar como",
+	.str_close_and_save = L"Sair e salvar",
+	.str_close_without_saving = L"Sair sem salvar",
 	.str_back = L"Voltar",
 	.str_font_sz= L"Tamanho da Fonte",
 	.str_small_font=L"Pequena",
@@ -20,6 +22,23 @@ const Language LANG_POR = {
 	.str_copyright_notice=L"Copyright (C) Léo Hardt 2020. Licença a ser definida.",
 	.str_open_manual=L"Abrir Manual",
 	.str_school_data=L"Dados da Escola",
+	/* Create & view school */
+	.str_create_school=L"",
+	.str_school_name=L"",
+	.str_number_of_days_per_cycle=L"",
+	.str_number_of_periods_per_day=L"",
+	.str_in_what_periods_the_school_is_open=L"",
+	.str_create_school_manual_entry=L"Seja bem vindo ao software Minerva. Agradecemos por testá-lo e pedimos o favor que se encontrares algum erro, "
+		"faça a gentileza de entrar em contato.\n\n"
+		"Em caso de dúvidas, o software dispõe de um manual, esclarecendo o uso de suas funções.\n\n"
+		"Para cadastrar uma escola, preencha os campos ao lado. Pense em cada \"escola\" aqui como uma entidade que "
+		"precisa de um cronograma diferente. Esse nome será usado na tela inicial e no horário. Recomendamos um nome "
+		"curto, como \"Escola Dom Pedro - Noite.\"\n\n"
+		"O tamanho do ciclo é tamanho do horário, em dias. Geralmente são cinco dias. Se a escola só funcionar "
+		"em três dias da semana, são três dias no ciclo. Se o horário será bisemanal, são 10 dias. E assim por diante. "
+		"Caso tenha dificuldade para decidir, pense \"quantos dias demora para o horário voltar ao início?\".\n\n"
+		"Por último, clique em qualquer período em que a escola não estiver aberta para fazer com que ela esteja fechada. Algumas escolas, por "
+		"exemplo, ficam fechadas no 5º período da sexta-feira. Para fazer com que a escola volte a estar aberta, clique novamente.",
 	/* Header names */
 	.str_school=L"Escola",
 	.str_rooms=L"Salas",
@@ -63,6 +82,8 @@ const Language LANG_ENG = {
 	.str_settings = L"Settings",
 	.str_save = L"Save",
 	.str_save_as = L"Save as",
+	.str_close_and_save = L"Close and save",
+	.str_close_without_saving = L"Close without saving",
 	.str_back = L"Back",
 	.str_font_sz= L"Font size",
 	.str_small_font=L"Small",
@@ -74,6 +95,23 @@ const Language LANG_ENG = {
 	.str_copyright_notice=L"Copyright (C) Léo Hardt 2020. License to be defined.",
 	.str_open_manual=L"Open Manual",
 	.str_school_data=L"School data",
+	/* Create & view school */
+	.str_create_school=L"",
+	.str_school_name=L"",
+	.str_number_of_days_per_cycle=L"",
+	.str_number_of_periods_per_day=L"",
+	.str_in_what_periods_the_school_is_open=L"",
+	.str_create_school_manual_entry=L"Seja bem vindo ao software Minerva. Agradecemos por testá-lo e pedimos o favor que se encontrares algum erro, "
+		"faça a gentileza de entrar em contato.\n\n"
+		"Em caso de dúvidas, o software dispõe de um manual, esclarecendo o uso de suas funções.\n\n"
+		"Para cadastrar uma escola, preencha os campos ao lado. Pense em cada \"escola\" aqui como uma entidade que "
+		"precisa de um cronograma diferente. Esse nome será usado na tela inicial e no horário. Recomendamos um nome "
+		"curto, como \"Escola Dom Pedro - Noite.\"\n\n"
+		"O tamanho do ciclo é tamanho do horário, em dias. Geralmente são cinco dias. Se a escola só funcionar "
+		"em três dias da semana, são três dias no ciclo. Se o horário será bisemanal, são 10 dias. E assim por diante. "
+		"Caso tenha dificuldade para decidir, pense \"quantos dias demora para o horário voltar ao início?\".\n\n"
+		"Por último, clique em qualquer período em que a escola não estiver aberta para fazer com que ela esteja fechada. Algumas escolas, por "
+		"exemplo, ficam fechadas no 5º período da sexta-feira. Para fazer com que a escola volte a estar aberta, clique novamente.",
 	/* Header names */
 	.str_school=L"School",
 	.str_rooms=L"Rooms",
@@ -117,6 +155,8 @@ const Language LANG_SPA = {
 	.str_settings = L"Ajustes",
 	.str_save = L"Guardar",
 	.str_save_as = L"Guardar como",
+	.str_close_and_save = L"Guardar y salir",
+	.str_close_without_saving = L"Guardar sin salir",
 	.str_back = L"(?)",
 	.str_font_sz= L"Tamaño de Fuente",
 	.str_small_font=L"Pequeña",
@@ -128,6 +168,13 @@ const Language LANG_SPA = {
 	.str_copyright_notice=L"Copyright (C) Léo Hardt 2020. Licencia a ser definida.",
 	.str_open_manual=L"Abrir el manual",
 	.str_school_data=L"Datos de la escuela",
+	/* Create & view school */
+	.str_create_school=L"Crear escuela",
+	.str_school_name=L"Nome de la escuela",
+	.str_number_of_days_per_cycle=L"Número de días en un ciclo",
+	.str_number_of_periods_per_day=L"Número de períodos por día ",
+	.str_in_what_periods_the_school_is_open=L"En que períodos la escuela está abierta?",
+	.str_create_school_manual_entry=L"Texto Grande; Texto Grande; Texto Grande; Texto Grande; Texto Grande; ",
 	/* Header names */
 	.str_school=L"Escuela",
 	.str_rooms=L"Salas",
@@ -171,6 +218,8 @@ const Language LANG_DEU = {
 	.str_settings = L"Einstellungen",
 	.str_save = L"Speichern",
 	.str_save_as = L"Speichern als",
+	.str_close_and_save = L"Speichern und Schließen",
+	.str_close_without_saving = L"Schließen ohne zu Speichern",
 	.str_back = L"(?)",
 	.str_font_sz= L"Schriftgröße",
 	.str_small_font=L"Kleine",
@@ -182,6 +231,13 @@ const Language LANG_DEU = {
 	.str_copyright_notice=L"Copyright (C) Léo Hardt 2020. Lizenz definiert werden.",
 	.str_open_manual=L"Handbuch offenen",
 	.str_school_data=L"Schulendatei",
+	/* Create & view school */
+	.str_create_school=L"Schule Erstellen",
+	.str_school_name=L"Name der Schule",
+	.str_number_of_days_per_cycle=L"Anzahl Tage pro Zyklus",
+	.str_number_of_periods_per_day=L"Anzahl Zeiträume pro Tag",
+	.str_in_what_periods_the_school_is_open=L"In welche Schulstunde ist die Schule geöffenet?",
+	.str_create_school_manual_entry=L"Grosses Text; Grosses Text; Grosses Text; Grosses Text; Grosses Text;",
 	/* Header names */
 	.str_school=L"Schule",
 	.str_rooms=L"Klassenzimmer",

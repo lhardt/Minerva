@@ -11,6 +11,8 @@ typedef struct Language {
 	const wchar_t * const str_settings;
 	const wchar_t * const str_save;
 	const wchar_t * const str_save_as;
+	const wchar_t * const str_close_and_save;
+	const wchar_t * const str_close_without_saving;
 	const wchar_t * const str_back;
 	const wchar_t * const str_font_sz;
 	const wchar_t * const str_small_font;
@@ -22,6 +24,13 @@ typedef struct Language {
 	const wchar_t * const str_copyright_notice;
 	const wchar_t * const str_open_manual;
 	const wchar_t * const str_school_data;
+	/* Create & view school */
+	const wchar_t * const str_create_school;
+	const wchar_t * const str_school_name;
+	const wchar_t * const str_number_of_days_per_cycle;
+	const wchar_t * const str_number_of_periods_per_day;
+	const wchar_t * const str_in_what_periods_the_school_is_open;
+	const wchar_t * const str_create_school_manual_entry;
 	/* Header names */
 	const wchar_t * const str_school;
 	const wchar_t * const str_rooms;
