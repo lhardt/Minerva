@@ -16,13 +16,14 @@
 
 #include "types.h"
 #include "decisions.h"
+#include "school_examples.h"
 
-void copy_string(const char * const string);
+char * copy_string(const char * const string);
 
 void print_int_list(FILE * out, const int * const list);
-int * copy_int_list(const int * const list);
-int * int_list_copy(const int * const list);
 
+int * int_list_copy(const int * const list);
+int * int_list_n_copy(const int * const list, int n);
 
 void print_sized_int_list(FILE * out, const int * const list, const int size);
 
@@ -41,7 +42,11 @@ void print_class(FILE * out, const Class * const c);
 
 void print_school(FILE * out, const School * const s);
 
+void copy_soluiton(const Solution * const solution);
+
 School * copy_school(const School * const school);
+
+SchoolExample * copy_example(const SchoolExample * const ex);
 
 void free_school(School * school);
 

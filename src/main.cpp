@@ -113,6 +113,7 @@ bool Application::OnInit(){
 		m_island_image->LoadFile("res/floating.png", wxBITMAP_TYPE_PNG);
 
 		LoadConfig();
+		printf("Language: %x\n", m_lang);
 		m_form_welcome = new WelcomeForm(this);
 		m_form_welcome->Show();
 	}

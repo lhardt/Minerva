@@ -1,6 +1,6 @@
 #include "gui.hpp"
 
-SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)){
+SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, owner->m_lang->str_minerva_school_timetables, wxPoint(30,30), wxSize(800,600)){
 	this->m_owner = owner;
 	SetMinSize(wxSize(800,600));
 	SetFont(*m_owner->m_text_font);

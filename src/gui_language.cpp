@@ -71,7 +71,15 @@ const Language LANG_POR = {
 	.str_add_teacher=L"Adicionar Professor",
 	.str_add_teacher_group=L"Adicionar Grupo de Professores",
 	.str_add_class=L"Adicionar Turma",
-	.str_add_class_group=L"Adicionar Grupo de Turmas"
+	.str_add_class_group=L"Adicionar Grupo de Turmas",
+	/* Possible Preferences */
+	.str_period_preference=L"Preferência por Período",
+	.str_subject_preference=L"Preferência por Disciplina",
+	.str_class_preference=L"Preferência por Turma",
+	.str_twin_preference=L"Preferência por Geminação",
+	.str_room_preference=L"Preferência por Sala",
+	/* Checking */
+	.str_check_all=L"Conferir tudo"
 };
 
 const Language LANG_ENG = {
@@ -144,7 +152,15 @@ const Language LANG_ENG = {
 	.str_add_teacher=L"Add teacher",
 	.str_add_teacher_group=L"Add teacher group",
 	.str_add_class=L"Add class",
-	.str_add_class_group=L"Add class group"
+	.str_add_class_group=L"Add class group",
+	/* Possible Preferences */
+	.str_period_preference=L"Period Preference",
+	.str_subject_preference=L"Subject Preference",
+	.str_class_preference=L"Class Preference",
+	.str_twin_preference=L"Double Period Preference",
+	.str_room_preference=L"Room Preference",
+	/* Checking */
+	.str_check_all=L"Check all"
 };
 
 const Language LANG_SPA = {
@@ -207,7 +223,15 @@ const Language LANG_SPA = {
 	.str_add_teacher=L"Añadir Maestro",
 	.str_add_teacher_group=L"Añadir Grupo de Maestros",
 	.str_add_class=L"Añadir Clase",
-	.str_add_class_group=L"Añadir Grupo de Clases"
+	.str_add_class_group=L"Añadir Grupo de Clases",
+	/* Possible Preferences */
+	.str_period_preference=L"?",
+	.str_subject_preference=L"?",
+	.str_class_preference=L"?",
+	.str_twin_preference=L"?",
+	.str_room_preference=L"?",
+	/* Checking */
+	.str_check_all=L"?"
 };
 
 const Language LANG_DEU = {
@@ -270,5 +294,13 @@ const Language LANG_DEU = {
 	.str_add_teacher=L"Lehrer hinzufügen",
 	.str_add_teacher_group=L"Lehrergruppe hinzufügen",
 	.str_add_class=L"Klass hinzufügen",
-	.str_add_class_group=L"Klassengruppe hinzufügen"
+	.str_add_class_group=L"Klassengruppe hinzufügen",
+	/* Possible Preferences */
+	.str_period_preference=L"?",
+	.str_subject_preference=L"?",
+	.str_class_preference=L"?",
+	.str_twin_preference=L"?",
+	.str_room_preference=L"?",
+	/* Checking */
+	.str_check_all=L"?"
 };

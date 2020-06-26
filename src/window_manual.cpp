@@ -1,13 +1,14 @@
 #include "gui.hpp"
 #include <wx/notebook.h>
 
-ManualWindow::ManualWindow(Application * owner) : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva - Manual"), wxPoint(30,30), wxSize(490,600)){
+ManualWindow::ManualWindow(Application * owner) : wxFrame(nullptr, wxID_ANY, owner->m_lang->str_minerva_school_timetables, wxPoint(30,30), wxSize(490,600)){
 	m_owner = owner;
 
 	#ifdef __WXMSW__
 		SetIcon(wxICON(aaaaaaaa));
 	#endif
 
+	SetFont(*m_owner->m_text_font);
 	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	m_notebook->InsertPage(0, PopulateSchoolWindow(), wxT("Geral"));
@@ -17,18 +18,18 @@ ManualWindow::ManualWindow(Application * owner) : wxFrame(nullptr, wxID_ANY, wxS
 	m_notebook->InsertPage(4, PopulateClassesWindow(), wxT("Turmas"));
 	m_notebook->InsertPage(5, PopulateLecturesWindow(), wxT("Aulas"));
 	m_notebook->InsertPage(6, PopulateTimetableWindow(), wxT("Horário"));
-	m_notebook->InsertPage(6, PopulateSoftwareWindow(), wxT("Software"));
+	m_notebook->InsertPage(7, PopulateSoftwareWindow(), wxT("Software"));
 
 	this->Refresh();
 }
 
 wxWindow * ManualWindow::PopulateSchoolWindow(){
-	wxScrolledWindow * man_win = new wxScrolledWindow(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
+	wxScrolledWindow * man_win = new wxScrolledWindow(m_notebook, wxID_ANY);
 	man_win->SetBackgroundColour(wxColor(255,255,255));
 
 	wxSizer * textsz = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(man_win, wxID_ANY, wxT("Por Onde Começar\n"), wxDefaultPosition, wxSize(300,-1));
+	wxStaticText * title = new wxStaticText(man_win, wxID_ANY, wxT("Por Onde Começar\n"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	title->SetFont(*m_owner->m_page_title_font);
 	textsz->Add(title, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 15);
 
@@ -167,7 +168,6 @@ wxWindow * ManualWindow::PopulateLecturesWindow(){
 	return man_win;
 }
 
-
 wxWindow * ManualWindow::PopulateTimetableWindow(){
 	wxScrolledWindow * man_win = new wxScrolledWindow(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	man_win->SetBackgroundColour(wxColor(255,255,255));
@@ -204,7 +204,9 @@ wxWindow * ManualWindow::PopulateSoftwareWindow(){
 	wxStaticText * introd = new wxStaticText(man_win, wxID_ANY,
 			wxT("O presente software é parte de um Trabalho de Conclusão de Curso, por Léo Hardt, no IFRS-Canoas.\n\n"
 				"Ele será aprimorado subsequentemente, tendo em vista as novas melhorias que serão necessárias com seu uso. "
-				"Em sua versão atual, é apenas um protótipo. A licença de uso e de distribuição será definida mais tarde."
+				"Em sua versão atual, é apenas um protótipo. A licença de uso e de distribuição será definida mais tarde.\n\n"
+				"Para compor este programa, foram utilizadas diferentes bibliotecas livres. São elas: SQLite3, wxWidgets. "
+				// TODO TODO
 			), wxDefaultPosition, wxSize(450,500));
 	title->SetFont(*m_owner->m_page_title_font);
 	textsz->Add(introd, 0, wxALL, 15);

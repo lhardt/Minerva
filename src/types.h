@@ -84,7 +84,6 @@ struct Teacher {
 
 	Teaches      ** teaches;
 	ClassQuantity * possible_classes;
-	ClassQuantity * classes;
 
 	int * subordinates;
 
@@ -128,18 +127,18 @@ struct Class {
 };
 
 
-struct TeacherQuantity{
+struct TeacherQuantity {
 	Teacher * 		teacher;
 	int				quantity;
 };
 
 
-struct ClassQuantity{
+struct ClassQuantity {
 	Class * m_class;
 	int 	quantity;
 };
 
-struct SubjectQuantity{
+struct SubjectQuantity {
 	Subject    	  * subject;
 	int			 	quantity;
 };
@@ -148,14 +147,6 @@ struct RoomFeatureQuantity{
 	RoomFeature * feature;
 	int			  quantity;
 };
-
-typedef struct ExtendedClass{
-	int 			  id;
-	TeacherQuantity * teachers;
-	int 			* periods;
-	char    		* name;
-} ExtendedClass;
-
 
 typedef struct ExtendedTeacher{
 	int 			id;

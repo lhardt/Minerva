@@ -9,7 +9,7 @@
 #include "gui_language.hpp"
 #include "art_metro.h"
 
-MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)){
+MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, owner->m_lang->str_minerva_school_timetables, wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
 
 	SetFont(*m_owner->m_text_font);
@@ -19,7 +19,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	#endif
 
 	SetMinSize(wxSize(800,600));
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
 
 	wxRibbonBar * m_ribbon = new wxRibbonBar(this,-1,wxDefaultPosition, wxSize(800,150), wxRIBBON_BAR_FLOW_HORIZONTAL | wxRIBBON_BAR_SHOW_PAGE_LABELS);
 	m_ribbon->SetArtProvider(new wxRibbonMetroArtProvider(true, m_owner->m_small_font));
@@ -65,45 +65,45 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_ROOMS), m_owner->m_lang->str_list_rooms, image_list);
 	m_rib_bbars[1][1]->AddButton(LHID_OF(LHN_ADD_FEATURE), m_owner->m_lang->str_add_feature, image_add);
 	m_rib_bbars[1][1]->AddButton(LHID_OF(LHN_ADD_ROOM), m_owner->m_lang->str_add_room, image_add);
-	m_rib_bbars[1][2]->AddButton(LHID_OF(LHN_ROOM_PERIOD_PREF), wxT("Preferência por Períodos"), image_detail);
-	m_rib_bbars[1][3]->AddButton(LHID_OF(LHN_CHECK_ALL_ROOMS), wxT("Conferir Tudo"), image_detail);
+	m_rib_bbars[1][2]->AddButton(LHID_OF(LHN_ROOM_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
+	m_rib_bbars[1][3]->AddButton(LHID_OF(LHN_CHECK_ALL_ROOMS), m_owner->m_lang->str_check_all, image_detail);
 	m_rib_bbars[1][4]->AddButton(LHID_OF(LHN_OPEN_ROOMS_MANUAL), m_owner->m_lang->str_open_manual, image_detail);
 	/* DISCIPLINAS */
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECTS), m_owner->m_lang->str_list_subjects, image_list);
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECT_GROUPS), m_owner->m_lang->str_list_subject_groups, image_detail);
 	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT), m_owner->m_lang->str_add_subject, image_add);
 	m_rib_bbars[2][1]->AddButton(LHID_OF(LHN_ADD_SUBJECT_GROUP), m_owner->m_lang->str_add_subject_group, image_add);
-	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_CHECK_ALL_SUBJECTS), wxT("Conferir Tudo"), image_detail);
+	m_rib_bbars[2][2]->AddButton(LHID_OF(LHN_CHECK_ALL_SUBJECTS), m_owner->m_lang->str_check_all, image_detail);
 	m_rib_bbars[2][3]->AddButton(LHID_OF(LHN_OPEN_SUBJECTS_MANUAL), m_owner->m_lang->str_open_manual, image_help);
 	/* PROFESSORES */
 	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHERS), m_owner->m_lang->str_list_teachers, image_list);
 	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHER_GROUPS), m_owner->m_lang->str_list_teacher_groups, image_detail);
 	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER), m_owner->m_lang->str_add_teacher, image_add);
 	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER_GROUP), m_owner->m_lang->str_add_teacher_group, image_detail);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_SUBJECT_PREF), wxT("Preferência por Disciplina"), image_detail);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_PERIOD_PREF), wxT("Disponibilidade por Períodos"), image_detail);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
-	m_rib_bbars[3][3]->AddButton(LHID_OF(LHN_CHECK_ALL_TEACHERS), wxT("Conferir Tudo"), image_detail);
+	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_SUBJECT_PREF), m_owner->m_lang->str_subject_preference, image_detail);
+	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
+	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_TWIN_PREF), m_owner->m_lang->str_twin_preference, image_detail);
+	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_ROOM_PREF), m_owner->m_lang->str_room_preference, image_detail);
+	m_rib_bbars[3][3]->AddButton(LHID_OF(LHN_CHECK_ALL_TEACHERS), m_owner->m_lang->str_check_all, image_detail);
 	m_rib_bbars[3][4]->AddButton(LHID_OF(LHN_OPEN_TEACHERS_MANUAL), m_owner->m_lang->str_open_manual, image_help);
 	/* TURMAS */
 	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASSES), m_owner->m_lang->str_list_classes, image_list);
 	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASS_GROUPS), m_owner->m_lang->str_list_class_groups, image_detail);
 	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS), m_owner->m_lang->str_add_class, image_add);
 	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS_GROUP), m_owner->m_lang->str_add_class_group, image_detail);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_PERIOD_PREF), wxT("Disponibilidade por Períodos"), image_detail);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TEACHER_PREF), wxT("Preferência por Professores"), image_detail);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
-	m_rib_bbars[4][3]->AddButton(LHID_OF(LHN_CHECK_ALL_CLASSES), wxT("Conferir Tudo"), image_detail);
+	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
+	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TEACHER_PREF), m_owner->m_lang->str_teacher_preference, image_detail);
+	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_ROOM_PREF), m_owner->m_lang->str_room_preference, image_detail);
+	m_rib_bbars[4][3]->AddButton(LHID_OF(LHN_CHECK_ALL_CLASSES), m_owner->m_lang->str_check_all, image_detail);
 	m_rib_bbars[4][4]->AddButton(LHID_OF(LHN_OPEN_CLASSES_MANUAL), m_owner->m_lang->str_open_manual, image_help);
 	/* AULAS */
 	m_rib_bbars[5][0]->AddButton(LHID_OF(LHN_SEE_LECTURES), wxT("Ver Aulas por Turma"), image_list);
 	m_rib_bbars[5][1]->AddButton(LHID_OF(LHN_ADD_LECTURES), wxT("Adicionar Aulas por Turma"), image_add);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_PERIOD_PREF), wxT("Preferência por Períodos"), image_detail);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TEACHER_PREF), wxT("Preferência por Professores"), image_detail);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TWIN_PREF), wxT("Preferência por Geminação"), image_detail);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_ROOM_PREF), wxT("Preferência por Sala"), image_detail);
-	m_rib_bbars[5][3]->AddButton(LHID_OF(LHN_CHECK_ALL_LECTURES), wxT("Conferir Tudo"), image_detail);
+	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
+	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TEACHER_PREF), m_owner->m_lang->str_teacher_preference, image_detail);
+	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TWIN_PREF), m_owner->m_lang->str_twin_preference, image_detail);
+	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_ROOM_PREF), m_owner->m_lang->str_room_preference, image_detail);
+	m_rib_bbars[5][3]->AddButton(LHID_OF(LHN_CHECK_ALL_LECTURES), m_owner->m_lang->str_check_all, image_detail);
 	m_rib_bbars[5][4]->AddButton(LHID_OF(LHN_OPEN_LECTURES_MAUAL), m_owner->m_lang->str_open_manual, image_help);
 	/* HORÁRIO */
 	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_SEE_TIMETABLE), wxT("Visualizar Horário"), image_list);
@@ -115,28 +115,26 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add(m_ribbon, 0, wxEXPAND);
 
-	m_center_pane = new wxPanel(this, wxID_ANY, wxPoint(0,150), wxSize(800,425));
-	m_center_pane->SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
-	wxPanel * m_footer = new wxPanel(this, wxID_ANY, wxPoint(0,575), wxSize(800,25));
+	m_center_pane = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	wxPanel * m_footer = new wxPanel(this, wxID_ANY, wxPoint(0,575), wxDefaultSize);
 
 	sizer->Add(m_center_pane, 1, wxEXPAND);
 
 	m_footer->SetBackgroundColour(wxColor(0x25,0x75,0xb0));
-	wxStaticText * m_footer_text = new wxStaticText(m_footer, wxID_ANY,wxT("Copyright (C) Léo Hardt 2019-2020. This program is free software protected by Mozilla Public License v2.0."),
-													wxPoint(0,5), wxSize(800,20), wxST_NO_AUTORESIZE |wxALIGN_CENTRE | wxALIGN_CENTRE_HORIZONTAL);
+	wxStaticText * m_footer_text = new wxStaticText(m_footer, wxID_ANY,m_owner->m_lang->str_copyright_notice, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	m_footer_text->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
 	m_footer_text->SetFont(*m_owner->m_small_font);
 
-	wxSizer * footer_sizer = new wxBoxSizer(wxHORIZONTAL);
-	footer_sizer->Add(m_footer_text,1,wxALIGN_CENTER);
-	m_footer->SetSizerAndFit(footer_sizer);
+	wxSizer * footer_sizer = new wxBoxSizer(wxVERTICAL);
+	footer_sizer->Add(m_footer_text,1,wxEXPAND | wxALL, 2);
+	m_footer->SetSizer(footer_sizer);
 
 	sizer->Add(m_footer, 0, wxEXPAND);
 
-
-	m_ribbon->AddPageHighlight(m_ribbon->GetPageCount() - 1);
+	m_ribbon->AddPageHighlight(m_ribbon->GetPageCount() - 1); /* TODO is it working?*/
 	m_ribbon->Realize();
 
+	sizer->SetMinSize(wxSize(800,600));
 	SetSizerAndFit(sizer);
 }
 

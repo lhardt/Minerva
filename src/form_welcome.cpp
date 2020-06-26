@@ -7,7 +7,7 @@ extern "C" {
 	#include "loader.h"
 };
 
-WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxString::FromUTF8("Horário Escolar Minerva"), wxPoint(30,30), wxSize(800,600)) {
+WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, owner->m_lang->str_minerva_school_timetables, wxPoint(30,30), wxSize(800,600)) {
 	int i = 0;
 	int * school_ids;
 	char ** school_names;
@@ -100,19 +100,6 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, wxStr
 	frame_sz->Add(panel,1,wxEXPAND,0);
 	SetSizerAndFit(frame_sz);
 	SetSize(wxSize(800,600));
-
-
-	//
-	// panel->SetMinSize(wxSize(799,599));
-	// panel->SetMaxSize(wxSize(801,601));
-	// panel->SetSize(wxSize(800,600));
-	//
-	// Layout();
-	//
-	// SetMinSize(wxSize(799,599));
-	// SetMaxSize(wxSize(801,601));
-	// SetSize(wxSize(800,600));
-	//
 }
 
 void WelcomeForm::OnCreateClicked(wxCommandEvent & ev){
@@ -138,9 +125,6 @@ void WelcomeForm::OnOpenClicked(wxCommandEvent & ev){
 }
 
 void WelcomeForm::OnHelpClicked(wxCommandEvent & ev){
-	int w,h;
-	GetSize(&w, &h);
-	printf("Window size: w%d, h%d\n", w,h);
 	if(m_owner->m_window_manual == nullptr){
 		m_owner->m_window_manual = new ManualWindow(m_owner);
 		m_owner->m_window_manual->Show();

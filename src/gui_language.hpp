@@ -64,6 +64,15 @@ typedef struct Language {
 	const wchar_t * const str_add_teacher_group;
 	const wchar_t * const str_add_class;
 	const wchar_t * const str_add_class_group;
+	/* Possible Preferences */
+	const wchar_t * const str_period_preference;
+	const wchar_t * const str_subject_preference;
+	const wchar_t * const str_teacher_preference;
+	const wchar_t * const str_class_preference;
+	const wchar_t * const str_twin_preference;
+	const wchar_t * const str_room_preference;
+	/* Checking */
+	const wchar_t * const str_check_all;
 } Language;
 
 const extern Language LANG_POR;
