@@ -11,14 +11,14 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Professor"), wxDefaultPosition, wxSize(400,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Professor"));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome do Professor"), wxDefaultPosition, wxSize(200,15));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome do Professor"));
 	name_label->SetFont(*m_owner->m_small_font);
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
 
-	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, wxT("O professor está disponível em quais períodos?"), wxPoint(30,195), wxSize(250,15));
+	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, wxT("O professor está disponível em quais períodos?"));
 	grid_label->SetFont(*m_owner->m_small_font);
 	m_grid = new ChoiceGrid(this, wxID_ANY, wxPoint(30,210), wxSize(500,200));
 
@@ -42,7 +42,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 		}
 	}
 
-	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, wxT("Adicione Disciplinas que o Professor leciona."), wxDefaultPosition, wxSize(400,15));
+	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, wxT("Adicione Disciplinas que o Professor leciona."));
 	subjects_label->SetFont(*m_owner->m_small_font);
 
 	wxArrayString arr;
@@ -52,7 +52,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(310,30),arr);
-	wxButton * add_subject = new wxButton(this, wxID_ANY, wxT("Adicionar Disciplina"), wxDefaultPosition, wxSize(180,30));
+	wxButton * add_subject = new wxButton(this, wxID_ANY, wxT("Adicionar Disciplina"), wxDefaultPosition, wxSize(180,-1));
 	add_subject->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddSubjectButtonClicked, this);
 
 	add_sizer->Add(m_all_subjects_list,0,wxRIGHT,10);
@@ -79,7 +79,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	wxButton * add_teacher = new wxButton(this, wxID_ANY, wxT("Adicionar Professor"), wxDefaultPosition, wxSize(180,30));
 	add_teacher->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddTeacherButtonClicked, this);
 
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxPoint(30, 180), wxSize(300,30));
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_err_msg->SetFont(*m_owner->m_small_font);
 
 	sizer->Add(title, 0, wxALL, 15);

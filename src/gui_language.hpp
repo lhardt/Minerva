@@ -73,6 +73,14 @@ typedef struct Language {
 	const wchar_t * const str_room_preference;
 	/* Checking */
 	const wchar_t * const str_check_all;
+	/* General-Purpouse / Group Related */
+	const wchar_t * const str_add_classes_to_the_group;
+	const wchar_t * const str_add_class_to_the_group;
+	const wchar_t * const str_group_name;
+	const wchar_t * const str_remove_all;
+	const wchar_t * const str_remove;
+	const wchar_t * const str_add_group;
+
 } Language;
 
 const extern Language LANG_POR;

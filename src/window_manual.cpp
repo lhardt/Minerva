@@ -31,7 +31,7 @@ wxWindow * ManualWindow::PopulateSchoolWindow(){
 
 	wxStaticText * title = new wxStaticText(man_win, wxID_ANY, wxT("Por Onde Começar\n"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
 	title->SetFont(*m_owner->m_page_title_font);
-	textsz->Add(title, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 15);
+	textsz->Add(title, 0, wxALIGN_CENTER | wxALL, 15);
 
 	wxStaticText * introd = new wxStaticText(man_win, wxID_ANY,
 			wxT("Gostaríamos mais uma vez de estar testando essa novidade. Todo feedback nos é importante.\n\n"

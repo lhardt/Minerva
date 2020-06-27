@@ -29,13 +29,6 @@ extern "C"{
 
 char * copy_wx_string(wxString str);
 
-class PreferenceClientData : public wxClientData{
-public:
-	int value;
-	const char * const name;
-	wxColor color;
-};
-
 class IntClientData : public wxClientData{
 public:
 	IntClientData(int value, wxString name);

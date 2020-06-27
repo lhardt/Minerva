@@ -17,14 +17,14 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	}
 
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Grupo de Turmas"), wxDefaultPosition, wxSize(400,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Grupo de Turmas"));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome do Grupo"), wxDefaultPosition, wxSize(200,15));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome do Grupo"));
 	name_label->SetFont(*m_owner->m_small_font);
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
 
-	wxStaticText * classes_label = new wxStaticText(this, wxID_ANY, wxT("Adicione Turmas ao Grupo."), wxDefaultPosition, wxSize(400,15));
+	wxStaticText * classes_label = new wxStaticText(this, wxID_ANY, wxT("Adicione Turmas ao Grupo."));
 	classes_label->SetFont(*m_owner->m_small_font);
 
 	wxArrayString class_names;
@@ -33,14 +33,14 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	}
 
 	m_all_classes_list = new wxChoice(this, wxID_ANY,  wxDefaultPosition, wxSize(310,30), class_names);
-	wxButton * add_class = new wxButton(this, wxID_ANY, wxT("Adicionar Turma"), wxDefaultPosition, wxSize(180,30));
+	wxButton * add_class = new wxButton(this, wxID_ANY, wxT("Adicionar Turma"), wxDefaultPosition, wxSize(180,-1));
 
 	m_selected_classes_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
-	wxButton * remove_button = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(180,30));
-	wxButton * remove_all = new wxButton(this, wxID_ANY, wxT("Remover Todas"), wxDefaultPosition, wxSize(180,30));
-	wxButton * add_group = new wxButton(this, wxID_ANY, wxT("Adicionar Grupo"), wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_button = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(180,-1));
+	wxButton * remove_all = new wxButton(this, wxID_ANY, wxT("Remover Todas"), wxDefaultPosition, wxSize(180,-1));
+	wxButton * add_group = new wxButton(this, wxID_ANY, wxT("Adicionar Grupo"), wxDefaultPosition, wxSize(180,-1));
 
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
 	add_sizer->Add(m_all_classes_list,0,wxRIGHT,10);

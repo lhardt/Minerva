@@ -17,7 +17,6 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 		SetIcon(wxICON(aaaaaaaa));
 	#endif
 
-	SetMinSize(wxSize(800,600));
 	SetBackgroundColour(wxColour(240,240,240));
 
 	wxScrolledWindow * m_right_pane = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(350,-1));
@@ -121,17 +120,19 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	m_right_pane->SetScrollRate(5,5);
 	m_right_pane->ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_ALWAYS);
 	m_right_pane->Layout();
-	SetSizer(sizer);
+	SetSizerAndFit(sizer);
+	sizer->SetMinSize(800,600);
 
-	Layout();
-	SetSize(GetMinSize());
-	Refresh();
-
-	SetSize(GetMinSize());
+	m_number_of_periods_text->Bind(wxEVT_SPINCTRL, &CreateSchoolForm::OnGridSizeUpdated, this);
+	m_number_of_days_text->Bind(wxEVT_SPINCTRL, &CreateSchoolForm::OnGridSizeUpdated, this);
 }
 
 CreateSchoolForm::~CreateSchoolForm(){
 
+}
+
+void CreateSchoolForm::OnGridSizeUpdated(wxSpinEvent & ev){
+	m_grid->GridRemake(m_number_of_days_text->GetValue(),m_number_of_periods_text->GetValue());
 }
 
 void CreateSchoolForm::OnBackClicked(wxCommandEvent & ev){

@@ -79,7 +79,14 @@ const Language LANG_POR = {
 	.str_twin_preference=L"Preferência por Geminação",
 	.str_room_preference=L"Preferência por Sala",
 	/* Checking */
-	.str_check_all=L"Conferir tudo"
+	.str_check_all=L"Conferir tudo",
+	/* General-Purpouse / Group Related */
+	.str_add_classes_to_the_group=L"Adicionar Turmas ao Grupo",
+	.str_add_class_to_the_group=L"Adicionar Turma",
+	.str_group_name=L"Nome do Grupo",
+	.str_remove_all=L"Remover Todos",
+	.str_remove=L"Remover",
+	.str_add_group=L"Adicionar Grupo"
 };
 
 const Language LANG_ENG = {
@@ -160,7 +167,14 @@ const Language LANG_ENG = {
 	.str_twin_preference=L"Double Period Preference",
 	.str_room_preference=L"Room Preference",
 	/* Checking */
-	.str_check_all=L"Check all"
+	.str_check_all=L"Check all",
+	/* General-Purpouse / Group Related */
+	.str_add_classes_to_the_group=L"Add Classes to the group",
+	.str_add_class_to_the_group=L"Add class",
+	.str_group_name=L"Group name",
+	.str_remove_all=L"Remove All",
+	.str_remove=L"Remove",
+	.str_add_group=L"Add Group"
 };
 
 const Language LANG_SPA = {
