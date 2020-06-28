@@ -2463,9 +2463,9 @@ static bool exec_and_check(sqlite3 * db, const char * const sql, int id){
 }
 
 bool remove_feature(FILE * console_out, sqlite3* db, int id){
-	return  !exec_and_check(db, DELETE_FEATURE_BY_ID, id)?false:
+	return  !exec_and_check(db, DELETE_ROOM_FEATURE_BY_FEATURE_ID, id)?false:
 			!exec_and_check(db, DELETE_DEMAND_BY_FEATURE_ID, id)?false:
-			!exec_and_check(db, DELETE_ROOM_FEATURE_BY_FEATURE_ID, id)?false:
+			!exec_and_check(db, DELETE_FEATURE_BY_ID, id)?false:
 			true;
 }
 

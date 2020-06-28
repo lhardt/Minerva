@@ -2,6 +2,7 @@
 
 extern "C" {
 	#include "loader.h"
+	#include "util.h"
 };
 
 ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
@@ -9,30 +10,50 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	School * school = NULL;
 	this->m_owner = owner;
 	school = m_owner->m_school;
+	SetFont(*m_owner->m_text_font);
 	SetBackgroundColour(wxColour(240,240,240));
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Lista de Turmas"), wxDefaultPosition, wxSize(400,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_classes);
 	title->SetFont(*m_owner->m_page_title_font);
 
-	m_classes_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300));
+	m_classes_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 
 	wxSizer * body_sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * description_sizer = new wxBoxSizer(wxVERTICAL);
+	wxSizer * fields_sizer = new wxGridSizer(2,10,10);
 
 	body_sizer->Add(m_classes_list, 0, wxEXPAND|wxALL, 15);
 	body_sizer->Add(description_sizer, 1, wxEXPAND|wxALL, 15);
 
-	m_name_text = new wxStaticText(this, wxID_ANY, wxT("Nome:"), wxDefaultPosition, wxSize(300,30));
-	m_size_text = new wxStaticText(this, wxID_ANY, wxT("Tamanho: "), wxDefaultPosition, wxSize(300,30));
-	m_free_periods_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Pode ter Períodos Livres: "), wxDefaultPosition, wxSize(300,30));
-	m_entry_period_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Período de Entrada: "), wxDefaultPosition, wxSize(300,30));
-	m_exit_period_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Período de Saída: "), wxDefaultPosition, wxSize(300,30));
-	m_subjects_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("Disciplinas Requeridas: "), wxDefaultPosition, wxSize(300,-1));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
+	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_size);
+	wxStaticText * free_periods_label = new wxStaticText(this, wxID_ANY, wxT("Períodos Livres: "));
+	wxStaticText * entry_period_label = new wxStaticText(this, wxID_ANY, wxT("Período de Entrada: "));
+	wxStaticText * exit_period_label = new wxStaticText(this, wxID_ANY, wxT("Período de Saída: "));
+	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, wxT("Disciplinas Requeridas: "));
+	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, wxT("Disponibilidade:"));
+	wxStaticText * m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 
-	wxStaticText * periods_text = new wxStaticText(this, wxID_ANY, wxT("Períodos em que ele está disponível"), wxDefaultPosition,wxSize(300,20));
-	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(300,200));
+	name_label->SetFont(*m_owner->m_bold_text_font);
+	size_label->SetFont(*m_owner->m_bold_text_font);
+	free_periods_label->SetFont(*m_owner->m_bold_text_font);
+	entry_period_label->SetFont(*m_owner->m_bold_text_font);
+	exit_period_label->SetFont(*m_owner->m_bold_text_font);
+	subjects_label->SetFont(*m_owner->m_bold_text_font);
+	periods_label->SetFont(*m_owner->m_bold_text_font);
+	m_err_msg->SetFont(*m_owner->m_small_font);
+
+	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_size_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_free_periods_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_entry_period_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_exit_period_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_subjects_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(250,200));
+	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"));
+	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
 	grid_values.push_back(wxT("Disponível"));
@@ -47,25 +68,30 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_periods_grid->m_basic_col_name = wxT("Dia");
 	m_periods_grid->m_basic_row_name = wxT("Período");
 
-	wxSizer * btn_sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));
-	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"), wxDefaultPosition, wxSize(200,30));
-
 	edit_btn->Disable();
-	btn_sizer->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
-	btn_sizer->Add(delete_btn, 1, wxEXPAND|wxALL,5);
 
-	description_sizer->Add(m_name_text, 0, wxBOTTOM, 5);
-	description_sizer->Add(m_size_text, 0, wxBOTTOM, 5);
-	description_sizer->Add(m_free_periods_text, 0, wxBOTTOM, 5);
-	description_sizer->Add(m_entry_period_text, 0, wxBOTTOM, 5);
-	description_sizer->Add(m_exit_period_text, 0, wxBOTTOM, 5);
-	description_sizer->Add(m_subjects_text, 1, wxBOTTOM, 5);
-	description_sizer->Add(periods_text, 0, wxBOTTOM, 1);
-	description_sizer->Add(m_periods_grid, 0, wxBOTTOM, 5);
+	wxSizer * btn_sizer = new wxBoxSizer(wxHORIZONTAL);
+	btn_sizer->Add(edit_btn, 1, wxEXPAND | wxRIGHT, 10);
+	btn_sizer->Add(delete_btn, 1, wxEXPAND);
+
+	fields_sizer->Add(name_label, 1, wxEXPAND);
+	fields_sizer->Add(m_name_text, 1, wxEXPAND);
+	fields_sizer->Add(size_label, 1, wxEXPAND);
+	fields_sizer->Add(m_size_text, 1, wxEXPAND);
+	fields_sizer->Add(free_periods_label, 1, wxEXPAND);
+	fields_sizer->Add(m_free_periods_text, 1, wxEXPAND);
+	fields_sizer->Add(entry_period_label, 1, wxEXPAND);
+	fields_sizer->Add(m_entry_period_text, 1, wxEXPAND);
+	fields_sizer->Add(exit_period_label, 1, wxEXPAND);
+	fields_sizer->Add(m_exit_period_text, 1, wxEXPAND);
+	fields_sizer->Add(subjects_label, 1, wxEXPAND);
+	fields_sizer->Add(m_subjects_text, 1, wxEXPAND);
+	description_sizer->Add(fields_sizer, 0, wxEXPAND | wxBOTTOM, 15);
+	description_sizer->Add(periods_label, 0, wxEXPAND);
+	description_sizer->Add(m_periods_grid, 0, wxEXPAND | wxBOTTOM, 15);
 	description_sizer->AddStretchSpacer();
-	description_sizer->Add(btn_sizer, 0, 0);
-
+	description_sizer->Add(btn_sizer, 0, wxEXPAND);
+	description_sizer->Add(m_err_msg, 0, wxEXPAND);
 
 	if(school->n_classes > 0){
 		wxArrayString list;
@@ -94,12 +120,12 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
 	if(m_classes_list->GetSelection() != wxNOT_FOUND){
 		Class * c = &school->classes[m_classes_list->GetSelection()];
-		m_name_text->SetLabel(wxT("Nome: ") + wxString::FromUTF8(c->name));
-		m_size_text->SetLabel(wxT("Tamanho: ") + wxString::Format("%d",c->size));
-		m_free_periods_text->SetLabel(wxString::FromUTF8("Pode ter Períodos Livres: ") + wxString(c->can_have_free_periods_flag?wxT("Sim"):wxString::FromUTF8("Não")));
-		m_entry_period_text->SetLabel(wxString::FromUTF8("Período de Entrada: ") + wxString::Format("%s",school->period_names[c->maximal_entry_period]));
-		m_exit_period_text->SetLabel(wxString::FromUTF8("Período de Saída: ") + wxString::Format("%s",school->period_names[c->minimal_exit_period]));
-		m_subjects_text->SetLabel(wxString::FromUTF8("Disciplinas Requeridas: "));
+		m_name_text->SetLabel(wxString::FromUTF8(c->name));
+		m_size_text->SetLabel(wxString::Format("%d",c->size));
+		m_free_periods_text->SetLabel(wxString(c->can_have_free_periods_flag?wxT("Sim"):wxString::FromUTF8("Não")));
+		m_entry_period_text->SetLabel(wxString::Format("%s",school->period_names[c->maximal_entry_period]));
+		m_exit_period_text->SetLabel(wxString::Format("%s",school->period_names[c->minimal_exit_period]));
+		m_subjects_text->SetLabel(wxString::FromUTF8(""));
 		if(c->needs != NULL){
 			for(i = 0; c->needs[i].subject != NULL; ++i){
 				m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxString::FromUTF8(c->needs[i].subject->name) +
@@ -142,22 +168,7 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 		success = remove_class(stdout, m_owner->m_database, c->id);
 
 		if(success) {
-			/* TODO: Check for subordinates too. */
-			Meeting * m_list;
-			for(i = 0; i < school->n_solutions; ++i){
-				m_list=  school->solutions[i].meetings;
-				for(j = 0; m_list[j].m_class != NULL; ++j){
-					if(m_list[i].m_class->id == c->id){
-						for(j = i; m_list[j].m_class != NULL; ++j){
-							m_list[j] = m_list[j+1];
-						}
-					}
-				}
-			}
-			for(i = del_i; i < school->n_classes; ++i){
-				school->classes[i] = school->classes[i+1];
-			}
-
+			remove_class_from_school(school, del_i);
 			m_classes_list->Delete(del_i);
 		} else {
 			printf("Não foi possível deletar.\n");

@@ -2,6 +2,7 @@
 
 extern "C" {
 	#include "loader.h"
+	#include "util.h"
 };
 
 ListFeaturesPane::ListFeaturesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
@@ -13,32 +14,36 @@ ListFeaturesPane::ListFeaturesPane(Application * owner, wxWindow * parent, wxPoi
 
 	m_selected_index = -1;
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Lista de Características"), wxDefaultPosition, wxSize(400,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_features, wxDefaultPosition, wxSize(400,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
 	m_features_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300));
 	m_features_list->Bind(wxEVT_LISTBOX,&ListFeaturesPane::OnSelectionChange, this);
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
+	name_label->SetFont(*m_owner->m_bold_text_font);
+	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
 
+	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
+	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
+
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer* body_sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer* description_sizer = new wxBoxSizer(wxVERTICAL);
+	wxSizer * btn_sizer = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * field_sizer = new wxBoxSizer(wxHORIZONTAL);
 
 	body_sizer->Add(m_features_list, 0, wxEXPAND|wxALL, 15);
 	body_sizer->Add(description_sizer, 1, wxEXPAND|wxALL, 15);
 
-
-	m_name_text = new wxStaticText(this, wxID_ANY, wxT("Nome:"), wxDefaultPosition, wxSize(300,30));
-
-	wxSizer * btn_sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));
-	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"), wxDefaultPosition, wxSize(200,30));
 	btn_sizer->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
 	btn_sizer->Add(delete_btn, 1, wxEXPAND|wxALL,5);
 
-	description_sizer->Add(m_name_text, 0, 0);
+	description_sizer->Add(field_sizer, 0, 0);
 	description_sizer->AddStretchSpacer();
 	description_sizer->Add(btn_sizer, 0, 0);
+
+	field_sizer->Add(name_label, 0, wxRIGHT, 10);
+	field_sizer->Add(m_name_text, 0, wxRIGHT, 10);
 
 	edit_btn->Disable();
 	delete_btn->Bind(wxEVT_BUTTON, &ListFeaturesPane::OnRemoveButtonClicked, this);
@@ -62,50 +67,20 @@ ListFeaturesPane::ListFeaturesPane(Application * owner, wxWindow * parent, wxPoi
 }
 
 void ListFeaturesPane::OnSelectionChange(wxCommandEvent & ev){
-	printf("Selection changed;\n");
 	if(m_features_list->GetSelection() != wxNOT_FOUND){
 		m_selected_index = m_features_list->GetSelection();
-		m_name_text->SetLabel(wxString::Format(wxT("Nome: %s"), wxString::FromUTF8( m_owner->m_school->feature_names[m_selected_index] )));
+		m_name_text->SetLabel(wxString::FromUTF8( m_owner->m_school->feature_names[m_selected_index]));
 	}
 }
 
 void ListFeaturesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
-	printf("remove clicked\n");
 	School * school = m_owner->m_school;
-	if(m_selected_index != -1){
+	if(m_features_list->GetSelection() != wxNOT_FOUND){
 		bool success = remove_feature(stdout, m_owner->m_database, school->feature_ids[m_selected_index]);
 		if(success){
-			free(school->feature_names[m_selected_index]);
-
-			for(int i = m_selected_index; i < school->n_features && school->feature_ids[i] >= 0; ++i ){
-				school->feature_names[i] = school->feature_names[i+1];
-				school->feature_ids[i] = school->feature_ids[i+1];
-			}
-
-			/* If there are features right of the deleted, push them back, in all structures. */
-			if(m_selected_index == MAX_FEATURES -1 || school->feature_ids[m_selected_index+1] != -1){
-				if(school->rooms != NULL && school->n_rooms > 0){
-					for(int i = 0;  i < school->n_rooms; ++i ){
-						for(int j = m_selected_index + 1; (j < MAX_FEATURES -1) && (school->rooms[i].room_features[j] >= 0); ++j){
-							/* copies the -1 terminator too. */
-							school->rooms[i].room_features[j] = school->rooms[i].room_features[j+1];
-						}
-					}
-				}
-
-				if(school->teaches != NULL && school->n_teaches > 0){
-					for(int i = 0; i < school->n_teaches; ++i){
-						for(int j = m_selected_index + 1; (j < MAX_FEATURES -1) && (school->teaches[i].features[j] >= 0); ++j){
-							/* copies the -1 terminator too. */
-							school->teaches[i].features[j] = school->teaches[i].features[j+1];
-						}
-						/* May have a different terminator. */
-						for(int j = m_selected_index + 1; (j < MAX_FEATURES -1) && (school->teaches[i].features[j] >= 0); ++j){
-							school->teaches[i].min_features[j] = school->teaches[i].min_features[j+1];
-						}
-					}
-				}
-			}
+			remove_feature_from_school(school, m_selected_index);
+			
+			m_name_text->SetLabel(wxT(""));
 			m_features_list->Delete(m_selected_index);
 		}
 	}

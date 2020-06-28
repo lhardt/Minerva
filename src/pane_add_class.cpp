@@ -16,39 +16,50 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 		selected_subjects[i] = 0;
 	}
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Turma"), wxDefaultPosition, wxSize(400,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Turma"));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome da Turma"), wxDefaultPosition, wxSize(200,15));
-	name_label->SetFont(*m_owner->m_small_font);
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome da Turma"));
+	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, wxT("Qual o tamanho da turma?"));
+	wxStaticText * entry_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de entrada da turma?"));
+	wxStaticText * exit_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de saída da turma?"));
+	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, wxT("Em Quais Períodos a Turma está Disponível?"));
+	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, wxT("Quantos Períodos de Cada Disciplina a Turma Assiste?"));
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 
-	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, wxT("Qual o tamanho da turma?"), wxDefaultPosition, wxSize(200,15));
-	m_size_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
+	name_label->SetFont(*m_owner->m_small_font);
+	size_label->SetFont(*m_owner->m_small_font);
+	entry_label->SetFont(*m_owner->m_small_font);
+	exit_label->SetFont(*m_owner->m_small_font);
+	periods_label->SetFont(*m_owner->m_small_font);
+	subjects_label->SetFont(*m_owner->m_small_font);
+	m_err_msg->SetFont(*m_owner->m_small_font);
 
 	wxArrayString per_arr;
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		per_arr.push_back(wxString::FromUTF8(school->daily_period_names[i]));
 	}
+	wxArrayString subj_arr;
+	for(i = 0; i < school->n_subjects; ++i){
+		subj_arr.push_back(wxString::FromUTF8(school->subjects[i].name));
+	}
 
-	wxStaticText * entry_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de entrada da turma?"), wxDefaultPosition, wxSize(300,15));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(180,-1));
+	m_size_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(180,-1));
 	m_entry_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), per_arr);
-
-
-	wxStaticText * exit_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de saída da turma?"), wxDefaultPosition, wxSize(300,15));
 	m_exit_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), per_arr);
-
-	m_entry_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
-	m_exit_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
-
-
-	m_free_periods_checkbox = new wxCheckBox(this, wxID_ANY, wxT("A turma pode ter períodos livres?"), wxDefaultPosition, wxSize(300, 30), wxALIGN_RIGHT);
-
-	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, wxT("Em Quais Períodos a Turma está Disponível?"), wxDefaultPosition, wxSize(350,15));
-
+	m_free_periods_checkbox = new wxCheckBox(this, wxID_ANY, wxT("A turma pode ter períodos livres?"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_periods = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(400,300));
+	wxButton * remove_subject = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(220,-1));
+	wxButton * remove_all = new wxButton(this, wxID_ANY, wxT("Remover Todos"), wxDefaultPosition, wxSize(220,-1));
+	m_selected_subjects_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
+	wxButton * add_class = new wxButton(this, wxID_ANY, wxT("Adicionar Turma"), wxDefaultPosition, wxSize(220,-1));
+	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(180,30), subj_arr);
+	m_score_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(120,30));
+	wxButton * add_subject = new wxButton(this, wxID_ANY, wxT("Adicionar Disciplina"), wxDefaultPosition, wxSize(220,30));
+
+	m_free_periods_checkbox->SetFont(*m_owner->m_small_font);
 
 	wxVector<wxString> possible_values;
 	possible_values.push_back(wxT("Disponível"));
@@ -75,51 +86,26 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 		}
 	}
 
-	wxArrayString subj_arr;
-	for(i = 0; i < school->n_subjects; ++i){
-		subj_arr.push_back(wxString::FromUTF8(school->subjects[i].name));
-	}
-
-	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, wxT("Quantos Períodos de Cada Disciplina a Turma Assiste?."), wxDefaultPosition, wxSize(400,15));
-	subjects_label->SetFont(*m_owner->m_small_font);
-
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
-	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(180,30), subj_arr);
-	m_score_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(120,30));
-	wxButton * add_subject = new wxButton(this, wxID_ANY, wxT("Adicionar Disciplina"), wxDefaultPosition, wxSize(180,30));
+	wxSizer * subjects_sizer = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * buttons_sizer = new wxBoxSizer(wxVERTICAL);
+
 	add_sizer->Add(m_all_subjects_list,0,wxRIGHT,10);
 	add_sizer->Add(m_score_text,0,wxRIGHT,10);
 	add_sizer->Add(add_subject,0,wxRIGHT,10);
 
-
-	add_subject->Bind(wxEVT_BUTTON, &AddClassPane::OnAddSubjectButtonClicked, this);
-
-
-	wxSizer * subjects_sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * buttons_sizer = new wxBoxSizer(wxVERTICAL);
-
-	wxButton * remove_subject = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(180,30));
-	wxButton * remove_all = new wxButton(this, wxID_ANY, wxT("Remover Todos"), wxDefaultPosition, wxSize(180,30));
-	m_selected_subjects_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
 	buttons_sizer->Add(remove_subject, 0, wxBOTTOM, 15);
 	buttons_sizer->Add(remove_all, 0, wxBOTTOM, 15);
 	subjects_sizer->Add(m_selected_subjects_list, 0, wxRIGHT, 10);
 	subjects_sizer->Add(buttons_sizer, 0, 0);
-
-	remove_all->Bind(wxEVT_BUTTON, &AddClassPane::OnRemoveAllButtonClicked, this);
-
-
-	wxButton * add_class = new wxButton(this, wxID_ANY, wxT("Adicionar Turma"), wxDefaultPosition, wxSize(180,30));
-	add_class->Bind(wxEVT_BUTTON, &AddClassPane::OnAddClassButtonClicked, this);
-
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
 	sizer->Add(title, 0, wxALL, 15);
 	sizer->Add(name_label, 0, wxLEFT ,15);
 	sizer->Add(m_name_text, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(size_label, 0, wxLEFT ,15);
 	sizer->Add(m_size_text, 0, wxLEFT | wxBOTTOM,15);
-	sizer->Add(m_free_periods_checkbox, 0, wxLEFT ,15);
+	sizer->Add(m_free_periods_checkbox, 0, wxLEFT | wxBOTTOM ,15);
 	sizer->Add(entry_label, 0, wxLEFT ,15);
 	sizer->Add(m_entry_text, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(exit_label, 0, wxLEFT ,15);
@@ -137,6 +123,12 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_ALWAYS);
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
+
+	m_entry_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
+	m_exit_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
+	remove_all->Bind(wxEVT_BUTTON, &AddClassPane::OnRemoveAllButtonClicked, this);
+	add_subject->Bind(wxEVT_BUTTON, &AddClassPane::OnAddSubjectButtonClicked, this);
+	add_class->Bind(wxEVT_BUTTON, &AddClassPane::OnAddClassButtonClicked, this);
 }
 
 void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){

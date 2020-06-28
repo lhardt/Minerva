@@ -13,6 +13,9 @@ typedef struct Language {
 	const wchar_t * const str_save_as;
 	const wchar_t * const str_close_and_save;
 	const wchar_t * const str_close_without_saving;
+	const wchar_t * const str_name;
+	const wchar_t * const str_edit;
+	const wchar_t * const str_size;
 	const wchar_t * const str_back;
 	const wchar_t * const str_font_sz;
 	const wchar_t * const str_small_font;
@@ -48,13 +51,21 @@ typedef struct Language {
 	const wchar_t * const str_check;
 	/* Listing */
 	const wchar_t * const str_list_features;
+	const wchar_t * const str_list_of_features;
 	const wchar_t * const str_list_rooms;
+	const wchar_t * const str_list_of_rooms;
 	const wchar_t * const str_list_subjects;
+	const wchar_t * const str_list_of_subjects;
 	const wchar_t * const str_list_subject_groups;
+	const wchar_t * const str_list_of_subject_groups;
 	const wchar_t * const str_list_teachers;
+	const wchar_t * const str_list_of_teachers;
 	const wchar_t * const str_list_teacher_groups;
+	const wchar_t * const str_list_of_teacher_groups;
 	const wchar_t * const str_list_classes;
+	const wchar_t * const str_list_of_classes;
 	const wchar_t * const str_list_class_groups;
+	const wchar_t * const str_list_of_class_groups;
 	/* Adding */
 	const wchar_t * const str_add_feature;
 	const wchar_t * const str_add_room;

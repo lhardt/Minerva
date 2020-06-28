@@ -54,6 +54,7 @@ void AddFeaturePane::OnCreateButtonClicked(wxCommandEvent & ev){
 				school->feature_ids = (int*) realloc(school->feature_ids, school->n_features + 10);
 			}
 			school->feature_names[school->n_features] = copy_wx_string(m_name_text->GetValue());
+			school->feature_ids[school->n_features] = id;
 
 			school->n_features++;
 

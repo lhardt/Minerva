@@ -20,19 +20,25 @@
 
 char * copy_string(const char * const string);
 
-void print_int_list(FILE * out, const int * const list);
-
 int * int_list_copy(const int * const list);
+
 int * int_list_n_copy(const int * const list, int n);
+
+Meeting * copy_meetings_list(const Meeting * const meetings);
+
+School * copy_school(const School * const school);
+
+SchoolExample * copy_example(const SchoolExample * const ex);
+
+void print_int_list(FILE * out, const int * const list);
 
 void print_sized_int_list(FILE * out, const int * const list, const int size);
 
 void print_bool_list(FILE * out, const bool * const list, const int size);
 
 void print_meeting_list(FILE * out, const Meeting * const meetings);
-void print_short_meeting_list(FILE * out, const Meeting * const meetings);
-Meeting * copy_meetings_list(const Meeting * const meetings);
 
+void print_short_meeting_list(FILE * out, const Meeting * const meetings);
 
 void print_room(FILE * out, const Room * const t);
 
@@ -44,9 +50,13 @@ void print_school(FILE * out, const School * const s);
 
 void copy_soluiton(const Solution * const solution);
 
-School * copy_school(const School * const school);
+void remove_class_from_school(School * school, int class_i);
 
-SchoolExample * copy_example(const SchoolExample * const ex);
+void remove_feature_from_school(School * school, int feature_i);
+
+void remove_teacher_from_school(School * school, int teacher_i);
+
+void remove_room_from_school(School * school, int room_i);
 
 void free_school(School * school);
 
