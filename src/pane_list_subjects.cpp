@@ -2,6 +2,7 @@
 
 extern "C" {
 	#include "loader.h"
+	#include "preprocess.h"
 };
 
 ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
@@ -17,7 +18,7 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
 
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Lista de Disciplinas"), wxDefaultPosition, wxSize(400,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_subjects, wxDefaultPosition, wxSize(400,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
 	m_subjects_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300));
@@ -30,16 +31,18 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 		m_subjects_list->InsertItems(list,0);
 	}
 
-	m_name_text = new wxStaticText(this, wxID_ANY, wxT("Nome:"), wxDefaultPosition, wxSize(300,30));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name, wxDefaultPosition, wxSize(300,30));
+	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
-	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));
-	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"), wxDefaultPosition, wxSize(200,30));
+	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
+	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
 
 	edit_btn->Disable();
 
 	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
 	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
 
+	desc_sz->Add(name_label, 0, wxBOTTOM, 5);
 	desc_sz->Add(m_name_text, 0, wxBOTTOM, 5);
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(butn_sz, 0, 0);
@@ -71,55 +74,14 @@ void ListSubjectsPane::OnEditButtonClicked(wxCommandEvent & ev){
 
 void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
-	int i,j,k, del_i;
+	int del_i;
 	bool success;
 	if(m_subjects_list->GetSelection() != wxNOT_FOUND){
 		del_i = m_subjects_list->GetSelection();
 
 		success = remove_subject(stdout, m_owner->m_database, school->subjects[del_i].id);
 		if(success){
-			for(i = 0; i < school->n_teaches; ++i){
-				/* Push all behind to the front if this is about the deleted. */
-				if(school->teaches[i].subject->id == school->subjects[del_i].id){
-					for(j = i; j < school->n_teaches; ++j){
-						school->teaches[j] = school->teaches[j+1];
-					}
-					--school->n_teaches;
-					--i;
-				}
-			}
-
-			if(school->solutions != NULL){
-				for(i = 0; i < school->n_solutions; ++i){
-					Meeting * m_list = school->solutions[i].meetings;
-					for(j = 0; m_list[j].m_class != NULL; ++j){
-						Meeting * meet = & m_list[j];
-						if(meet->subj->id == school->subjects[del_i].id){
-							if(meet->possible_periods != NULL){
-								free(meet->possible_periods);
-							}
-							if(meet->possible_rooms != NULL){
-								free(meet->possible_rooms);
-							}
-							if(meet->possible_teachers != NULL){
-								free(meet->possible_teachers);
-							}
-
-
-							for(k = j; m_list[k].m_class != NULL; ++k){
-								m_list[k] = m_list[k+1];
-							}
-							--j;
-						}
-					}
-				}
-			}
-
-			for(i = del_i; i < school->n_subjects; ++i){
-				school->subjects[i] = school->subjects[i + 1];
-			}
-			--school->n_subjects;
-
+			school_subject_remove(school, del_i);
 			printf("Sucesso.\n");
 			m_subjects_list->Delete(del_i);
 		} else {

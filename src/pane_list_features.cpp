@@ -2,7 +2,7 @@
 
 extern "C" {
 	#include "loader.h"
-	#include "util.h"
+	#include "preprocess.h"
 };
 
 ListFeaturesPane::ListFeaturesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
@@ -78,8 +78,8 @@ void ListFeaturesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 	if(m_features_list->GetSelection() != wxNOT_FOUND){
 		bool success = remove_feature(stdout, m_owner->m_database, school->feature_ids[m_selected_index]);
 		if(success){
-			remove_feature_from_school(school, m_selected_index);
-			
+			school_feature_remove(school, m_selected_index);
+
 			m_name_text->SetLabel(wxT(""));
 			m_features_list->Delete(m_selected_index);
 		}

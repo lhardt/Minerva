@@ -4,6 +4,7 @@
 
 extern "C" {
 	#include "loader.h"
+	#include "preprocess.h"
 };
 
 AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
@@ -169,14 +170,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 
 		int id = insert_class(stdout, m_owner->m_database, &c, school);
 		if(id != -1){
-			if(school->classes == NULL || school->n_classes == 0){
-				school->classes = (Class*)calloc(11, sizeof(Class));
-			} else if(school->n_classes % 10 == 0) {
-				school->classes = (Class*)realloc(school->classes,(school->n_classes + 11) * sizeof(Class));
-			}
-			school->classes[ school->n_classes ] = c;
-
-			++school->n_classes;
+			school_class_add(school, &c);
 			m_err_msg->SetLabel(wxString::FromUTF8("Inserido com sucesso."));
 
 			ClearInsertedData();

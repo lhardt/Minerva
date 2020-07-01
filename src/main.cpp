@@ -102,22 +102,39 @@ IntClientData::IntClientData(int value, wxString name):
 }
 
 bool Application::OnInit(){
-	m_database = init_all_tables(stdout, "db/teste.db");
-	if(m_database == nullptr){
-		int err_response = wxMessageBox(wxT("Erro!"),wxT("Não foi possível abrir o banco de dados."), wxOK);
-		this->Exit();
-	} else {
+	int errc;
+	bool loaded;
+
+	errc = sqlite3_open(":memory:",&m_database);
+	loaded = load_backup(m_database, "db/Database.db");
+
+	if(m_database != nullptr && loaded && (errc == SQLITE_OK)){
+		init_all_tables(stdout, m_database);
 
 		m_island_image = new wxImage(400,400);
 		m_island_image->AddHandler(new wxPNGHandler);
 		m_island_image->LoadFile("res/floating.png", wxBITMAP_TYPE_PNG);
 
 		LoadConfig();
-		printf("Language: %x\n", m_lang);
+
 		m_form_welcome = new WelcomeForm(this);
 		m_form_welcome->Show();
+
+		return true;
+	} else {
+		printf("Could open in-memory-db? %d %s\n", errc, sqlite3_errmsg(m_database));
+		printf("Could load back-up? %s\n", loaded?("Yes"):("No"));
+		if(m_database == nullptr){
+			int err_response = wxMessageBox(wxT("Erro!"),wxT("Não foi possível abrir o banco de dados."), wxOK);
+			Exit();
+		}
+
+		return false;
 	}
-	return true;
+}
+
+bool Application::SaveDatabase(){
+	return save_backup(m_database, "db/Database.db");
 }
 
 void Application::SwitchForm(AppFormType next){

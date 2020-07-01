@@ -58,7 +58,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AS),m_owner->m_lang->str_save_as, image_save);
 	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AND_CLOSE),m_owner->m_lang->str_close_and_save, image_save);
 	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_CLOSE_WITHOUT_SAVE),m_owner->m_lang->str_close_without_saving, image_close);
-	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_SCHOOL_DATA),m_owner->m_lang->str_school_data, image_list);
+	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_SCHOOL_DATA),m_owner->m_lang->str_school_details, image_list);
 	m_rib_bbars[0][2]->AddButton(LHID_OF(LHN_OPEN_SCHOOL_MANUAL),m_owner->m_lang->str_open_manual, image_help);
 	/* SALAS E CARACTERISTICAS DE SALAS */
 	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_FEATURES), m_owner->m_lang->str_list_features, image_list);

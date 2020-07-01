@@ -225,6 +225,7 @@ typedef struct School {
 	Subject	   * subjects;
 	Room       * rooms;
 	Teaches    * teaches;
+	Meeting    * meetings;
 	Solution   * solutions;
 
 	int 		 n_periods;
@@ -237,6 +238,7 @@ typedef struct School {
 	int 		 n_days;
 	int 		 n_periods_per_day;
 	int			 n_solutions;
+	int			 n_meetings;
 	int			 n_subject_groups;
 
 	bool 		 periods[MAX_PERIODS_PER_WEEK];

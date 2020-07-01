@@ -109,16 +109,14 @@ void WelcomeForm::OnCreateClicked(wxCommandEvent & ev){
 }
 
 void WelcomeForm::OnOpenClicked(wxCommandEvent & ev){
-	if( wxNOT_FOUND == m_dropdown->GetCurrentSelection()){
-		printf("No item selected\n");
-	} else {
+	if( wxNOT_FOUND != m_dropdown->GetCurrentSelection()){
 		IntClientData * data = (IntClientData *) m_dropdown->GetClientObject( m_dropdown->GetSelection());
 		m_owner->m_school = select_school_by_id( stdout, m_owner->m_database, data->m_value);
-		if(m_owner->m_school == NULL){
-			printf("Could not load school.\n");
-		} else {
+		if(m_owner->m_school != NULL){
 			m_owner->SwitchForm(FORM_MAIN_MENU);
 			this->Destroy();
+		} else {
+			/* TODO proper error handling */
 		}
 	}
 	ev.Skip();

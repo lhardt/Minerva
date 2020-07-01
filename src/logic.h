@@ -9,12 +9,12 @@
  * This module contains functions for making sure that all decision nodes
  * are valid. It also has some counting functions for utility.
  */
- #ifndef LOGIC_H
- #define LOGIC_H
+#ifndef LOGIC_H
+#define LOGIC_H
 
- #include <stdlib.h>
+#include <stdlib.h>
 
- #include "decisions.h"
+#include "decisions.h"
 
 /* ROOT CONSISTENCY CHECK
  *		Tries to detect problems before the timetable generation.

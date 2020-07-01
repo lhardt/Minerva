@@ -361,6 +361,7 @@ class DescSchoolPane : public wxScrolledWindow {
 
  private:
 	Application * m_owner;
+	void OnRemoveButtonClicked(wxCommandEvent & );
 };
 
 class ListFeaturesPane : public wxScrolledWindow {
@@ -387,20 +388,19 @@ class ListRoomsPane : public wxScrolledWindow {
    ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos);
    ~ListRoomsPane();
  private:
+	wxListBox * m_rooms_list;
+	wxStaticText * m_name_text;
+	wxStaticText * m_size_text;
+	wxStaticText * m_features_text;
+	ChoiceGrid * m_periods_grid;
+	wxStaticText * m_err_msg;
+	Application * m_owner;
 
-   wxListBox * m_rooms_list;
-   wxStaticText * m_name_text;
-   wxStaticText * m_size_text;
-   wxStaticText * m_features_text;
-   ChoiceGrid * m_periods_grid;
+	int m_selected_index;
 
-   Application * m_owner;
-
-   int m_selected_index;
-
-   void OnEditButtonClicked(wxCommandEvent &);
-   void OnDeleteButtonClicked(wxCommandEvent &);
-   void OnSelectionChanged(wxCommandEvent &);
+	void OnEditButtonClicked(wxCommandEvent &);
+	void OnDeleteButtonClicked(wxCommandEvent &);
+	void OnSelectionChanged(wxCommandEvent &);
 };
 
 class ListSubjectsPane : public wxScrolledWindow {
@@ -717,6 +717,7 @@ class Application : public wxApp {
 	void OnConfigUpdate();
 	void LoadConfig();
 	void UpdateFonts();
+	bool SaveDatabase();
 
 	const Language * m_lang;
 	int m_font_sz;

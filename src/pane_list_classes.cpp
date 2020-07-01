@@ -2,7 +2,7 @@
 
 extern "C" {
 	#include "loader.h"
-	#include "util.h"
+	#include "preprocess.h"
 };
 
 ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
@@ -67,6 +67,16 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 
 	m_periods_grid->m_basic_col_name = wxT("Dia");
 	m_periods_grid->m_basic_row_name = wxT("Período");
+
+	m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
+	for(i = 0; i < school->n_periods; ++i){
+		if(school->periods[i]){
+			m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+					wxT(""));
+			m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+					wxColor(255,255,255));
+		}
+	}
 
 	edit_btn->Disable();
 
@@ -135,12 +145,8 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		}
 		m_subjects_text->Wrap(300);
 
-		m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
-
 		for(i = 0; i < school->n_periods; ++i){
-			if(school->periods[i] == false){
-				m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
-			} else {
+			if(school->periods[i]){
 				m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
 						wxString::Format("%s" , (c->periods[i] > 0?wxT("Aberta"):wxT("Fechada")) ));
 				m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
@@ -157,7 +163,7 @@ void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
 }
 
 void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
-	int i, j, del_i;
+	int i, del_i;
 	bool success = false;
 	School * school = m_owner->m_school;
 	Class * c;
@@ -168,8 +174,24 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 		success = remove_class(stdout, m_owner->m_database, c->id);
 
 		if(success) {
-			remove_class_from_school(school, del_i);
+			school_class_remove(school, del_i);
 			m_classes_list->Delete(del_i);
+
+			m_name_text->SetLabel(wxT(""));
+			m_size_text->SetLabel(wxT(""));
+			m_free_periods_text->SetLabel(wxT(""));
+			m_entry_period_text->SetLabel(wxT(""));
+			m_exit_period_text->SetLabel(wxT(""));
+			m_subjects_text->SetLabel(wxT(""));
+
+			for(i = 0; i < school->n_periods; ++i){
+				if(school->periods[i]){
+					m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+							wxT(""));
+					m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+							wxColor(255,255,255));
+				}
+			}
 		} else {
 			printf("Não foi possível deletar.\n");
 		}

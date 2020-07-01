@@ -1,5 +1,15 @@
+/*
+ * Project Minerva.
+ *   gui_language.cpp - translation tables for the UI.
+ *
+ * (C) 2019-2020 Léo Hardt <leom.hardt@gmail.com>.
+ *
+ * This program is free software. See LICENSE.
+ *
+ * This module contains structures related to
+ * decision trees for school timetabling.
+ */
 #include "gui_language.hpp"
-
 
 const Language LANG_POR = {
 	.str_minerva_school_timetables = L"Horário Escolar Minerva",
@@ -24,7 +34,7 @@ const Language LANG_POR = {
 	.str_create=L"Criar",
 	.str_copyright_notice=L"Copyright (C) Léo Hardt 2020. Licença a ser definida.",
 	.str_open_manual=L"Abrir Manual",
-	.str_school_data=L"Dados da Escola",
+	.str_school_details=L"Detalhes da Escola",
 	/* Create & view school */
 	.str_create_school=L"Cadastrar Escola",
 	.str_school_name=L"Nome da Escola",
@@ -44,6 +54,8 @@ const Language LANG_POR = {
 		"exemplo, ficam fechadas no 5º período da sexta-feira. Para fazer com que a escola volte a estar aberta, clique novamente.",
 	/* Header names */
 	.str_school=L"Escola",
+	.str_periods=L"Períodos",
+	.str_features=L"Características",
 	.str_rooms=L"Salas",
 	.str_subjects=L"Disciplinas",
 	.str_teachers=L"Professores",
@@ -86,6 +98,7 @@ const Language LANG_POR = {
 	/* Possible Preferences */
 	.str_period_preference=L"Preferência por Período",
 	.str_subject_preference=L"Preferência por Disciplina",
+	.str_teacher_preference=L"Preferência por Professor",
 	.str_class_preference=L"Preferência por Turma",
 	.str_twin_preference=L"Preferência por Geminação",
 	.str_room_preference=L"Preferência por Sala",
@@ -97,7 +110,27 @@ const Language LANG_POR = {
 	.str_group_name=L"Nome do Grupo",
 	.str_remove_all=L"Remover Todos",
 	.str_remove=L"Remover",
-	.str_add_group=L"Adicionar Grupo"
+	.str_add_group=L"Adicionar Grupo",
+
+	.str_adj__open = L"Aberta",
+	.str_adj__closed = L"Fechada",
+
+	.str_day = L"Dia",
+	.str_period = L"Período",
+	.str_delete = L"Deletar",
+
+	.str_are_you_sure = L"Tem certeza?",
+	.str_school_deletion_popup_text = L"Quer mesmo apagar essa escola e todos os dados inseridos?",
+
+	.str_error=L"Erro",
+	.str_could_not_open_db_error=L"Não foi possível abrir o banco de dados.",
+
+	.str_yes=L"Sim",
+	.str_no=L"Não",
+
+	.str_fill_the_form_correctly=L"Preencha os campos corretamente",
+	.str_success=L"Sucesso",
+	.str_could_not_insert_on_db=L"Não foi possível inserir as informações no banco de dados"
 };
 
 const Language LANG_ENG = {
@@ -123,7 +156,7 @@ const Language LANG_ENG = {
 	.str_create=L"Create",
 	.str_copyright_notice=L"Copyright (C) Léo Hardt 2020. License to be defined.",
 	.str_open_manual=L"Open Manual",
-	.str_school_data=L"School data",
+	.str_school_details=L"School Details",
 	/* Create & view school */
 	.str_create_school=L"Create school",
 	.str_school_name=L"School name",
@@ -143,6 +176,8 @@ const Language LANG_ENG = {
 		"don't open at the last period of friday. To mark the period as open, just click again.",
 	/* Header names */
 	.str_school=L"School",
+	.str_periods=L"Periods",
+	.str_features=L"Features",
 	.str_rooms=L"Rooms",
 	.str_subjects=L"Subjects",
 	.str_teachers=L"Teachers",
@@ -185,6 +220,7 @@ const Language LANG_ENG = {
 	/* Possible Preferences */
 	.str_period_preference=L"Period Preference",
 	.str_subject_preference=L"Subject Preference",
+	.str_teacher_preference=L"Teacher Preference",
 	.str_class_preference=L"Class Preference",
 	.str_twin_preference=L"Double Period Preference",
 	.str_room_preference=L"Room Preference",
@@ -196,7 +232,27 @@ const Language LANG_ENG = {
 	.str_group_name=L"Group name",
 	.str_remove_all=L"Remove All",
 	.str_remove=L"Remove",
-	.str_add_group=L"Add Group"
+	.str_add_group=L"Add Group",
+
+	.str_adj__open = L"Open",
+	.str_adj__closed = L"Closed",
+
+	.str_day = L"Day",
+	.str_period = L"Period",
+	.str_delete = L"Delete",
+
+	.str_are_you_sure = L"Are you sure?",
+	.str_school_deletion_popup_text = L"Do you really want to delete this school and all its data?",
+
+	.str_error=L"Error",
+	.str_could_not_open_db_error=L"Could not open the database file.",
+
+	.str_yes=L"Yes",
+	.str_no=L"No",
+
+	.str_fill_the_form_correctly=L"Fill the form correctly",
+	.str_success=L"Success",
+	.str_could_not_insert_on_db=L"Could not insert the data onto the database."
 };
 
 const Language LANG_SPA = {
@@ -222,7 +278,7 @@ const Language LANG_SPA = {
 	.str_create=L"Crear",
 	.str_copyright_notice=L"Copyright (C) Léo Hardt 2020. Licencia a ser definida.",
 	.str_open_manual=L"Abrir el manual",
-	.str_school_data=L"Datos de la escuela",
+	.str_school_details=L"Datos de la escuela",
 	/* Create & view school */
 	.str_create_school=L"Crear escuela",
 	.str_school_name=L"Nombre de la escuela",
@@ -232,6 +288,8 @@ const Language LANG_SPA = {
 	.str_create_school_manual_entry=L"Texto Grande; Texto Grande; Texto Grande; Texto Grande; Texto Grande; ",
 	/* Header names */
 	.str_school=L"Escuela",
+	.str_periods=L"Períodos",
+	.str_features=L"Características",
 	.str_rooms=L"Salas",
 	.str_subjects=L"Asignaturas",
 	.str_teachers=L"Maestros",
@@ -274,11 +332,40 @@ const Language LANG_SPA = {
 	/* Possible Preferences */
 	.str_period_preference=L"?",
 	.str_subject_preference=L"?",
+	.str_teacher_preference=L"?",
 	.str_class_preference=L"?",
 	.str_twin_preference=L"?",
 	.str_room_preference=L"?",
 	/* Checking */
-	.str_check_all=L"?"
+	.str_check_all=L"?",
+
+	/* General-Purpouse / Group Related */
+	.str_add_classes_to_the_group=L"Añadir Clases",
+	.str_add_class_to_the_group=L"Añadir Clase",
+	.str_group_name=L"Nombre del grupo",
+	.str_remove_all=L"Remove Todos",
+	.str_remove=L"Remover",
+	.str_add_group=L"Añadir Grupo",
+
+	.str_adj__open = L"Abierta",
+	.str_adj__closed = L"Cerrada",
+
+	.str_day = L"Día",
+	.str_period = L"Período",
+	.str_delete = L"Apagar",
+
+	.str_are_you_sure = L"???",
+	.str_school_deletion_popup_text = L"???",
+
+	.str_error=L"Error",
+	.str_could_not_open_db_error=L"???",
+
+	.str_yes=L"Sí",
+	.str_no=L"No",
+
+	.str_fill_the_form_correctly=L"???",
+	.str_success=L"???",
+	.str_could_not_insert_on_db=L"???"
 };
 
 const Language LANG_DEU = {
@@ -294,7 +381,7 @@ const Language LANG_DEU = {
 	.str_name = L"Name",
 	.str_edit = L"?",
 	.str_size = L"?",
-	.str_back = L"(?)",
+	.str_back = L"Zurück",
 	.str_font_sz= L"Schriftgröße",
 	.str_small_font=L"Kleine",
 	.str_medium_font=L"Mittlere",
@@ -304,7 +391,7 @@ const Language LANG_DEU = {
 	.str_create=L"Erstellen",
 	.str_copyright_notice=L"Copyright (C) Léo Hardt 2020. Lizenz definiert werden.",
 	.str_open_manual=L"Handbuch offenen",
-	.str_school_data=L"Schulendatei",
+	.str_school_details=L"Schulendatei",
 	/* Create & view school */
 	.str_create_school=L"Schule Erstellen",
 	.str_school_name=L"Name der Schule",
@@ -313,7 +400,9 @@ const Language LANG_DEU = {
 	.str_in_what_periods_the_school_is_open=L"In welche Schulstunde ist die Schule geöffenet?",
 	.str_create_school_manual_entry=L"Grosses Text; Grosses Text; Grosses Text; Grosses Text; Grosses Text;",
 	/* Header names */
-	.str_school=L"Schule",
+	.str_school=L"(?)",
+	.str_periods=L"Periods",
+	.str_features=L"Merkmale",
 	.str_rooms=L"Klassenzimmer",
 	.str_subjects=L"Fache",
 	.str_teachers=L"Lehrer",
@@ -356,9 +445,38 @@ const Language LANG_DEU = {
 	/* Possible Preferences */
 	.str_period_preference=L"?",
 	.str_subject_preference=L"?",
+	.str_teacher_preference=L"?",
 	.str_class_preference=L"?",
 	.str_twin_preference=L"?",
 	.str_room_preference=L"?",
 	/* Checking */
-	.str_check_all=L"?"
+	.str_check_all=L"?",
+	/* General-Purpouse / Group Related */
+	.str_add_classes_to_the_group=L"???",
+	.str_add_class_to_the_group=L"Klasse hinzufügen",
+	.str_group_name=L"Gruppenname",
+	.str_remove_all=L"???",
+	.str_remove=L"???",
+	.str_add_group=L"???",
+
+	.str_adj__open = L"Geoffenet",
+	.str_adj__closed = L"Geschlosst",
+
+	.str_day = L"Tag",
+	.str_period = L"Period",
+	.str_delete = L"???",
+
+	.str_are_you_sure = L"???",
+	.str_school_deletion_popup_text = L"??",
+
+	.str_error=L"??",
+	.str_could_not_open_db_error=L"???.",
+
+	.str_yes=L"???",
+	.str_no=L"??",
+
+	.str_fill_the_form_correctly=L"???",
+	.str_success=L"???",
+	.str_could_not_insert_on_db=L"???"
+
 };

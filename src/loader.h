@@ -24,7 +24,7 @@
  * Development Status:
  *		Implemented.
  */
-sqlite3* init_all_tables(FILE* console_out, char * db_filename);
+bool init_all_tables(FILE* console_out, sqlite3* db);
 
 /*	INSERT SCHOOL
  *		Inserts a school in the database, disregarding null pointers.
@@ -60,5 +60,7 @@ School * select_school_by_id(FILE * console_out, sqlite3* db, int id);
 bool  load_xml(char * xml_filename, School ** load_ptr);
 bool  export_to_xml(char * xml_filename, School * school);
 
+bool save_backup(sqlite3 * memory_db, const char * const filename);
+bool load_backup(sqlite3 * memory_db, const char * const filename);
 
 #endif /* DATA_LOADER_H */

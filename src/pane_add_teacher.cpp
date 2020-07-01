@@ -2,6 +2,7 @@
 
 extern "C" {
 	#include "loader.h"
+	#include "preprocess.h"
 };
 AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
 	int i;
@@ -139,6 +140,7 @@ void AddTeacherPane::ClearInsertedData(){
 
 void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 	int i;
+	Teaches * teaches_vals;
 	School * school = m_owner->m_school;
 	if(!m_name_text->GetValue().IsEmpty()){
 		Teacher t;
@@ -151,15 +153,15 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.max_meetings_per_class_per_day = school->n_periods_per_day;
 		t.num_planning_periods = 0;
 
-
 		if(m_teaches_subjects_list->GetCount() > 0){
 			t.teaches = (Teaches**)calloc(m_teaches_subjects_list->GetCount() + 1, sizeof(Teaches*));
+			teaches_vals = (Teaches*)calloc(m_teaches_subjects_list->GetCount() + 1, sizeof(Teaches));
 			int i_teaches = 0;
 			/* The number of elements in the listbox is equal
 			 * to the number of true elements in m_teaches_subj */
 			for(i = 0; i < school->n_subjects; ++i){
 				if(m_teaches_subj[i] == true){
-					t.teaches[i_teaches] = (Teaches*) calloc(1,sizeof(Teaches));
+					t.teaches[i_teaches] = &(teaches_vals[i_teaches]);
 					t.teaches[i_teaches]->teacher = &t;
 					t.teaches[i_teaches]->subject = &(school->subjects[i]);
 					t.teaches[i_teaches]->score = 1;
@@ -171,57 +173,28 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 					++i_teaches;
 				}
 			}
+			t.teaches[i_teaches] = NULL;
 		} else {
 			t.teaches = NULL;
 		}
-
 		t.periods = (int*)calloc(1 + school->n_periods, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
 			t.periods[i] =
 					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==wxT("Disponível") ? 1:0);
 		}
-
 		int result = insert_teacher(stdout, m_owner->m_database, &t, school);
 
 		if(result != -1){
-
-			if(school->teachers == nullptr || school->n_teachers == 0){
-				school->teachers = (Teacher *)calloc(11, sizeof(Teacher));
-				school->n_teachers = 0;
-			} else if(school->n_teachers % 10 == 0){
-				school->teachers = (Teacher *)realloc(school->teachers, (school->n_teachers + 11)*sizeof(Teacher));
-			}
-			school->teachers[ school->n_teachers ] = t;
-			++school->n_teachers;
-
-			/* Correcting teacher addresses and mallocs. */
-			if(school->teaches == NULL || school->n_teaches == 0){
-				// Will take the next ten
-				school->teaches = (Teaches *)calloc(11 +
-							(m_teaches_subjects_list->GetCount() - m_teaches_subjects_list->GetCount() % 10),
-							 sizeof(Teaches));
-				school->n_teaches = 0;
-			} else if(school->n_teaches %10 == 0){
-				school->teaches = (Teaches *)realloc(school->teaches,
-							(school->n_teaches + 11 + (m_teaches_subjects_list->GetCount() - m_teaches_subjects_list->GetCount() % 10))
-							* sizeof(Teaches));
-			}
-
-			int i_subj = 0;
-			i = 0;
-			for(i_subj = 0; i_subj < school->n_subjects; ++i_subj){
-				if(m_teaches_subj[i_subj] == true){
-					school->teaches[school->n_teaches] = * t.teaches[i];
-					free(t.teaches[i]);
-					t.teaches[i] = & school->teaches[school->n_teaches];
-					school->n_teaches++;
-					++i;
-				}
-			}
-
+			school_teacher_add(school, &t);
 			m_err_msg->SetLabel(wxT("Adicionado com sucesso."));
+			if(m_teaches_subjects_list->GetCount() > 0){
+				free(teaches_vals);
+			}
 			ClearInsertedData();
 		} else {
+			if(m_teaches_subjects_list->GetCount() > 0){
+				free(teaches_vals);
+			}
 			m_err_msg->SetLabel(wxT("Não foi possível adicionar. Erro no banco de dados."));
 		}
 	} else {

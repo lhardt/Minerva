@@ -623,19 +623,8 @@ static int create_table(FILE * console_out, sqlite3* db,const char * const table
 /**
 * Tries to recreate every table. Ignores if table already exists.
 */
-sqlite3* init_all_tables(FILE * console_out, char * db_filename){
-
-	sqlite3 * db;
-	if(console_out){
-		fprintf(console_out,"Opening database.\n");
-	}
-	int errc = sqlite3_open(db_filename, &db);
-	if(errc != SQLITE_OK){
-		printf("Errc %d %s\n", errc, sqlite3_errmsg(db));
-		return NULL;
-	}
-	bool iserr;
-	iserr = create_table(console_out,db,"School", CREATE_TABLE_SCHOOL)?1:
+bool init_all_tables(FILE * console_out, sqlite3 * db){
+	return create_table(console_out,db,"School", CREATE_TABLE_SCHOOL)?1:
 			create_table(console_out,db,"DailyPeriod", CREATE_TABLE_DAILY_PERIOD)?1:
 			create_table(console_out,db,"Day", CREATE_TABLE_DAY)?1:
 			create_table(console_out,db,"Period", CREATE_TABLE_PERIOD)?1:
@@ -664,12 +653,6 @@ sqlite3* init_all_tables(FILE * console_out, char * db_filename){
 			create_table(console_out,db,"PossibleRoom", CREATE_TABLE_POSSIBLE_ROOM)?1:
 			create_table(console_out,db,"PossiblePeriod", CREATE_TABLE_POSSIBLE_PERIOD)?1:
 			create_table(console_out,db,"PossibleTeacher", CREATE_TABLE_POSSIBLE_TEACHER)?1:0;
-	if(iserr){
-		sqlite3_close(db);
-		return NULL;
-	} else {
-		return db;
-	}
 }
 
 /**
@@ -2461,6 +2444,64 @@ static bool exec_and_check(sqlite3 * db, const char * const sql, int id){
 
 	return retc;
 }
+
+bool save_backup(sqlite3* memory_db, const char * const filename){
+	sqlite3 * file_db;
+	sqlite3 * from_db;
+	sqlite3 * to_db;
+	sqlite3_backup * backup;
+	int errc;
+	bool retc = false;
+
+	errc = sqlite3_open(filename, &file_db);
+
+	if(errc == SQLITE_OK){
+		from_db = memory_db;
+		to_db = file_db;
+
+		backup = sqlite3_backup_init(to_db, "main", from_db, "main");
+		if( backup ) {
+			sqlite3_backup_step(backup, -1);
+			sqlite3_backup_finish(backup);
+			retc = true;
+		} else {
+			printf("wtf\n");
+		}
+		errc = sqlite3_errcode(to_db);
+	} else {
+		printf("Não foi possível abrir o arquivo. %d %s\n", errc, sqlite3_errmsg(file_db));
+	}
+	sqlite3_close(file_db);
+
+	return retc;
+}
+
+bool load_backup(sqlite3* memory_db, const char * const filename){
+	sqlite3 * file_db;
+	sqlite3_backup * backup;
+	bool retc = false;
+	int errc;
+
+	errc = sqlite3_open(filename, &file_db);
+
+	if(errc == SQLITE_OK){
+		backup = sqlite3_backup_init(memory_db, "main", file_db, "main");
+		if( backup ) {
+			sqlite3_backup_step(backup, -1);
+			sqlite3_backup_finish(backup);
+			retc = true;
+		} else {
+			printf("wtf\n");
+		}
+		errc = sqlite3_errcode(memory_db);
+	} else {
+		printf("Não foi possível abrir o arquivo. %d %s\n", errc, sqlite3_errmsg(file_db));
+	}
+	sqlite3_close(file_db);
+
+	return retc;
+}
+
 
 bool remove_feature(FILE * console_out, sqlite3* db, int id){
 	return  !exec_and_check(db, DELETE_ROOM_FEATURE_BY_FEATURE_ID, id)?false:

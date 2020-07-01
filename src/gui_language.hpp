@@ -1,6 +1,16 @@
+/*
+ * Project Minerva.
+ *   gui_language.hpp - translation tables for the UI.
+ *
+ * (C) 2019-2020 Léo Hardt <leom.hardt@gmail.com>.
+ *
+ * This program is free software. See LICENSE.
+ *
+ * This module contains structures related to
+ * decision trees for school timetabling.
+ */
 #ifndef GUI_LANGUAGE
 #define GUI_LANGUAGE
-
 
 /* Language per se */
 typedef struct Language {
@@ -26,7 +36,7 @@ typedef struct Language {
 	const wchar_t * const str_create;
 	const wchar_t * const str_copyright_notice;
 	const wchar_t * const str_open_manual;
-	const wchar_t * const str_school_data;
+	const wchar_t * const str_school_details;
 	/* Create & view school */
 	const wchar_t * const str_create_school;
 	const wchar_t * const str_school_name;
@@ -36,6 +46,8 @@ typedef struct Language {
 	const wchar_t * const str_create_school_manual_entry;
 	/* Header names */
 	const wchar_t * const str_school;
+	const wchar_t * const str_periods;
+	const wchar_t * const str_features;
 	const wchar_t * const str_rooms;
 	const wchar_t * const str_subjects;
 	const wchar_t * const str_teachers;
@@ -92,6 +104,25 @@ typedef struct Language {
 	const wchar_t * const str_remove;
 	const wchar_t * const str_add_group;
 
+	const wchar_t * const str_adj__open;
+	const wchar_t * const str_adj__closed;
+
+	const wchar_t * const str_day;
+	const wchar_t * const str_period;
+	const wchar_t * const str_delete;
+
+	const wchar_t * const str_are_you_sure;
+	const wchar_t * const str_school_deletion_popup_text;
+
+	const wchar_t * const str_error;
+	const wchar_t * const str_could_not_open_db_error;
+
+	const wchar_t * const str_yes;
+	const wchar_t * const str_no;
+
+	const wchar_t * const str_fill_the_form_correctly;
+	const wchar_t * const str_success;
+	const wchar_t * const str_could_not_insert_on_db;
 } Language;
 
 const extern Language LANG_POR;
@@ -166,7 +197,5 @@ const extern Language LANG_DEU;
 #define LHN_GENERATE_TIMETABLE		52
 #define LHN_CREATE_TIMETABLE		53
 #define LHN_OPEN_TIMETABLE_MANUAL	54
-
-
 
 #endif /* GUI_LANGUAGE */
