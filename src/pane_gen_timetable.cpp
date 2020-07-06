@@ -17,11 +17,11 @@ GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * par
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Soluções Geradas."), wxDefaultPosition, wxSize(400,40));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_generated_timetables, wxDefaultPosition, wxSize(400,40));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * description = new wxStaticText(this, wxID_ANY, wxT("Aqui poderemos gerar novas grades horárias. Pode demorar um pouco, fique tranquilo."), wxDefaultPosition, wxSize(400,-1));
-	wxStaticText * last_gen_label = new wxStaticText(this, wxID_ANY, wxT("Últimas grades geradas:"), wxDefaultPosition, wxSize(400,-1));
+	wxStaticText * description = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_generate_timetable_text , wxDefaultPosition, wxSize(400,-1));
+	wxStaticText * last_gen_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_last_generated_timetables, wxDefaultPosition, wxSize(400,-1));
 
 	if(school->solutions){
 		for(i = 0; i < school->n_solutions; ++i){
@@ -30,10 +30,10 @@ GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * par
 	}
 	wxSizer * gen_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxStaticText * tt_name_label = new wxStaticText(this,wxID_ANY, wxT("Escolha um nome para a grade horária.\nEx: a data de hoje, \"1ª Tentativa\", etc."), wxDefaultPosition, wxSize(300,40));
+	wxStaticText * tt_name_label = new wxStaticText(this,wxID_ANY, m_owner->m_lang->str_name);
 	m_tt_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,30));
 
-	wxButton * gen_button = new wxButton(this, wxID_ANY, wxT("Gerar"), wxDefaultPosition, wxSize(150,30));
+	wxButton * gen_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_generate, wxDefaultPosition, wxSize(150,30));
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
 	gen_sizer->Add(m_tt_name_text, 1, wxRIGHT, 10);
@@ -57,7 +57,7 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 	if(!m_tt_name_text->GetValue().IsEmpty()){
 		DecisionTree * tree = init_decision_tree(m_owner->m_school);
 		print_meeting_list(stdout,tree->start[0].conclusion);
-		m_err_msg->SetLabel(wxT("Gerando o novo horário."));
+		m_err_msg->SetLabel(m_owner->m_lang->str_generating);
 
 		Solution gen_solution;
 		gen_solution.name = copy_wx_string(m_tt_name_text->GetValue());
@@ -82,16 +82,16 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 				}
 				school->solutions[school->n_solutions] = gen_solution;
 				++ school->n_solutions;
-				m_err_msg->SetLabel(wxT("Gerada com sucesso."));
+				m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			} else {
 				free_meetings_list(gen_solution.meetings);
-				m_err_msg->SetLabel(wxT("Não foi possível gravar a solução."));
+				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 			}
 		} else {
-			m_err_msg->SetLabel(wxT("Não foi possível gerar a grade horária."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_generate);
 		}
 	} else {
-		m_err_msg->SetLabel(wxT("Preencha o nome primeiro!"));
+		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
 	}
 }
 

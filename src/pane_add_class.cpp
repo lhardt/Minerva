@@ -18,15 +18,15 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	}
 
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Turma"));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_class);
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome da Turma"));
-	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, wxT("Qual o tamanho da turma?"));
-	wxStaticText * entry_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de entrada da turma?"));
-	wxStaticText * exit_label = new wxStaticText(this, wxID_ANY, wxT("Qual é o período de saída da turma?"));
-	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, wxT("Em Quais Períodos a Turma está Disponível?"));
-	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, wxT("Quantos Períodos de Cada Disciplina a Turma Assiste?"));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_name);
+	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_size);
+	wxStaticText * entry_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_entry_period);
+	wxStaticText * exit_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_exit_period);
+	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_availibility);
+	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_subjects);
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 
 	name_label->SetFont(*m_owner->m_small_font);
@@ -50,21 +50,21 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	m_size_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(180,-1));
 	m_entry_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), per_arr);
 	m_exit_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), per_arr);
-	m_free_periods_checkbox = new wxCheckBox(this, wxID_ANY, wxT("A turma pode ter períodos livres?"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_free_periods_checkbox = new wxCheckBox(this, wxID_ANY, m_owner->m_lang->str_class_can_have_free_periods, wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_periods = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(400,300));
-	wxButton * remove_subject = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(220,-1));
-	wxButton * remove_all = new wxButton(this, wxID_ANY, wxT("Remover Todos"), wxDefaultPosition, wxSize(220,-1));
+	wxButton * remove_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(220,-1));
+	wxButton * remove_all = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(220,-1));
 	m_selected_subjects_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
-	wxButton * add_class = new wxButton(this, wxID_ANY, wxT("Adicionar Turma"), wxDefaultPosition, wxSize(220,-1));
+	wxButton * add_class = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_class, wxDefaultPosition, wxSize(220,-1));
 	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(180,30), subj_arr);
 	m_score_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(120,30));
-	wxButton * add_subject = new wxButton(this, wxID_ANY, wxT("Adicionar Disciplina"), wxDefaultPosition, wxSize(220,30));
+	wxButton * add_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_subject, wxDefaultPosition, wxSize(220,30));
 
 	m_free_periods_checkbox->SetFont(*m_owner->m_small_font);
 
 	wxVector<wxString> possible_values;
-	possible_values.push_back(wxT("Disponível"));
-	possible_values.push_back(wxT("Indisponível"));
+	possible_values.push_back(m_owner->m_lang->str_class_availible);
+	possible_values.push_back(m_owner->m_lang->str_class_unavailible);
 
 	wxVector<wxColor> possible_backgrounds;
 	possible_backgrounds.push_back(wxColor(200,200,255));
@@ -73,8 +73,8 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	m_periods->SetPossibleValues(possible_values);
 	m_periods->SetBackgroundColors(possible_backgrounds);
 
-	m_periods->m_basic_col_name = wxT("Dia");
-	m_periods->m_basic_row_name = wxT("Período");
+	m_periods->m_basic_col_name = m_owner->m_lang->str_day;
+	m_periods->m_basic_row_name = m_owner->m_lang->str_period;
 
 	m_periods->GridRemake(school->n_days,school->n_periods_per_day);
 
@@ -171,16 +171,16 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		int id = insert_class(stdout, m_owner->m_database, &c, school);
 		if(id != -1){
 			school_class_add(school, &c);
-			m_err_msg->SetLabel(wxString::FromUTF8("Inserido com sucesso."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 
 			ClearInsertedData();
 		} else {
 			free(c.name);
 			free(c.short_name);
-			m_err_msg->SetLabel(wxString::FromUTF8("Erro no banco. Não foi possível inserir."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
 	} else {
-		m_err_msg->SetLabel(wxT("Preencha todos os dados antes."));
+		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
 	}
 }
 
@@ -201,7 +201,7 @@ void AddClassPane::ClearInsertedData(){
 		if(school->periods[i] == false){
 			m_periods->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 		} else {
-			m_periods->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), "Disponível");
+			m_periods->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), m_owner->m_lang->str_class_availible);
 			m_periods->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxColor(200,200,255));
 		}
 	}
@@ -244,7 +244,7 @@ void AddClassPane::OnPeriodChoice(wxCommandEvent& ev){
 			for(int i = new_entry; i < last_entry; ++i){
 				for(int j = 0; j < school->n_days; ++j){
 					if(school->periods[j * school->n_periods_per_day + i]){
-						m_periods->SetCellValue(1 + i, 1 + j, wxT("Disponível"));
+						m_periods->SetCellValue(1 + i, 1 + j, m_owner->m_lang->str_class_availible);
 						m_periods->SetCellBackgroundColour(1 + i, 1 + j, wxColor(200,200,255));
 					} /* Else the cell is immutable anyway */
 				}
@@ -258,7 +258,7 @@ void AddClassPane::OnPeriodChoice(wxCommandEvent& ev){
 			for(int i = last_exit; i < new_exit; ++i){
 				for(int j = 0; j < school->n_days; ++j){
 					if(school->periods[j * school->n_periods_per_day + i]){
-						m_periods->SetCellValue(1 + i, 1 + j, wxT("Disponível"));
+						m_periods->SetCellValue(1 + i, 1 + j, m_owner->m_lang->str_class_availible);
 						m_periods->SetCellBackgroundColour(1 + i, 1 + j, wxColor(200,200,255));
 					}
 				}

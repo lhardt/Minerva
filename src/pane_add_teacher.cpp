@@ -12,20 +12,20 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Professor"));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_teacher);
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome do Professor"));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	name_label->SetFont(*m_owner->m_small_font);
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
 
-	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, wxT("O professor está disponível em quais períodos?"));
+	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availibility);
 	grid_label->SetFont(*m_owner->m_small_font);
 	m_grid = new ChoiceGrid(this, wxID_ANY, wxPoint(30,210), wxSize(500,200));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(wxT("Disponível"));
-	grid_values.push_back(wxT("Ocupado"));
+	grid_values.push_back(m_owner->m_lang->str_teacher_availible);
+	grid_values.push_back(m_owner->m_lang->str_teacher_unavailible);
 	m_grid->SetPossibleValues(grid_values);
 
 	wxVector<wxColor> grid_colors = wxVector<wxColor>();
@@ -33,8 +33,8 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	grid_colors.push_back(wxColor(255,200,200));
 	m_grid->SetBackgroundColors(grid_colors);
 
-	m_grid->m_basic_col_name = wxT("Dia");
-	m_grid->m_basic_row_name = wxT("Período");
+	m_grid->m_basic_col_name = m_owner->m_lang->str_day;
+	m_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
 	m_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 	for(i = 0; i < m_owner->m_school->n_periods; ++i){
@@ -43,7 +43,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 		}
 	}
 
-	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, wxT("Adicione Disciplinas que o Professor leciona."));
+	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_teaches);
 	subjects_label->SetFont(*m_owner->m_small_font);
 
 	wxArrayString arr;
@@ -53,7 +53,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
 	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(310,30),arr);
-	wxButton * add_subject = new wxButton(this, wxID_ANY, wxT("Adicionar Disciplina"), wxDefaultPosition, wxSize(180,-1));
+	wxButton * add_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_subject, wxDefaultPosition, wxSize(180,-1));
 	add_subject->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddSubjectButtonClicked, this);
 
 	add_sizer->Add(m_all_subjects_list,0,wxRIGHT,10);
@@ -66,8 +66,8 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	wxSizer * subjects_sizer  = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * buttons_sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxButton * remove_subject = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(180,30));
-	wxButton * remove_all     = new wxButton(this, wxID_ANY, wxT("Remover Todas"), wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_all     = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,30));
 	m_teaches_subjects_list   = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
 	remove_subject->Disable();
 	subjects_sizer->Add(m_teaches_subjects_list, 0, wxRIGHT, 10);
@@ -77,7 +77,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 
 	remove_all->Bind(wxEVT_BUTTON, &AddTeacherPane::OnRemoveAllButtonClicked, this);
 
-	wxButton * add_teacher = new wxButton(this, wxID_ANY, wxT("Adicionar Professor"), wxDefaultPosition, wxSize(180,30));
+	wxButton * add_teacher = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,30));
 	add_teacher->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddTeacherButtonClicked, this);
 
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
@@ -180,13 +180,13 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.periods = (int*)calloc(1 + school->n_periods, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
 			t.periods[i] =
-					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==wxT("Disponível") ? 1:0);
+					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_teacher_availible ? 1:0);
 		}
 		int result = insert_teacher(stdout, m_owner->m_database, &t, school);
 
 		if(result != -1){
 			school_teacher_add(school, &t);
-			m_err_msg->SetLabel(wxT("Adicionado com sucesso."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			if(m_teaches_subjects_list->GetCount() > 0){
 				free(teaches_vals);
 			}
@@ -195,10 +195,10 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 			if(m_teaches_subjects_list->GetCount() > 0){
 				free(teaches_vals);
 			}
-			m_err_msg->SetLabel(wxT("Não foi possível adicionar. Erro no banco de dados."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
 	} else {
-		m_err_msg->SetLabel(wxT("Preencha ao menos o nome do professor."));
+		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
 	}
 }
 

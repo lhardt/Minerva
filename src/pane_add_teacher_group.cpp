@@ -16,14 +16,13 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Grupo de Professores"), wxDefaultPosition, wxSize(400,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_teacher_group, wxDefaultPosition, wxSize(400,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome do Grupo"), wxDefaultPosition, wxSize(200,15));
-	name_label->SetFont(*m_owner->m_small_font);
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name, wxDefaultPosition, wxSize(200,15));
+	wxStaticText * teachers_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_teachers_to_the_group, wxDefaultPosition, wxSize(400,15));
 
-	wxStaticText * teachers_label = new wxStaticText(this, wxID_ANY, wxT("Adicione Professores ao Grupo."), wxDefaultPosition, wxSize(400,15));
+	name_label->SetFont(*m_owner->m_small_font);
 	teachers_label->SetFont(*m_owner->m_small_font);
 
 	wxArrayString teacher_names;
@@ -31,14 +30,15 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 		teacher_names.push_back(wxString::FromUTF8(m_owner->m_school->teachers[i].name));
 	}
 
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
 	m_all_teachers_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(310,30), teacher_names);
-	wxButton * add_teacher = new wxButton(this, wxID_ANY, wxT("Adicionar Professor"), wxDefaultPosition, wxSize(180,30));
+	wxButton * add_teacher = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_teacher, wxDefaultPosition, wxSize(180,30));
 
-	wxButton * remove_teacher = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(180,30));
-	wxButton * remove_all_teachers = new wxButton(this, wxID_ANY, wxT("Remover Todos"), wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_teacher = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_all_teachers = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,30));
 	m_selected_teachers_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
 
-	wxButton * add_group = new wxButton(this, wxID_ANY, wxT("Adicionar Grupo"), wxDefaultPosition, wxSize(180,30));
+	wxButton * add_group = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_group, wxDefaultPosition, wxSize(180,30));
 
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
@@ -156,10 +156,12 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 			++school->n_teachers;
 
 			AddTeacherGroupPane::ClearInsertedData();
-			m_err_msg->SetLabel(wxT("Inserido com Sucesso"));
+			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 		} else {
-			m_err_msg->SetLabel(wxT("Não foi possível inserir. Erro no Banco."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
+	} else {
+		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
 	}
 }
 

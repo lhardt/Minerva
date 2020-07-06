@@ -8,14 +8,14 @@ AddSubjectPane::AddSubjectPane(Application * owner, wxWindow * parent, wxPoint p
 	this->m_owner = owner;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Disciplina"), wxDefaultPosition, wxSize(200,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_subject, wxDefaultPosition, wxSize(200,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * subject_name_label = new wxStaticText(this,wxID_ANY,wxT("Nome da Disciplina"), wxDefaultPosition, wxSize(200,15));
+	wxStaticText * subject_name_label = new wxStaticText(this,wxID_ANY,m_owner->m_lang->str_name, wxDefaultPosition, wxSize(200,15));
 	subject_name_label->SetFont(*m_owner->m_small_font);
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
 
-	wxButton * button = new wxButton(this,wxID_ANY, wxT("Adicionar"), wxDefaultPosition, wxSize(200,30));
+	wxButton * button = new wxButton(this,wxID_ANY, m_owner->m_lang->str_add, wxDefaultPosition, wxSize(200,30));
 	button->Bind(wxEVT_BUTTON, &AddSubjectPane::OnCreateButtonClicked, this);
 
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxPoint(30, 180), wxSize(300,30));
@@ -64,12 +64,12 @@ void AddSubjectPane::OnCreateButtonClicked(wxCommandEvent & ev){
 			school->subjects[ school->n_subjects ] = subject;
 			school->n_subjects++;
 
-			m_err_msg->SetLabel(wxT("Inserido com sucesso."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			ClearInsertedData();
 		} else {
-			m_err_msg->SetLabel(wxT("Erro no banco de dados. Não foi possível inserir."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
 	} else {
-		m_err_msg->SetLabel(wxT("Não é possível criar uma disciplina sem nome."));
+		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
 	}
 }

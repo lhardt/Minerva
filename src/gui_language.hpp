@@ -123,6 +123,60 @@ typedef struct Language {
 	const wchar_t * const str_fill_the_form_correctly;
 	const wchar_t * const str_success;
 	const wchar_t * const str_could_not_insert_on_db;
+
+	const wchar_t * const str_list_lectures_by_class;
+	const wchar_t * const str_add_lectures_by_class;
+	const wchar_t * const str_see_timetable;
+	const wchar_t * const str_export_timetable;
+	const wchar_t * const str_generate_timetable;
+	const wchar_t * const str_create_timetable_manually;
+
+	const wchar_t * const str_class_name;
+	const wchar_t * const str_class_size;
+	const wchar_t * const str_class_entry_period;
+	const wchar_t * const str_class_exit_period;
+	const wchar_t * const str_class_availibility;
+	const wchar_t * const str_class_subjects;
+
+	const wchar_t * const str_class_can_have_free_periods;
+	const wchar_t * const str_class_availible;
+	const wchar_t * const str_class_unavailible;
+
+	const wchar_t * const str_room_size_in_students;
+	const wchar_t * const str_room_availibility;
+	const wchar_t * const str_room_add_features_with_scores;
+
+	const wchar_t * const str_add_subjects_to_the_group;
+	const wchar_t * const str_add_teachers_to_the_group;
+
+	const wchar_t * const str_teacher_availibility;
+	const wchar_t * const str_teacher_availible;
+	const wchar_t * const str_teacher_unavailible;
+	const wchar_t * const str_teacher_teaches;
+
+	const wchar_t * const str_choose_a_timetable;
+	const wchar_t * const str_timetable__none;
+	const wchar_t * const str_class__none;
+	const wchar_t * const str_teacher__none;
+	const wchar_t * const str_subject__none;
+	const wchar_t * const str_room__none;
+	const wchar_t * const str_room;
+	const wchar_t * const str_lecture_desc;
+	const wchar_t * const str_detail;
+
+	const wchar_t * const str_desc_timetable;
+	const wchar_t * const str_class;
+	const wchar_t * const str_teacher;
+	const wchar_t * const str_subject;
+
+	const wchar_t * const str_generated_timetables;
+	const wchar_t * const str_generate_timetable_text;
+	const wchar_t * const str_last_generated_timetables;
+	const wchar_t * const str_generate;
+
+
+	const wchar_t * const str_generating;
+	const wchar_t * const str_could_not_generate;
 } Language;
 
 const extern Language LANG_POR;

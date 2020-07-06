@@ -13,14 +13,14 @@ AddFeaturePane::AddFeaturePane(Application * owner, wxWindow * parent, wxPoint p
 	wxSizer * wrapper = new wxBoxSizer(wxVERTICAL);
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Característica"), wxDefaultPosition, wxSize(300,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_feature, wxDefaultPosition, wxSize(300,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome da Característica"), wxDefaultPosition, wxSize(200,15));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name, wxDefaultPosition, wxSize(200,15));
 	name_label->SetFont(*m_owner->m_small_font);
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
 
-	wxButton * button_add = new wxButton(this,wxID_ANY, wxT("Adicionar"), wxDefaultPosition, wxSize(200,30));
+	wxButton * button_add = new wxButton(this,wxID_ANY, m_owner->m_lang->str_add, wxDefaultPosition, wxSize(200,30));
 
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 	m_err_msg->SetFont(*m_owner->m_small_font);
@@ -59,12 +59,12 @@ void AddFeaturePane::OnCreateButtonClicked(wxCommandEvent & ev){
 			school->n_features++;
 
 			ClearInsertedData();
-			m_err_msg->SetLabel(wxT("Inserido com sucesso."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 		} else {
-			m_err_msg->SetLabel(wxT("Não foi possível inserir.\n Possível erro no banco de dados"));
+			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
 	} else {
-		m_err_msg->SetLabel(wxT("Não é possível adicionar uma característica sem nome."));
+		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
 	}
 }
 

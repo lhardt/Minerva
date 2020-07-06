@@ -12,14 +12,14 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Grupo de Disciplinas"), wxPoint(30,30), wxSize(400,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_subject_group, wxPoint(30,30), wxSize(400,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome do Grupo"), wxDefaultPosition, wxSize(200,15));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name, wxDefaultPosition, wxSize(200,15));
 	name_label->SetFont(*m_owner->m_small_font);
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
 
-	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, wxT("Adicione Disciplinas desse grupo."), wxDefaultPosition, wxSize(400,15));
+	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_subjects_to_the_group, wxDefaultPosition, wxSize(400,15));
 	subjects_label->SetFont(*m_owner->m_small_font);
 
 	wxArrayString subj_names;
@@ -29,13 +29,13 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	}
 
 	m_subjects_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(310,30), subj_names);
-	wxButton * add_subject = new wxButton(this, wxID_ANY, wxT("Adicionar Disciplina"), wxDefaultPosition, wxSize(180,30));
+	wxButton * add_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_subject, wxDefaultPosition, wxSize(180,30));
 
-	wxButton * remove_subject = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(180,30));
-	wxButton * remove_all_subjects = new wxButton(this, wxID_ANY, wxT("Remover Todas"), wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_all_subjects = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,30));
 	m_subjects_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
 
-	wxButton * add_group = new wxButton(this, wxID_ANY, wxT("Adicionar Grupo"), wxDefaultPosition, wxSize(180,30));
+	wxButton * add_group = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_group, wxDefaultPosition, wxSize(180,30));
 
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
 
@@ -114,15 +114,17 @@ void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
 					if(sing_id >= 0){
 						school->subjects[i].in_groups[school->n_subject_groups -1] = 1;
 					} else {
-						m_err_msg->SetLabel(wxString::Format("Could not insert subject %s\n", wxString::FromUTF8(school->subjects[i].name)));
+						m_err_msg->SetLabel(m_owner->m_lang->str_error);
 					}
 				}
 			}
-			m_err_msg->SetLabel(wxT("Adicionado com sucesso."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			ClearInsertedData();
 		} else {
-			m_err_msg->SetLabel(wxT("Não foi possível adicionar. Erro no banco."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
+	} else {
+		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
 	}
 }
 

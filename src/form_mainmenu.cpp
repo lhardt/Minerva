@@ -97,8 +97,8 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	m_rib_bbars[4][3]->AddButton(LHID_OF(LHN_CHECK_ALL_CLASSES), m_owner->m_lang->str_check_all, image_detail);
 	m_rib_bbars[4][4]->AddButton(LHID_OF(LHN_OPEN_CLASSES_MANUAL), m_owner->m_lang->str_open_manual, image_help);
 	/* AULAS */
-	m_rib_bbars[5][0]->AddButton(LHID_OF(LHN_SEE_LECTURES), wxT("Ver Aulas por Turma"), image_list);
-	m_rib_bbars[5][1]->AddButton(LHID_OF(LHN_ADD_LECTURES), wxT("Adicionar Aulas por Turma"), image_add);
+	m_rib_bbars[5][0]->AddButton(LHID_OF(LHN_SEE_LECTURES), m_owner->m_lang->str_list_lectures_by_class, image_list);
+	m_rib_bbars[5][1]->AddButton(LHID_OF(LHN_ADD_LECTURES), m_owner->m_lang->str_add_lectures_by_class, image_add);
 	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
 	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TEACHER_PREF), m_owner->m_lang->str_teacher_preference, image_detail);
 	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TWIN_PREF), m_owner->m_lang->str_twin_preference, image_detail);
@@ -106,10 +106,10 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	m_rib_bbars[5][3]->AddButton(LHID_OF(LHN_CHECK_ALL_LECTURES), m_owner->m_lang->str_check_all, image_detail);
 	m_rib_bbars[5][4]->AddButton(LHID_OF(LHN_OPEN_LECTURES_MAUAL), m_owner->m_lang->str_open_manual, image_help);
 	/* HORÁRIO */
-	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_SEE_TIMETABLE), wxT("Visualizar Horário"), image_list);
-	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_EXPORT_TIMETABLE), wxT("Exportar Horário"), image_detail);
-	m_rib_bbars[6][1]->AddButton(LHID_OF(LHN_GENERATE_TIMETABLE), wxT("Gerar"), image_add);
-	m_rib_bbars[6][1]->AddButton(LHID_OF(LHN_CREATE_TIMETABLE), wxT("Criar Manualmente"), image_detail);
+	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_SEE_TIMETABLE), m_owner->m_lang->str_see_timetable, image_list);
+	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_EXPORT_TIMETABLE), m_owner->m_lang->str_export_timetable, image_detail);
+	m_rib_bbars[6][1]->AddButton(LHID_OF(LHN_GENERATE_TIMETABLE), m_owner->m_lang->str_generate_timetable, image_add);
+	m_rib_bbars[6][1]->AddButton(LHID_OF(LHN_CREATE_TIMETABLE), m_owner->m_lang->str_create_timetable_manually, image_detail);
 	m_rib_bbars[6][2]->AddButton(LHID_OF(LHN_OPEN_TIMETABLE_MANUAL), m_owner->m_lang->str_open_manual, image_help);
 
 	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);

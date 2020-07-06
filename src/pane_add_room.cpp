@@ -20,26 +20,26 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	School * school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Sala"), wxPoint(30,30), wxSize(200,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_room);
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome da Sala"), wxPoint(30,75), wxSize(200,15));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
+	wxStaticText * capacity_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room_size_in_students);
+	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room_availibility);
+	wxStaticText * features_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room_add_features_with_scores, wxDefaultPosition, wxSize(200,15));
+
 	name_label->SetFont(*m_owner->m_small_font);
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxPoint(30,90), wxSize(200,30));
-
-
-	wxStaticText * capacity_label = new wxStaticText(this, wxID_ANY, wxT("Capacidade, em número de alunos, da sala"), wxPoint(30,135), wxSize(200,15));
 	capacity_label->SetFont(*m_owner->m_small_font);
-	m_capacity_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxPoint(30,150), wxSize(200,30));
-
-
-	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, wxT("A sala fica aberta em quais períodos?"), wxPoint(30,195), wxSize(250,15));
 	grid_label->SetFont(*m_owner->m_small_font);
+	features_label->SetFont(*m_owner->m_small_font);
+
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxPoint(30,90), wxSize(200,30));
+	m_capacity_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxPoint(30,150), wxSize(200,30));
 	m_grid = new ChoiceGrid(this, wxID_ANY, wxPoint(30,210), wxSize(500,200));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(wxT("Aberta"));
-	grid_values.push_back(wxT("Fechada"));
+	grid_values.push_back(m_owner->m_lang->str_adj__open);
+	grid_values.push_back(m_owner->m_lang->str_adj__closed);
 	m_grid->SetPossibleValues(grid_values);
 
 	wxVector<wxColor> grid_colors = wxVector<wxColor>();
@@ -47,8 +47,8 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	grid_colors.push_back(wxColor(255,200,200));
 	m_grid->SetBackgroundColors(grid_colors);
 
-	m_grid->m_basic_col_name = wxT("Dia");
-	m_grid->m_basic_row_name = wxT("Período");
+	m_grid->m_basic_col_name = m_owner->m_lang->str_day;
+	m_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
 	m_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 
@@ -58,7 +58,7 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 		}
 	}
 
-	wxButton * button_go = new wxButton(this,wxID_ANY, wxT("Adicionar Sala"), wxPoint(30,425), wxSize(200,30));
+	wxButton * button_go = new wxButton(this,wxID_ANY, m_owner->m_lang->str_add_room, wxPoint(30,425), wxSize(200,30));
 
 	button_go->Bind(wxEVT_BUTTON, &AddRoomPane::OnCreateButtonClicked, this);
 
@@ -68,11 +68,9 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	}
 
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText * features_label = new wxStaticText(this, wxID_ANY, wxT("Adicione Características dessa Sala, com suas respectivas \"notas\"."), wxDefaultPosition, wxSize(200,15));
-	features_label->SetFont(*m_owner->m_small_font);
 	m_features = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(180,30), arr);
 	m_score_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(120,30));
-	wxButton * add_feature = new wxButton(this, wxID_ANY, wxT("Adicionar Característica"), wxDefaultPosition, wxSize(180,30));
+	wxButton * add_feature = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_feature, wxDefaultPosition, wxSize(180,30));
 	add_sizer->Add(m_features,0,wxRIGHT,10);
 	add_sizer->Add(m_score_text,0,wxRIGHT,10);
 	add_sizer->Add(add_feature,0,wxRIGHT,10);
@@ -86,26 +84,26 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	feature_hor_sz->Add(m_added_features, 0, wxALL, 0);
 	feature_hor_sz->Add(feature_ver_sz, 0, 0);
 
-	wxButton * remove_feature = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(180,30));
-	wxButton * edit_feature = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_feature = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,30));
+	wxButton * edit_feature = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(180,30));
 	feature_ver_sz->Add(remove_feature, 0, wxLEFT | wxBOTTOM, 10);
 	feature_ver_sz->Add(edit_feature, 0, wxLEFT, 10);
 
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(title, 0, wxFIXED_MINSIZE | wxALL, 15);
-	sizer->Add(name_label, 0, wxFIXED_MINSIZE | wxLEFT | wxTOP, 15);
-	sizer->Add(m_name_text, 0, wxFIXED_MINSIZE | wxLEFT , 15);
-	sizer->Add(capacity_label, 0, wxFIXED_MINSIZE | wxLEFT | wxTOP, 15);
-	sizer->Add(m_capacity_text, 0, wxFIXED_MINSIZE | wxLEFT , 15);
-	sizer->Add(grid_label, 0, wxFIXED_MINSIZE | wxLEFT | wxTOP, 15);
+	sizer->Add(title, 0, wxALL, 15);
+	sizer->Add(name_label, 0,  wxLEFT | wxTOP, 15);
+	sizer->Add(m_name_text, 0, wxLEFT , 15);
+	sizer->Add(capacity_label, 0, wxLEFT | wxTOP, 15);
+	sizer->Add(m_capacity_text, 0, wxLEFT , 15);
+	sizer->Add(grid_label, 0, wxLEFT | wxTOP, 15);
 	sizer->Add(m_grid, 1, wxLEFT, 15);
-	sizer->Add(features_label, 0, wxFIXED_MINSIZE | wxLEFT | wxTOP, 15);
-	sizer->Add(add_sizer, 0, wxFIXED_MINSIZE | wxLEFT, 15);
+	sizer->Add(features_label, 0, wxLEFT | wxTOP, 15);
+	sizer->Add(add_sizer, 0,  wxLEFT, 15);
 	sizer->Add(feature_hor_sz, 0, wxLEFT | wxTOP, 15);
-	sizer->Add(button_go, 0, wxFIXED_MINSIZE | wxALL, 15);
-	sizer->Add(m_err_msg, 0, wxFIXED_MINSIZE | wxLEFT, 15);
+	sizer->Add(button_go, 0,  wxALL, 15);
+	sizer->Add(m_err_msg, 0,  wxLEFT, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -124,7 +122,7 @@ void AddRoomPane::ClearInsertedData(){
 		if(school->periods[i] == false){
 			m_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 		} else {
-			m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), "Aberta");
+			m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), m_owner->m_lang->str_adj__open);
 			m_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxColor(200,200,255));
 		}
 	}
@@ -157,7 +155,7 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 
 		for(i = 0; i < school->n_periods; ++i){
 			room.disponibility[i] =
-					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==wxT("Aberta") ? 1:0);
+					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_adj__open ? 1:0);
 		}
 		room.disponibility[school->n_periods] = -1;
 
@@ -172,13 +170,13 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 			school->rooms[school->n_rooms] = room;
 			school->n_rooms++;
 
-			m_err_msg->SetLabel(wxT("Adicionado com sucesso."));
+			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			ClearInsertedData();
 		} else {
-			m_err_msg->SetLabel(wxT("Não foi possível inserir no banco.\n"));
+			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
 	} else {
-		m_err_msg->SetLabel(wxT("Uma sala precisa ao menos de um nome e da sua capacidade."));
+		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
 	}
 
 }
@@ -192,9 +190,5 @@ void AddRoomPane::OnAddFeatureClicked(wxCommandEvent & ev){
 		wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[  m_features->GetSelection() ]) << wxT(": ") << m_score_text->GetValue();
 		m_added_features->InsertItems(1,&to_be_inserted, m_added_features->GetCount() );
 		m_score_text->SetValue(0);
-	} else {
-		m_err_msg->SetLabel(wxT("Não é possivel adicionar sem selecionar uma caracterísitca."));
 	}
-
-	printf("add clicked!\n");
 }

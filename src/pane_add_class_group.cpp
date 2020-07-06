@@ -17,14 +17,14 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	}
 
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Adicionar Grupo de Turmas"));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_class_group);
 	title->SetFont(*m_owner->m_page_title_font);
 
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, wxT("Nome do Grupo"));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name);
 	name_label->SetFont(*m_owner->m_small_font);
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
 
-	wxStaticText * classes_label = new wxStaticText(this, wxID_ANY, wxT("Adicione Turmas ao Grupo."));
+	wxStaticText * classes_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_classes_to_the_group);
 	classes_label->SetFont(*m_owner->m_small_font);
 
 	wxArrayString class_names;
@@ -33,12 +33,12 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	}
 
 	m_all_classes_list = new wxChoice(this, wxID_ANY,  wxDefaultPosition, wxSize(310,30), class_names);
-	wxButton * add_class = new wxButton(this, wxID_ANY, wxT("Adicionar Turma"), wxDefaultPosition, wxSize(180,-1));
+	wxButton * add_class = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_class, wxDefaultPosition, wxSize(180,-1));
 
 	m_selected_classes_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
-	wxButton * remove_button = new wxButton(this, wxID_ANY, wxT("Remover"), wxDefaultPosition, wxSize(180,-1));
-	wxButton * remove_all = new wxButton(this, wxID_ANY, wxT("Remover Todas"), wxDefaultPosition, wxSize(180,-1));
-	wxButton * add_group = new wxButton(this, wxID_ANY, wxT("Adicionar Grupo"), wxDefaultPosition, wxSize(180,-1));
+	wxButton * remove_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,-1));
+	wxButton * remove_all = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,-1));
+	wxButton * add_group = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_group, wxDefaultPosition, wxSize(180,-1));
 
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 
@@ -132,9 +132,9 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 			++school->n_classes;
 
 			ClearInsertedData();
-			m_err_msg->SetLabel("Inserido com Sucesso");
+			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 		} else {
-			m_err_msg->SetLabel("Erro no banco.");
+			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
 	}
 }
