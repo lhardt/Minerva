@@ -13,11 +13,6 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	int i;
 	School * school = m_owner->m_school;
 
-	for(i = 0; i < MAX_SUBJECTS; ++i){
-		selected_subjects[i] = 0;
-	}
-
-
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_class);
 	title->SetFont(*m_owner->m_page_title_font);
 
@@ -37,28 +32,28 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	subjects_label->SetFont(*m_owner->m_small_font);
 	m_err_msg->SetFont(*m_owner->m_small_font);
 
-	wxArrayString per_arr;
-	for(i = 0; i < school->n_periods_per_day; ++i){
-		per_arr.push_back(wxString::FromUTF8(school->daily_period_names[i]));
-	}
-	wxArrayString subj_arr;
-	for(i = 0; i < school->n_subjects; ++i){
-		subj_arr.push_back(wxString::FromUTF8(school->subjects[i].name));
-	}
-
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(180,-1));
 	m_size_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(180,-1));
-	m_entry_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), per_arr);
-	m_exit_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), per_arr);
+	m_entry_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30));
+	m_exit_text = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30));
 	m_free_periods_checkbox = new wxCheckBox(this, wxID_ANY, m_owner->m_lang->str_class_can_have_free_periods, wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_periods = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(400,300));
 	wxButton * remove_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(220,-1));
 	wxButton * remove_all = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(220,-1));
 	m_selected_subjects_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
 	wxButton * add_class = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_class, wxDefaultPosition, wxSize(220,-1));
-	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(180,30), subj_arr);
+	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(180,30));
 	m_score_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(120,30));
 	wxButton * add_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_subject, wxDefaultPosition, wxSize(220,30));
+
+	for(i = 0; i < school->n_periods_per_day; ++i){
+		m_entry_text->Append(wxString::FromUTF8(school->daily_period_names[i]), new IntClientData(i));
+		m_exit_text->Append(wxString::FromUTF8(school->daily_period_names[i]), new IntClientData(i));
+	}
+
+	for(i = 0; i < school->n_subjects; ++i){
+		m_all_subjects_list->Append(wxString::FromUTF8(school->subjects[i].name), new IntClientData(i));
+	}
 
 	m_free_periods_checkbox->SetFont(*m_owner->m_small_font);
 
@@ -152,15 +147,16 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.minimal_exit_period = m_exit_text->GetSelection();
 		c.abstract = false;
 		if(m_selected_subjects_list->GetCount() > 0){
-			c.needs = (SubjectQuantity*) calloc(m_selected_subjects_list->GetCount() + 1, sizeof(SubjectQuantity));
+			int n_needs = m_selected_subjects_list->GetCount();
+			c.needs = (SubjectQuantity*) calloc(n_needs + 1, sizeof(SubjectQuantity));
 			int i_need = 0;
-			for(i = 0; i < school->n_subjects; ++i){
-				if(selected_subjects[i] > 0){
-					c.needs[i_need].subject = &school->subjects[i];
-					c.needs[i_need].quantity = selected_subjects[i];
-					++i_need;
-				}
+
+			for(i_need = 0; i < n_needs; ++i_need){
+				IntPairClientData* item_data =(IntPairClientData*) m_selected_subjects_list->GetClientObject(i_need);
+				c.needs[i_need].subject = &school->subjects[ item_data->m_v1 ];
+				c.needs[i_need].quantity = item_data->m_v2;
 			}
+
 			c.needs[i_need].subject = NULL;
 			c.needs[i_need].quantity = -1;
 		} else {
@@ -186,10 +182,11 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 
 void AddClassPane::OnAddSubjectButtonClicked(wxCommandEvent & ev){
 	if(m_all_subjects_list->GetSelection() != wxNOT_FOUND && m_score_text->GetValue() > 0){
+		int subject_i = ((IntClientData*)(m_all_subjects_list->GetClientObject( m_all_subjects_list->GetSelection())))->m_value;
+		IntPairClientData * data = new IntPairClientData(subject_i, m_score_text->GetValue());
 		wxString text = m_all_subjects_list->GetStringSelection() + wxString::Format(": %d", m_score_text->GetValue());
-		m_selected_subjects_list->InsertItems(1, &text, m_selected_subjects_list->GetCount());
-
-		selected_subjects[m_all_subjects_list->GetSelection()] = m_score_text->GetValue();
+		m_selected_subjects_list->Insert(text, m_selected_subjects_list->GetCount(),data);
+		m_score_text->SetValue(0);
 	}
 }
 
@@ -209,12 +206,6 @@ void AddClassPane::ClearInsertedData(){
 	m_score_text->SetValue(0);
 	m_size_text->SetValue(0);
 	m_free_periods_checkbox->SetValue(false);
-
-	for(i = 0; i < MAX_SUBJECTS; ++i){
-		selected_subjects[i] = 0;
-	}
-	selected_subjects[MAX_SUBJECTS-1] = -1;
-
 	last_entry = -1;
 	last_exit = -1;
 
@@ -223,9 +214,6 @@ void AddClassPane::ClearInsertedData(){
 }
 
 void AddClassPane::OnRemoveAllButtonClicked(wxCommandEvent & ev){
-	for(int i = 0; i < m_owner->m_school->n_subjects; ++i){
-		selected_subjects[i] = 0;
-	}
 	m_selected_subjects_list->Clear();
 }
 

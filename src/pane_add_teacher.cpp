@@ -16,12 +16,23 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	title->SetFont(*m_owner->m_page_title_font);
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
-	name_label->SetFont(*m_owner->m_small_font);
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
-
 	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availibility);
+	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_teaches);
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
+
+	name_label->SetFont(*m_owner->m_small_font);
 	grid_label->SetFont(*m_owner->m_small_font);
+	subjects_label->SetFont(*m_owner->m_small_font);
+	m_err_msg->SetFont(*m_owner->m_small_font);
+
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
 	m_grid = new ChoiceGrid(this, wxID_ANY, wxPoint(30,210), wxSize(500,200));
+	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(310,30));
+	wxButton * add_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_subject, wxDefaultPosition, wxSize(180,-1));
+	wxButton * remove_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_all     = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,30));
+	wxButton * add_teacher = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_teacher, wxDefaultPosition, wxSize(180,30));
+	m_teaches_subjects_list   = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
 	grid_values.push_back(m_owner->m_lang->str_teacher_availible);
@@ -43,45 +54,25 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 		}
 	}
 
-	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_teaches);
-	subjects_label->SetFont(*m_owner->m_small_font);
+	add_subject->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddSubjectButtonClicked, this);
+	remove_all->Bind(wxEVT_BUTTON, &AddTeacherPane::OnRemoveAllButtonClicked, this);
+	add_teacher->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddTeacherButtonClicked, this);
+	remove_subject->Disable();
 
-	wxArrayString arr;
 	for(i = 0; i < m_owner->m_school->n_subjects; ++i){
-		arr.push_back(wxString::FromUTF8(m_owner->m_school->subjects[i].name));
+		m_all_subjects_list->Insert(wxString::FromUTF8(m_owner->m_school->subjects[i].name), i, new IntClientData(i));
 	}
 
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
-	m_all_subjects_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(310,30),arr);
-	wxButton * add_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_subject, wxDefaultPosition, wxSize(180,-1));
-	add_subject->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddSubjectButtonClicked, this);
-
+	wxSizer * subjects_sizer  = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * buttons_sizer = new wxBoxSizer(wxVERTICAL);
 	add_sizer->Add(m_all_subjects_list,0,wxRIGHT,10);
 	add_sizer->Add(add_subject,0,wxRIGHT,10);
 
-	for(i = 0; i < MAX_SUBJECTS; ++i){
-		m_teaches_subj[i] = false;
-	}
-
-	wxSizer * subjects_sizer  = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * buttons_sizer = new wxBoxSizer(wxVERTICAL);
-
-	wxButton * remove_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,30));
-	wxButton * remove_all     = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,30));
-	m_teaches_subjects_list   = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
-	remove_subject->Disable();
 	subjects_sizer->Add(m_teaches_subjects_list, 0, wxRIGHT, 10);
 	subjects_sizer->Add(buttons_sizer, 0, 0);
 	buttons_sizer->Add(remove_subject, 0, wxALL, 10);
 	buttons_sizer->Add(remove_all, 0, wxLEFT, 10);
-
-	remove_all->Bind(wxEVT_BUTTON, &AddTeacherPane::OnRemoveAllButtonClicked, this);
-
-	wxButton * add_teacher = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,30));
-	add_teacher->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddTeacherButtonClicked, this);
-
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
-	m_err_msg->SetFont(*m_owner->m_small_font);
 
 	sizer->Add(title, 0, wxALL, 15);
 	sizer->Add(name_label, 0, wxLEFT ,15);
@@ -102,18 +93,15 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 }
 
 void AddTeacherPane::OnAddSubjectButtonClicked(wxCommandEvent & ev){
-	if(m_all_subjects_list->GetSelection() != wxNOT_FOUND && m_teaches_subj[ m_all_subjects_list->GetSelection() ] == false ){
+	if(m_all_subjects_list->GetSelection() != wxNOT_FOUND ){
 		wxString text = wxString::FromUTF8(m_owner->m_school->subjects[ m_all_subjects_list->GetSelection() ].name);
-		m_teaches_subj[ m_all_subjects_list->GetSelection() ] = true;
-		m_teaches_subjects_list->InsertItems(1, &text, m_teaches_subjects_list->GetCount());
+		// IntClientData data(m_all_subjects_list->GetSelection());
+		m_teaches_subjects_list->Insert(text, m_teaches_subjects_list->GetCount(), new IntClientData(m_all_subjects_list->GetSelection()));
+		m_all_subjects_list->Delete(m_all_subjects_list->GetSelection());
 	}
 }
 
 void AddTeacherPane::OnRemoveAllButtonClicked(wxCommandEvent & ev){
-	int i;
-	for(i = 0; i < m_owner->m_school->n_subjects; ++i){
-		m_teaches_subj[i] = false;
-	}
 	m_teaches_subjects_list->Clear();
 }
 
@@ -122,10 +110,6 @@ void AddTeacherPane::ClearInsertedData(){
 	int i;
 	m_name_text->Clear();
 	m_teaches_subjects_list->Clear();
-
-	for(i = 0; i < MAX_SUBJECTS; ++i){
-		m_teaches_subj[i] = false;
-	}
 
 	for(i = 0; i < school->n_periods; ++i){
 		if(school->periods[i] == false){
@@ -139,14 +123,13 @@ void AddTeacherPane::ClearInsertedData(){
 }
 
 void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
-	int i;
+	int i_teaches = 0;
 	Teaches * teaches_vals;
 	School * school = m_owner->m_school;
 	if(!m_name_text->GetValue().IsEmpty()){
 		Teacher t;
 		t.name = copy_wx_string(m_name_text->GetValue());
 		t.short_name = copy_wx_string(m_name_text->GetValue());
-
 		t.max_days = school->n_days;
 		t.max_meetings = school->n_periods;
 		t.max_meetings_per_day = school->n_periods_per_day;
@@ -154,31 +137,24 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.num_planning_periods = 0;
 
 		if(m_teaches_subjects_list->GetCount() > 0){
-			t.teaches = (Teaches**)calloc(m_teaches_subjects_list->GetCount() + 1, sizeof(Teaches*));
-			teaches_vals = (Teaches*)calloc(m_teaches_subjects_list->GetCount() + 1, sizeof(Teaches));
-			int i_teaches = 0;
-			/* The number of elements in the listbox is equal
-			 * to the number of true elements in m_teaches_subj */
-			for(i = 0; i < school->n_subjects; ++i){
-				if(m_teaches_subj[i] == true){
-					t.teaches[i_teaches] = &(teaches_vals[i_teaches]);
-					t.teaches[i_teaches]->teacher = &t;
-					t.teaches[i_teaches]->subject = &(school->subjects[i]);
-					t.teaches[i_teaches]->score = 1;
-					/* Anull features */
-					for(int i_feature = 0; i_feature < MAX_FEATURES; ++i_feature){
-						t.teaches[i_teaches]->features[i_feature] = 0;
-						t.teaches[i_teaches]->min_features[i_feature] = 0;
-					}
-					++i_teaches;
-				}
+			int n_teaches = m_teaches_subjects_list->GetCount();
+			t.teaches = (Teaches**)calloc(n_teaches + 1, sizeof(Teaches*));
+			teaches_vals = (Teaches*)calloc(n_teaches + 1, sizeof(Teaches));
+			for(i_teaches = 0; i_teaches < n_teaches; ++i_teaches){
+				IntClientData * data = (IntClientData* )m_teaches_subjects_list->GetClientObject(i_teaches);
+				t.teaches[i_teaches] = &(teaches_vals[i_teaches]);
+				t.teaches[i_teaches]->teacher = &t;
+				t.teaches[i_teaches]->subject = &(school->subjects[data->m_value]);
+				t.teaches[i_teaches]->score = 1;
+				t.teaches[i_teaches]->features = NULL;
+				t.teaches[i_teaches]->min_features = NULL;
 			}
 			t.teaches[i_teaches] = NULL;
 		} else {
 			t.teaches = NULL;
 		}
 		t.periods = (int*)calloc(1 + school->n_periods, sizeof(int));
-		for(i = 0; i < school->n_periods; ++i){
+		for(int i = 0; i < school->n_periods; ++i){
 			t.periods[i] =
 					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_teacher_availible ? 1:0);
 		}

@@ -15,13 +15,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define MAX_FEATURES          (64)
-#define MAX_PERIODS_PER_DAY   (32)
-#define MAX_PERIODS_PER_WEEK  (1024)
-#define MAX_DAYS 			  ((MAX_PERIODS_PER_WEEK)/(MAX_PERIODS_PER_DAY))
-#define MAX_ROOMS			  (256)
-#define MAX_GROUPS			  (128)
-#define MAX_SUBJECTS		  (128)
+// #define MAX_FEATURES          (64)
+// #define MAX_PERIODS_PER_DAY   (32)
+// #define MAX_PERIODS_PER_WEEK  (1024)
+// #define MAX_DAYS 			  ((MAX_PERIODS_PER_WEEK)/(MAX_PERIODS_PER_DAY))
+// #define MAX_ROOMS			  (256)
+// #define MAX_GROUPS			  (128)
+// #define MAX_SUBJECTS		  (128)
 
 typedef enum Period {
 	_NULL     = -1,
@@ -53,8 +53,8 @@ typedef struct Room {
 	int size;
 	/*this is not a list of fetures. Is rather a score given to all fetures, being 0 absent. */
 	/* Last value must be -1. */
-	int room_features[MAX_FEATURES + 1];
-	int disponibility[MAX_PERIODS_PER_WEEK + 1];
+	int * room_features;
+	int * disponibility;
 } Room;
 
 typedef struct Subject {
@@ -62,7 +62,7 @@ typedef struct Subject {
 	char * name;
 	char * short_name;
 
-	int   in_groups[MAX_GROUPS +1];
+	int  * in_groups;
 } Subject;
 
 typedef struct Teaches Teaches;
@@ -79,8 +79,8 @@ struct Teacher {
 	int    			num_planning_periods;
 	// bool   			one_day_planning_periods; DEFAULT TO YES.
 
-	int				day_max_meetings[MAX_DAYS + 1];
-	int				day_scores[MAX_DAYS + 1];
+	int				* day_max_meetings;
+	int				* day_scores;
 
 	Teaches      ** teaches;
 	ClassQuantity * possible_classes;
@@ -96,8 +96,8 @@ struct Teaches {
 	Teacher * teacher;
 	Subject * subject;
 	int  score;
-	int  features[MAX_FEATURES + 1];
-	int  min_features[MAX_FEATURES + 1];
+	int  * features;
+	int  * min_features;
 };
 
 typedef struct Class Class;
@@ -108,7 +108,7 @@ struct Class {
 
 	int 			size;
 	/* Not a list, but a list of scores */
-	int 		    periods[MAX_PERIODS_PER_WEEK+1];
+	int 		    * periods;
 	int 		  * rooms;
 	bool 			can_have_free_periods_flag;
 	int 			maximal_entry_period;
@@ -123,7 +123,7 @@ struct Class {
 	int * subordinates;
 
 	SubjectQuantity * needs;
-	int max_per_day_subject_group[MAX_GROUPS];
+	int * max_per_day_subject_group;
 };
 
 
@@ -241,7 +241,7 @@ typedef struct School {
 	int			 n_meetings;
 	int			 n_subject_groups;
 
-	bool 		 periods[MAX_PERIODS_PER_WEEK];
+	bool 		 * periods;
 
 	int		 	 max_meetings_teacher_per_week;
 	int 		 max_meetings_teacher_per_day;

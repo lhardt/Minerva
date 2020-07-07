@@ -169,10 +169,10 @@ void school_feature_remove(School * school, int feature_i){
 		}
 
 		/* If there are features right of the deleted, push them back, in all structures. */
-		if(feature_i == MAX_FEATURES -1 || school->feature_ids[feature_i+1] != -1){
+		if(school->feature_ids[feature_i+1] != -1){
 			if(school->rooms != NULL && school->n_rooms > 0){
 				for(i = 0;  i < school->n_rooms; ++i ){
-					for(j = feature_i + 1; (j < MAX_FEATURES -1) && (school->rooms[i].room_features[j] >= 0); ++j){
+					for(j = feature_i + 1; school->rooms[i].room_features[j] >= 0; ++j){
 						/* copies the -1 terminator too. */
 						school->rooms[i].room_features[j] = school->rooms[i].room_features[j+1];
 					}
@@ -181,12 +181,12 @@ void school_feature_remove(School * school, int feature_i){
 
 			if(school->teaches != NULL && school->n_teaches > 0){
 				for(i = 0; i < school->n_teaches; ++i){
-					for(j = feature_i + 1; (j < MAX_FEATURES -1) && (school->teaches[i].features[j] >= 0); ++j){
+					for(j = feature_i + 1; school->teaches[i].features[j] >= 0; ++j){
 						/* copies the -1 terminator too. */
 						school->teaches[i].features[j] = school->teaches[i].features[j+1];
 					}
 					/* May have a different terminator. */
-					for(j = feature_i + 1; (j < MAX_FEATURES -1) && (school->teaches[i].features[j] >= 0); ++j){
+					for(j = feature_i + 1; school->teaches[i].features[j] >= 0; ++j){
 						school->teaches[i].min_features[j] = school->teaches[i].min_features[j+1];
 					}
 				}
@@ -200,6 +200,41 @@ void school_teacher_remove(School * school, int teacher_i){
 
 }
 
+void school_room_add(School * school, const Room * const room){
+	if(school->n_rooms == 0){
+		school->rooms = (Room*) calloc(11, sizeof(Room));
+	} else if(school->n_rooms % 10 == 0) {
+		school->rooms = (Room *) realloc(school->rooms, (school->n_rooms + 11 - (school->n_rooms % 10))*sizeof(Room));
+	}
+	school->rooms[school->n_rooms] = *room;
+	school->n_rooms++;
+}
+
 void school_room_remove(School * school, int room_i){
 
+}
+
+void school_subject_add(School * school, const Subject * const subject){
+	if(school->subjects == NULL || school->n_subjects == 0){
+		school->subjects = (Subject*)calloc(10, sizeof(Subject));
+		school->n_subjects = 0;
+	} else if(school->n_subjects % 10 == 0) {
+		school->subjects = (Subject*)realloc(school->subjects,(school->n_subjects +11)*sizeof(Subject));
+	}
+	school->subjects[ school->n_subjects ] = *subject;
+	school->n_subjects++;
+}
+
+void school_subjectgroup_add(School * school, const char * const name, int id){
+	if(school->n_subject_groups == 0 || school->subject_group_names == NULL){
+		school->subject_group_names = (char **) calloc(11, sizeof(char *));
+		school->subject_group_ids = (int *) calloc(11, sizeof(int));
+		school->n_subject_groups = 0;
+	} else if(school->n_subject_groups % 10 == 0) {
+		school->subject_group_names = (char **) realloc(school->subject_group_names, (school->n_subject_groups + 11) * sizeof(char*));
+		school->subject_group_ids = (int *) realloc(school->subject_group_ids, (school->n_subject_groups + 11) * sizeof(int*));
+	}
+	school->subject_group_names[school->n_subject_groups] = name;
+	school->subject_group_ids[school->n_subject_groups] = id;
+	++school->n_subject_groups;
 }

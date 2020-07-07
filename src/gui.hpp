@@ -29,8 +29,16 @@ extern "C"{
 
 char * copy_wx_string(wxString str);
 
+class IntPairClientData : public wxClientData{
+public:
+	IntPairClientData(int v1, int v2);
+	int m_v1;
+	int m_v2;
+};
+
 class IntClientData : public wxClientData{
 public:
+	IntClientData(int value);
 	IntClientData(int value, wxString name);
 	int m_value;
 	wxString m_name;
@@ -208,8 +216,6 @@ class AddRoomPane : public wxScrolledWindow {
 
 	Application * m_owner;
 
-	int m_feature_values[MAX_FEATURES];
-
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void OnAddFeatureClicked(wxCommandEvent &);
 	void ClearInsertedData();
@@ -242,8 +248,6 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 	wxListBox * m_subjects_list;
 	wxStaticText * m_err_msg;
 
-	bool added_subjects[MAX_SUBJECTS];
-
 	Application * m_owner;
 	void OnAddSubjectButtonClicked(wxCommandEvent &);
 	void OnRemoveAllButtonClicked(wxCommandEvent &);
@@ -262,8 +266,6 @@ class AddTeacherPane : public wxScrolledWindow {
 	wxListBox  * m_teaches_subjects_list;
 	wxStaticText * m_err_msg;
 	ChoiceGrid * m_grid;
-
-	bool m_teaches_subj[MAX_SUBJECTS];
 
 	Application * m_owner;
 
@@ -308,8 +310,6 @@ class AddClassPane : public wxScrolledWindow {
 	wxSpinCtrl * m_score_text;
 	wxSpinCtrl * m_size_text;
 	wxCheckBox * m_free_periods_checkbox;
-
-	int selected_subjects[MAX_SUBJECTS];
 	int last_entry, last_exit;
 
 

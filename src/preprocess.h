@@ -25,15 +25,18 @@ void school_teacher_remove(School * school, int teacher_i);
 void school_class_add(School * school, const Class * const c);
 void school_class_remove(School * school, int class_i);
 
-void school_subject_add(School * school, Subject * subject);
+void school_subject_add(School * school, const Subject * const subject);
 void school_subject_remove(School * school, int subject_i);
 
-void school_room_add(School * school, Teacher * teacher);
+void school_room_add(School * school, const Room * const room);
 void school_room_remove(School * school, int room_i);
 
 void school_meeting_add(School * school, Meeting * meet);
 void school_meeting_change(School * school, int meeting_i);
 void school_meeting_remove(School * school, int meeting_i);
+
+void school_subjectgroup_add(School * school, const char * const name, int id);
+void school_subjectgroup_remove(School * school, int i);
 
 void school_on_preference_changed(School * school);
 

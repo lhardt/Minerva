@@ -2284,7 +2284,6 @@ static bool select_all_periods_by_school_id(FILE * console_out, sqlite3 * db, in
 					break;
 				}
 			}
-
 			day_per_i = -1;
 			day_per_id = sqlite3_column_int(stmt,4);
 			for(j = 0; j < school->n_periods_per_day; ++j){
@@ -2293,10 +2292,7 @@ static bool select_all_periods_by_school_id(FILE * console_out, sqlite3 * db, in
 					break;
 				}
 			}
-
-			if(day_per_i == -1 || day_i == -1){
-				fprintf(console_out, "Could not find periods' parents: %d %d \n", day_i, day_per_i);
-			} else {
+			if(day_per_i != -1 && day_i != -1){
 				per_i = day_i * school->n_periods_per_day + day_per_i;
 				school->period_ids[per_i] = sqlite3_column_int(stmt,0);
 
@@ -2306,8 +2302,14 @@ static bool select_all_periods_by_school_id(FILE * console_out, sqlite3 * db, in
 					school->period_names[per_i] = calloc(str_sz + 1, sizeof(char));
 					strncpy(school->period_names[per_i], aux, str_sz);
 				}
-
+				if(school->periods == NULL){
+					school->periods = calloc(11, sizeof(bool));
+				} else if(per_i % 10 == 0){ /* garanteed? Probably */
+					school->periods = realloc(school->periods, (per_i + 11) * sizeof(bool));
+				}
 				school->periods[per_i] = sqlite3_column_int(stmt,2) > 0;
+			} else {
+				fprintf(console_out, "Could not find periods' parents: %d %d \n", day_i, day_per_i);
 			}
 			errc = sqlite3_step(stmt);
 			++i;
