@@ -80,7 +80,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 }
 
 void DescSchoolPane::OnRemoveButtonClicked(wxCommandEvent & ){
-	wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_are_you_sure, m_owner->m_lang->str_school_deletion_popup_text, wxCANCEL | wxOK);
+	wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_school_deletion_popup_text, m_owner->m_lang->str_are_you_sure, wxCANCEL | wxOK);
 	dialog->SetYesNoLabels(m_owner->m_lang->str_yes, m_owner->m_lang->str_no);
 	int confirmation = dialog->ShowModal();
 	if(confirmation == wxOK){

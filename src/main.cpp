@@ -17,6 +17,12 @@ extern "C" {
 	#include "util.h"
 };
 
+void Application::NotifyNewUnsavedData(){
+	if(m_form_main_menu){
+		m_form_main_menu->NotifyNewUnsavedData();
+	}
+}
+
 void Application::OnConfigUpdate(){
 	FILE * conf_file = fopen(".config", "w");
 

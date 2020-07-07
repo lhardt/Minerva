@@ -181,6 +181,11 @@ const Language LANG_POR = {
 	.str_generate=L"Gerar",
 	.str_generating=L"Gerando",
 	.str_could_not_generate=L"Não foi possível gerar.",
+	.str_close=L"Fechar",
+	.str_undo=L"Desfazer",
+	.str_redo=L"Refazer",
+	.str_cancel=L"Cancelar",
+	.str_confirm_close_without_saving=L"Deseja salvar antes de sair?",
 };
 
 const Language LANG_ENG = {
@@ -352,6 +357,11 @@ const Language LANG_ENG = {
 	.str_generate=L"Generate",
 	.str_generating=L"Generating",
 	.str_could_not_generate=L"Could not generate timetable.",
+	.str_close=L"Close",
+	.str_undo=L"Undo",
+	.str_redo=L"Redo",
+	.str_cancel=L"Cancel",
+	.str_confirm_close_without_saving=L"Do you want to save before leaving?",
 };
 
 const Language LANG_SPA = {
@@ -513,6 +523,11 @@ const Language LANG_SPA = {
 	.str_generate=L"",
 	.str_generating=L"",
 	.str_could_not_generate=L"",
+	.str_close=L"",
+	.str_undo=L"",
+	.str_redo=L"",
+	.str_cancel=L"",
+	.str_confirm_close_without_saving=L"",
 };
 
 const Language LANG_DEU = {
@@ -670,4 +685,9 @@ const Language LANG_DEU = {
 	.str_generate=L"",
 	.str_generating=L"",
 	.str_could_not_generate=L"",
+	.str_close=L"",
+	.str_undo=L"",
+	.str_redo=L"",
+	.str_cancel=L"Abbrechen",
+	.str_confirm_close_without_saving=L"",
 };

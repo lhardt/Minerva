@@ -173,10 +173,14 @@ typedef struct Language {
 	const wchar_t * const str_generate_timetable_text;
 	const wchar_t * const str_last_generated_timetables;
 	const wchar_t * const str_generate;
-
-
 	const wchar_t * const str_generating;
 	const wchar_t * const str_could_not_generate;
+	const wchar_t * const str_close;
+	const wchar_t * const str_undo;
+	const wchar_t * const str_redo;
+
+	const wchar_t * const str_cancel;
+	const wchar_t * const str_confirm_close_without_saving;
 } Language;
 
 const extern Language LANG_POR;
@@ -193,25 +197,26 @@ const extern Language LANG_DEU;
 
 #define LHID_OF(i) (LH_ID_PADDING + (i))
 
-#define LHN_SAVE_AS 				1
-#define LHN_SAVE_AND_CLOSE 			2
-#define LHN_CLOSE_WITHOUT_SAVE 		3
-#define LHN_SCHOOL_DATA				4
-#define LHN_OPEN_SCHOOL_MANUAL		5
+#define LHN_SAVE	 				1
+#define LHN_CLOSE		 			2
+#define LHN_UNDO			 		3
+#define LHN_REDO			 		4
+#define LHN_SCHOOL_DATA				5
+#define LHN_OPEN_SCHOOL_MANUAL		6
 
-#define LHN_SEE_FEATURES			6
-#define LHN_SEE_ROOMS				7
-#define LHN_ADD_FEATURE				8
-#define LHN_ADD_ROOM				9
-#define LHN_ROOM_PERIOD_PREF 		10
-#define LHN_CHECK_ALL_ROOMS			11
-#define LHN_OPEN_ROOMS_MANUAL		12
+#define LHN_SEE_FEATURES			7
+#define LHN_SEE_ROOMS				8
+#define LHN_ADD_FEATURE				9
+#define LHN_ADD_ROOM				10
+#define LHN_ROOM_PERIOD_PREF 		11
+#define LHN_CHECK_ALL_ROOMS			12
+#define LHN_OPEN_ROOMS_MANUAL		13
 
-#define LHN_SEE_SUBJECTS			13
-#define LHN_SEE_SUBJECT_GROUPS		14
-#define LHN_ADD_SUBJECT				15
-#define LHN_ADD_SUBJECT_GROUP		16
-#define LHN_SUBJECT_PERIOD_PREF		17
+#define LHN_SEE_SUBJECTS			14
+#define LHN_SEE_SUBJECT_GROUPS		15
+#define LHN_ADD_SUBJECT				16
+#define LHN_ADD_SUBJECT_GROUP		17
+#define LHN_SUBJECT_PERIOD_PREF		18
 #define LHN_SUBJECT_ROOM_PREF		19
 #define LHN_CHECK_ALL_SUBJECTS		20
 #define LHN_OPEN_SUBJECTS_MANUAL	21
@@ -252,4 +257,5 @@ const extern Language LANG_DEU;
 #define LHN_CREATE_TIMETABLE		53
 #define LHN_OPEN_TIMETABLE_MANUAL	54
 
+#define LHN_HELP					55
 #endif /* GUI_LANGUAGE */

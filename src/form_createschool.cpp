@@ -88,8 +88,8 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	wxSizer * right_pane_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * footer_sz = new wxBoxSizer(wxVERTICAL);
 
-	button_sz->Add(m_button_create, 0, wxRIGHT, 5);
-	button_sz->Add(m_button_back, 0, 0);
+	button_sz->Add(m_button_back, 0, wxRIGHT, 5);
+	button_sz->Add(m_button_create, 0, 0);
 
 	left_pane_sz->Add(m_title, 0, wxBOTTOM, 15);
 	left_pane_sz->Add(m_school_name_label, 0, wxBOTTOM, 5);
@@ -162,7 +162,7 @@ void CreateSchoolForm::OnCreateClicked(wxCommandEvent & ev){
 		school->period_names = (char**) calloc( school->n_periods + 1, sizeof(char*));
 		for(i = 0; i < school->n_periods; ++i){
 			school->period_names[i] = (char*)calloc(1,sizeof(char));
-			school->periods[i] = m_owner->m_lang->str_open == m_grid->GetCellValue(1 + (i % school->n_periods_per_day), 1 +  (i / school->n_periods_per_day));
+			school->periods[i] = m_owner->m_lang->str_adj__open == m_grid->GetCellValue(1 + (i % school->n_periods_per_day), 1 +  (i / school->n_periods_per_day));
 		}
 
 		int errc = insert_school(stdout, m_owner->m_database, school);

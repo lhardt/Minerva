@@ -65,6 +65,7 @@ void AddSubjectPane::OnCreateButtonClicked(wxCommandEvent & ev){
 			school->n_subjects++;
 
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
+			m_owner->NotifyNewUnsavedData();
 			ClearInsertedData();
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);

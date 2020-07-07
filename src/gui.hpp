@@ -144,6 +144,7 @@ class MainMenuForm : public wxFrame{
 	MainMenuForm(Application * owner);
 	~MainMenuForm();
 
+	void NotifyNewUnsavedData();
  private:
 	wxRibbonBar * m_ribbon;
 	wxRibbonPage * m_ribbon_pages[7];
@@ -151,7 +152,10 @@ class MainMenuForm : public wxFrame{
 	wxPanel * m_open_pane = nullptr;
 	wxPanel * m_center_pane = nullptr;
 	Application * m_owner = nullptr;
+	wxToolBar * m_toolbar = nullptr;
 	void OnMenuItemClicked(wxCommandEvent&);
+	void OnToolbarEvent(wxCommandEvent&);
+	void OnClose(wxCommandEvent&);
 
 	void CloseOpenedPane();
 };
@@ -708,7 +712,6 @@ class Application : public wxApp {
 	CreateSchoolForm * 	m_form_create_school = nullptr;
 	MainMenuForm * 		m_form_main_menu = nullptr;
 	SettingsForm * 	m_form_settings = nullptr;
-
  public:
 	virtual bool OnInit();
 	virtual int  OnExit();
@@ -718,6 +721,7 @@ class Application : public wxApp {
 	void LoadConfig();
 	void UpdateFonts();
 	bool SaveDatabase();
+	void NotifyNewUnsavedData();
 
 	const Language * m_lang;
 	int m_font_sz;

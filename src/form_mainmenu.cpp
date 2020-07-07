@@ -9,6 +9,10 @@
 #include "gui_language.hpp"
 #include "art_metro.h"
 
+extern "C" {
+	#include "util.h"
+};
+
 MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, owner->m_lang->str_minerva_school_timetables, wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
 
@@ -21,14 +25,14 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	SetMinSize(wxSize(800,600));
 	SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
 
+
 	wxRibbonBar * m_ribbon = new wxRibbonBar(this,-1,wxDefaultPosition, wxSize(800,150), wxRIBBON_BAR_FLOW_HORIZONTAL | wxRIBBON_BAR_SHOW_PAGE_LABELS);
 	m_ribbon->SetArtProvider(new wxRibbonMetroArtProvider(true, m_owner->m_small_font));
-	printf("diff");
 	wxRibbonButtonBar * m_rib_bbars[7][5];
 
 	const wchar_t * const menu_names[7] = {m_owner->m_lang->str_school, m_owner->m_lang->str_rooms, m_owner->m_lang->str_subjects, m_owner->m_lang->str_teachers, m_owner->m_lang->str_classes, m_owner->m_lang->str_lectures, m_owner->m_lang->str_timetable};
 	const wchar_t * const smenu_names[10][10] = {
-		{m_owner->m_lang->str_file, m_owner->m_lang->str_data, m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_data, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
@@ -48,18 +52,29 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	auto image	      = wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, wxSize(32,32));
 	auto image_add    = wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, wxSize(32,32));
 	auto image_help   = wxArtProvider::GetBitmap(wxART_HELP, wxART_TOOLBAR, wxSize(32,32));
-	auto image_save   = wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_TOOLBAR, wxSize(32,32));
-	auto image_saveas = wxArtProvider::GetBitmap(wxART_FILE_SAVE_AS, wxART_TOOLBAR, wxSize(32,32));
+	// auto image_saveas = wxArtProvider::GetBitmap(wxART_FILE_SAVE_AS, wxART_TOOLBAR, wxSize(1,32));
 	auto image_list   = wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_TOOLBAR, wxSize(32,32));
-	auto image_close  = wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, wxSize(32,32));
 	auto image_detail = wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, wxSize(32,32));
+	auto image_helpsm = wxArtProvider::GetBitmap(wxART_HELP, wxART_TOOLBAR, wxSize(16,16));
+	auto image_undo   = wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR, wxSize(16,16));
+	auto image_redo   = wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR, wxSize(16,16));
+	auto image_save   = wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_TOOLBAR, wxSize(16,16));
+	auto image_close  = wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, wxSize(16,16));
 
+	m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_TEXT);
+	m_toolbar->AddTool(LHID_OF(LHN_SAVE), m_owner->m_lang->str_save, image_save);
+	m_toolbar->AddTool(LHID_OF(LHN_UNDO), m_owner->m_lang->str_undo, image_undo);
+	m_toolbar->AddTool(LHID_OF(LHN_REDO), m_owner->m_lang->str_redo, image_redo);
+	m_toolbar->AddTool(LHID_OF(LHN_CLOSE), m_owner->m_lang->str_close, image_close);
+	m_toolbar->AddTool(LHID_OF(LHN_HELP), m_owner->m_lang->str_help, image_helpsm);
+	m_toolbar->Bind(wxEVT_MENU, &MainMenuForm::OnToolbarEvent, this);
+	m_toolbar->EnableTool(LHID_OF(LHN_SAVE), false);
+	m_toolbar->EnableTool(LHID_OF(LHN_UNDO), false);
+	m_toolbar->EnableTool(LHID_OF(LHN_REDO), false);
+	m_toolbar->Realize();
 	/* ESCOLA */
-	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AS),m_owner->m_lang->str_save_as, image_save);
-	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SAVE_AND_CLOSE),m_owner->m_lang->str_close_and_save, image_save);
-	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_CLOSE_WITHOUT_SAVE),m_owner->m_lang->str_close_without_saving, image_close);
-	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_SCHOOL_DATA),m_owner->m_lang->str_school_details, image_list);
-	m_rib_bbars[0][2]->AddButton(LHID_OF(LHN_OPEN_SCHOOL_MANUAL),m_owner->m_lang->str_open_manual, image_help);
+	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SCHOOL_DATA),m_owner->m_lang->str_school_details, image_list);
+	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_OPEN_SCHOOL_MANUAL),m_owner->m_lang->str_open_manual, image_help);
 	/* SALAS E CARACTERISTICAS DE SALAS */
 	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_FEATURES), m_owner->m_lang->str_list_features, image_list);
 	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_ROOMS), m_owner->m_lang->str_list_rooms, image_list);
@@ -112,30 +127,74 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	m_rib_bbars[6][1]->AddButton(LHID_OF(LHN_CREATE_TIMETABLE), m_owner->m_lang->str_create_timetable_manually, image_detail);
 	m_rib_bbars[6][2]->AddButton(LHID_OF(LHN_OPEN_TIMETABLE_MANUAL), m_owner->m_lang->str_open_manual, image_help);
 
-	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-    sizer->Add(m_ribbon, 0, wxEXPAND);
-
-	m_center_pane = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	wxPanel * m_footer = new wxPanel(this, wxID_ANY, wxPoint(0,575), wxDefaultSize);
-
-	sizer->Add(m_center_pane, 1, wxEXPAND);
-
-	m_footer->SetBackgroundColour(wxColor(0x25,0x75,0xb0));
-	wxStaticText * m_footer_text = new wxStaticText(m_footer, wxID_ANY,m_owner->m_lang->str_copyright_notice, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE_HORIZONTAL);
-	m_footer_text->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
-	m_footer_text->SetFont(*m_owner->m_small_font);
-
-	wxSizer * footer_sizer = new wxBoxSizer(wxVERTICAL);
-	footer_sizer->Add(m_footer_text,1,wxEXPAND | wxALL, 2);
-	m_footer->SetSizer(footer_sizer);
-
-	sizer->Add(m_footer, 0, wxEXPAND);
-
 	m_ribbon->AddPageHighlight(m_ribbon->GetPageCount() - 1); /* TODO is it working?*/
 	m_ribbon->Realize();
 
+	m_center_pane = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+
+	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->Add(m_ribbon, 0, wxEXPAND);
+	sizer->Add(m_center_pane, 1, wxEXPAND);
+	sizer->Add(m_toolbar,0,wxEXPAND);
+
 	sizer->SetMinSize(wxSize(800,600));
 	SetSizerAndFit(sizer);
+	//m_footer->SetBackgroundColour(wxColor(0x25,0x75,0xb0));
+}
+
+void MainMenuForm::NotifyNewUnsavedData(){
+	m_toolbar->EnableTool(LHID_OF(LHN_SAVE), true);
+}
+
+void MainMenuForm::OnToolbarEvent(wxCommandEvent & evt){
+	switch(evt.GetId()){
+		case LHID_OF(LHN_SAVE):{
+			m_owner->SaveDatabase();
+			m_toolbar->EnableTool(LHID_OF(LHN_SAVE), false);
+			break;
+		}
+		case LHID_OF(LHN_UNDO):{
+			printf("Undo!\n");
+			break;
+		}
+		case LHID_OF(LHN_REDO):{
+			printf("Redo!\n");
+			break;
+		}
+		case LHID_OF(LHN_CLOSE):{
+			if(m_toolbar->GetToolEnabled(LHID_OF(LHN_SAVE))){
+				wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_confirm_close_without_saving, m_owner->m_lang->str_are_you_sure, wxCANCEL | wxYES_NO);
+				dialog->SetYesNoCancelLabels(m_owner->m_lang->str_close_and_save, m_owner->m_lang->str_close_without_saving, m_owner->m_lang->str_cancel);
+				int confirmation = dialog->ShowModal();
+
+				switch(confirmation){
+					case wxID_YES: {
+						m_owner->SaveDatabase();
+					} /* Fallthrough */
+					case wxID_NO: {
+						free_school(m_owner->m_school);
+						m_owner->m_school = nullptr;
+
+						m_owner->SwitchForm(FORM_WELCOME);
+						Destroy();
+						break;
+					}
+					case wxID_CANCEL: {
+						/* Empty on purpouse */
+						break;
+					}
+				}
+			} else {
+				free_school(m_owner->m_school);
+				m_owner->m_school = nullptr;
+
+				m_owner->SwitchForm(FORM_WELCOME);
+				Destroy();
+				break;
+			}
+			break;
+		}
+	}
 }
 
 MainMenuForm::~MainMenuForm(){
