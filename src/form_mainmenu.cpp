@@ -139,7 +139,38 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 
 	sizer->SetMinSize(wxSize(800,600));
 	SetSizerAndFit(sizer);
+	Bind(wxEVT_CLOSE_WINDOW, &MainMenuForm::OnClose, this);
 	//m_footer->SetBackgroundColour(wxColor(0x25,0x75,0xb0));
+}
+
+void MainMenuForm::OnClose(wxCloseEvent &evt){
+	printf("oh no we are closing.\n");
+	if(m_toolbar->GetToolEnabled(LHID_OF(LHN_SAVE))){
+		wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_confirm_close_without_saving, m_owner->m_lang->str_are_you_sure, wxCANCEL | wxYES_NO);
+		dialog->SetYesNoCancelLabels(m_owner->m_lang->str_close_and_save, m_owner->m_lang->str_close_without_saving, m_owner->m_lang->str_cancel);
+		int confirmation = dialog->ShowModal();
+		switch(confirmation){
+			case wxID_YES: {
+				m_owner->SaveDatabase();
+			} /* Fallthrough */
+			case wxID_NO: {
+				free_school(m_owner->m_school);
+				m_owner->m_school = nullptr;
+				Destroy();
+				evt.Skip();
+				break;
+			}
+			case wxID_CANCEL: {
+				/* Empty on purpouse */
+				break;
+			}
+		}
+	} else {
+		free_school(m_owner->m_school);
+		m_owner->m_school = nullptr;
+		Destroy();
+		evt.Skip();
+	}
 }
 
 void MainMenuForm::NotifyNewUnsavedData(){

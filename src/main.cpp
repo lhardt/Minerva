@@ -139,7 +139,7 @@ bool Application::OnInit(){
 
 		m_form_welcome = new WelcomeForm(this);
 		m_form_welcome->Show();
-
+		SetExitOnFrameDelete(true);
 		return true;
 	} else {
 		printf("Could open in-memory-db? %d %s\n", errc, sqlite3_errmsg(m_database));

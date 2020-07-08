@@ -163,7 +163,7 @@ class MainMenuForm : public wxFrame{
 	wxToolBar * m_toolbar = nullptr;
 	void OnMenuItemClicked(wxCommandEvent&);
 	void OnToolbarEvent(wxCommandEvent&);
-	void OnClose(wxCommandEvent&);
+	void OnClose(wxCloseEvent&);
 
 	void CloseOpenedPane();
 };
