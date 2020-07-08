@@ -7,6 +7,7 @@ extern "C" {
 	#include "types.h"
 	#include "loader.h"
 	#include "preprocess.h"
+	#include "util.h"
 };
 
 
@@ -138,26 +139,25 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		room.name = copy_wx_string(m_name_text->GetValue());
 		room.short_name = copy_wx_string(m_name_text->GetValue());
 		room.size = m_capacity_text->GetValue();
-		for(i = 0; i < m_features->GetCount(); ++i){
-			IntPairClientData * data = (IntPairClientData*) m_features->GetClientObject(i);
-			room.room_features = (int*)calloc(school->n_features + 11 - (school->n_features % 10), sizeof(int));
+		room.room_features = (int*)calloc(school->n_features + 11 - (school->n_features % 10), sizeof(int));
+		for(i = 0; i < m_added_features->GetCount(); ++i){
+			IntPairClientData * data = (IntPairClientData*) m_added_features->GetClientObject(i);
 			room.room_features[data->m_v1] = data->m_v2;
 		}
-		room.room_features[m_features->GetCount()] = -1;
-
+		room.room_features[school->n_features] = -1;
 		room.disponibility = (int*)calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
 			room.disponibility[i] =
 					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_adj__open ? 1:0);
 		}
 		room.disponibility[school->n_periods] = -1;
-
 		int id = insert_room(stdout, m_owner->m_database, &room, school);
 		if(id != -1){
 			room.id = id;
 			school_room_add(m_owner->m_school, &room);
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			ClearInsertedData();
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}

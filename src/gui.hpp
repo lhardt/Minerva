@@ -189,9 +189,7 @@ class AddFeaturePane : public wxPanel {
 	~AddFeaturePane();
 
 	wxTextCtrl * m_name_text;
-
 	wxStaticText * m_err_msg;
-
 	Application * m_owner;
  private:
 	void OnCreateButtonClicked(wxCommandEvent &);
@@ -226,9 +224,7 @@ class AddSubjectPane : public wxScrolledWindow {
 	AddSubjectPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddSubjectPane();
 
-
  private:
-
 	wxTextCtrl * m_name_text;
 	Application * m_owner;
 	wxStaticText * m_err_msg;
@@ -247,8 +243,8 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 	wxChoice * m_subjects_choice;
 	wxListBox * m_subjects_list;
 	wxStaticText * m_err_msg;
-
 	Application * m_owner;
+
 	void OnAddSubjectButtonClicked(wxCommandEvent &);
 	void OnRemoveAllButtonClicked(wxCommandEvent &);
 	void OnCreateButtonClicked(wxCommandEvent &);
@@ -260,13 +256,11 @@ class AddTeacherPane : public wxScrolledWindow {
 	AddTeacherPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddTeacherPane();
  private:
-
 	wxTextCtrl * m_name_text;
 	wxChoice   * m_all_subjects_list;
 	wxListBox  * m_teaches_subjects_list;
 	wxStaticText * m_err_msg;
 	ChoiceGrid * m_grid;
-
 	Application * m_owner;
 
 	void OnAddTeacherButtonClicked(wxCommandEvent &);
@@ -280,15 +274,13 @@ class AddTeacherGroupPane : public wxScrolledWindow {
 	AddTeacherGroupPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddTeacherGroupPane();
  private:
-
 	wxTextCtrl * m_name_text;
 	wxChoice * m_all_teachers_list;
 	wxListBox  * m_selected_teachers_list;
+	wxChoice * m_all_subjects_list;
+	wxListBox  * m_selected_subjects_list;
 	wxStaticText * m_err_msg;
-
 	Application * m_owner;
-
-	bool * teachers_inside;
 
 	void OnRemoveTeacherButtonClicked(wxCommandEvent & evt);
 	void OnRemoveAllButtonClicked(wxCommandEvent &);
@@ -338,8 +330,6 @@ class AddClassGroupPane : public wxScrolledWindow {
 	wxChoice * m_all_classes_list;
 	wxListBox  * m_selected_classes_list;
 	wxStaticText * m_err_msg;
-
-	bool * m_added_classes;
 
 	void OnAddGroupButtonClicked(wxCommandEvent &);
 	void OnAddClassButtonClicked(wxCommandEvent &);

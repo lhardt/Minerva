@@ -124,6 +124,7 @@ void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 				school->rooms[i] = school->rooms[i+ 1];
 			}
 			m_rooms_list->Delete(m_selected_index);
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Não foi possível apagar.");
 		}
@@ -139,7 +140,7 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 		m_name_text->SetLabel(wxString::FromUTF8( room->name ));
 		m_size_text->SetLabel(wxString::Format("%d",room->size ));
 		m_features_text->SetLabel(wxT(""));
-		for(i = 0; i < school->n_features && room->room_features[i] >= 0; ++i){
+		for(i = 0; i < school->n_features && room->room_features && room->room_features[i] >= 0; ++i){
 			if(room->room_features[i] > 0){
 				m_features_text->SetLabel(m_features_text->GetLabel().Append(wxString::Format("%s: %d\n", school->feature_names[i], room->room_features[i])));
 			}

@@ -82,6 +82,7 @@ void ListFeaturesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 
 			m_name_text->SetLabel(wxT(""));
 			m_features_list->Delete(m_selected_index);
+			m_owner->NotifyNewUnsavedData();
 		}
 	}
 }

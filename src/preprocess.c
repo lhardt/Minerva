@@ -121,6 +121,34 @@ void school_teacher_add(School * school, const Teacher * const t){
 	++school->n_teachers;
 }
 
+void school_teacher_remove(School * school, int i_remove){
+	int i,j;
+	/* TODO Check for subordinates too. */
+	for(i = 0; i < school->n_teaches; ++i){
+		if(school->teaches[i].teacher->id == school->teachers[i_remove].id){
+			for(j = i; j < school->n_teaches; ++j){
+				school->teaches[j] = school->teaches[j+1];
+			}
+			--i;
+			--school->n_teaches;
+		}
+	}
+	if(school->solutions != NULL){
+		for(i = 0; i < school->n_solutions; ++i){
+			Meeting * m_list = school->solutions[i].meetings;
+			for(j = 0; m_list[j].m_class != NULL; ++j ){
+				if(m_list[j].teacher->id == school->teachers[i_remove].id){
+					m_list[j].teacher = NULL;
+				}
+			}
+		}
+	}
+	for(i = i_remove; i < school->n_teachers; ++i){
+		school->teachers[i] = school->teachers[i+1];
+	}
+	--school->n_teachers;
+}
+
 void school_class_remove(School * school, int class_i){
 	int i,j;
 	/* TODO: Check for subordinates too. */
@@ -194,10 +222,6 @@ void school_feature_remove(School * school, int feature_i){
 		}
 		--school->n_features;
 	}
-}
-
-void school_teacher_remove(School * school, int teacher_i){
-
 }
 
 void school_room_add(School * school, const Room * const room){

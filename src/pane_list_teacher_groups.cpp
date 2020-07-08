@@ -81,12 +81,13 @@ void ListTeacherGroupsPane::OnDeleteButtonClicked(wxCommandEvent &) {
 			bool success = remove_teacher(stdout, m_owner->m_database, school->teachers[i_teacher].id);
 			if(success){
 				m_groups_list->Delete(i_sel);
-				m_err_msg->SetLabel(wxT("Removido com sucesso."));
+				m_err_msg->SetLabel(m_owner->m_lang->str_success);
+				m_owner->NotifyNewUnsavedData();
 			} else {
-				m_err_msg->SetLabel(wxT("Erro no banco."));
+				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 			}
 		} else {
-			m_err_msg->SetLabel(wxT("This should never occur."));
+			printf("ERROR IN THE CODE! F: %s, L: %d\n", __FILE__, __LINE__);
 		}
 	}
 }

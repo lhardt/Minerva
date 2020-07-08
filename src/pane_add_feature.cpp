@@ -25,13 +25,13 @@ AddFeaturePane::AddFeaturePane(Application * owner, wxWindow * parent, wxPoint p
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 	m_err_msg->SetFont(*m_owner->m_small_font);
 
-	sizer->Add(title, 0, wxEXPAND |  wxTOP | wxLEFT | wxRIGHT, 15);
-	sizer->Add(name_label, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 15);
-	sizer->Add(m_name_text, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
-	sizer->Add(button_add, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
-	sizer->Add(m_err_msg, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 15);
+	sizer->Add(title, 0, wxEXPAND , 15);
+	sizer->Add(name_label, 0, wxEXPAND | wxTOP, 15);
+	sizer->Add(m_name_text, 0, wxBOTTOM, 15);
+	sizer->Add(button_add, 0, wxBOTTOM, 15);
+	sizer->Add(m_err_msg, 0, wxEXPAND | wxBOTTOM, 15);
 
-	wrapper->Add(sizer, 0, wxALL, 15);
+	wrapper->Add(sizer, 0, wxALL, 30);
 	SetSizerAndFit(wrapper);
 
 	button_add->Bind(wxEVT_BUTTON, &AddFeaturePane::OnCreateButtonClicked, this);
@@ -60,6 +60,7 @@ void AddFeaturePane::OnCreateButtonClicked(wxCommandEvent & ev){
 
 			ClearInsertedData();
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}

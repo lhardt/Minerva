@@ -935,14 +935,13 @@ int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 	}
 	sqlite3_finalize(stmt);
 
-	sqlite3_prepare(db, INSERT_TABLE_ROOM_FEATURE, -1, &stmt, NULL);
-	for(int i = 0; i < school->n_features && room->room_features[i] >= 0; ++i){
+	errc = sqlite3_prepare(db, INSERT_TABLE_ROOM_FEATURE, -1, &stmt, NULL);
+	for(int i = 0; i < school->n_features && room->room_features && room->room_features[i] >= 0; ++i){
 		if(room->room_features[i] != 0){
 			sqlite3_bind_int(stmt,1, room->id);
 			sqlite3_bind_int(stmt,2, school->feature_ids[i]);
 			sqlite3_bind_int(stmt,3, room->room_features[i]);
-
-			sqlite3_step(stmt);
+			errc = sqlite3_step(stmt);
 			sqlite3_reset(stmt);
 		}
 	}
@@ -1057,7 +1056,7 @@ int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * 
 			fprintf(console_out,"Could not insert subjectingroup. %s\n", sqlite3_errmsg(db));
 			return -1;
 		}
-		for(i = 0; i < school->n_subjects && subject->in_groups[i] >= 0 ; ++i){
+		for(i = 0; i < school->n_subjects && subject->in_groups && subject->in_groups[i] >= 0 ; ++i){
 			if(subject->in_groups[i] > 0){
 				sqlite3_bind_int(stmt,1,subject->id);
 				sqlite3_bind_int(stmt,2,school->subject_group_ids[i]);
@@ -1466,14 +1465,8 @@ static int * select_room_availibility(FILE * console_out, sqlite3* db, int room_
 	int i = 0, errc = 0, i_per = 0;
 	sqlite3_stmt * stmt;
 	int * arr = NULL;
-
 	int id_period;
-	/*
-		"id						integer primary key,"
-		"room_id				integer,"
-		"period_id				integer,"
-		"score					integer,"
-	*/
+
 	errc = sqlite3_prepare_v2(db, SELECT_ROOM_AVAILIBILITY_BY_ROOM_ID, -1, &stmt, NULL);
 
 	if(errc == SQLITE_OK){
@@ -1486,7 +1479,6 @@ static int * select_room_availibility(FILE * console_out, sqlite3* db, int room_
 			for(i_per = 0; i_per < school->n_periods; ++i_per){
 				if(school->period_ids[i_per] == id_period){
 					arr[i_per] = sqlite3_column_int(stmt,3);
-					printf("Selected  score %d at iper %d.\n", arr[i_per], i_per);
 					break;
 				}
 			}
@@ -1497,9 +1489,7 @@ static int * select_room_availibility(FILE * console_out, sqlite3* db, int room_
 	} else {
 		fprintf(console_out, "Couldn't select attendance.\n");
 	}
-
 	return arr;
-
 }
 
 /*
@@ -1665,14 +1655,15 @@ static bool select_all_room_features_by_room_id(FILE * console_out, sqlite3* db,
 	if(errc == SQLITE_ROW){
 		id_feature = sqlite3_column_int(stmt,2);
 		bool found_correspondence = false;
+		room->room_features = calloc(school->n_features + 1, sizeof(int));
 		for(j = 0; j < school->n_features; ++j){
 			if(school->feature_ids[j] == id_feature){
 				found_correspondence = true;
 				room->room_features[j] = sqlite3_column_int(stmt,3);
-				printf("Score: %d\n", room->room_features[j]);
 				break;
 			}
 		}
+		room->room_features[school->n_features] = -1;
 		if(!found_correspondence){
 			fprintf(console_out, "Could not find feature id.\n");
 		}
@@ -1718,12 +1709,7 @@ static Room * select_all_rooms_by_school_id(FILE * console_out, sqlite3* db, int
 
 			errc = sqlite3_step(stmt);
 
-			int * tmp = select_room_availibility(console_out, db, rooms[i].id, school);
-			int j = 0;
-			for(j = 0; tmp != NULL && j <  school->n_periods && tmp[j] >= 0; ++j){
-				rooms[i].disponibility[j]= tmp[j];
-			}
-			rooms[i].disponibility[j] = -1;
+			rooms[i].disponibility = select_room_availibility(console_out, db, rooms[i].id, school);
 
 			select_all_room_features_by_room_id(console_out, db, &rooms[i], school);
 			++i;
@@ -2372,7 +2358,6 @@ int select_all_subject_groups_by_school_id(FILE * console_out, sqlite3 * db, int
 	if(errc != SQLITE_DONE) {
 		fprintf(console_out, "Could not step select subject group names %d %s\n", errc, sqlite3_errmsg(db));
 	}
-	printf("Set i to %d with schoolid %d\n", i, id);
 	*n_groups = i;
 	return i;
 }

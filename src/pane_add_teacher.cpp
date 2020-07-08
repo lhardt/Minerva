@@ -167,6 +167,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 				free(teaches_vals);
 			}
 			ClearInsertedData();
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			if(m_teaches_subjects_list->GetCount() > 0){
 				free(teaches_vals);

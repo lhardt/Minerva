@@ -22,13 +22,15 @@ AddSubjectPane::AddSubjectPane(Application * owner, wxWindow * parent, wxPoint p
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_err_msg->SetFont(*m_owner->m_small_font);
 
-	wxBoxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(title,0,  wxALL, 15);
-	sizer->Add(subject_name_label,0, wxTOP | wxLEFT, 15);
-	sizer->Add(m_name_text,0, wxLEFT, 15);
-	sizer->Add(button,0,  wxTOP | wxLEFT, 15);
-	sizer->Add(m_err_msg,0, wxTOP | wxLEFT, 15);
-	SetSizerAndFit(sizer);
+	wxSizer * wrapper = new wxBoxSizer(wxVERTICAL);
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->Add(title, 0, wxEXPAND | wxBOTTOM, 15);
+	sizer->Add(subject_name_label, 0, wxEXPAND | wxBOTTOM, 5);
+	sizer->Add(m_name_text, 0, wxBOTTOM, 15);
+	sizer->Add(button, 0,  wxBOTTOM, 15);
+	sizer->Add(m_err_msg, 0, wxEXPAND | wxBOTTOM, 15);
+	wrapper->Add(sizer, 1, wxEXPAND | wxALL, 30);
+	SetSizerAndFit(wrapper);
 }
 
 AddSubjectPane::~AddSubjectPane(){

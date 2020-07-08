@@ -192,6 +192,7 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 							wxColor(255,255,255));
 				}
 			}
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Não foi possível deletar.\n");
 		}

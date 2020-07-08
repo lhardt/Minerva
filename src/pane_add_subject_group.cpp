@@ -105,6 +105,7 @@ void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
 			}
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			ClearInsertedData();
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}

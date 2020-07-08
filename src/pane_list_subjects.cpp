@@ -15,8 +15,8 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
+	wxSizer * field_sz= new wxGridSizer(2,10,10);
 	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
-
 
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_subjects, wxDefaultPosition, wxSize(400,25));
 	title->SetFont(*m_owner->m_page_title_font);
@@ -30,9 +30,9 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 		}
 		m_subjects_list->InsertItems(list,0);
 	}
-
-	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name, wxDefaultPosition, wxSize(300,30));
-	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
+	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	name_label->SetFont(*m_owner->m_bold_text_font);
 
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
@@ -42,8 +42,9 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
 	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
 
-	desc_sz->Add(name_label, 0, wxBOTTOM, 5);
-	desc_sz->Add(m_name_text, 0, wxBOTTOM, 5);
+	field_sz->Add(name_label, 0, 0);
+	field_sz->Add(m_name_text, 1, wxEXPAND);
+	desc_sz->Add(field_sz, 0, wxBOTTOM , 5);
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(butn_sz, 0, 0);
 
@@ -82,22 +83,20 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 		success = remove_subject(stdout, m_owner->m_database, school->subjects[del_i].id);
 		if(success){
 			school_subject_remove(school, del_i);
-			printf("Sucesso.\n");
 			m_subjects_list->Delete(del_i);
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Não foi possível.\n");
 		}
-
 	}
-	printf("Hello, \n");
 }
 
 void ListSubjectsPane::OnSelectionChanged(wxCommandEvent & ev){
-	Subject * subject =  nullptr;
+	Subject * subject = nullptr;
 	if(m_subjects_list->GetSelection() != wxNOT_FOUND){
 		subject = &(m_owner->m_school->subjects[m_subjects_list->GetSelection()]);
-		m_name_text->SetLabel(wxString::Format(wxT("Nome: %s"), wxString::FromUTF8(subject->name)));
+		m_name_text->SetLabel(wxString::FromUTF8(subject->name));
 	} else {
-		m_name_text->SetLabel(wxString::FromUTF8("Nome:"));
+		m_name_text->SetLabel(wxT(""));
 	}
 }

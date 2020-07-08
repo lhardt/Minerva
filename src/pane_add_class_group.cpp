@@ -10,37 +10,27 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	int i;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	m_added_classes = new bool[school->n_classes];
-
-	for(i = 0; i < school->n_classes; ++i){
-		m_added_classes[i] = false;
-	}
-
-
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_class_group);
 	title->SetFont(*m_owner->m_page_title_font);
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name);
-	name_label->SetFont(*m_owner->m_small_font);
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
-
 	wxStaticText * classes_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_classes_to_the_group);
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
+
+	name_label->SetFont(*m_owner->m_small_font);
 	classes_label->SetFont(*m_owner->m_small_font);
 
-	wxArrayString class_names;
-	for(i = 0; i < school->n_classes; ++i){
-		class_names.push_back(wxString::FromUTF8(school->classes[i].name));
-	}
-
-	m_all_classes_list = new wxChoice(this, wxID_ANY,  wxDefaultPosition, wxSize(310,30), class_names);
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
+	m_all_classes_list = new wxChoice(this, wxID_ANY,  wxDefaultPosition, wxSize(310,30));
 	wxButton * add_class = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_class, wxDefaultPosition, wxSize(180,-1));
-
 	m_selected_classes_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
 	wxButton * remove_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,-1));
 	wxButton * remove_all = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,-1));
 	wxButton * add_group = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_group, wxDefaultPosition, wxSize(180,-1));
 
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
+	for(i = 0; i < school->n_classes; ++i){
+		m_all_classes_list->Insert(wxString::FromUTF8(school->classes[i].name), i, new IntClientData(i));
+	}
 
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
 	add_sizer->Add(m_all_classes_list,0,wxRIGHT,10);
@@ -76,8 +66,8 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 
 void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
-	int i, i_member = 0, j;
-	if((!m_name_text->GetValue().IsEmpty()) && (m_selected_classes_list->GetCount() > 0)){
+	int i, i_member = 0, j, n_subordinates = m_selected_classes_list->GetCount();
+	if(!m_name_text->GetValue().IsEmpty() && n_subordinates > 0){
 		Class c;
 		c.name = copy_wx_string(m_name_text->GetValue());
 		c.short_name = copy_wx_string(m_name_text->GetValue());
@@ -86,42 +76,42 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		c.minimal_exit_period = 0;
 		c.abstract = false;
 		c.needs = NULL;
-		c.rooms = NULL; /* TODO change. */
-		c.subordinates = (int *) calloc(m_selected_classes_list->GetCount()+1, sizeof(int));
-		for(i = 0; i < school->n_classes; ++i){
-			if(m_added_classes[i]){
-				c.size += school->classes[i].size;
+		c.rooms = NULL; /* TODO */
+		c.subordinates = (int *) calloc(n_subordinates+1, sizeof(int));
+		for(i = 0; i < m_selected_classes_list->GetCount(); ++i){
+			int i_class = ((IntClientData*)m_selected_classes_list->GetClientObject(i))->m_value;
 
-				if(c.maximal_entry_period > school->classes[i].maximal_entry_period){
-					c.maximal_entry_period = school->classes[i].maximal_entry_period;
-				}
-				if(c.minimal_exit_period < school->classes[i].minimal_exit_period){
-					c.minimal_exit_period = school->classes[i].minimal_exit_period;
-				}
-				if(c.can_have_free_periods_flag && !school->classes[i].can_have_free_periods_flag){
-					c.can_have_free_periods_flag = false;
-				}
-				for(j = 0; j < school->n_subject_groups; ++j){
-					if(i_member == 0 ||  c.max_per_day_subject_group[j] > school->classes[i].max_per_day_subject_group[j]){
-						c.max_per_day_subject_group[j] = school->classes[i].max_per_day_subject_group[j];
-					}
-				}
-				for(j = 0; j < school->n_periods; ++j){
-					if(i_member == 0 ){
-						c.periods[j] = school->classes[i].periods[j];
-					} else if(school->classes[i].periods[j] == 0){
-						c.periods[j] = 0;
-					} else {
-						c.periods[j] += school->classes[i].periods[j];
-					}
-				}
-				c.subordinates[i] = 1;
-				++i_member;
+			c.size += school->classes[i_class].size;
+
+			if(c.maximal_entry_period > school->classes[i_class].maximal_entry_period){
+				c.maximal_entry_period = school->classes[i_class].maximal_entry_period;
 			}
+			if(c.minimal_exit_period < school->classes[i_class].minimal_exit_period){
+				c.minimal_exit_period = school->classes[i_class].minimal_exit_period;
+			}
+			if(c.can_have_free_periods_flag && !school->classes[i_class].can_have_free_periods_flag){
+				c.can_have_free_periods_flag = false;
+			}
+
+			for(j = 0; j < school->n_subject_groups; ++j){
+				if(i_member == 0 ||  c.max_per_day_subject_group[j] > school->classes[i_class].max_per_day_subject_group[j]){
+					c.max_per_day_subject_group[j] = school->classes[i_class].max_per_day_subject_group[j];
+				}
+			}
+			for(j = 0; j < school->n_periods; ++j){
+				if(school->classes[i_class].periods[j] == 0 ){
+					c.periods[j] = 0;
+					break;
+				} else {
+					c.periods[j] += school->classes[i_class].periods[j];
+				}
+			}
+			c.subordinates[i_class] = 1;
+			++i_member;
 		}
 		for(i = 0; i < school->n_periods; ++i){
 			if(c.periods[i] > 0){
-				/* Garanteed above since each is >1 */
+				/* Garanteed above zero since each is >1 */
 				c.periods[i] = c.periods[i]/m_selected_classes_list->GetCount();
 			}
 		}
@@ -133,6 +123,7 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 
 			ClearInsertedData();
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
@@ -141,30 +132,30 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 
 void AddClassGroupPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 	int i_select = m_all_classes_list->GetSelection();
-	if(i_select != wxNOT_FOUND && m_added_classes[i_select] == false){
+	if(i_select != wxNOT_FOUND){
 		wxString name = wxString::FromUTF8(m_owner->m_school->classes[i_select].name);
-		m_selected_classes_list->InsertItems(1, &name, m_selected_classes_list->GetCount());
-		m_added_classes[i_select] = true;
+		m_selected_classes_list->Insert(name, m_selected_classes_list->GetCount(), new IntClientData(i_select));
+		m_all_classes_list->Delete(i_select);
 	}
 }
 
 void AddClassGroupPane::OnRemoveAllButtonClicked(wxCommandEvent & ev){
-	int i;
-	for(i = 0; i < m_owner->m_school->n_classes; ++i){
-		m_added_classes[i] = false;
-	}
 	m_selected_classes_list->Clear();
+	m_all_classes_list->Clear();
+	for(int i = 0; i < m_owner->m_school->n_classes; ++i){
+		m_all_classes_list->Insert(wxString::FromUTF8(m_owner->m_school->classes[i].name), i, new IntClientData(i));
+	}
 }
 
 void AddClassGroupPane::ClearInsertedData(){
-	int i;
-	for(i = 0; i < m_owner->m_school->n_classes; ++i){
-		m_added_classes[i] = false;
-	}
-	m_selected_classes_list->Clear();
 	m_name_text->Clear();
+	m_all_classes_list->Clear();
+	m_selected_classes_list->Clear();
+	for(int i = 0; i < m_owner->m_school->n_classes; ++i){
+		m_all_classes_list->Insert(wxString::FromUTF8(m_owner->m_school->classes[i].name), i, new IntClientData(i));
+	}
 }
 
 AddClassGroupPane::~AddClassGroupPane(){
-	delete[] m_added_classes;
+
 }

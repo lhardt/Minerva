@@ -170,6 +170,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 
 			ClearInsertedData();
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			free(c.name);
 			free(c.short_name);

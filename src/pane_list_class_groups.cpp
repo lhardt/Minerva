@@ -116,6 +116,7 @@ void ListClassGroupsPane::OnDeleteButtonClicked(wxCommandEvent & evt){
 			// TODO
 		}
 		// TODO
+		m_owner->NotifyNewUnsavedData();
 	}
 }
 

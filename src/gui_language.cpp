@@ -66,7 +66,7 @@ const Language LANG_POR = {
 	.str_file=L"Arquivo",
 	.str_data=L"Dados",
 	.str_view=L"Visualização",
-	.str_add=L"Cadastro",
+	.str_add=L"Cadastrar",
 	.str_preferences=L"Preferências",
 	.str_check=L"Conferência",
 	/* Listing */
@@ -154,7 +154,7 @@ const Language LANG_POR = {
 
 	.str_add_subjects_to_the_group=L"Adicionar disciplinas ao grupo",
 
-	.str_add_teachers_to_the_group=L"",
+	.str_add_teachers_to_the_group=L"Adicione Professores ao Grupo",
 	.str_teacher_availibility=L"Disponibilidade do Professor",
 	.str_teacher_availible=L"Disponível",
 	.str_teacher_unavailible=L"Indisponível",
@@ -330,7 +330,7 @@ const Language LANG_ENG = {
 	.str_room_add_features_with_scores=L"Add features to the class with their \"scores\"",
 	.str_add_subjects_to_the_group=L"Add subjects to the group",
 
-	.str_add_teachers_to_the_group=L"",
+	.str_add_teachers_to_the_group=L"Add teachers to the group",
 	.str_teacher_availibility=L"Teacher Availibility",
 	.str_teacher_availible=L"Availible",
 	.str_teacher_unavailible=L"Unavailible",

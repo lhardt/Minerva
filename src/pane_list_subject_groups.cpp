@@ -59,7 +59,8 @@ void ListSubjectGroupsPane::OnEditButtonClicked(wxCommandEvent & evt){
 }
 
 void ListSubjectGroupsPane::OnDeleteButtonClicked(wxCommandEvent & evt){
-
+	/* TODO */
+	m_owner->NotifyNewUnsavedData();
 }
 
 void ListSubjectGroupsPane::OnSelectionChanged(wxCommandEvent & evt){
