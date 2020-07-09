@@ -139,11 +139,34 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 
 	sizer->SetMinSize(wxSize(800,600));
 	SetSizerAndFit(sizer);
-	Bind(wxEVT_CLOSE_WINDOW, &MainMenuForm::OnClose, this);
+	Bind(wxEVT_CLOSE_WINDOW, &MainMenuForm::OnCloseClose, this);
+	Bind(wxEVT_BUTTON, &MainMenuForm::OnSave, this,LHID_OF(LHN_SAVE));
+	Bind(wxEVT_BUTTON, &MainMenuForm::OnCloseCommand, this,LHID_OF(LHN_CLOSE));
+	Bind(wxEVT_BUTTON, &MainMenuForm::OnUndo, this,LHID_OF(LHN_UNDO));
+	Bind(wxEVT_BUTTON, &MainMenuForm::OnRedo, this,LHID_OF(LHN_REDO));
 	//m_footer->SetBackgroundColour(wxColor(0x25,0x75,0xb0));
+	wxAcceleratorEntry keyboard_shortcuts[4];
+	keyboard_shortcuts[0].Set(wxACCEL_CTRL, (int)'S', LHID_OF(LHN_SAVE));
+	keyboard_shortcuts[1].Set(wxACCEL_CTRL, (int)'Q', LHID_OF(LHN_CLOSE));
+	keyboard_shortcuts[2].Set(wxACCEL_CTRL, (int)'Z', LHID_OF(LHN_UNDO));
+	keyboard_shortcuts[3].Set(wxACCEL_CTRL | wxACCEL_SHIFT, (int)'Z', LHID_OF(LHN_REDO));
+	wxAcceleratorTable shortcuts_table(4,keyboard_shortcuts);
+	SetAcceleratorTable(shortcuts_table);
 }
 
-void MainMenuForm::OnClose(wxCloseEvent &evt){
+void MainMenuForm::OnCloseCommand(wxCommandEvent &evt){
+	if(OnClose()){
+		evt.Skip();
+	}
+}
+
+void MainMenuForm::OnCloseClose(wxCloseEvent &evt){
+	if(OnClose()){
+		evt.Skip();
+	}
+}
+
+bool MainMenuForm::OnClose(){
 	printf("oh no we are closing.\n");
 	if(m_toolbar->GetToolEnabled(LHID_OF(LHN_SAVE))){
 		wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_confirm_close_without_saving, m_owner->m_lang->str_are_you_sure, wxCANCEL | wxYES_NO);
@@ -157,8 +180,8 @@ void MainMenuForm::OnClose(wxCloseEvent &evt){
 				free_school(m_owner->m_school);
 				m_owner->m_school = nullptr;
 				Destroy();
-				evt.Skip();
-				break;
+				return true;
+				// break;
 			}
 			case wxID_CANCEL: {
 				/* Empty on purpouse */
@@ -169,7 +192,7 @@ void MainMenuForm::OnClose(wxCloseEvent &evt){
 		free_school(m_owner->m_school);
 		m_owner->m_school = nullptr;
 		Destroy();
-		evt.Skip();
+		return true;
 	}
 }
 
@@ -177,51 +200,44 @@ void MainMenuForm::NotifyNewUnsavedData(){
 	m_toolbar->EnableTool(LHID_OF(LHN_SAVE), true);
 }
 
+void MainMenuForm::OnSave(wxCommandEvent & evt){
+	if(m_toolbar->GetToolEnabled(LHID_OF(LHN_SAVE))){
+		m_owner->SaveDatabase();
+		m_toolbar->EnableTool(LHID_OF(LHN_SAVE), false);
+	}
+	printf("hello\n");
+}
+
+void MainMenuForm::OnUndo(wxCommandEvent &){
+	printf("Undo!\n");
+}
+
+void MainMenuForm::OnRedo(wxCommandEvent &){
+	printf("Redo!\n");
+}
+
 void MainMenuForm::OnToolbarEvent(wxCommandEvent & evt){
 	switch(evt.GetId()){
 		case LHID_OF(LHN_SAVE):{
-			m_owner->SaveDatabase();
-			m_toolbar->EnableTool(LHID_OF(LHN_SAVE), false);
+			OnSave(evt);
 			break;
 		}
 		case LHID_OF(LHN_UNDO):{
-			printf("Undo!\n");
+			OnUndo(evt);
 			break;
 		}
 		case LHID_OF(LHN_REDO):{
-			printf("Redo!\n");
+			OnRedo(evt);
 			break;
 		}
 		case LHID_OF(LHN_CLOSE):{
-			if(m_toolbar->GetToolEnabled(LHID_OF(LHN_SAVE))){
-				wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_confirm_close_without_saving, m_owner->m_lang->str_are_you_sure, wxCANCEL | wxYES_NO);
-				dialog->SetYesNoCancelLabels(m_owner->m_lang->str_close_and_save, m_owner->m_lang->str_close_without_saving, m_owner->m_lang->str_cancel);
-				int confirmation = dialog->ShowModal();
-
-				switch(confirmation){
-					case wxID_YES: {
-						m_owner->SaveDatabase();
-					} /* Fallthrough */
-					case wxID_NO: {
-						free_school(m_owner->m_school);
-						m_owner->m_school = nullptr;
-
-						m_owner->SwitchForm(FORM_WELCOME);
-						Destroy();
-						break;
-					}
-					case wxID_CANCEL: {
-						/* Empty on purpouse */
-						break;
-					}
-				}
-			} else {
-				free_school(m_owner->m_school);
-				m_owner->m_school = nullptr;
-
-				m_owner->SwitchForm(FORM_WELCOME);
-				Destroy();
-				break;
+			OnClose();
+			break;
+		}
+		case LHID_OF(LHN_HELP):{
+			if(m_owner->m_window_manual == nullptr){
+				m_owner->m_window_manual = new ManualWindow(m_owner);
+				m_owner->m_window_manual->Show();
 			}
 			break;
 		}

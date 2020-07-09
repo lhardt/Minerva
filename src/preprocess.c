@@ -200,7 +200,7 @@ void school_feature_remove(School * school, int feature_i){
 		if(school->feature_ids[feature_i+1] != -1){
 			if(school->rooms != NULL && school->n_rooms > 0){
 				for(i = 0;  i < school->n_rooms; ++i ){
-					for(j = feature_i + 1; school->rooms[i].room_features[j] >= 0; ++j){
+					for(j = feature_i + 1;  school->rooms[i].room_features && school->rooms[i].room_features[j] >= 0; ++j){
 						/* copies the -1 terminator too. */
 						school->rooms[i].room_features[j] = school->rooms[i].room_features[j+1];
 					}
@@ -250,6 +250,7 @@ void school_subject_add(School * school, const Subject * const subject){
 }
 
 void school_subjectgroup_add(School * school, const char * const name, int id){
+	/* TODO realloc class->in_groups */
 	if(school->n_subject_groups == 0 || school->subject_group_names == NULL){
 		school->subject_group_names = (char **) calloc(11, sizeof(char *));
 		school->subject_group_ids = (int *) calloc(11, sizeof(int));

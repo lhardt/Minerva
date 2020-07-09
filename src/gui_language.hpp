@@ -181,6 +181,7 @@ typedef struct Language {
 
 	const wchar_t * const str_cancel;
 	const wchar_t * const str_confirm_close_without_saving;
+	const wchar_t * const str_subjects_in_the_group;
 } Language;
 
 const extern Language LANG_POR;

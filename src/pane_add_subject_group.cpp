@@ -70,7 +70,7 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 void AddSubjectGroupPane::OnAddSubjectButtonClicked(wxCommandEvent & evt){
 	int add_i = m_subjects_choice->GetSelection();
 	if(add_i != wxNOT_FOUND){
-		wxString name = wxString::FromUTF8(m_owner->m_school->subjects[add_i].name);
+		wxString name = m_subjects_choice->GetString(add_i);
 		m_subjects_list->Insert(name, m_subjects_list->GetCount(), new IntClientData(((IntClientData*)m_subjects_choice->GetClientObject(add_i))->m_value));
 		m_subjects_choice->Delete(add_i);
 	}
@@ -85,7 +85,7 @@ void AddSubjectGroupPane::OnRemoveAllButtonClicked(wxCommandEvent & evt){
 }
 
 void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
-	int i, id, sing_id ;
+	int i, id, sing_id;
 	School * school = m_owner->m_school;
 	if(!m_name_text->IsEmpty() && !m_subjects_list->IsEmpty()){
 		char * name = copy_wx_string(m_name_text->GetValue());
@@ -94,9 +94,14 @@ void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
 			int n_members = m_subjects_list->GetCount();
 			school_subjectgroup_add(school, name,id);
 			for(i = 0; i < n_members; ++i){
-				int i_subj = ((IntClientData*)m_subjects_list->GetClientObject())->m_value;
+				int i_subj = ((IntClientData*)m_subjects_list->GetClientObject(i))->m_value;
 				sing_id = insert_subject_in_group(stdout, m_owner->m_database, school->subjects[i_subj].id, id);
 				if(sing_id >= 0){
+					if(school->subjects[i_subj].in_groups == NULL){
+						school->subjects[i_subj].in_groups = (int *)calloc(1 + school->n_subject_groups, sizeof(int));
+						school->subjects[i_subj].in_groups[school->n_subject_groups] = -1;
+					}
+
 					school->subjects[i_subj].in_groups[school->n_subject_groups -1] = 1;
 				} else {
 					m_err_msg->SetLabel(m_owner->m_lang->str_error);

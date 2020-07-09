@@ -186,6 +186,7 @@ const Language LANG_POR = {
 	.str_redo=L"Refazer",
 	.str_cancel=L"Cancelar",
 	.str_confirm_close_without_saving=L"Deseja salvar antes de sair?",
+	.str_subjects_in_the_group=L"Disciplinas no grupo",
 };
 
 const Language LANG_ENG = {
@@ -362,6 +363,7 @@ const Language LANG_ENG = {
 	.str_redo=L"Redo",
 	.str_cancel=L"Cancel",
 	.str_confirm_close_without_saving=L"Do you want to save before leaving?",
+	.str_subjects_in_the_group=L"Subjects in the group",
 };
 
 const Language LANG_SPA = {
@@ -528,6 +530,7 @@ const Language LANG_SPA = {
 	.str_redo=L"",
 	.str_cancel=L"",
 	.str_confirm_close_without_saving=L"",
+	.str_subjects_in_the_group=L"",
 };
 
 const Language LANG_DEU = {
@@ -690,4 +693,5 @@ const Language LANG_DEU = {
 	.str_redo=L"",
 	.str_cancel=L"Abbrechen",
 	.str_confirm_close_without_saving=L"",
+	.str_subjects_in_the_group=L"",
 };

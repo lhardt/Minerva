@@ -60,21 +60,21 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * fields_sz = new wxGridSizer(2,5,5);
+	wxSizer * fields_sz = new wxFlexGridSizer(2,5,5);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
 
 	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
 	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
 
-	fields_sz->Add(name_label);
-	fields_sz->Add(m_name_text);
-	fields_sz->Add(size_label);
-	fields_sz->Add(m_size_text);
-	fields_sz->Add(features_label, 1);
-	fields_sz->Add(m_features_text);
+	fields_sz->Add(name_label, 0, wxEXPAND);
+	fields_sz->Add(m_name_text, 0, wxEXPAND);
+	fields_sz->Add(size_label, 0, wxEXPAND);
+	fields_sz->Add(m_size_text, 0, wxEXPAND);
+	fields_sz->Add(features_label, 0, wxEXPAND);
+	fields_sz->Add(m_features_text, 0, wxEXPAND);
 
-	desc_sz->Add(fields_sz, 1, wxTOP | wxLEFT, 15);
+	desc_sz->Add(fields_sz, 0, wxTOP | wxLEFT, 15);
 	desc_sz->Add(periods_text, 0, wxTOP | wxLEFT, 15);
 	desc_sz->Add(m_periods_grid, 0, wxBOTTOM|wxLEFT, 15);
 	desc_sz->AddStretchSpacer();
@@ -82,7 +82,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	desc_sz->Add(m_err_msg, 0, 0);
 
 	body_sz->Add(m_rooms_list, 0, wxEXPAND|wxALL, 15);
-	body_sz->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
+	body_sz->Add(desc_sz, 0, wxEXPAND|wxALL, 15);
 
 	sizer->Add(title, 0, wxALL, 15);
 	sizer->Add(body_sz, 1, wxALL, 15);
@@ -133,6 +133,7 @@ void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 
 void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 	int i;
+	bool more_than_zero_features = 0;
 	School * school = m_owner->m_school;
 	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
 		Room * room = & school->rooms[m_rooms_list->GetSelection()];
@@ -140,10 +141,19 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 		m_name_text->SetLabel(wxString::FromUTF8( room->name ));
 		m_size_text->SetLabel(wxString::Format("%d",room->size ));
 		m_features_text->SetLabel(wxT(""));
+
 		for(i = 0; i < school->n_features && room->room_features && room->room_features[i] >= 0; ++i){
 			if(room->room_features[i] > 0){
-				m_features_text->SetLabel(m_features_text->GetLabel().Append(wxString::Format("%s: %d\n", school->feature_names[i], room->room_features[i])));
+				if(more_than_zero_features){
+					m_features_text->SetLabel(m_features_text->GetLabel().Append(
+						wxString::Format("\n%s: %d", wxString::FromUTF8(school->feature_names[i]), room->room_features[i])));
+				} else {
+					m_features_text->SetLabel(m_features_text->GetLabel().Append(
+						wxString::Format("%s: %d", wxString::FromUTF8(school->feature_names[i]), room->room_features[i])));
+					more_than_zero_features=true;
+				}
 			}
+			printf("The name of the %d th feature was %s\n", i, school->feature_names[i]);
 		}
 		m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 		for(i = 0; i < school->n_periods; ++i){
@@ -159,6 +169,7 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 		}
 
 	}
+	Layout();
 }
 
 ListRoomsPane::~ListRoomsPane(){
