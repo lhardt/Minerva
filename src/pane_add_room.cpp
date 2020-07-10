@@ -63,13 +63,12 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	m_added_features = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
 	wxButton * remove_feature = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,30));
-	wxButton * edit_feature = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(180,30));
+	wxButton * remove_all = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,30));
 
 	button_go->Bind(wxEVT_BUTTON, &AddRoomPane::OnCreateButtonClicked, this);
 
 	for(i = 0; (i < m_owner->m_school->n_features) && (NULL != m_owner->m_school->feature_names[i]) ; ++i){
-		IntClientData * data = new IntClientData(i);
-		m_features->Insert(wxString::FromUTF8(m_owner->m_school->feature_names[i]), i, data);
+		m_features->Insert(wxString::FromUTF8(m_owner->m_school->feature_names[i]), i, new IntClientData(i));
 	}
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
@@ -85,7 +84,7 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	feature_hor_sz->Add(feature_ver_sz, 0, 0);
 
 	feature_ver_sz->Add(remove_feature, 0, wxLEFT | wxBOTTOM, 10);
-	feature_ver_sz->Add(edit_feature, 0, wxLEFT, 10);
+	feature_ver_sz->Add(remove_all, 0, wxLEFT, 10);
 
 	sizer->Add(title, 0, wxALL, 15);
 	sizer->Add(name_label, 0,  wxLEFT | wxTOP, 15);
@@ -107,6 +106,8 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
     Layout();
 
 	add_feature->Bind(wxEVT_BUTTON, &AddRoomPane::OnAddFeatureClicked, this);
+	remove_feature->Bind(wxEVT_BUTTON, &AddRoomPane::OnRemoveFeatureClicked, this);
+	remove_all->Bind(wxEVT_BUTTON, &AddRoomPane::OnRemoveAllClicked, this);
 }
 
 void AddRoomPane::ClearInsertedData(){
@@ -168,11 +169,30 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 }
 
 void AddRoomPane::OnAddFeatureClicked(wxCommandEvent & ev){
-	if(m_features->GetSelection() != wxNOT_FOUND){
-		//m_feature_values[ m_features->GetSelection() ] = m_score_text->GetValue();
-		IntPairClientData* data = new IntPairClientData(m_features->GetSelection(), m_score_text->GetValue());
-		wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[  m_features->GetSelection() ]) << wxT(": ") << m_score_text->GetValue();
-		m_added_features->Insert(to_be_inserted, m_added_features->GetCount(), data);
+	int i_sel = m_features->GetSelection();
+	if(i_sel != wxNOT_FOUND && m_score_text->GetValue() > 0){
+		int i_feature = ((IntClientData*)m_features->GetClientObject(i_sel))->m_value;
+		wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[i_sel]) << wxT(": ") << m_score_text->GetValue();
+		m_added_features->Insert(to_be_inserted, m_added_features->GetCount(), new IntPairClientData(i_feature, m_score_text->GetValue()));
 		m_score_text->SetValue(0);
+		m_features->Delete(i_sel);
+	}
+}
+
+void AddRoomPane::OnRemoveFeatureClicked(wxCommandEvent & ev){
+	int i_sel = m_added_features->GetSelection();
+	if(i_sel != wxNOT_FOUND){
+		int i_feature = ((IntPairClientData*)m_added_features->GetClientObject(i_sel))->m_v1;
+		wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[i_feature]);
+		m_features->Insert(to_be_inserted, m_added_features->GetCount(), new IntClientData(i_feature));
+		m_added_features->Delete(i_sel);
+	}
+}
+
+void AddRoomPane::OnRemoveAllClicked(wxCommandEvent & ev){
+	m_features->Clear();
+	m_added_features->Clear();
+	for(int i = 0; (i < m_owner->m_school->n_features) && (NULL != m_owner->m_school->feature_names[i]) ; ++i){
+		m_features->Insert(wxString::FromUTF8(m_owner->m_school->feature_names[i]), i, new IntClientData(i));
 	}
 }

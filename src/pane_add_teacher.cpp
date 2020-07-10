@@ -56,8 +56,8 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 
 	add_subject->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddSubjectButtonClicked, this);
 	remove_all->Bind(wxEVT_BUTTON, &AddTeacherPane::OnRemoveAllButtonClicked, this);
+	remove_subject->Bind(wxEVT_BUTTON, &AddTeacherPane::OnRemoveSubjectButtonClicked, this);
 	add_teacher->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddTeacherButtonClicked, this);
-	remove_subject->Disable();
 
 	for(i = 0; i < m_owner->m_school->n_subjects; ++i){
 		m_all_subjects_list->Insert(wxString::FromUTF8(m_owner->m_school->subjects[i].name), i, new IntClientData(i));
@@ -93,16 +93,31 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 }
 
 void AddTeacherPane::OnAddSubjectButtonClicked(wxCommandEvent & ev){
-	if(m_all_subjects_list->GetSelection() != wxNOT_FOUND ){
-		int i_subj = ((IntClientData*)m_all_subjects_list->GetClientData(m_all_subjects_list->GetSelection()))->m_value;
+	int i_sel = m_all_subjects_list->GetSelection();
+	if(i_sel != wxNOT_FOUND ){
+		int i_subj = ((IntClientData*)m_all_subjects_list->GetClientObject(i_sel))->m_value;
 		wxString text = wxString::FromUTF8(m_owner->m_school->subjects[ i_subj ].name);
 		m_teaches_subjects_list->Insert(text, m_teaches_subjects_list->GetCount(), new IntClientData(i_subj));
-		m_all_subjects_list->Delete(m_all_subjects_list->GetSelection());
+		m_all_subjects_list->Delete(i_sel);
+	}
+}
+
+void AddTeacherPane::OnRemoveSubjectButtonClicked(wxCommandEvent & ev){
+	int i_sel = m_teaches_subjects_list->GetSelection();
+	if(i_sel != wxNOT_FOUND ){
+		int i_subj = ((IntClientData*)m_teaches_subjects_list->GetClientObject(i_sel))->m_value;
+		wxString text = wxString::FromUTF8(m_owner->m_school->subjects[ i_subj ].name);
+		m_all_subjects_list->Insert(text, m_all_subjects_list->GetCount(), new IntClientData(i_subj));
+		m_teaches_subjects_list->Delete(i_sel);
 	}
 }
 
 void AddTeacherPane::OnRemoveAllButtonClicked(wxCommandEvent & ev){
+	m_all_subjects_list->Clear();
 	m_teaches_subjects_list->Clear();
+	for(int i = 0; i < m_owner->m_school->n_subjects; ++i){
+		m_all_subjects_list->Insert(wxString::FromUTF8(m_owner->m_school->subjects[i].name), i, new IntClientData(i));
+	}
 }
 
 void AddTeacherPane::ClearInsertedData(){

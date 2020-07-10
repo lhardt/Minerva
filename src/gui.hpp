@@ -219,6 +219,8 @@ class AddRoomPane : public wxScrolledWindow {
 
 	Application * m_owner;
 
+	void OnRemoveFeatureClicked(wxCommandEvent &);
+	void OnRemoveAllClicked(wxCommandEvent &);
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void OnAddFeatureClicked(wxCommandEvent &);
 	void ClearInsertedData();
@@ -251,6 +253,7 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 	Application * m_owner;
 
 	void OnAddSubjectButtonClicked(wxCommandEvent &);
+	void OnRemoveSubjectButtonClicked(wxCommandEvent &);
 	void OnRemoveAllButtonClicked(wxCommandEvent &);
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
@@ -271,6 +274,7 @@ class AddTeacherPane : public wxScrolledWindow {
 	void OnAddTeacherButtonClicked(wxCommandEvent &);
 	void OnAddSubjectButtonClicked(wxCommandEvent &);
 	void OnRemoveAllButtonClicked(wxCommandEvent &);
+	void OnRemoveSubjectButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };
 
@@ -322,6 +326,7 @@ class AddClassPane : public wxScrolledWindow {
 
 	void OnAddSubjectButtonClicked(wxCommandEvent &);
 	void OnAddClassButtonClicked(wxCommandEvent &);
+	void OnRemoveSubjectButtonClicked(wxCommandEvent & ev);
 	void OnRemoveAllButtonClicked(wxCommandEvent & ev);
 	void OnPeriodChoice(wxCommandEvent &);
 	void ClearInsertedData();

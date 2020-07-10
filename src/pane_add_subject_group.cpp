@@ -63,6 +63,7 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	Layout();
 
 	add_subject->Bind(wxEVT_BUTTON, &AddSubjectGroupPane::OnAddSubjectButtonClicked, this);
+	remove_subject->Bind(wxEVT_BUTTON, &AddSubjectGroupPane::OnRemoveSubjectButtonClicked, this);
 	remove_all_subjects->Bind(wxEVT_BUTTON, &AddSubjectGroupPane::OnRemoveAllButtonClicked, this);
 	add_group->Bind(wxEVT_BUTTON, &AddSubjectGroupPane::OnCreateButtonClicked, this);
 }
@@ -73,6 +74,15 @@ void AddSubjectGroupPane::OnAddSubjectButtonClicked(wxCommandEvent & evt){
 		wxString name = m_subjects_choice->GetString(add_i);
 		m_subjects_list->Insert(name, m_subjects_list->GetCount(), new IntClientData(((IntClientData*)m_subjects_choice->GetClientObject(add_i))->m_value));
 		m_subjects_choice->Delete(add_i);
+	}
+}
+
+void AddSubjectGroupPane::OnRemoveSubjectButtonClicked(wxCommandEvent & evt){
+	int rem_i = m_subjects_list->GetSelection();
+	if(rem_i != wxNOT_FOUND){
+		wxString name = m_subjects_list->GetString(rem_i);
+		m_subjects_choice->Insert(name, m_subjects_choice->GetCount(), new IntClientData(((IntClientData*)m_subjects_list->GetClientObject(rem_i))->m_value));
+		m_subjects_list->Delete(rem_i);
 	}
 }
 

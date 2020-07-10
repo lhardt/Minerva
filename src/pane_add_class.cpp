@@ -122,6 +122,7 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 
 	m_entry_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
 	m_exit_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
+	remove_subject->Bind(wxEVT_BUTTON, &AddClassPane::OnRemoveSubjectButtonClicked, this);
 	remove_all->Bind(wxEVT_BUTTON, &AddClassPane::OnRemoveAllButtonClicked, this);
 	add_subject->Bind(wxEVT_BUTTON, &AddClassPane::OnAddSubjectButtonClicked, this);
 	add_class->Bind(wxEVT_BUTTON, &AddClassPane::OnAddClassButtonClicked, this);
@@ -182,12 +183,14 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 }
 
 void AddClassPane::OnAddSubjectButtonClicked(wxCommandEvent & ev){
-	if(m_all_subjects_list->GetSelection() != wxNOT_FOUND && m_score_text->GetValue() > 0){
-		int subject_i = ((IntClientData*)(m_all_subjects_list->GetClientObject( m_all_subjects_list->GetSelection())))->m_value;
+	int sel_i = m_all_subjects_list->GetSelection();
+	if(sel_i != wxNOT_FOUND && m_score_text->GetValue() > 0){
+		int subject_i = ((IntClientData*)(m_all_subjects_list->GetClientObject( sel_i)))->m_value;
 		IntPairClientData * data = new IntPairClientData(subject_i, m_score_text->GetValue());
 		wxString text = m_all_subjects_list->GetStringSelection() + wxString::Format(": %d", m_score_text->GetValue());
 		m_selected_subjects_list->Insert(text, m_selected_subjects_list->GetCount(),data);
 		m_score_text->SetValue(0);
+		m_all_subjects_list->Delete(sel_i);
 	}
 }
 
@@ -214,8 +217,22 @@ void AddClassPane::ClearInsertedData(){
 	m_exit_text->Clear();
 }
 
+void AddClassPane::OnRemoveSubjectButtonClicked(wxCommandEvent & ev){
+	int sel_i = m_selected_subjects_list->GetSelection();
+	if(sel_i != wxNOT_FOUND){
+		int subject_i = ((IntPairClientData*)(m_selected_subjects_list->GetClientObject( sel_i)))->m_v1;
+		wxString text = wxString::FromUTF8(m_owner->m_school->subjects[subject_i].name);
+		m_all_subjects_list->Insert(text, m_all_subjects_list->GetCount(),new IntClientData(subject_i));
+		m_selected_subjects_list->Delete(sel_i);
+	}
+}
+
 void AddClassPane::OnRemoveAllButtonClicked(wxCommandEvent & ev){
 	m_selected_subjects_list->Clear();
+	m_all_subjects_list->Clear();
+	for(int i = 0; i < m_owner->m_school->n_subjects; ++i){
+		m_all_subjects_list->Append(wxString::FromUTF8(m_owner->m_school->subjects[i].name), new IntClientData(i));
+	}
 }
 
 void AddClassPane::OnPeriodChoice(wxCommandEvent& ev){
