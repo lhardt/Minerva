@@ -158,6 +158,22 @@ bool Application::SaveDatabase(){
 }
 
 void Application::SwitchForm(AppFormType next){
+	if(m_form_welcome != nullptr){
+		m_form_welcome->Destroy();
+		m_form_welcome = nullptr;
+	}
+	if(m_form_create_school != nullptr){
+		m_form_create_school->Destroy();
+		m_form_create_school = nullptr;
+	}
+	if(m_form_main_menu != nullptr){
+		m_form_main_menu->Destroy();
+		m_form_main_menu = nullptr;
+	}
+	if(m_form_settings != nullptr){
+		m_form_settings->Destroy();
+		m_form_settings = nullptr;
+	}
 	switch(next){
 		case FORM_WELCOME:{
 			m_form_welcome = new WelcomeForm(this);

@@ -104,7 +104,6 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, owner
 
 void WelcomeForm::OnCreateClicked(wxCommandEvent & ev){
 	m_owner->SwitchForm(FORM_CREATE_SCHOOL);
-	this->Destroy();
 	ev.Skip();
 }
 
@@ -114,7 +113,6 @@ void WelcomeForm::OnOpenClicked(wxCommandEvent & ev){
 		m_owner->m_school = select_school_by_id( stdout, m_owner->m_database, data->m_value);
 		if(m_owner->m_school != NULL){
 			m_owner->SwitchForm(FORM_MAIN_MENU);
-			this->Destroy();
 		} else {
 			/* TODO proper error handling */
 		}
@@ -131,7 +129,6 @@ void WelcomeForm::OnHelpClicked(wxCommandEvent & ev){
 
 void WelcomeForm::OnSettingsClicked(wxCommandEvent & ev){
 	m_owner->SwitchForm(FORM_SETTINGS);
-	Destroy();
 }
 
 WelcomeForm::~WelcomeForm(){

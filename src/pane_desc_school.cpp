@@ -1,5 +1,10 @@
 #include "gui.hpp"
 
+extern "C" {
+	#include "loader.h"
+	#include "util.h"
+};
+
 DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
@@ -83,7 +88,14 @@ void DescSchoolPane::OnRemoveButtonClicked(wxCommandEvent & ){
 	wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_school_deletion_popup_text, m_owner->m_lang->str_are_you_sure, wxCANCEL | wxOK);
 	dialog->SetYesNoLabels(m_owner->m_lang->str_yes, m_owner->m_lang->str_no);
 	int confirmation = dialog->ShowModal();
-	if(confirmation == wxOK){
+	if(confirmation == wxID_YES){
+		bool success = remove_school(stdout, m_owner->m_database, m_owner->m_school->id);
+		if(success){
+			free_school(m_owner->m_school);
+			m_owner->m_school = nullptr;
+			m_owner->SwitchForm(FORM_WELCOME);
+			Destroy();
+		}
 		printf("To delete school\n");
 	}
 }

@@ -719,6 +719,8 @@ class Application : public wxApp {
 	virtual bool OnInit();
 	virtual int  OnExit();
 	void SwitchForm(AppFormType next);
+	void OpenHelpWindow();
+	void CloseHelpWindow();
 	void ChildNotify(int messageCode);
 	void OnConfigUpdate();
 	void LoadConfig();

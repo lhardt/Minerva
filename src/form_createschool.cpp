@@ -136,7 +136,6 @@ void CreateSchoolForm::OnGridSizeUpdated(wxSpinEvent & ev){
 
 void CreateSchoolForm::OnBackClicked(wxCommandEvent & ev){
 	m_owner->SwitchForm(FORM_WELCOME);
-	this->Destroy();
 }
 
 void CreateSchoolForm::OnCreateClicked(wxCommandEvent & ev){
@@ -171,7 +170,6 @@ void CreateSchoolForm::OnCreateClicked(wxCommandEvent & ev){
 			m_owner->m_school = school;
 			m_owner->SwitchForm(FORM_MAIN_MENU);
 			m_owner->SaveDatabase();
-			this->Destroy();
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}

@@ -36,6 +36,8 @@ const char * const SELECT_SCHOOL_NAMES =
 		("SELECT id,name FROM School");
 const char * const SELECT_SCHOOL_BY_ID =
 		("SELECT * FROM School where id=?");
+const char * const DELETE_SCHOOL_BY_ID =
+		("DELETE FROM School WHERE id=?");
 
 const char * const CREATE_TABLE_DAILY_PERIOD =
 			("CREATE TABLE IF NOT EXISTS DailyPeriod("
@@ -50,7 +52,9 @@ const char * const INSERT_TABLE_DAILY_PERIOD =
 const char * const LASTID_TABLE_DAILY_PERIOD =
 			("SELECT id FROM DailyPeriod where rowid = last_insert_rowid()");
 const char * const SELECT_DAILY_PERIOD_BY_SCHOOL_ID =
-		("SELECT * FROM DailyPeriod WHERE id_school=? ORDER BY per_index");
+			("SELECT * FROM DailyPeriod WHERE id_school=? ORDER BY per_index");
+const char * const DELETE_DAILY_PERIOD_BY_SCHOOL_ID =
+			("DELETE FROM DailyPeriod WHERE id_school=?");
 
 const char * const CREATE_TABLE_DAY =
 			("CREATE TABLE IF NOT EXISTS Day("
@@ -66,6 +70,8 @@ const char * const LASTID_TABLE_DAY =
 			("SELECT id FROM Day where rowid = last_insert_rowid()");
 const char * const SELECT_DAY_BY_SCHOOL_ID =
 		("SELECT * FROM Day WHERE id_school = ? ORDER BY day_index");
+const char * const DELETE_DAY_BY_SCHOOL_ID =
+		("DELETE FROM Day WHERE id_school = ?");
 
 const char * const CREATE_TABLE_PERIOD =
 			("CREATE TABLE IF NOT EXISTS Period("
@@ -84,6 +90,8 @@ const char * const LASTID_TABLE_PERIOD =
 			("SELECT id FROM Period where rowid = last_insert_rowid()");
 const char * const SELECT_PERIOD_BY_SCHOOL_ID =
 		("SELECT * FROM Period WHERE id_school = ?");
+const char * const DELETE_PERIOD_BY_SCHOOL_ID =
+		("DELETE FROM Period WHERE id_school = ?");
 
 const char * const CREATE_TABLE_FEATURE =
 			("CREATE TABLE IF NOT EXISTS Feature("
@@ -100,6 +108,8 @@ const char * const SELECT_FEATURE_BY_SCHOOL_ID =
 		("SELECT * FROM Feature WHERE id_school = ?");
 const char * const DELETE_FEATURE_BY_ID =
 		("DELETE FROM Feature WHERE id=?");
+const char * const DELETE_FEATURE_BY_SCHOOL_ID =
+		("DELETE FROM Feature WHERE id_school=?");
 
 const char * const CREATE_TABLE_ROOM =
 			("CREATE TABLE IF NOT EXISTS Room("
@@ -118,6 +128,8 @@ const char * const SELECT_ROOM_BY_SCHOOL_ID =
 			("SELECT * FROM Room WHERE id_school = ?");
 const char * const DELETE_ROOM_BY_ID =
 			("DELETE FROM Room WHERE id=?");
+const char * const DELETE_ROOM_BY_SCHOOL_ID =
+			("DELETE FROM Room WHERE id_school=?");
 
 const char * const CREATE_TABLE_ROOM_FEATURE =
 			("CREATE TABLE IF NOT EXISTS RoomFeature("
@@ -140,6 +152,11 @@ const char * const DELETE_ROOM_FEATURE_BY_ROOM_ID =
 			("DELETE FROM RoomFeature WHERE id_room=?");
 const char * const DELETE_ROOM_FEATURE_BY_ID =
 			("DELETE FROM RoomFeature WHERE id=?");
+const char * const DELETE_ROOM_FEATURE_BY_SCHOOL_ID =
+			("DELETE FROM RoomFeature WHERE EXISTS("
+				"SELECT id FROM Room WHERE Room.id = RoomFeature.id_room "
+					"AND Room.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_ROOM_AVALIBILITY =
 			("CREATE TABLE IF NOT EXISTS RoomAvalibility("
@@ -158,6 +175,11 @@ const char * const SELECT_ROOM_AVAILIBILITY_BY_ROOM_ID =
 			("SELECT * FROM RoomAvalibility WHERE id_room=?");
 const char * const DELETE_ROOM_AVAILIBILITY_BY_ROOM_ID =
 			("DELETE FROM RoomAvalibility WHERE id_room=?");
+const char * const DELETE_ROOM_AVAILIBILITY_BY_SCHOOL_ID =
+			("DELETE FROM RoomAvailibility WHERE EXISTS("
+				"SELECT id FROM Room WHERE Room.id = RoomAvailibility.id_room "
+					"AND Room.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_CLASS =
 			("CREATE TABLE IF NOT EXISTS Class("
@@ -180,6 +202,8 @@ const char * const SELECT_CLASS_BY_SCHOOL_ID =
 			("SELECT * FROM Class WHERE id_school=?");
 const char * const DELETE_CLASS_BY_ID =
 		("DELETE FROM Class WHERE id=?");
+const char * const DELETE_CLASS_BY_SCHOOL_ID =
+		("DELETE FROM Class WHERE id_school=?");
 
 const char * const CREATE_TABLE_CLASS_ATTENDANCE =
 			("CREATE TABLE IF NOT EXISTS ClassAttendance("
@@ -200,6 +224,11 @@ const char * const SELECT_CLASS_ATTENDANCE_BY_CLASS_ID =
 			("SELECT * FROM ClassAttendance WHERE id_class = ?");
 const char * const DELETE_CLASS_ATTENDANCE_BY_CLASS_ID =
 			("DELETE FROM ClassAttendance WHERE id_class=?");
+const char * const DELETE_CLASS_ATTENDANCE_BY_SCHOOL_ID =
+			("DELETE FROM ClassAttendance WHERE EXISTS ("
+				"SELECT id FROM Class WHERE Class.id=ClassAttendance.id_class "
+					"AND Class.id_school = ?"
+			")");
 
 const char * const CREATE_TABLE_CLASS_SUBORDINATION =
 			("CREATE TABLE IF NOT EXISTS ClassSubordination("
@@ -219,6 +248,12 @@ const char * const DELETE_CLASS_SUBORDINATION_BY_SUP_ID =
 			("DELETE FROM ClassSubordination WHERE id_sup = ?");
 const char * const DELETE_CLASS_SUBORDINATION_BY_SUB_ID =
 			("DELETE FROM ClassSubordination WHERE id_sub = ?");
+const char * const DELETE_CLASS_Subordination_BY_SCHOOL_ID =
+			/* Deleting by supid is enough, and equivalent to by subid */
+			("DELETE FROM ClassSubordination WHERE EXISTS ("
+				"SELECT id FROM Class WHERE Class.id=ClassSubordination.id_sup "
+					"AND Class.id_school = ?"
+			")");
 
 const char * const CREATE_TABLE_SUBJECT =
 			("CREATE TABLE IF NOT EXISTS Subject("
@@ -236,6 +271,8 @@ const char * const SELECT_SUBJECT_BY_SCHOOL_ID =
 			("SELECT * FROM Subject WHERE id_school = ?");
 const char * const DELETE_SUBJECT_BY_ID =
 			("DELETE FROM Subject WHERE id=?");
+const char * const DELETE_SUBJECT_BY_SCHOOL_ID =
+			("DELETE FROM Subject WHERE id_school=?");
 
 const char * const CREATE_TABLE_SUBJECT_GROUP =
 			("CREATE TABLE IF NOT EXISTS SubjectGroup("
@@ -273,6 +310,11 @@ const char * const DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID =
 			("DELETE FROM SubjectInGroup WHERE id_subject = ?");
 const char * const DELETE_SUBJECT_IN_GROUP_BY_GROUP_ID =
 			("DELETE FROM SubjectInGroup WHERE id_group = ?");
+const char * const DELETE_FROM_SUBJECT_IN_GROUP_BY_SCHOOL_ID =
+			("DELETE FROM SubjectInGroup WHERE EXISTS("
+				"SELECT Subject WHERE SubjectInGroup.id_subject = Subject.id "
+					"AND Subject.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_CLASS_SUBJECT =
 			("CREATE TABLE IF NOT EXISTS ClassSubject("
@@ -294,6 +336,11 @@ const char * const DELETE_CLASS_SUBJECT_BY_CLASS_ID =
 			("DELETE FROM ClassSubject WHERE class_id = ?");
 const char * const DELETE_CLASS_SUBJECT_BY_SUBJECT_ID =
 			("DELETE FROM ClassSubject WHERE subject_id = ?");
+const char * const DELETE_CLASS_SUBJECT_BY_SCHOOL_ID =
+			("DELETE FROM ClassSubject WHERE EXISTS ("
+				"SELECT id FROM Class WHERE Class.id=ClassSubject.id_class "
+					"AND Class.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_CLASS_SUBJECT_GROUP =
 			("CREATE TABLE IF NOT EXISTS ClassSubjectGroup("
@@ -316,6 +363,11 @@ const char * const DELETE_CLASS_SUBJECT_GROUP_BY_CLASS_ID =
 			("DELETE FROM ClassSubjectGroup WHERE id_class=?");
 const char * const DELETE_CLASS_SUBJECT_GROUP_BY_GROUP_ID =
 			("DELETE FROM ClassSubjectGroup WHERE id_group=?");
+const char * const DELETE_CLASS_SUBJECT_GROUP_BY_SCHOOL_ID =
+			("DELETE FROM ClassSubjectGroup WHERE EXISTS ("
+				"SELECT Class WHERE Class.id = ClassSubjectGroup.id_class "
+					"AND Class.id_school = ?"
+			")");
 
 const char * const CREATE_TABLE_TEACHER =
 			("CREATE TABLE IF NOT EXISTS Teacher("
@@ -338,6 +390,8 @@ const char * const SELECT_TEACHER_BY_SCHOOL_ID =
 			("SELECT * FROM Teacher WHERE id_school = ?");
 const char * const DELETE_TEACHER_BY_ID =
 			("DELETE FROM Teacher WHERE id=?");
+const char * const DELETE_TEACHER_BY_SCHOOL_ID =
+			("DELETE FROM Teacher WHERE id_school=?");
 
 const char * const CREATE_TABLE_TEACHER_DAY =
 			("CREATE TABLE IF NOT EXISTS TeacherDay("
@@ -357,6 +411,11 @@ const char * const SELECT_TEACHER_DAY_BY_TEACHER_ID =
 			("SELECT * FROM TeacherDay WHERE id_teacher = ?");
 const char * const DELETE_TEACHER_DAY_BY_TEACHER_ID =
 			("DELETE FROM TeacherDay WHERE id_teacher = ?");
+const char * const DELETE_TEACHER_DAY_BY_SCHOOL_ID =
+			("DELETE FROM TeacherDay WHERE EXISTS ("
+				"SELECT id Teacher WHERE Teacher.id=TeacherDay.id_teacher "
+					"AND Teacher.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_TEACHES =
 			("CREATE TABLE IF NOT EXISTS Teaches("
@@ -380,6 +439,11 @@ const char * const DELETE_TEACHES_BY_SUBJECT_ID =
 			("DELETE FROM Teaches WHERE id_subject = ?");
 const char * const DELETE_TEACHES_BY_TEACHER_ID =
 			("DELETE FROM Teaches WHERE id_teacher = ?");
+const char * const DELETE_TEACHES_BY_SCHOOL_ID =
+			("DELETE FROM Teaches WHERE EXISTS ("
+				"SELECT id FROM Teacher WHERE Teaches.id_teacher = Teacher.id "
+					"AND Teacher.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_TEACHER_SUBORDINATION =
 			("CREATE TABLE IF NOT EXISTS TeacherSubordination("
@@ -399,6 +463,12 @@ const char * const DELETE_TEACHER_SUBORDINATION_BY_SUP_ID =
 			("DELETE FROM TeacherSubordination WHERE id_sup = ?");
 const char * const DELETE_TEACHER_SUBORDINATION_BY_SUB_ID =
 			("DELETE FROM TeacherSubordination WHERE id_sub = ?");
+const char * const DELETE_TEACHER_SUBORDINATION_BY_SCHOOL_ID =
+			/* Selecting id_sup is sufficient and equivalent to selecting id_sub*/
+			("DELETE FROM TeacherSubordination WHERE EXISTS("
+				"SELECT Teacher WHERE Teacher.id = TeacherSubordination.id_sup "
+					"AND Teacher.id_school=? "
+			")");
 
 const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
 			("CREATE TABLE IF NOT EXISTS TeacherAttendance("
@@ -419,6 +489,11 @@ const char * const SELECT_TEACHER_ATTENDANCE_BY_TEACHER_ID =
 			("SELECT * FROM TeacherAttendance WHERE id_teacher=?");
 const char * const DELETE_TEACHER_ATTENDANCE_BY_TEACHER_ID =
 			("DELETE FROM TeacherAttendance WHERE id_teacher = ?");
+const char * const DELETE_TEACHER_ATTENDANCE_BY_SCHOOL_ID =
+			("DELETE FROM TeacherAtteandance WHERE EXISTS ("
+				"SELECT Teacher WHERE Teacher.id = TeacherAttendance.id_teacher "
+					"AND Teacher.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_ATTENDANCE_TYPE =
 			("CREATE TABLE IF NOT EXISTS AttendanceType("
@@ -435,8 +510,8 @@ const char * const SELECT_ATTENDANCE_TYPE =
 const char * const CREATE_TABLE_DEMAND =
 			("CREATE TABLE IF NOT EXISTS Demand("
 				"id						integer primary key,"
-				"teaches_id				integer,"
-				"feature_id				integer,"
+				"id_teaches				integer,"
+				"id_feature				integer,"
 				"min_score				integer,"
 				"score  				integer,"
 				"FOREIGN KEY (teaches_id) REFERENCES Teaches(id),"
@@ -456,13 +531,18 @@ const char * const DELETE_DEMAND_BY_ID =
  			("DELETE FROM Demand WHERE id=?");
 const char * const DELETE_DEMAND_BY_SUBJECT_ID =
 			("DELETE FROM Demand WHERE EXISTS ("
-				"SELECT id from Teaches WHERE Teaches.id = Demand.teaches_id "
+				"SELECT id from Teaches WHERE Teaches.id = Demand.id_teaches "
 					"AND Teaches.id_subject = ?"
 			")");
 const char * const DELETE_DEMAND_BY_TEACHER_ID =
 			("DELETE FROM Demand WHERE EXISTS ("
-				"SELECT id FROM Teaches WHERE Teaches.id = Demand.teaches_id "
+				"SELECT id FROM Teaches WHERE Teaches.id = Demand.id_teaches "
 					"AND Teaches.id_teacher = ?"
+			")");
+const char * const DELETE_DEMAND_BY_SCHOOL_ID =
+			("DELETE FROM Demand WHERE EXISTS ("
+				"SELECT id FROM Feature WHERE Feature.id = Demand.id_feature "
+					"AND Feature.id_school=?"
 			")");
 
 const char * const CREATE_TABLE_TEACHES_PERIOD_PREFERENCE =
@@ -490,6 +570,11 @@ const char * const DELETE_TEACHES_PERIOD_PREFERENCE_BY_TEACHER_ID =
 				"SELECT id FROM Teaches WHERE Teaches.id = TeachesPeriodPreference.id_teaches "
 					"AND Teaches.id_teacher = ?"
 			")");
+const char * const DELETE_TEACHES_PERIOD_PREFERENCE_BY_SCHOOL_ID =
+			("DELETE FROM TeachesPeriodPreference WHERE EXISTS ("
+				"SELECT id FROM Period WHERE Period.id = TeachesPeriodPreference.id_period "
+					"AND Period.id_school = ?"
+			")");
 
 const char * const CREATE_TABLE_TEACHES_TWIN_PREFERENCE =
 			("CREATE TABLE IF NOT EXISTS TeachesTwinPreference("
@@ -515,6 +600,14 @@ const char * const DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID =
 				"SELECT id FROM Teaches WHERE Teaches.id = TeachesTwinPreference.id_teaches "
 					"AND Teaches.id_teacher = ?"
 			")");
+const char * const DELETE_TEACHES_TWIN_PREFERENCE_BY_SCHOOL_ID =
+			("DELETE FROM TeachesTwinPreference WHERE EXISTS ("
+				"SELECT id FROM Teaches WHERE Teaches.id = TeachesTwinPreference.id_teaches "
+					"AND EXISTS("
+						"SELECT id FROM Teacher WHERE Teaches.id_teacher = Teacher.id "
+							"AND Teacher.id_school = ?"
+					")"
+			")");
 
 const char * const CREATE_TABLE_SOLUTION =
 			("CREATE TABLE IF NOT EXISTS Solution("
@@ -531,6 +624,8 @@ const char * const LASTID_TABLE_SOLUTION =
 			("SELECT id FROM Solution WHERE rowid = last_insert_rowid()");
 const char * const SELECT_SOLUTION_BY_SCHOOL_ID =
 			("SELECT * FROM SOLUTION WHERE id_school=?");
+const char * const DELETE_SOLUTION_BY_SCHOOL_ID =
+			("DELETE FROM SOLUTION WHERE id_school=?");
 
 const char * const CREATE_TABLE_MEETING =
 			("CREATE TABLE IF NOT EXISTS Meeting("
@@ -566,6 +661,8 @@ const char * const DELETE_MEETING_BY_CLASS_ID =
 			("DELETE FROM Meeting WHERE id_class = ?");
 const char * const DELETE_MEETING_BY_SOLUTION_ID =
 			("DELETE FROM Meeting WHERE id_solution = ?");
+const char * const DELETE_MEETING_BY_SCHOOL_ID =
+			("DELETE FROM Meeting WHERE id_school = ?");
 
 const char * const CREATE_TABLE_POSSIBLE_TEACHER =
 			("CREATE TABLE IF NOT EXISTS PossibleTeacher("
@@ -584,6 +681,11 @@ const char * const SELECT_TABLE_POSSIBLE_TEACHER_BY_MEETING_ID =
 			("SELECT * FROM PossibleTeacher WHERE id_meeting=?");
 const char * const DELETE_POSSIBLE_TEACHER_BY_MEETING_ID =
 			("DELETE FROM PossibleTeacher WHERE id_meeting=?");
+const char * const DELETE_POSSIBLE_TEACHER_BY_SCHOOL_ID =
+			("DELETE FROM PossibleTeacher WHERE EXISTS("
+				"SELECT id FROM Meeting WHERE Meeting.id = PossibleTeacher.id_meeting "
+					"AND Meeting.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_POSSIBLE_ROOM =
 			("CREATE TABLE IF NOT EXISTS PossibleRoom("
@@ -602,6 +704,11 @@ const char * const SELECT_TABLE_POSSIBLE_ROOM_BY_MEETING_ID =
 			("SELECT * FROM PossibleRoom WHERE id_meeting = ?");
 const char * const DELETE_POSSIBLE_ROOM_BY_MEETING_ID =
 			("DELETE FROM PossibleRoom WHERE id_meeting = ?");
+const char * const DELETE_POSSIBLE_ROOM_BY_SCHOOL_ID =
+			("DELETE FROM PossibleRoom WHERE EXISTS("
+				"SELECT id FROM Meeting WHERE Meeting.id = PossibleRoom.id_meeting "
+					"AND Meeting.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_POSSIBLE_PERIOD =
 			("CREATE TABLE IF NOT EXISTS PossiblePeriod("
@@ -620,6 +727,11 @@ const char * const SELECT_TABLE_POSSIBLE_PERIOD_BY_MEETING_ID =
 			("SELECT * FROM PossiblePeriod WHERE id_meeting = ?");
 const char * const DELETE_POSSIBLE_PERIOD_BY_MEETING_ID =
 			("DELETE FROM PossiblePeriod WHERE id_meeting = ?");
+const char * const DELETE_POSSIBLE_PERIOD_BY_SCHOOL_ID =
+			("DELETE FROM PossiblePeriod WHERE EXISTS("
+				"SELECT id FROM Meeting WHERE Meeting.id = PossiblePeriod.id_meeting "
+					"AND Meeting.id_school=?"
+			")");
 
 /**
  * Creates a table based on one of the strings above.
@@ -2539,6 +2651,37 @@ bool remove_class(FILE * console_out, sqlite3* db, int id) {
 			!exec_and_check(db, DELETE_CLASS_SUBORDINATION_BY_SUP_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_ATTENDANCE_BY_CLASS_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_BY_ID, id)?false:
+			true;
+}
+
+bool remove_school(FILE * console_out, sqlite3 * db, int id){
+	return	!exec_and_check(db, DELETE_POSSIBLE_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_POSSIBLE_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_POSSIBLE_TEACHER_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_MEETING_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_SOLUTION_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_PERIOD_PREFERENCE_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_DEMAND_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_ATTENDANCE_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_DAY_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_SUBJECT_GROUP_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_SUBJECT_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_SUBJECT_GROUP_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_SUBJECT_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_ATTENDANCE_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_ROOM_AVAILIBILITY_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_ROOM_FEATURE_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_FEATURE_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_DAY_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_DAILY_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_SCHOOL_BY_ID, id)?false:
 			true;
 }
 

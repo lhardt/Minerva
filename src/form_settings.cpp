@@ -119,12 +119,10 @@ void SettingsForm::OnSaveButtonClicked(wxCommandEvent& evt){
 	}
 	m_owner->OnConfigUpdate();
 	m_owner->SwitchForm(FORM_SETTINGS);
-	this->Destroy();
 }
 
 void SettingsForm::OnBackButtonClicked(wxCommandEvent & evt){
 	m_owner->SwitchForm(FORM_WELCOME);
-	this->Destroy();
 }
 
 SettingsForm::~SettingsForm(){
