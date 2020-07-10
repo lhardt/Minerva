@@ -94,9 +94,9 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 
 void AddTeacherPane::OnAddSubjectButtonClicked(wxCommandEvent & ev){
 	if(m_all_subjects_list->GetSelection() != wxNOT_FOUND ){
-		wxString text = wxString::FromUTF8(m_owner->m_school->subjects[ m_all_subjects_list->GetSelection() ].name);
-		// IntClientData data(m_all_subjects_list->GetSelection());
-		m_teaches_subjects_list->Insert(text, m_teaches_subjects_list->GetCount(), new IntClientData(m_all_subjects_list->GetSelection()));
+		int i_subj = ((IntClientData*)m_all_subjects_list->GetClientData(m_all_subjects_list->GetSelection()))->m_value;
+		wxString text = wxString::FromUTF8(m_owner->m_school->subjects[ i_subj ].name);
+		m_teaches_subjects_list->Insert(text, m_teaches_subjects_list->GetCount(), new IntClientData(i_subj));
 		m_all_subjects_list->Delete(m_all_subjects_list->GetSelection());
 	}
 }

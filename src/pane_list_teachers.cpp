@@ -22,21 +22,21 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	m_teachers_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300));
 	m_name_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name, wxDefaultPosition, wxSize(300,20));
-	m_max_days_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("N° Máximo de Dias: "), wxDefaultPosition, wxSize(300,20));
-	m_max_periods_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("N° Máximo de Períodos: "), wxDefaultPosition, wxSize(300,20));
-	m_max_ppd_text = new wxStaticText(this, wxID_ANY, wxString::FromUTF8("N° Máximo de Períodos por Dia: "), wxDefaultPosition,wxSize(300,20));
-	m_planning_periods_text = new wxStaticText(this, wxID_ANY, wxT("N° de Períodos de Planejamento: "), wxDefaultPosition,wxSize(300,20));
-	m_teaches_text = new wxStaticText(this, wxID_ANY, wxT("Ensina: "), wxDefaultPosition,wxSize(300,-1), wxST_NO_AUTORESIZE);
+	m_max_days_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_days, wxDefaultPosition, wxSize(300,20));
+	m_max_periods_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods, wxDefaultPosition, wxSize(300,20));
+	m_max_ppd_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods_per_day, wxDefaultPosition,wxSize(300,20));
+	m_planning_periods_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_number_of_planning_periods, wxDefaultPosition,wxSize(300,20));
+	m_teaches_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_teaches, wxDefaultPosition,wxSize(300,-1), wxST_NO_AUTORESIZE);
 
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
 
-	wxStaticText * periods_text = new wxStaticText(this, wxID_ANY, wxT("Períodos em que ele está disponível"), wxDefaultPosition,wxSize(300,20));
+	wxStaticText * periods_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availibility, wxDefaultPosition,wxSize(300,20));
 	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(300,200));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(wxT("Disponível"));
-	grid_values.push_back(wxT("Ocupado"));
+	grid_values.push_back(m_owner->m_lang->str_teacher_availible);
+	grid_values.push_back(m_owner->m_lang->str_teacher_unavailible);
 	m_periods_grid->SetPossibleValues(grid_values);
 
 	wxVector<wxColor> grid_colors = wxVector<wxColor>();
@@ -112,12 +112,12 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 	if(school != NULL && school->teachers != NULL && i_select != wxNOT_FOUND){
 		Teacher * t = & school->teachers[i_select];
 
-		m_name_text->SetLabel(wxString::Format("Nome: %s", wxString::FromUTF8(t->name)));
-		m_max_days_text->SetLabel(wxString::Format(wxString::FromUTF8("N° Máximo de Dias: %d"), (t->max_days)));
-		m_max_periods_text->SetLabel(wxString::Format(wxString::FromUTF8("N° Máximo de Períodos: %d"), (t->max_meetings)));
-		m_max_ppd_text->SetLabel(wxString::Format(wxString::FromUTF8("N° Máximo de Períodos por Dia: %d"), (t->max_meetings_per_day)));
-		m_planning_periods_text->SetLabel(wxString::Format(wxString::FromUTF8("N° de Períodos de Planejamento: %d"), (t->num_planning_periods)));
-		m_teaches_text->SetLabel(wxT("Ensina: "));
+		m_name_text->SetLabel(wxString::FromUTF8(t->name));
+		m_max_days_text->SetLabel(wxString::Format("%d", (t->max_days)));
+		m_max_periods_text->SetLabel(wxString::Format("%d", (t->max_meetings)));
+		m_max_ppd_text->SetLabel(wxString::Format("%d", (t->max_meetings_per_day)));
+		m_planning_periods_text->SetLabel(wxString::Format("%d", (t->num_planning_periods)));
+		m_teaches_text->SetLabel(wxT(""));
 		if(t->teaches != NULL){
 			for(int i = 0; t->teaches[i] != NULL; ++i){
 				m_teaches_text->SetLabel(m_teaches_text->GetLabel() +
@@ -132,7 +132,7 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 				m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 			} else {
 				m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						wxString::Format("%s" , (t->periods[i] > 0?wxT("Disponível"):wxT("Ocupado")) ));
+						wxString::Format("%s" , (t->periods[i] > 0?m_owner->m_lang->str_teacher_availible:m_owner->m_lang->str_teacher_unavailible) ));
 				m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
 						(t->periods[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
 			}

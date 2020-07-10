@@ -58,4 +58,7 @@ bool remove_subject_group(FILE * console_out, sqlite3* db, int id);
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);
 
+bool save_backup(sqlite3 * memory_db, const char * const filename);
+bool load_backup(sqlite3 * memory_db, const char * const filename);
+
 #endif /* DATA_LOADER_H */

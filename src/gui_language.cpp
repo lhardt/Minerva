@@ -88,7 +88,7 @@ const Language LANG_POR = {
 	.str_list_of_class_groups=L"Lista de Grupos de Turmas",
 	/* Adding */
 	.str_add_feature=L"Adicionar Característica",
-	.str_add_room=L"Adicionar Salas",
+	.str_add_room=L"Adicionar Sala",
 	.str_add_subject=L"Adicionar Disciplina",
 	.str_add_subject_group=L"Adicionar Grupo de Disciplinas",
 	.str_add_teacher=L"Adicionar Professor",
@@ -187,6 +187,11 @@ const Language LANG_POR = {
 	.str_cancel=L"Cancelar",
 	.str_confirm_close_without_saving=L"Deseja salvar antes de sair?",
 	.str_subjects_in_the_group=L"Disciplinas no grupo",
+	.str_max_number_of_days=L"Número máximo de dias",
+	.str_max_number_of_periods=L"Número máximo de períodos",
+	.str_max_number_of_periods_per_day=L"Número máximo de pe",
+	.str_number_of_planning_periods=L"Número de períodos de planejamento",
+	.str_teachers_teach=L"Os professores ensinam",
 };
 
 const Language LANG_ENG = {
@@ -364,6 +369,11 @@ const Language LANG_ENG = {
 	.str_cancel=L"Cancel",
 	.str_confirm_close_without_saving=L"Do you want to save before leaving?",
 	.str_subjects_in_the_group=L"Subjects in the group",
+	.str_max_number_of_days=L"Max number of days",
+	.str_max_number_of_periods=L"Max number of periods",
+	.str_max_number_of_periods_per_day=L"Max number of periods per day",
+	.str_number_of_planning_periods=L"Number of planning periods",
+	.str_teachers_teach=L"The teachers teach",
 };
 
 const Language LANG_SPA = {
@@ -433,7 +443,7 @@ const Language LANG_SPA = {
 	.str_list_of_class_groups=L"Lista de Grupos de Clases",
 	/* Adding */
 	.str_add_feature=L"Añadir Característica",
-	.str_add_room=L"Añadir Salas",
+	.str_add_room=L"Añadir Sala",
 	.str_add_subject=L"Añadir Asignaturas",
 	.str_add_subject_group=L"Añadir Grupo de Asignaturas",
 	.str_add_teacher=L"Añadir Maestro",
@@ -531,6 +541,11 @@ const Language LANG_SPA = {
 	.str_cancel=L"",
 	.str_confirm_close_without_saving=L"",
 	.str_subjects_in_the_group=L"",
+	.str_max_number_of_days=L"",
+	.str_max_number_of_periods=L"",
+	.str_max_number_of_periods_per_day=L"",
+	.str_number_of_planning_periods=L"",
+	.str_teachers_teach=L"",
 };
 
 const Language LANG_DEU = {
@@ -694,4 +709,9 @@ const Language LANG_DEU = {
 	.str_cancel=L"Abbrechen",
 	.str_confirm_close_without_saving=L"",
 	.str_subjects_in_the_group=L"",
+	.str_max_number_of_days=L"",
+	.str_max_number_of_periods=L"",
+	.str_max_number_of_periods_per_day=L"",
+	.str_number_of_planning_periods=L"",
+	.str_teachers_teach=L"",
 };
