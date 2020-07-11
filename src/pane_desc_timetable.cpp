@@ -14,6 +14,7 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 	wxSizer * labels_sz = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * choice_sz = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * grid_sz = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * fields_sz = new wxFlexGridSizer(2,5,5);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_desc_timetable, wxPoint(30,30), wxSize(200,25));
@@ -93,8 +94,26 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 	}
 
 	wxStaticText * desc_title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_lecture_desc, wxDefaultPosition, wxSize(200,30));
+	wxStaticText * class_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class);
+	wxStaticText * teacher_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher);
+	wxStaticText * subject_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_subject);
+	wxStaticText * room_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room);
+	wxStaticText * day_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_day);
+	wxStaticText * period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_period);
 
-	wxButton * detail_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_detail, wxDefaultPosition, wxSize(200,30));
+	class_label->SetFont(*m_owner->m_bold_text_font);
+	teacher_label->SetFont(*m_owner->m_bold_text_font);
+	subject_label->SetFont(*m_owner->m_bold_text_font);
+	room_label->SetFont(*m_owner->m_bold_text_font);
+	day_label->SetFont(*m_owner->m_bold_text_font);
+	period_label->SetFont(*m_owner->m_bold_text_font);
+
+	m_class_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_teacher_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_subject_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_room_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_day_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_period_text = new wxStaticText(this, wxID_ANY, wxT(""));
 
 	m_solution_choice->Bind(wxEVT_CHOICE, &DescTimetablePane::OnRedrawGridRequest, this);
 	m_class_choice->Bind(wxEVT_CHOICE, &DescTimetablePane::OnRedrawGridRequest, this);
@@ -111,9 +130,21 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 	choice_sz->Add(m_room_choice, 1, wxALL, 5);
 	choice_sz->Add(m_subject_choice, 1, wxALL, 5);
 
+	fields_sz->Add(class_label);
+	fields_sz->Add(m_class_text);
+	fields_sz->Add(teacher_label);
+	fields_sz->Add(m_teacher_text);
+	fields_sz->Add(subject_label);
+	fields_sz->Add(m_subject_text);
+	fields_sz->Add(room_label);
+	fields_sz->Add(m_room_text);
+	fields_sz->Add(day_label);
+	fields_sz->Add(m_day_text);
+	fields_sz->Add(period_label);
+	fields_sz->Add(m_period_text);
+
 	desc_sz->Add(desc_title, 0, wxALL, 15);
-	desc_sz->AddStretchSpacer();
-	desc_sz->Add(detail_btn, 0, wxEXPAND | wxALL, 15);
+	desc_sz->Add(fields_sz);
 
 	grid_sz->Add(m_grid, 1, wxRIGHT | wxEXPAND, 5);
 	grid_sz->Add(desc_sz, 0, wxEXPAND | wxLEFT, 5);
@@ -125,7 +156,39 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 	sizer->Add(choice_sz, 0, wxEXPAND | wxALIGN_CENTER | wxLEFT | wxRIGHT, 15);
 	sizer->Add(grid_sz, 1, wxEXPAND | wxALL, 15);
 
-	this->SetSizerAndFit(sizer);
+	SetSizer(sizer);
+	Layout();
+
+	m_grid->Bind(wxEVT_GRID_SELECT_CELL, &DescTimetablePane::OnGridSelection, this);
+}
+
+void DescTimetablePane::OnGridSelection(wxGridEvent & evt) {
+	int i_met, col = evt.GetCol(), row = evt.GetRow();
+	bool chose_solution = m_solution_choice->GetSelection() != 0;
+	bool chose_class = m_class_choice->GetSelection() != 0;
+	bool chose_teacher = m_teacher_choice->GetSelection() != 0;
+	School * school = m_owner->m_school;
+	if(col > 0 && row > 0 && chose_solution && (chose_class || chose_teacher) ){
+		Solution * solution = & (m_owner->m_school->solutions[m_solution_choice->GetSelection()-1]);
+		int i_per = (col-1) * school->n_periods_per_day + (row-1);
+
+		for(i_met = 0; i_met < solution->n_meetings; ++i_met){
+			Meeting * met = &(solution->meetings[i_met]);
+			if(i_per == met->period
+					&& (!chose_class || met->m_class == &school->classes[ m_class_choice->GetSelection()-1])
+					&& (!chose_teacher || met->teacher == &school->teachers[m_teacher_choice->GetSelection()-1])){
+				m_class_text->SetLabel(wxString::FromUTF8(met->m_class->name));
+				m_teacher_text->SetLabel(wxString::FromUTF8(met->teacher->name));
+				m_subject_text->SetLabel(wxString::FromUTF8(met->subj->name));
+				m_room_text->SetLabel(wxString::FromUTF8(met->room->name));
+				m_day_text->SetLabel(wxString::FromUTF8(school->day_names[met->period / school->n_periods_per_day]));
+				m_period_text->SetLabel(wxString::FromUTF8(school->daily_period_names[met->period % school->n_periods_per_day]));
+
+				break;
+			}
+		}
+
+	}
 }
 
 void DescTimetablePane::OnRedrawGridRequest(wxCommandEvent & evt){
@@ -137,6 +200,13 @@ void DescTimetablePane::OnRedrawGridRequest(wxCommandEvent & evt){
 	bool chose_teacher = m_teacher_choice->GetSelection() != 0;
 	bool chose_subject = m_subject_choice->GetSelection() != 0;
 	bool chose_room = m_room_choice->GetSelection() != 0;
+
+	m_class_text->SetLabel("");
+	m_teacher_text->SetLabel("");
+	m_subject_text->SetLabel("");
+	m_room_text->SetLabel("");
+	m_day_text->SetLabel("");
+	m_period_text->SetLabel("");
 
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		for(j = 0;j < school->n_days; ++j){

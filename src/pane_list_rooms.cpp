@@ -153,7 +153,6 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 					more_than_zero_features=true;
 				}
 			}
-			printf("The name of the %d th feature was %s\n", i, school->feature_names[i]);
 		}
 		m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 		for(i = 0; i < school->n_periods; ++i){

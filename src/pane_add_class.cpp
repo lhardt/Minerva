@@ -137,6 +137,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.name = copy_wx_string(m_name_text->GetValue());
 		c.short_name = copy_wx_string(m_name_text->GetValue());
 		c.size = m_size_text->GetValue();
+		c.periods = (int *) calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
 			c.periods[i] =
 					(m_periods->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==wxT("Disponível") ? 1:0);
@@ -152,7 +153,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			c.needs = (SubjectQuantity*) calloc(n_needs + 1, sizeof(SubjectQuantity));
 			int i_need = 0;
 
-			for(i_need = 0; i < n_needs; ++i_need){
+			for(i_need = 0; i_need < n_needs; ++i_need){
 				IntPairClientData* item_data =(IntPairClientData*) m_selected_subjects_list->GetClientObject(i_need);
 				c.needs[i_need].subject = &school->subjects[ item_data->m_v1 ];
 				c.needs[i_need].quantity = item_data->m_v2;

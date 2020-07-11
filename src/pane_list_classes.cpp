@@ -22,7 +22,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 
 	wxSizer * body_sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * description_sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * fields_sizer = new wxGridSizer(2,10,10);
+	wxSizer * fields_sizer = new wxFlexGridSizer(2,10,10);
 
 	body_sizer->Add(m_classes_list, 0, wxEXPAND|wxALL, 15);
 	body_sizer->Add(description_sizer, 1, wxEXPAND|wxALL, 15);
@@ -52,12 +52,12 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_exit_period_text = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_subjects_text = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(250,200));
-	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"));
-	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"));
+	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
+	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove);
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(wxT("Disponível"));
-	grid_values.push_back(wxT("Indisponível"));
+	grid_values.push_back(m_owner->m_lang->str_class_availible);
+	grid_values.push_back(m_owner->m_lang->str_class_unavailible);
 	m_periods_grid->SetPossibleValues(grid_values);
 
 	wxVector<wxColor> grid_colors = wxVector<wxColor>();
@@ -65,8 +65,8 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	grid_colors.push_back(wxColor(255,200,200));
 	m_periods_grid->SetBackgroundColors(grid_colors);
 
-	m_periods_grid->m_basic_col_name = wxT("Dia");
-	m_periods_grid->m_basic_row_name = wxT("Período");
+	m_periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
+	m_periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
 	m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 	for(i = 0; i < school->n_periods; ++i){
@@ -132,23 +132,26 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		Class * c = &school->classes[m_classes_list->GetSelection()];
 		m_name_text->SetLabel(wxString::FromUTF8(c->name));
 		m_size_text->SetLabel(wxString::Format("%d",c->size));
-		m_free_periods_text->SetLabel(wxString(c->can_have_free_periods_flag?wxT("Sim"):wxString::FromUTF8("Não")));
+		m_free_periods_text->SetLabel(c->can_have_free_periods_flag? m_owner->m_lang->str_yes : m_owner->m_lang->str_no );
 		m_entry_period_text->SetLabel(wxString::Format("%s",school->period_names[c->maximal_entry_period]));
 		m_exit_period_text->SetLabel(wxString::Format("%s",school->period_names[c->minimal_exit_period]));
 		m_subjects_text->SetLabel(wxString::FromUTF8(""));
 		if(c->needs != NULL){
 			for(i = 0; c->needs[i].subject != NULL; ++i){
-				m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxString::FromUTF8(c->needs[i].subject->name) +
-						wxString::Format(wxString::FromUTF8(": %d períodos;\n"), c->needs[i].quantity));
+				if(i == 0){
+					m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxString::FromUTF8(c->needs[i].subject->name) +
+						wxString::Format(wxString::FromUTF8(": %d períodos;"), c->needs[i].quantity));
+				} else {
+					m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxT("\n") + wxString::FromUTF8(c->needs[i].subject->name) +
+						wxString::Format(wxString::FromUTF8(": %d períodos;"), c->needs[i].quantity));
+				}
 			}
-
 		}
-		m_subjects_text->Wrap(300);
 
 		for(i = 0; i < school->n_periods; ++i){
 			if(school->periods[i]){
 				m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						wxString::Format("%s" , (c->periods[i] > 0?wxT("Aberta"):wxT("Fechada")) ));
+						c->periods[i] > 0?m_owner->m_lang->str_class_availible:m_owner->m_lang->str_class_unavailible);
 				m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
 						(c->periods[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
 			}

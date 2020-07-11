@@ -170,10 +170,10 @@ const Language LANG_POR = {
 	.str_lecture_desc=L"Descrição da Aula",
 	.str_detail=L"Detalhar",
 
-	.str_desc_timetable=L"",
-	.str_class=L"",
-	.str_teacher=L"",
-	.str_subject=L"",
+	.str_desc_timetable=L"Ver Grade",
+	.str_class=L"Turma",
+	.str_teacher=L"Professor",
+	.str_subject=L"Disciplina",
 
 	.str_generated_timetables=L"Grades Geradas",
 	.str_generate_timetable_text=L"Aqui poderemos gerar novas grades horárias. Pode demorar um pouco, fique tranquilo.",
@@ -187,10 +187,10 @@ const Language LANG_POR = {
 	.str_cancel=L"Cancelar",
 	.str_confirm_close_without_saving=L"Deseja salvar antes de sair?",
 	.str_subjects_in_the_group=L"Disciplinas no grupo",
-	.str_max_number_of_days=L"Número máximo de dias",
-	.str_max_number_of_periods=L"Número máximo de períodos",
-	.str_max_number_of_periods_per_day=L"Número máximo de pe",
-	.str_number_of_planning_periods=L"Número de períodos de planejamento",
+	.str_max_number_of_days=L"N° máx de dias",
+	.str_max_number_of_periods=L"N° máx de períodos",
+	.str_max_number_of_periods_per_day=L"N° máx. de períodos por dia",
+	.str_number_of_planning_periods=L"N° de períodos de planejamento",
 	.str_teachers_teach=L"Os professores ensinam",
 };
 

@@ -83,6 +83,7 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 				school->solutions[school->n_solutions] = gen_solution;
 				++ school->n_solutions;
 				m_err_msg->SetLabel(m_owner->m_lang->str_success);
+				m_owner->NotifyNewUnsavedData();
 			} else {
 				free_meetings_list(gen_solution.meetings);
 				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);

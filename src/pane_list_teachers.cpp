@@ -12,26 +12,42 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
-
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_teachers, wxDefaultPosition, wxSize(400,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	m_teachers_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300));
-	m_name_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name, wxDefaultPosition, wxSize(300,20));
-	m_max_days_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_days, wxDefaultPosition, wxSize(300,20));
-	m_max_periods_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods, wxDefaultPosition, wxSize(300,20));
-	m_max_ppd_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods_per_day, wxDefaultPosition,wxSize(300,20));
-	m_planning_periods_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_number_of_planning_periods, wxDefaultPosition,wxSize(300,20));
-	m_teaches_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_teaches, wxDefaultPosition,wxSize(300,-1), wxST_NO_AUTORESIZE);
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
+	wxStaticText * max_days_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_days);
+	wxStaticText * max_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods);
+	wxStaticText * max_ppd_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods_per_day);
+	wxStaticText * planning_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_number_of_planning_periods);
+	wxStaticText * teaches_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_teaches);
+	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availibility, wxDefaultPosition,wxSize(300,20));
 
+	name_label->SetFont(*m_owner->m_bold_text_font);
+	max_days_label->SetFont(*m_owner->m_bold_text_font);
+	max_periods_label->SetFont(*m_owner->m_bold_text_font);
+	max_ppd_label->SetFont(*m_owner->m_bold_text_font);
+	planning_periods_label->SetFont(*m_owner->m_bold_text_font);
+	teaches_label->SetFont(*m_owner->m_bold_text_font);
+	periods_label->SetFont(*m_owner->m_bold_text_font);
+
+	m_teachers_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300));
+	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_max_days_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_max_periods_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_max_ppd_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_planning_periods_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_teaches_text = new wxStaticText(this, wxID_ANY, wxT(""));
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
 
-	wxStaticText * periods_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availibility, wxDefaultPosition,wxSize(300,20));
+
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
+	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
+	wxSizer * fields_sz = new wxFlexGridSizer(2,5,5);
+	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
+
 	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(300,200));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
@@ -61,17 +77,23 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	edit_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnEditButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnDeleteButtonClicked, this);
 
-
 	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
 	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
 
-	desc_sz->Add(m_name_text, 0, wxBOTTOM, 5);
-	desc_sz->Add(m_max_days_text, 0, wxBOTTOM, 5);
-	desc_sz->Add(m_max_periods_text, 0, wxBOTTOM, 5);
-	desc_sz->Add(m_max_ppd_text, 0, wxBOTTOM, 5);
-	desc_sz->Add(m_planning_periods_text, 0, wxBOTTOM, 5);
-	desc_sz->Add(m_teaches_text, 10, wxEXPAND | wxBOTTOM, 5);
-	desc_sz->Add(periods_text, 0, wxTOP, 15);
+	fields_sz->Add(name_label);
+	fields_sz->Add(m_name_text);
+	fields_sz->Add(max_days_label);
+	fields_sz->Add(m_max_days_text);
+	fields_sz->Add(max_periods_label);
+	fields_sz->Add(m_max_periods_text);
+	fields_sz->Add(max_ppd_label);
+	fields_sz->Add(m_max_ppd_text);
+	fields_sz->Add(planning_periods_label);
+	fields_sz->Add(m_planning_periods_text);
+	fields_sz->Add(teaches_label);
+	fields_sz->Add(m_teaches_text);
+	desc_sz->Add(fields_sz);
+	desc_sz->Add(periods_label, 0, wxTOP, 15);
 	desc_sz->Add(m_periods_grid, 0, wxBOTTOM, 15);
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(butn_sz, 0, 0);

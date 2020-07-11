@@ -19,6 +19,8 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 	int old_n_rows = GetNumberRows();
 	int old_n_cols = GetNumberCols();
 
+	EnableEditing(false);
+
 	m_immutable_cell_text = wxT("");
 	m_immutable_cell_color = wxColor(200, 200, 200);
 

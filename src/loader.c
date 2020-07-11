@@ -514,19 +514,19 @@ const char * const CREATE_TABLE_DEMAND =
 				"id_feature				integer,"
 				"min_score				integer,"
 				"score  				integer,"
-				"FOREIGN KEY (teaches_id) REFERENCES Teaches(id),"
-				"FOREIGN KEY (feature_id) REFERENCES Feature(id)"
+				"FOREIGN KEY (id_teaches) REFERENCES Teaches(id),"
+				"FOREIGN KEY (id_feature) REFERENCES Feature(id)"
 			")");
 const char * const INSERT_TABLE_DEMAND =
 			("INSERT INTO Demand VALUES (?,?,?)");
 const char * const LASTID_DEMAND =
 			("SELECT id FROM Demand where rowid = last_insert_rowid()");
 const char * const SELECT_DEMAND_BY_TEACHES_ID =
-			("SELECT * FROM Demand WHERE teaches_id=?");
+			("SELECT * FROM Demand WHERE id_teaches=?");
 const char * const DELETE_DEMAND_BY_TEACHES_ID =
- 			("DELETE FROM Demand WHERE teaches_id=?");
+ 			("DELETE FROM Demand WHERE id_teaches=?");
 const char * const DELETE_DEMAND_BY_FEATURE_ID =
- 			("DELETE FROM Demand WHERE feature_id=?");
+ 			("DELETE FROM Demand WHERE id_feature=?");
 const char * const DELETE_DEMAND_BY_ID =
  			("DELETE FROM Demand WHERE id=?");
 const char * const DELETE_DEMAND_BY_SUBJECT_ID =
@@ -2074,13 +2074,7 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 					break;
 				}
 			}
-			printf("To select attendance with id %d \n", classes[i].id);
-			int * attendance = select_attendance(console_out, db, SELECT_CLASS_ATTENDANCE_BY_CLASS_ID, classes[i].id, school);
-			for(j = 0; attendance[j] >= 0 && j < school->n_periods; ++j){
-				classes[i].periods[j] = attendance[j];
-			}
-			classes[i].periods[j] = -1;
-			free(attendance);
+			classes[i].periods = select_attendance(console_out, db, SELECT_CLASS_ATTENDANCE_BY_CLASS_ID, classes[i].id, school);
 
 			select_all_class_subject_by_class_id(console_out, db, &classes[i], school);
 

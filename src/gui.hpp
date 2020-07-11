@@ -681,8 +681,15 @@ class DescTimetablePane : public wxScrolledWindow {
 	wxChoice * m_subject_choice;
 	wxChoice * m_room_choice;
 	wxGrid   * m_grid;
+	wxStaticText * m_class_text;
+	wxStaticText * m_teacher_text;
+	wxStaticText * m_subject_text;
+	wxStaticText * m_room_text;
+	wxStaticText * m_day_text;
+	wxStaticText * m_period_text;
 
 	void OnRedrawGridRequest(wxCommandEvent &);
+	void OnGridSelection(wxGridEvent & evt);
 };
 
 /* Manual */

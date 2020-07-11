@@ -125,7 +125,11 @@ void AddTeacherPane::ClearInsertedData(){
 	int i;
 	m_name_text->Clear();
 	m_teaches_subjects_list->Clear();
+	m_all_subjects_list->Clear();
 
+	for(int i = 0; i < m_owner->m_school->n_subjects; ++i){
+		m_all_subjects_list->Insert(wxString::FromUTF8(m_owner->m_school->subjects[i].name), i, new IntClientData(i));
+	}
 	for(i = 0; i < school->n_periods; ++i){
 		if(school->periods[i] == false){
 			m_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
@@ -150,6 +154,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.max_meetings_per_day = school->n_periods_per_day;
 		t.max_meetings_per_class_per_day = school->n_periods_per_day;
 		t.num_planning_periods = 0;
+		t.subordinates = NULL;
 
 		if(m_teaches_subjects_list->GetCount() > 0){
 			int n_teaches = m_teaches_subjects_list->GetCount();

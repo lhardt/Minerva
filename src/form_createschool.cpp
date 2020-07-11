@@ -159,6 +159,7 @@ void CreateSchoolForm::OnCreateClicked(wxCommandEvent & ev){
 		}
 		school->n_periods = school->n_days * school->n_periods_per_day;
 		school->period_names = (char**) calloc( school->n_periods + 1, sizeof(char*));
+		school->periods = (bool*) calloc( school->n_periods + 1, sizeof(bool));
 		for(i = 0; i < school->n_periods; ++i){
 			school->period_names[i] = (char*)calloc(1,sizeof(char));
 			school->periods[i] = m_owner->m_lang->str_adj__open == m_grid->GetCellValue(1 + (i % school->n_periods_per_day), 1 +  (i / school->n_periods_per_day));
