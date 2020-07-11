@@ -20,6 +20,7 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 
 	name_label->SetFont(*m_owner->m_small_font);
 	teachers_label->SetFont(*m_owner->m_small_font);
+	subjects_label->SetFont(*m_owner->m_small_font);
 	m_err_msg->SetFont(*m_owner->m_small_font);
 
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
@@ -115,7 +116,7 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		group.teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*));
 		/* group.max_days will be the least of .max_days of all teachers. Similarly */
 		for(i = 0; i < n_members; ++i){
-			int i_teacher = ((IntClientData*)m_selected_teachers_list->GetClientData(i))->m_value;
+			int i_teacher = ((IntClientData*)m_selected_teachers_list->GetClientObject(i))->m_value;
 			Teacher * teacher = &school->teachers[i_teacher];
 			group.subordinates[i_teacher] = 1;
 			if(added_ctr == 0){

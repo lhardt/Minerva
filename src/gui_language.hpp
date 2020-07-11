@@ -188,6 +188,11 @@ typedef struct Language {
 	const wchar_t * const str_max_number_of_periods_per_day;
 	const wchar_t * const str_number_of_planning_periods;
 	const wchar_t * const str_teachers_teach;
+
+	const wchar_t * const str_group_availible;
+	const wchar_t * const str_group_unavailible;
+	const wchar_t * const str_group_availibility;
+	const wchar_t * const str_group_members;
 } Language;
 
 const extern Language LANG_POR;

@@ -192,6 +192,11 @@ const Language LANG_POR = {
 	.str_max_number_of_periods_per_day=L"N° máx. de períodos por dia",
 	.str_number_of_planning_periods=L"N° de períodos de planejamento",
 	.str_teachers_teach=L"Os professores ensinam",
+
+	.str_group_availible=L"Disponível",
+	.str_group_unavailible=L"Indisponível",
+	.str_group_availibility=L"Disponibilidade",
+	.str_group_members=L"Membros do Grupo",
 };
 
 const Language LANG_ENG = {
@@ -374,6 +379,11 @@ const Language LANG_ENG = {
 	.str_max_number_of_periods_per_day=L"Max number of periods per day",
 	.str_number_of_planning_periods=L"Number of planning periods",
 	.str_teachers_teach=L"The teachers teach",
+
+	.str_group_availible=L"Availible",
+	.str_group_unavailible=L"Unavailible",
+	.str_group_availibility=L"Availibility",
+	.str_group_members=L"Group members",
 };
 
 const Language LANG_SPA = {
@@ -546,6 +556,10 @@ const Language LANG_SPA = {
 	.str_max_number_of_periods_per_day=L"",
 	.str_number_of_planning_periods=L"",
 	.str_teachers_teach=L"",
+	.str_group_availible=L"",
+	.str_group_unavailible=L"",
+	.str_group_availibility=L"",
+	.str_group_members=L"",
 };
 
 const Language LANG_DEU = {
@@ -714,4 +728,9 @@ const Language LANG_DEU = {
 	.str_max_number_of_periods_per_day=L"Die maximal Anzahl von Zeiträume pro Tag",
 	.str_number_of_planning_periods=L"Die Anzahl von Klassenplanungszeiträume",
 	.str_teachers_teach=L"Die Lehrer lehren",
+
+	.str_group_availible=L"",
+	.str_group_unavailible=L"",
+	.str_group_availibility=L"",
+	.str_group_members=L"",
 };

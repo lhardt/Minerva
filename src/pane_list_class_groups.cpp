@@ -11,12 +11,7 @@ ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent,
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
-
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Grupos de Turmas"), wxDefaultPosition, wxSize(400,25));
+	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_class_groups, wxDefaultPosition, wxSize(400,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
 	wxArrayString group_names;
@@ -25,17 +20,27 @@ ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent,
 			group_names.push_back(wxString::FromUTF8(school->classes[i].name));
 		}
 	}
-
 	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), group_names);
-	m_name_text = new wxStaticText(this, wxID_ANY, wxT("Nome do Grupo: "), wxDefaultPosition, wxSize(400,25));
-	m_members_text = new wxStaticText(this, wxID_ANY, wxT("Membros do Grupo: "), wxDefaultPosition, wxSize(400,-1));
 
-	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, wxT("Períodos em que o grupo inteiro está presente: "), wxDefaultPosition, wxSize(300,30));
+	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name);
+	wxStaticText * members_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_members);
+	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_availibility);
+
+	name_label->SetFont(*m_owner->m_bold_text_font);
+	members_label->SetFont(*m_owner->m_bold_text_font);
+	periods_label->SetFont(*m_owner->m_bold_text_font);
+	periods_label->SetFont(*m_owner->m_bold_text_font);
+
+	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_members_text = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(400,300));
+	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
+	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(wxT("Disponível"));
-	grid_values.push_back(wxT("Indisponível"));
+	grid_values.push_back(m_owner->m_lang->str_group_availible);
+	grid_values.push_back(m_owner->m_lang->str_group_unavailible);
 	m_periods_grid->SetPossibleValues(grid_values);
 
 	wxVector<wxColor> grid_colors = wxVector<wxColor>();
@@ -43,21 +48,26 @@ ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent,
 	grid_colors.push_back(wxColor(255,200,200));
 	m_periods_grid->SetBackgroundColors(grid_colors);
 
-	m_periods_grid->m_basic_col_name = wxT("Dia");
-	m_periods_grid->m_basic_row_name = wxT("Período");
+	m_periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
+	m_periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
 	m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 
-	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));
-	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"), wxDefaultPosition, wxSize(200,30));
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
+	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
+	wxSizer * fields_sz = new wxFlexGridSizer(2,10,10);
+	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
 
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
 	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
 	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
 
-	desc_sz->Add(m_name_text, 0, wxBOTTOM, 5);
-	desc_sz->Add(m_members_text, 0, wxBOTTOM, 5);
+	fields_sz->Add(name_label);
+	fields_sz->Add(m_name_text);
+	fields_sz->Add(members_label);
+	fields_sz->Add(m_members_text);
+	desc_sz->Add(fields_sz, 0, wxBOTTOM, 5);
 	desc_sz->Add(periods_label, 0, wxBOTTOM, 5);
 	desc_sz->Add(m_periods_grid, 0, wxBOTTOM, 5);
 	desc_sz->AddStretchSpacer();
@@ -93,11 +103,16 @@ void ListClassGroupsPane::OnSelectionChanged(wxCommandEvent & evt){
 		}
 		if(i_group == i_select +1){
 			--i_class;
-			m_name_text->SetLabel(wxT("Nome do Grupo: ") + wxString::FromUTF8(school->classes[i_class].name));
+			m_name_text->SetLabel(wxString::FromUTF8(school->classes[i_class].name));
 
 			for(i = 0; i < school->n_classes; ++i){
 				if(school->classes[i_class].subordinates[i] > 0){
-					m_members_text->SetLabel(m_members_text->GetLabel() + "\n\t" + wxString::FromUTF8(school->classes[i].name));
+					if(i == 0){
+						m_members_text->SetLabel(wxString::FromUTF8(school->classes[i].name));
+					} else {
+						m_members_text->SetLabel(m_members_text->GetLabel() + "\n" + wxString::FromUTF8(school->classes[i].name));
+
+					}
 				}
 			}
 		}

@@ -341,12 +341,19 @@ class AddClassGroupPane : public wxScrolledWindow {
 
 	wxTextCtrl * m_name_text;
 	wxChoice * m_all_classes_list;
+	wxChoice * m_all_subjects_list;
 	wxListBox  * m_selected_classes_list;
+	wxListBox  * m_selected_subjects_list;
 	wxStaticText * m_err_msg;
+	wxSpinCtrl * m_nper_text;
 
 	void OnAddGroupButtonClicked(wxCommandEvent &);
 	void OnAddClassButtonClicked(wxCommandEvent &);
-	void OnRemoveAllButtonClicked(wxCommandEvent &);
+	void OnRemoveClassButtonClicked(wxCommandEvent &);
+	void OnAddSubjectButtonClicked(wxCommandEvent &);
+	void OnRemoveSubjectButtonClicked(wxCommandEvent &);
+	void OnRemoveAllClassesButtonClicked(wxCommandEvent &);
+	void OnRemoveAllSubjectsButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };
 
