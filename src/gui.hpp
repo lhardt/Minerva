@@ -633,6 +633,9 @@ class LecturePeriodPrefPane : public wxScrolledWindow {
 
  private:
 	Application * m_owner;
+	wxChoice * m_class_choice;
+	wxChoice * m_subj_choice;
+	wxChoice * m_occurence_choice;
 };
 
 class LectureTeacherPrefPane : public wxScrolledWindow {

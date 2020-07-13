@@ -426,7 +426,7 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		}
 		case LHID_OF(LHN_LECTURE_PERIOD_PREF): {
 			CloseOpenedPane();
-			m_open_pane = new AddLecturePane(m_owner, m_center_pane, wxPoint(100,15));
+			m_open_pane = new LecturePeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_LECTURE_TEACHER_PREF): {
