@@ -94,14 +94,15 @@ void print_meeting_list(FILE * out, const Meeting * const meetings){
 	} else {
 		for(i = 0; meetings[i].m_class != NULL; i++){
 			fprintf(out, "Meeting %2d %s: T(%s) ",
-			i,
-			meetings[i].m_class->name,
-			(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
+					i,
+					meetings[i].m_class->name,
+					(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
 			print_int_list(out,meetings[i].possible_teachers);
 			fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
 			print_int_list(out,meetings[i].possible_rooms);
 			fprintf(out, "; P(%d) ", meetings[i].period);
 			print_int_list(out,meetings[i].possible_periods);
+			fprintf(out, "; S(%s)", meetings[i].subj->name);
 			fprintf(out,"\n");
 		}
 	}
@@ -199,20 +200,48 @@ void free_node(DecisionNode * node){
 	// }/
 }
 
+void print_teacher(FILE * out, const Teacher * const t){
+	if(t && out){
+		fprintf(out, "Teacher: \n\tid: %d", t->id);
+		fprintf(out, "\n\tname: %s", t->name);
+		fprintf(out, "\n\tsname: %s", t->short_name);
+		fprintf(out, "\n\tmaxdays: %d", t->max_days);
+		fprintf(out, "\n\tmax_meet: %d", t->max_meetings);
+		fprintf(out, "\n\tmax_pd: %d", t->max_meetings_per_day);
+		fprintf(out, "\n\tmax_pcpd: %d", t->max_meetings_per_class_per_day);
+		fprintf(out, "\n\tnum_plan: %d", t->num_planning_periods);
+		fprintf(out, "\n\tday_max_meet: ");
+		print_int_list(out, t->day_max_meetings);
+		fprintf(out,"\n\tday_scores: ");
+		print_int_list(out, t->day_scores);
+		fprintf(out,"\n\tperiods: ");
+		print_int_list(out, t->periods);
+		fprintf(out,"\n\trooms: ");
+		print_int_list(out, t->rooms);
+		fprintf(out,"\n\tsubordinates: ");
+		print_int_list(out, t->subordinates);
+		fprintf(out, "\n\tteaches: ");
+		for(int i = 0; t->teaches != NULL && t->teaches[i] != NULL && t->teaches[i]->subject != NULL; ++i){
+			printf("(%s, %d), ", t->teaches[i]->subject->name, t->teaches[i]->score);
+		}
+		printf("\n");
+	}
+}
+
 void print_school(FILE * out, const School * const s){
 	if(s && out){
-		printf("School:\n\tname:	 %s\n", s->name);
-		printf("\tn_periods: 		 %d\n", s->n_periods);
-		printf("\tn_periods_per_day: %d\n", s->n_periods_per_day);
-		printf("\tn_days: 			 %d\n", s->n_days);
-		printf("\tn_per: 			 %d\n", s->n_periods);
-		printf("\tn_features: 		 %d\n", s->n_features);
-		printf("\tn_classes: 		 %d\n", s->n_classes);
-		printf("\tn_teachers: 	 	 %d\n", s->n_teachers);
-		printf("\tn_subjects: 	 	 %d\n", s->n_subjects);
-		printf("\tn_rooms:	 	 	 %d\n", s->n_rooms);
-		printf("\tn_teaches: 	 	 %d\n", s->n_teaches);
-		printf("\tn_subj_groups: 	 %d\n", s->n_subject_groups);
+		fprintf(out, "School:\n\tname:	 %s\n", s->name);
+		fprintf(out, "\tn_periods: 		 %d\n", s->n_periods);
+		fprintf(out, "\tn_periods_per_day: %d\n", s->n_periods_per_day);
+		fprintf(out, "\tn_days: 			 %d\n", s->n_days);
+		fprintf(out, "\tn_per: 			 %d\n", s->n_periods);
+		fprintf(out, "\tn_features: 		 %d\n", s->n_features);
+		fprintf(out, "\tn_classes: 		 %d\n", s->n_classes);
+		fprintf(out, "\tn_teachers: 	 	 %d\n", s->n_teachers);
+		fprintf(out, "\tn_subjects: 	 	 %d\n", s->n_subjects);
+		fprintf(out, "\tn_rooms:	 	 	 %d\n", s->n_rooms);
+		fprintf(out, "\tn_teaches: 	 	 %d\n", s->n_teaches);
+		fprintf(out, "\tn_subj_groups: 	 %d\n", s->n_subject_groups);
 
 		// printf("\t\t")
 	}

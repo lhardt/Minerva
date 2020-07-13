@@ -37,9 +37,7 @@ int * make_possible_teacher_list(School * school, Meeting * meeting){
 		for(i_teaches = 0; teacher->teaches[i_teaches] != NULL; i_teaches++){
 			if(teacher->teaches[i_teaches]->subject == meeting->subj){
 				scores[i_teacher] = teacher->teaches[i_teaches]->score;
-			} else {
-				/* TODO: written for clarity. calloc makes it redundant */
-				scores[i_teacher] = 0;
+				printf("Setting score of %d to meeting (subj: %s) with teacher %s (i_teacher %d)\n", scores[i_teacher], meeting->subj->name, teacher->name, i_teacher);
 			}
 		}
 	}
@@ -88,7 +86,6 @@ DecisionTree * init_decision_tree(School * school){
 	tree->start = calloc(1, sizeof(DecisionNode));
 
 	tree->n_meetings = count_required_meetings(school, NULL, NULL);
-
 	* tree->start = (DecisionNode) {
 		.id=0,
 		.parent = NULL,
@@ -106,14 +103,11 @@ DecisionTree * init_decision_tree(School * school){
 		.is_consistent = true,
 		.score = 1
 	};
-
 	conclusion = tree->start->conclusion;
 
 	for(i_class = 0; i_class < school->n_classes; i_class++){
 		class = &(school->classes[i_class]);
-		printf("Maybe needs!!!!!\n");
 		for(i_need = 0; class->needs[i_need].subject != NULL; i_need++){
-			printf("Neeeds!!!!!\n");
 			for(i_quant = 0; i_quant < class->needs[i_need].quantity; i_quant++){
 				conclusion[i_meet].m_class = class;
 				conclusion[i_meet].subj  = class->needs[i_need].subject;
@@ -124,7 +118,12 @@ DecisionTree * init_decision_tree(School * school){
 				conclusion[i_meet].possible_teachers = make_possible_teacher_list(school,&conclusion[i_meet]);
 				conclusion[i_meet].possible_rooms = make_possible_room_list(school, &conclusion[i_meet]);
 				conclusion[i_meet].possible_periods = make_possible_period_list(school,&conclusion[i_meet]);
+				printf("Conclusion [i_meet] with possible_teachers: ");
+				print_int_list(stdout, conclusion[i_meet].possible_teachers);
+				printf("\n");
 				i_meet++;
+
+				// printf("(i_class, i_need, i_meet) (%d, %d, %d)\n", i_class, i_need, i_meet);
 			}
 		}
 	}
@@ -134,13 +133,12 @@ DecisionTree * init_decision_tree(School * school){
 
 DecisionNode * make_decision(const School * const school, DecisionNode * parent){
 	int i_child = 0;
-	DecisionNode * child;
+	DecisionNode * child = NULL;
 	bool has_children = true;
 
 	if(!parent->is_final && parent->is_consistent){
 		if(parent->children_score == NULL){
 			has_children = score_possible_children(school, parent);
-			child = &parent->children[0];
 		} else {
 			/* Find first not initialized */
 			for(i_child = 0; parent->children_score_order[i_child] >= 0; ++i_child){
@@ -153,11 +151,11 @@ DecisionNode * make_decision(const School * const school, DecisionNode * parent)
 					break;
 				}
 			}
-			child = &parent->children[i_child];
 		}
 		if( !has_children || parent->children_score_order[i_child] < 0){
 			return NULL;
 		}
+		child = &parent->children[i_child];
 		*child = (DecisionNode){
 			.id=1,
 			.type=parent->next_node_type,
@@ -195,30 +193,32 @@ DecisionNode * make_decision(const School * const school, DecisionNode * parent)
 				break;
 			}
 		}
+		child->is_consistent = new_node_elimination(school, child);
+		child->score = new_node_evaluation(school, child);
 	} else {
-		printf("Was final. No can do.");
+		printf("Was final. No can do. Parent isfinal %d, Parent isConsistent %d\n", parent->is_final, parent->is_consistent);
 	}
-
-	child->score = new_node_evaluation(school, child);
-
+	// sleep(1);
 	return child;
 }
 
 
 DecisionNode * dfs_timetable_create(const School * const school , DecisionNode* start){
-	DecisionNode * curr = start,* prev;
+	DecisionNode * curr = start,* next;
 	curr = start;
-	prev = NULL;
-	do{
-		prev = curr;
-		curr = make_decision(school, curr);
-		if(curr != NULL){
-			new_node_elimination(school, curr);
+	next = NULL;
+	int i = 0;
+	while(curr != NULL && i < 100 && !curr->is_final){
+		next = make_decision(school, curr);
+
+		if(next == NULL || !curr->is_consistent){
+			curr = curr->parent;
 		} else {
-			curr = prev;
-			prev = prev->parent;
+			curr = next;
 		}
-	} while(!curr->is_final && prev != NULL);
+		++i;
+	}
+
 	return curr;
 }
 
@@ -242,7 +242,7 @@ Meeting * create_timetable(School * school){
 		return NULL;
 	}
 
-	root_elimination(school, tree->start);
+	//root_elimination(school, tree->start);
 
 	DecisionNode * solution = dfs_timetable_create(school, tree->start);
 

@@ -56,6 +56,9 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
 	if(!m_tt_name_text->GetValue().IsEmpty()){
 		DecisionTree * tree = init_decision_tree(m_owner->m_school);
+		for(int i = 0; i < school->n_teachers; ++i){
+			print_teacher(stdout, &school->teachers[i]);
+		}
 		print_meeting_list(stdout,tree->start[0].conclusion);
 		m_err_msg->SetLabel(m_owner->m_lang->str_generating);
 

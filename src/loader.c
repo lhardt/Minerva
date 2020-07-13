@@ -1971,7 +1971,7 @@ bool select_all_class_subject_by_class_id(FILE * console_out, sqlite3* db, Class
 				}
 			}
 			if(! found){
-				printf("did not found it sr\n");
+				printf("did not find it sr\n");
 			}
 
 			++i;
@@ -1980,6 +1980,9 @@ bool select_all_class_subject_by_class_id(FILE * console_out, sqlite3* db, Class
 				alloc_sz += 10;
 				class->needs = realloc(class->needs, (alloc_sz+1)*sizeof(SubjectQuantity));
 			}
+		}
+		if(i > 0){
+			class->needs[i].subject = NULL;
 		}
 		return true;
 	} else {
@@ -2045,17 +2048,8 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 			}
 
 			classes[i].id = sqlite3_column_int(stmt,0);
-
-			aux = (const char *)sqlite3_column_text(stmt,1);
-			str_sz = sqlite3_column_bytes(stmt,1);
-			classes[i].name = calloc(str_sz + 1,sizeof(char));
-			strncpy(classes[i].name, aux, str_sz);
-
-			aux = (const char *)sqlite3_column_text(stmt,2);
-			str_sz = sqlite3_column_bytes(stmt,2);
-			classes[i].short_name = calloc(str_sz + 1,sizeof(char));
-			strncpy(classes[i].short_name, aux, str_sz);
-
+			classes[i].name = copy_sqlite_string(stmt,1);
+			classes[i].short_name = copy_sqlite_string(stmt,2);
 			classes[i].size = sqlite3_column_int(stmt,3);
 			classes[i].abstract = sqlite3_column_int(stmt,4);
 			classes[i].can_have_free_periods_flag = sqlite3_column_int(stmt,5);

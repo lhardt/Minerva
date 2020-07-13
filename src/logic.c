@@ -329,11 +329,12 @@ int count_required_meetings(School * school,Class * class,Subject * subject){
 	LMH_ASSERT(school != NULL);
 
 	if(school->classes != NULL && school->n_classes > 0){
-		for(i_class = 0; i_class < school->n_classes; i_class++){
+		for(i_class = 0; i_class < school->n_classes; ++i_class){
 			if( (class == NULL) != (&school->classes[i_class] == class) ){
-				for(i_need = 0; school->classes[i_class].needs[i_need].subject != NULL; i_need++){
+				for(i_need = 0; school->classes[i_class].needs[i_need].subject != NULL; ++i_need){
 					if((subject == NULL) != (school->classes[i_class].needs[i_need].subject == subject)){
 						count += school->classes[i_class].needs[i_need].quantity;
+						printf("Count adding in %d\n", school->classes[i_class].needs[i_need].quantity);
 					}
 				}
 			}
