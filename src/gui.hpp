@@ -636,6 +636,10 @@ class LecturePeriodPrefPane : public wxScrolledWindow {
 	wxChoice * m_class_choice;
 	wxChoice * m_subj_choice;
 	wxChoice * m_occurence_choice;
+	ChoiceGrid * m_periods_grid;
+
+	void OnSaveButtonClicked(wxCommandEvent &);
+	void OnBackButtonClicked(wxCommandEvent &);
 };
 
 class LectureTeacherPrefPane : public wxScrolledWindow {

@@ -48,6 +48,15 @@ void print_class(FILE * out, const Class * const c);
 
 void print_school(FILE * out, const School * const s);
 
+/* Returns nullptr on not founding */
+Room * find_room_by_id(School * school, int id);
+Class * find_class_by_id(School * school, int id);
+Teacher * find_teacher_by_id(School * school, int id);
+Meeting * find_meeting_by_id(School * school, int id);
+Subject * find_subject_by_id(School * school, int id);
+int get_day_index_by_id(School * school, int id);
+int get_daily_period_index_by_id(School * school, int id);
+
 void copy_soluiton(const Solution * const solution);
 
 void remove_class_from_school(School * school, int class_i);

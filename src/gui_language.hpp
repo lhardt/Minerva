@@ -193,6 +193,12 @@ typedef struct Language {
 	const wchar_t * const str_group_unavailible;
 	const wchar_t * const str_group_availibility;
 	const wchar_t * const str_group_members;
+
+	const wchar_t * const str_score_0;
+	const wchar_t * const str_score_1;
+	const wchar_t * const str_score_2;
+	const wchar_t * const str_score_3;
+	const wchar_t * const str_score_4;
 } Language;
 
 const extern Language LANG_POR;

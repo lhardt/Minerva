@@ -247,6 +247,82 @@ void print_school(FILE * out, const School * const s){
 	}
 }
 
+Room * find_room_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_rooms; ++i){
+		if(school->rooms[i].id == id){
+			return &(school->rooms[i]);
+		}
+	}
+	return NULL;
+}
+
+Class * find_class_by_id(School * school, int id) {
+	int i;
+
+	for(i = 0; i < school->n_classes; ++i){
+		if(school->classes[i].id == id){
+			return &(school->classes[i]);
+		}
+	}
+	return NULL;
+}
+
+Teacher * find_teacher_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_teachers; ++i){
+		if(school->teachers[i].id == id){
+			return &(school->teachers[i]);
+		}
+	}
+	return NULL;
+}
+
+Meeting * find_meeting_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_meetings; ++i){
+		if(school->meetings[i].id == id){
+			return &(school->meetings[i]);
+		}
+	}
+	return NULL;
+}
+
+Subject * find_subject_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_subjects; ++i){
+		if(school->subjects[i].id == id){
+			return &(school->subjects[i]);
+		}
+	}
+	return NULL;
+}
+
+int get_day_index_by_id(School * school, int id){
+	int i;
+	for(i = 0; i < school->n_days; ++i){
+		if(school->day_ids[i] == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
+int get_daily_period_index_by_id(School * school, int id){
+	int i;
+	for(i = 0; i < school->n_periods_per_day; ++i){
+		if(school->daily_period_ids[i] == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
+
 void free_school(School * s){
 	int i;
 	if(s != NULL){

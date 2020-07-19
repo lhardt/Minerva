@@ -197,6 +197,12 @@ const Language LANG_POR = {
 	.str_group_unavailible=L"Indisponível",
 	.str_group_availibility=L"Disponibilidade",
 	.str_group_members=L"Membros do Grupo",
+
+	.str_score_0=L"Indisponível",
+	.str_score_1=L"Em Último Caso",
+	.str_score_2=L"Indiferente",
+	.str_score_3=L"Prefere",
+	.str_score_4=L"Adoraria",
 };
 
 const Language LANG_ENG = {
@@ -384,6 +390,11 @@ const Language LANG_ENG = {
 	.str_group_unavailible=L"Unavailible",
 	.str_group_availibility=L"Availibility",
 	.str_group_members=L"Group members",
+	.str_score_0=L"Unavailible",
+	.str_score_1=L"Last-Case",
+	.str_score_2=L"Indifferent",
+	.str_score_3=L"Prefers",
+	.str_score_4=L"Would love to",
 };
 
 const Language LANG_SPA = {
