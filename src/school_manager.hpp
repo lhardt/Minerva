@@ -12,10 +12,11 @@
 
 #include <vector> // TODO: isn't Deque better?
 #include <wx/string.h>
+#include <sqlite3.h>
 
 #include "types.h"
 
-class SchoolManager;
+class DataManager;
 
 class Action {
 public:
@@ -26,25 +27,41 @@ public:
 		return wxT("Action");
 	}
 
-	SchoolManager * m_manager;
+	DataManager * m_manager;
 };
 
 class SchoolChangeAction : public Action {
 public:
 	~SchoolChangeAction();
-	SchoolChangeAction(SchoolManager * owner, School * new_school);
+	SchoolChangeAction(DataManager * owner, School * new_school);
 	void Do();
 	void Undo();
 	wxString Describe();
 	School * m_school;
 };
 
-class SchoolManager{
+class AddClassAction : public Action {
+public:
+	~AddClassAction();
+	AddClassAction(DataManager * owner, Class * _class);
+
+	void Do();
+	void Undo();
+
+	Class * m_class;
+};
+
+class DataManager{
 public:
 	School * m_school;
-	void ChangeSchool(School * new_school);
+	sqlite3 * m_database;
+
 	void DoAndSave(Action * act);
 	void RedoAndSave();
+	/* Actions simplified */
+	void ChangeSchool(School * new_school);
+	void AddClass(Class & new_class);
+
 private:
 	std::vector<Action*> undo_list;
 	std::vector<Action*> redo_list;

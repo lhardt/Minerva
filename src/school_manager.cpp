@@ -7,7 +7,7 @@ Action::~Action(){
 
 }
 
-SchoolChangeAction::SchoolChangeAction(SchoolManager * manager, School * new_school) :  m_school(new_school){
+SchoolChangeAction::SchoolChangeAction(DataManager * manager, School * new_school) :  m_school(new_school){
 	m_manager = manager;
 }
 
@@ -35,12 +35,12 @@ SchoolChangeAction::~SchoolChangeAction(){
 	/* TODO: should free one of them? */
 }
 
-void SchoolManager::ChangeSchool(School * school){
+void DataManager::ChangeSchool(School * school){
 	SchoolChangeAction *act = new SchoolChangeAction(this, m_school);
 	DoAndSave(act);
 }
 
-void SchoolManager::DoAndSave(Action * act){
+void DataManager::DoAndSave(Action * act){
 	act->Do();
 	undo_list.push_back(act);
 
@@ -50,7 +50,7 @@ void SchoolManager::DoAndSave(Action * act){
 	redo_list.clear();
 }
 
-void SchoolManager::RedoAndSave(){
+void DataManager::RedoAndSave(){
 	if(!undo_list.empty()){
 		Action * to_redo = undo_list.back();
 		to_redo->Do();

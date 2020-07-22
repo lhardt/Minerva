@@ -97,7 +97,6 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER_GROUP), m_owner->m_lang->str_add_teacher_group, image_detail);
 	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_SUBJECT_PREF), m_owner->m_lang->str_subject_preference, image_detail);
 	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_TWIN_PREF), m_owner->m_lang->str_twin_preference, image_detail);
 	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_ROOM_PREF), m_owner->m_lang->str_room_preference, image_detail);
 	m_rib_bbars[3][3]->AddButton(LHID_OF(LHN_CHECK_ALL_TEACHERS), m_owner->m_lang->str_check_all, image_detail);
 	m_rib_bbars[3][4]->AddButton(LHID_OF(LHN_OPEN_TEACHERS_MANUAL), m_owner->m_lang->str_open_manual, image_help);
@@ -314,16 +313,6 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane =new ListSubjectGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-		case LHID_OF(LHN_SUBJECT_PERIOD_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new SubjectPeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_SUBJECT_ROOM_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new SubjectRoomPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
 		case LHID_OF(LHN_CHECK_ALL_SUBJECTS):{
 			printf("Not there yet.\n");
 			break;
@@ -357,11 +346,6 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		case LHID_OF(LHN_TEACHER_PERIOD_PREF):{
 			CloseOpenedPane();
 			m_open_pane = new TeacherPeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_TEACHER_TWIN_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new TeacherTwinPrefPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_TEACHER_ROOM_PREF):{

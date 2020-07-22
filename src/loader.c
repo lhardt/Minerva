@@ -257,6 +257,31 @@ const char * const DELETE_CLASS_Subordination_BY_SCHOOL_ID =
 					"AND Class.id_school = ?"
 			")");
 
+const char * const CREATE_TABLE_CLASS_ROOM =
+			("CREATE TABLE ClassRoom("
+				"id						integer primary key autoincrement not null,"
+				"score					integer,"
+				"id_class				integer,"
+				"id_room				integer,"
+				"FOREIGN KEY (id_class) REFERENCES Class(id),"
+				"FOREIGN KEY (id_room) REFERENCES Room(id)"
+			")");
+const char * const INSERT_TABLE_CLASS_ROOM =
+			("INSERT INTO ClassRoom(score, id_class, id_room) VALUES (?,?,?)");
+const char * const LASTID_TABLE_CLASS_ROOM =
+			("SELECT id FROM ClassRoom WHERE rowid = last_insert_rowid()");
+const char * const SELECT_CLASS_ROOM_BY_CLASS_ID =
+			("SELECT * FROM ClassRoom WHERE id_class = ?");
+const char * const DELETE_CLASS_ROOM_BY_CLASS_ID =
+			("DELETE FROM ClassRoom WHERE id_class = ?");
+const char * const DELETE_CLASS_ROOM_BY_ROOM_ID =
+			("DELETE FROM ClassRoom WHERE id_room = ?");
+const char * const DELETE_CLASS_ROOM_BY_SCHOOL_ID =
+			("DELETE FROM ClassRoom WHERE EXISTS ("
+				"SELECT id FROM Class WHERE Class.id = ClassRoom.id_class "
+					"AND Class.id_school=?"
+			")");
+
 const char * const CREATE_TABLE_SUBJECT =
 			("CREATE TABLE IF NOT EXISTS Subject("
 				"id						integer primary key autoincrement not null,"
@@ -496,6 +521,24 @@ const char * const DELETE_TEACHER_ATTENDANCE_BY_SCHOOL_ID =
 				"SELECT Teacher WHERE Teacher.id = TeacherAttendance.id_teacher "
 					"AND Teacher.id_school=?"
 			")");
+
+const char * const CREATE_TABLE_TEACHER_ROOM =
+			("CREATE TABLE IF NOT EXISTS TeacherRoom("
+				"id						integer primary key autoincrement not null,"
+				"score					integer,"
+				"id_teacher				integer,"
+				"id_room				integer,"
+				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
+				"FOREIGN KEY (id_room) REFERENCES Room(id)"
+			")");
+const char * const INSERT_TABLE_TEACHER_ROOM =
+			("INSERT INTO TeacherRoom(score, id_teacher, id_room) VALUES (?,?,?)");
+const char * const LASTID_TABLE_TEACHER_ROOM =
+			("SELECT id FROM TeacherRoom WHERE rowid = last_insert_rowid()");
+const char * const SELECT_TABLE_TEACHER_ROOM_BY_TEACHER_ID =
+			("SELECT * from TeacherRoom WHERE id_teacher = ?");
+const char * const DELETE_TEACHER_ROOM_BY_TEACHER_ID =
+			("DELETE FROM TeacherRoom WHERE id_teacher=?");
 
 const char * const CREATE_TABLE_ATTENDANCE_TYPE =
 			("CREATE TABLE IF NOT EXISTS AttendanceType("
@@ -791,6 +834,7 @@ bool init_all_tables(FILE * console_out, sqlite3 * db){
 			create_table(console_out,db,"Class", CREATE_TABLE_CLASS)?1:
 			create_table(console_out,db,"ClassAttendance", CREATE_TABLE_CLASS_ATTENDANCE)?1:
 			create_table(console_out,db,"ClassSubordination", CREATE_TABLE_CLASS_SUBORDINATION)?1:
+			create_table(console_out,db,"ClassRoom", CREATE_TABLE_CLASS_ROOM)?1:
 			create_table(console_out,db,"Subject", CREATE_TABLE_SUBJECT)?1:
 			create_table(console_out,db,"SubjectGroup", CREATE_TABLE_SUBJECT_GROUP)?1:
 			create_table(console_out,db,"SubjectInGroup", CREATE_TABLE_SUBJECT_IN_GROUP)?1:
@@ -801,6 +845,7 @@ bool init_all_tables(FILE * console_out, sqlite3 * db){
 			create_table(console_out,db,"Teaches", CREATE_TABLE_TEACHES)?1:
 			create_table(console_out,db,"TeacherSubordination", CREATE_TABLE_TEACHER_SUBORDINATION)?1:
 			create_table(console_out,db,"TeacherAttendance", CREATE_TABLE_TEACHER_ATTENDANCE)?1:
+			create_table(console_out,db,"TeacherRoom", CREATE_TABLE_TEACHER_ROOM)?1:
 			create_table(console_out,db,"Demand", CREATE_TABLE_DEMAND)?1:
 			create_table(console_out,db,"TeachesPeriodPreference", CREATE_TABLE_TEACHES_PERIOD_PREFERENCE)?1:
 			create_table(console_out,db,"TeachesTwinPreference", CREATE_TABLE_TEACHES_TWIN_PREFERENCE)?1:
@@ -826,6 +871,27 @@ static int get_id_callback(void* id_field_ptr,int no_columns,char** text_columns
 	printf("CALLBACK FUNCTION MISUSE!");
 	return -1;
 
+}
+
+static bool insert_room_relation(FILE * console_out, sqlite3* db, const char * const table_insert, int obj_id, int * room_scores, School * school){
+	int i = 0, errc;
+	sqlite3_stmt * stmt;
+
+	errc = sqlite3_prepare_v2(db, table_insert, -1, &stmt, NULL);
+	if(errc != SQLITE_OK){
+		printf("Could not insert room relation");
+		return false;
+	}
+	while(errc == SQLITE_OK && i < school->n_rooms && room_scores[i] >= 0){
+		sqlite3_bind_int(stmt,1, room_scores[i]);
+		sqlite3_bind_int(stmt,2, obj_id);
+		sqlite3_bind_int(stmt,3, school->rooms[i].id);
+
+		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
+		++i;
+	}
+	return true;
 }
 
 static bool insert_attendance(FILE * console_out, sqlite3* db, const char* const table_insert, int * period_ids, int * period_scores, int obj_id, School * school){
@@ -948,6 +1014,10 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 				insert_teacher_sub(console_out, db, teacher->id, school->teachers[i].id);
 			}
 		}
+	}
+
+	if(teacher->rooms != NULL){
+		insert_room_relation(console_out, db, INSERT_TABLE_TEACHER_ROOM, teacher->id, teacher->rooms, school);
 	}
 
 	return teacher->id;

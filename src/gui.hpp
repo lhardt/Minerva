@@ -74,6 +74,8 @@ class ChoiceGrid : public wxGrid {
 	wxVector<wxColor>  m_background_colors;
 	wxVector<int> possible_values;
 
+	bool can_user_click = true;
+
 	wxVector<int> GetValues(int i_day);
 	wxVector<int> GetValues();
 
@@ -81,6 +83,7 @@ class ChoiceGrid : public wxGrid {
 	void SetPossibleValues(wxVector<wxString> values);
 	void SetBackgroundColors(wxVector<wxColor> values);
 	void SetCellImmutable(int i_col, int i_row);
+	void SetCanUserClick(bool can_user_click);
  private:
 	void OnLeftClick(wxGridEvent &);
 };
@@ -548,38 +551,12 @@ class RoomPeriodPrefPane : public wxScrolledWindow {
 	wxChoice * m_room_choice;
 };
 
-class SubjectPeriodPrefPane : public wxScrolledWindow {
- public:
-	SubjectPeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~SubjectPeriodPrefPane();
-
- private:
-	Application * m_owner;
-};
-
-class SubjectRoomPrefPane : public wxScrolledWindow {
- public:
-	SubjectRoomPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~SubjectRoomPrefPane();
-
- private:
-	Application * m_owner;
-};
-
 class TeacherSubjPrefPane : public wxScrolledWindow {
  public:
 	TeacherSubjPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~TeacherSubjPrefPane();
 
  private:
-	Application * m_owner;
-};
-
-class TeacherTwinPrefPane : public wxScrolledWindow {
-public:
-	TeacherTwinPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~TeacherTwinPrefPane();
-private:
 	Application * m_owner;
 };
 

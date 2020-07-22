@@ -88,7 +88,7 @@ void ChoiceGrid::SetBackgroundColors(wxVector<wxColour> values){
 void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
 	int i = 0;
 
-	if(m_value_names.size() > 0){
+	if(can_user_click && m_value_names.size() > 0){
 		if(evt.GetCol() > 0 && evt.GetRow() > 0){
 			wxString evt_str = GetCellValue(evt.GetRow(), evt.GetCol());
 			for( i = 0; i < m_value_names.size(); ++i){
@@ -109,8 +109,6 @@ void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
 				Refresh();
 			}
 		}
-	} else {
-		printf("No possible values. \n");
 	}
 
 }

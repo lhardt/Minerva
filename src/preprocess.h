@@ -14,6 +14,29 @@
 
 #include "types.h"
 
+enum SchoolActionType {
+	ADD_FEATURE,
+	ADD_ROOM,
+	ADD_SUBJECT,
+	ADD_SUBJECT_GROUP,
+	ADD_TEACHER,
+	ADD_TEACHER_GROUP,
+	ADD_CLASS,
+	ADD_CLASS_GROUP,
+
+	REMOVE_FEATURE,
+	REMOVE_ROOM,
+	REMOVE_SUBJECT,
+	REMOVE_SUBJECT_GROUP,
+	REMOVE_TEACHER,
+	REMOVE_TEACHER_GROUP,
+	REMOVE_CLASS,
+	REMOVE_CLASS_GROUP,
+	GENERATE_TIMETABLE,
+
+
+};
+
 void school_init_meeting_list(School * school);
 
 void school_feature_add(School * school, const char * const feature_name);
