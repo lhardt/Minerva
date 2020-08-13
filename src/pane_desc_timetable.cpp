@@ -179,7 +179,7 @@ void DescTimetablePane::OnGridSelection(wxGridEvent & evt) {
 					&& (!chose_teacher || met->teacher == &school->teachers[m_teacher_choice->GetSelection()-1])){
 				m_class_text->SetLabel(wxString::FromUTF8(met->m_class->name));
 				m_teacher_text->SetLabel(wxString::FromUTF8(met->teacher->name));
-				m_subject_text->SetLabel(wxString::FromUTF8(met->subj->name));
+				m_subject_text->SetLabel(wxString::FromUTF8(met->subject->name));
 				m_room_text->SetLabel(wxString::FromUTF8(met->room->name));
 				m_day_text->SetLabel(wxString::FromUTF8(school->day_names[met->period / school->n_periods_per_day]));
 				m_period_text->SetLabel(wxString::FromUTF8(school->daily_period_names[met->period % school->n_periods_per_day]));
@@ -220,12 +220,12 @@ void DescTimetablePane::OnRedrawGridRequest(wxCommandEvent & evt){
 	for(int i = 0; chosen_solution[i].m_class != NULL; ++i){
 		char * class_name    = chosen_solution[i].m_class->name;
 		char * teacher_name  = chosen_solution[i].teacher->name;
-		char * subject_name  = chosen_solution[i].subj->name;
+		char * subject_name  = chosen_solution[i].subject->name;
 		char * room_name = chosen_solution[i].room->name;
-		/* Should not print if this meeting is about another room / class / teacher / subj. */
+		/* Should not print if this meeting is about another room / class / teacher / subject. */
 		bool this_class = !chose_class || school->classes[ m_class_choice->GetSelection()-1 ].id == chosen_solution[i].m_class->id;
 		bool this_teacher = !chose_teacher || school->teachers[ m_teacher_choice->GetSelection() -1].id == chosen_solution[i].teacher->id;
-		bool this_subject = !chose_subject || school->subjects[m_subject_choice->GetSelection() -1].id == chosen_solution[i].subj->id;
+		bool this_subject = !chose_subject || school->subjects[m_subject_choice->GetSelection() -1].id == chosen_solution[i].subject->id;
 		bool this_room = !chose_room || school->rooms[m_room_choice->GetSelection() - 1].id == chosen_solution[i].room->id;
 
 		if(this_class && this_teacher && this_subject && this_room){

@@ -35,9 +35,9 @@ int * make_possible_teacher_list(School * school, Meeting * meeting){
 	for(i_teacher = 0; i_teacher < school->n_teachers; i_teacher++){
 		teacher = &(school->teachers[i_teacher]);
 		for(i_teaches = 0; teacher->teaches[i_teaches] != NULL; i_teaches++){
-			if(teacher->teaches[i_teaches]->subject == meeting->subj){
+			if(teacher->teaches[i_teaches]->subject == meeting->subject){
 				scores[i_teacher] = teacher->teaches[i_teaches]->score;
-				printf("Setting score of %d to meeting (subj: %s) with teacher %s (i_teacher %d)\n", scores[i_teacher], meeting->subj->name, teacher->name, i_teacher);
+				printf("Setting score of %d to meeting (subj: %s) with teacher %s (i_teacher %d)\n", scores[i_teacher], meeting->subject->name, teacher->name, i_teacher);
 			}
 		}
 	}
@@ -68,7 +68,7 @@ int * make_possible_period_list(School * school, Meeting * meeting){
 	int * possible_periods = calloc(school->n_periods + 1, sizeof(int));
 
 	for(i_per = 0; i_per < school->n_periods; i_per++){
-		possible_periods[i_per] = school->periods[i_per]?(meeting->m_class->periods[i_per]):0;
+		possible_periods[i_per] = school->periods[i_per]?(meeting->m_class->period_scores[i_per]):0;
 	}
 	possible_periods[school->n_periods] = -1;
 	return possible_periods;
@@ -107,10 +107,10 @@ DecisionTree * init_decision_tree(School * school){
 
 	for(i_class = 0; i_class < school->n_classes; i_class++){
 		class = &(school->classes[i_class]);
-		for(i_need = 0; class->needs[i_need].subject != NULL; i_need++){
-			for(i_quant = 0; i_quant < class->needs[i_need].quantity; i_quant++){
+		for(i_need = 0; class->assignments[i_need]->subject != NULL; i_need++){
+			for(i_quant = 0; i_quant < class->assignments[i_need]->amount; i_quant++){
 				conclusion[i_meet].m_class = class;
-				conclusion[i_meet].subj  = class->needs[i_need].subject;
+				conclusion[i_meet].subject = class->assignments[i_need]->subject;
 				conclusion[i_meet].teacher = NULL;
 				conclusion[i_meet].room = NULL;
 				conclusion[i_meet].period = -1;

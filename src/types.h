@@ -15,166 +15,105 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// #define MAX_FEATURES          (64)
-// #define MAX_PERIODS_PER_DAY   (32)
-// #define MAX_PERIODS_PER_WEEK  (1024)
-// #define MAX_DAYS 			  ((MAX_PERIODS_PER_WEEK)/(MAX_PERIODS_PER_DAY))
-// #define MAX_ROOMS			  (256)
-// #define MAX_GROUPS			  (128)
-// #define MAX_SUBJECTS		  (128)
-
 typedef enum Period {
-	_NULL     = -1,
-	_PLANNING = -2,
-	_NOT_SET  = -3,
+	per_NULL     = -1,
 } Period;
 
-typedef struct ClassQuantity ClassQuantity;
-typedef struct TeacherQuantity TeacherQuantity;
+typedef enum MeetingType {
+	meet_NULL = 0,
+	meet_PLANNING,
+	meet_LECTURE
+} MeetingType;
+
 typedef struct SubjectQuantity SubjectQuantity;
-typedef struct RoomFeatureQuantity RoomFeatureQuantity;
-
-/* TODO: preprocessing.
- * - Abstract classes need to be sorted out;
- * - Scores for lessons must be weighted;
- * - DONE: Disponibility of sub-/superordinate teachers/classes sorted out;
- * - Cascading specificity in values inserted by user;
- */
-
-typedef struct RoomFeature {
-	int id;
-	char * name;
-} RoomFeature;
 
 typedef struct Room {
-	int id;
+	int    id;
 	char * name;
 	char * short_name;
-	int size;
-	/*this is not a list of fetures. Is rather a score given to all fetures, being 0 absent. */
-	/* Last value must be -1. */
-	int * room_features;
-	int * disponibility;
+	int    size;
+	int  * availability; /* Negative-terminated score list. */
+	bool   active; /* Logical delete. To delete and not corrupt solutions */
 } Room;
 
 typedef struct Subject {
-	int id;
+	int    id;
 	char * name;
 	char * short_name;
-
-	int  * in_groups;
+	int  * in_groups; /* Negative-terminated score list (0 or 1 suffices in this case) */
 } Subject;
 
 typedef struct Teaches Teaches;
-typedef struct Teacher Teacher;
-struct Teacher {
+typedef struct Teacher {
 	int    			id;
 	char 		  * name;
 	char 		  * short_name;
-
 	int				max_days;
-	int    			max_meetings;
 	int    			max_meetings_per_day;
 	int				max_meetings_per_class_per_day;
+	int    			max_meetings;
+	bool			planning_needs_room;
 	int    			num_planning_periods;
-	// bool   			one_day_planning_periods; DEFAULT TO YES.
-
-	int				* day_max_meetings;
-	int				* day_scores;
-
-	Teaches      ** teaches;
-	ClassQuantity * possible_classes;
-
-	int * subordinates;
-
-	int    		  * periods;
-	int 		  * rooms;
-};
+	bool 			active; /* Logical delete. To delete and not corrupt solutions */
+	Teaches      ** teaches; /* Null-terminated pointer list */
+	int 		  * subordinates;
+	int 		  * room_scores;
+	int			  * day_max_meetings;
+	int			  * day_scores;
+	int    		  * lecture_period_scores;
+	int 		  * planning_period_scores;
+	int		  	  * planning_twin_scores; /* Negative-terminated score list. List[i-1] is the score given to i periods on a row */
+} Teacher;
 
 struct Teaches {
-	int id;
-	Teacher * teacher;
-	Subject * subject;
-	int  score;
-	int  * features;
-	int  * min_features;
+	int 		id;
+	Teacher   * teacher;
+	Subject   * subject;
+	int			max_per_day;
+	int			max_per_class_per_day;
+	int  		score; /* How much the teacher likes to lecture this subject */
+	int  	  * room_scores; /* Negative-terminated score list */
+	int  	  * period_scores; /* Negative-terminated score list */
+	int		  * twin_scores; /* Negative-terminated score list. List[i-1] is the score given to i periods on a row */
 };
 
-typedef struct Class Class;
-struct Class {
+typedef struct Assignment Assignment;
+typedef struct Class {
 	int 			id;
 	char 		  * name;
 	char 		  * short_name;
-
 	int 			size;
-	/* Not a list, but a list of scores */
-	int 		    * periods;
-	int 		  * rooms;
-	bool 			can_have_free_periods_flag;
 	int 			maximal_entry_period;
-	int 			minimal_exit_period;
-	/* If the class is abstract, the features are inherited,
-	 *  but the classes dont need to be together. For preprocessing.
-	 * Before the nucleus is ran, this should already have been substituted
-	 *  in the subordinate classes.
-	 */
-	bool abstract;
+	int				minimal_exit_period;
+	int 		  * period_scores; /* Negative-terminated score list */
+	int 		  * room_scores; /* Negative-terminated score list */
+	bool 			can_have_free_periods_flag;
+	int 		  * subordinates; /* Negative-terminated score list */
+	int 		  * max_per_day_subject_group;
+	Assignment 	 ** assignments; /* Null-terminated pointer list */
+	bool			active; /* Logical delete. To delete and not corrupt solutions */
+} Class;
 
-	int * subordinates;
-
-	SubjectQuantity * needs;
-	int * max_per_day_subject_group;
+struct Assignment {
+	int 	  id;
+	Subject * subject;
+	Class   * m_class;
+	int		  amount;
+	int 	  max_per_day;
+	int 	* possible_teachers; /* Negative-terminated score list*/
 };
 
-
-struct TeacherQuantity {
-	Teacher * 		teacher;
-	int				quantity;
-};
-
-
-struct ClassQuantity {
-	Class * m_class;
-	int 	quantity;
-};
-
-struct SubjectQuantity {
-	Subject    	  * subject;
-	int			 	quantity;
-};
-
-struct RoomFeatureQuantity{
-	RoomFeature * feature;
-	int			  quantity;
-};
-
-typedef struct ExtendedTeacher{
-	int 			id;
-	ClassQuantity * classes;
-	int 		  * periods;
-	char 		  * name;
-} ExtendedTeacher;
-
-/* TODO: The possible_* vectors create a significant overhead
- * on the memory used by the tree.
- */
 typedef struct Meeting {
-	int id;
-	/* Initially fixed */
+	int 			id; /* NOTE: ids are meetingtype-specific. */
+	MeetingType 	type;
 	Class      	  * m_class; /* Naming problem with c++ keyword */
-	Subject    	  * subj;
-	/* May be fixed */
+	Subject    	  * subject;
 	Teacher    	  * teacher;
 	Room 	   	  * room;
 	int 	     	period;
-
-	/* Scores given to each teacher, period and room, where
-	 * possible_x[i] is the score of the choic x[i] in this
-	 * meeting.
-	 */
-	int    	      * possible_periods;
-	int			  * possible_rooms;
-	int			  * possible_teachers;
+	int    	      * possible_periods; /* Negative-terminated score list */
+	int			  * possible_rooms; /* Negative-terminated score list */
+	int			  * possible_teachers; /* Negative-terminated score list */
 } Meeting;
 
 typedef struct Solution {
@@ -185,38 +124,17 @@ typedef struct Solution {
 	int 	  n_meetings;
 } Solution;
 
-typedef enum EditActionActionType {
-	kTestEmptyEnum
-} EditActionActionType;
-
-typedef enum EditActionObjectType {
-	kTestEmptyEnum2
-} EditActionObjectType;
-
-typedef struct EditAction {
-	int id;
-
-	EditActionActionType action;
-	EditActionObjectType object;
-	void * data_before;
-	void * data_after;
-} EditAction;
-
-
 typedef struct School {
-	/* Current state */
 	int 		 id;
 	char 	   * name;
 
 	char      ** day_names;
 	char      ** daily_period_names;
 	char      ** period_names;
-	char 	  ** feature_names;
 	char 	  ** subject_group_names;
 
 	int		   * day_ids;
 	int 	   * daily_period_ids;
-	int		   * feature_ids;
 	int		   * period_ids;
 	int		   * subject_group_ids;
 
@@ -227,9 +145,9 @@ typedef struct School {
 	Teaches    * teaches;
 	Meeting    * meetings;
 	Solution   * solutions;
+	Assignment * assignments;
 
 	int 		 n_periods;
-	int 		 n_features;
 	int 		 n_classes;
 	int 		 n_teachers;
 	int			 n_subjects;
@@ -238,18 +156,13 @@ typedef struct School {
 	int 		 n_days;
 	int 		 n_periods_per_day;
 	int			 n_solutions;
+	int			 n_lectures;
+	int			 n_planning;
 	int			 n_meetings;
 	int			 n_subject_groups;
+	int			 n_assignments;
 
 	bool 		 * periods;
-
-	int		 	 max_meetings_teacher_per_week;
-	int 		 max_meetings_teacher_per_day;
-	int 		 max_gemini_classes;
-
-	/* Past states */
-	EditAction * all_actions;
-	int 		 current_action_index;
 } School;
 
 #endif /* TYPES_H */

@@ -109,8 +109,9 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		group.name = copy_wx_string(m_name_text->GetValue());
 		group.short_name = copy_wx_string(m_name_text->GetValue());
 		group.num_planning_periods = 0;
-		group.periods = (int*)calloc(school->n_periods, sizeof(int));
-		group.periods = (int*)calloc(school->n_rooms, sizeof(int));
+		group.lecture_period_scores = (int*)calloc(school->n_periods+1, sizeof(int));
+		group.planning_period_scores = (int*)calloc(school->n_periods+1, sizeof(int));
+		group.room_scores = (int*)calloc(school->n_rooms, sizeof(int));
 		group.subordinates = (int *)calloc(n_members + 1, sizeof(int));
 		Teaches * teaches_vals = (Teaches*)calloc(n_subjects + 1, sizeof(Teaches));
 		group.teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*));
@@ -129,11 +130,12 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 					group.day_scores[j] = teacher->day_max_meetings[j];
 				}
 				for(j = 0; j < school->n_periods;++j){
-					group.periods[j] = teacher->periods[j];
+					group.lecture_period_scores[j] = teacher->lecture_period_scores[j];
+					group.planning_period_scores[j] = teacher->planning_period_scores[j];
 				}
-				if(teacher->rooms){
+				if(teacher->room_scores){
 					for(j  = 0; j < school->n_rooms; ++j){
-						group.rooms[j] = teacher->rooms[j];
+						group.room_scores[j] = teacher->room_scores[j];
 					}
 				}
 			} else {
@@ -159,13 +161,16 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 					}
 				}
 				for(j = 0; j < school->n_periods; ++j){
-					if(group.periods[j] > teacher->periods[j]){
-						group.periods[j] = teacher->periods[j];
+					if(group.lecture_period_scores[j] > teacher->lecture_period_scores[j]){
+						group.lecture_period_scores[j] = teacher->lecture_period_scores[j];
+					}
+					if(group.planning_period_scores[j] > teacher->planning_period_scores[j]){
+						group.planning_period_scores[j] = teacher->planning_period_scores[j];
 					}
 				}
 				for(j = 0; j < school->n_rooms; ++j){
-					if(teacher->rooms && teacher->rooms[j] < group.rooms[j]){
-						group.rooms[j] = teacher->rooms[j];
+					if(teacher->room_scores && teacher->room_scores[j] < group.room_scores[j]){
+						group.room_scores[j] = teacher->room_scores[j];
 					}
 				}
 			}
@@ -175,8 +180,6 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 			teaches_vals[i].teacher = &group;
 			teaches_vals[i].subject = &(school->subjects[ ((IntClientData*)m_selected_subjects_list->GetClientObject(i))->m_value ]);
 			teaches_vals[i].score = 1;
-			teaches_vals[i].features = NULL;
-			teaches_vals[i].min_features = NULL;
 			group.teaches[i] = &(teaches_vals[i]);
 		}
 		bool success = insert_teacher(stdout, m_owner->m_database, &group, school);

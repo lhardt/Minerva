@@ -22,6 +22,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	wxStaticText * school_nday_text = new wxStaticText(this, wxID_ANY, wxString::Format(wxT("%d"),school->n_days), wxDefaultPosition,wxDefaultSize);
 
 	wxButton * delete_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_delete);
+	wxButton * duplicate_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_duplicate);
 
 	title->SetFont(*m_owner->m_page_title_font);
 
@@ -42,7 +43,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	grid_label->SetFont(*m_owner->m_small_font);
 
 	ChoiceGrid * m_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(500,200));
-
+	m_grid->SetCanUserClick(false);
 	wxVector<wxString> grid_values = wxVector<wxString>();
 	grid_values.push_back(m_owner->m_lang->str_adj__open);
 	grid_values.push_back(m_owner->m_lang->str_adj__closed);
@@ -71,13 +72,17 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * content_sz = new wxBoxSizer(wxVERTICAL);
+	wxSizer * button_sz = new wxBoxSizer(wxHORIZONTAL);
 
 	sizer->Add(content_sz, 0,  wxALL, 15);
 	content_sz->Add(title, 0, wxALL, 15);
 	content_sz->Add(text_sz, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 15);
 	content_sz->Add(grid_label, 0, wxLEFT | wxRIGHT, 15);
 	content_sz->Add(m_grid, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
-	content_sz->Add(delete_button, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
+	content_sz->Add(button_sz, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
+
+	button_sz->Add(delete_button, 0, wxRIGHT, 15);
+	button_sz->Add(duplicate_button, 0, 0, 15);
 
 	SetSizerAndFit(sizer);
 

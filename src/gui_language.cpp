@@ -203,6 +203,8 @@ const Language LANG_POR = {
 	.str_score_2=L"Indiferente",
 	.str_score_3=L"Prefere",
 	.str_score_4=L"Adoraria",
+
+	.str_duplicate=L"Duplicar",
 };
 
 const Language LANG_ENG = {
@@ -395,6 +397,7 @@ const Language LANG_ENG = {
 	.str_score_2=L"Indifferent",
 	.str_score_3=L"Prefers",
 	.str_score_4=L"Would love to",
+	.str_duplicate=L"Duplicar",
 };
 
 const Language LANG_SPA = {
@@ -567,10 +570,17 @@ const Language LANG_SPA = {
 	.str_max_number_of_periods_per_day=L"",
 	.str_number_of_planning_periods=L"",
 	.str_teachers_teach=L"",
-	.str_group_availible=L"",
-	.str_group_unavailible=L"",
-	.str_group_availibility=L"",
-	.str_group_members=L"",
+
+	.str_group_availible=L" ",
+	.str_group_unavailible=L" ",
+	.str_group_availibility=L" ",
+	.str_group_members=L" ",
+	.str_score_0=L" ",
+	.str_score_1=L" ",
+	.str_score_2=L" ",
+	.str_score_3=L" ",
+	.str_score_4=L" ",
+	.str_duplicate=L" ",
 };
 
 const Language LANG_DEU = {
@@ -744,4 +754,11 @@ const Language LANG_DEU = {
 	.str_group_unavailible=L"",
 	.str_group_availibility=L"",
 	.str_group_members=L"",
+
+	.str_score_0=L" ",
+	.str_score_1=L" ",
+	.str_score_2=L" ",
+	.str_score_3=L" ",
+	.str_score_4=L" ",
+	.str_duplicate=L" ",
 };

@@ -154,9 +154,9 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 				m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 			} else {
 				m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						wxString::Format("%s" , (t->periods[i] > 0?m_owner->m_lang->str_teacher_availible:m_owner->m_lang->str_teacher_unavailible) ));
+						wxString::Format("%s" , (t->lecture_period_scores[i] > 0?m_owner->m_lang->str_teacher_availible:m_owner->m_lang->str_teacher_unavailible) ));
 				m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						(t->periods[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
+						(t->lecture_period_scores[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
 			}
 			m_periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
 		}

@@ -32,7 +32,7 @@ void school_subject_remove(School * school, int subj_i){
 			Meeting * m_list = school->solutions[i].meetings;
 			for(j = 0; m_list[j].m_class != NULL; ++j){
 				Meeting * meet = & m_list[j];
-				if(meet->subj->id == school->subjects[subj_i].id){
+				if(meet->subject->id == school->subjects[subj_i].id){
 					if(meet->possible_periods != NULL){
 						free(meet->possible_periods);
 					}
@@ -68,8 +68,8 @@ void school_class_add(School * school, const Class * const c){
 	}
 	school->classes[ school->n_classes ] = *c;
 
-	if(c->needs != NULL){
-		for(n = 0; c->needs[n].subject != NULL; ++n){
+	if(c->assignments != NULL){
+		for(n = 0; c->assignments[n]->subject != NULL; ++n){
 			/* Blank on purpouse */
 		}
 		if( n != 0 ){
@@ -79,10 +79,10 @@ void school_class_add(School * school, const Class * const c){
 				school->meetings = realloc(school->meetings, (n + 11)*sizeof(Meeting));
 			}
 			for(i = 0; i < n; ++i){
-				for(j = 0; j < c->needs[i].quantity; ++j){
+				for(j = 0; j < c->assignments[i]->amount; ++j){
 					/* c points to a temporary variable */
 					school->meetings[school->n_meetings].m_class = &school->classes[ school->n_classes ];
-					school->meetings[school->n_meetings].subj = c->needs[i].subject;
+					school->meetings[school->n_meetings].subject = c->assignments[i]->subject;
 				}
 			}
 		}
@@ -171,14 +171,14 @@ void school_class_remove(School * school, int class_i){
 	if(class->short_name != NULL){
 		free(class->short_name);
 	}
-	if(class->rooms != NULL){
-		free(class->rooms);
+	if(class->room_scores != NULL){
+		free(class->room_scores);
 	}
 	if(class->subordinates != NULL){
 		free(class->subordinates);
 	}
-	if(class->needs != NULL){
-		free(class->needs);
+	if(class->assignments != NULL){
+		free(class->assignments);
 	}
 
 	for(i = class_i; i < school->n_classes-1; ++i){
@@ -186,43 +186,43 @@ void school_class_remove(School * school, int class_i){
 	}
 }
 
-void school_feature_remove(School * school, int feature_i){
-	int i, j;
-
-	if(school->n_features > feature_i && feature_i >= 0){
-		free(school->feature_names[feature_i]);
-		for(i = feature_i; i < school->n_features && school->feature_ids[i] >= 0; ++i){
-			school->feature_names[i] = school->feature_names[i+1];
-			school->feature_ids[i] = school->feature_ids[i+1];
-		}
-
-		/* If there are features right of the deleted, push them back, in all structures. */
-		if(school->feature_ids[feature_i+1] != -1){
-			if(school->rooms != NULL && school->n_rooms > 0){
-				for(i = 0;  i < school->n_rooms; ++i ){
-					for(j = feature_i + 1;  school->rooms[i].room_features && school->rooms[i].room_features[j] >= 0; ++j){
-						/* copies the -1 terminator too. */
-						school->rooms[i].room_features[j] = school->rooms[i].room_features[j+1];
-					}
-				}
-			}
-
-			if(school->teaches != NULL && school->n_teaches > 0){
-				for(i = 0; i < school->n_teaches; ++i){
-					for(j = feature_i + 1; school->teaches[i].features[j] >= 0; ++j){
-						/* copies the -1 terminator too. */
-						school->teaches[i].features[j] = school->teaches[i].features[j+1];
-					}
-					/* May have a different terminator. */
-					for(j = feature_i + 1; school->teaches[i].features[j] >= 0; ++j){
-						school->teaches[i].min_features[j] = school->teaches[i].min_features[j+1];
-					}
-				}
-			}
-		}
-		--school->n_features;
-	}
-}
+// void school_feature_remove(School * school, int feature_i){
+// 	int i, j;
+//
+// 	if(school->n_features > feature_i && feature_i >= 0){
+// 		free(school->feature_names[feature_i]);
+// 		for(i = feature_i; i < school->n_features && school->feature_ids[i] >= 0; ++i){
+// 			school->feature_names[i] = school->feature_names[i+1];
+// 			school->feature_ids[i] = school->feature_ids[i+1];
+// 		}
+//
+// 		/* If there are features right of the deleted, push them back, in all structures. */
+// 		if(school->feature_ids[feature_i+1] != -1){
+// 			if(school->rooms != NULL && school->n_rooms > 0){
+// 				for(i = 0;  i < school->n_rooms; ++i ){
+// 					for(j = feature_i + 1;  school->rooms[i].room_features && school->rooms[i].room_features[j] >= 0; ++j){
+// 						/* copies the -1 terminator too. */
+// 						school->rooms[i].room_features[j] = school->rooms[i].room_features[j+1];
+// 					}
+// 				}
+// 			}
+//
+// 			if(school->teaches != NULL && school->n_teaches > 0){
+// 				for(i = 0; i < school->n_teaches; ++i){
+// 					for(j = feature_i + 1; school->teaches[i].features[j] >= 0; ++j){
+// 						/* copies the -1 terminator too. */
+// 						school->teaches[i].features[j] = school->teaches[i].features[j+1];
+// 					}
+// 					/* May have a different terminator. */
+// 					for(j = feature_i + 1; school->teaches[i].features[j] >= 0; ++j){
+// 						school->teaches[i].min_features[j] = school->teaches[i].min_features[j+1];
+// 					}
+// 				}
+// 			}
+// 		}
+// 		--school->n_features;
+// 	}
+// }
 
 void school_room_add(School * school, const Room * const room){
 	if(school->n_rooms == 0){

@@ -4,7 +4,8 @@ SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	this->m_owner = owner;
 	SetMinSize(wxSize(800,600));
 	SetFont(*m_owner->m_text_font);
-
+	SetBackgroundColour(wxColour(240,240,240));
+	
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_system_config, wxDefaultPosition, wxSize(400,30));
 	title->SetFont(*m_owner->m_page_title_font);
 

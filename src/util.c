@@ -26,7 +26,6 @@ char* copy_string(const char * const str){
 	return copy;
 }
 
-
 void print_int_list(FILE * out, const int * const list){
 	int i = 0;
 
@@ -102,7 +101,7 @@ void print_meeting_list(FILE * out, const Meeting * const meetings){
 			print_int_list(out,meetings[i].possible_rooms);
 			fprintf(out, "; P(%d) ", meetings[i].period);
 			print_int_list(out,meetings[i].possible_periods);
-			fprintf(out, "; S(%s)", meetings[i].subj->name);
+			fprintf(out, "; S(%s)", meetings[i].subject->name);
 			fprintf(out,"\n");
 		}
 	}
@@ -141,6 +140,7 @@ Meeting * copy_meetings_list(const Meeting * const list){
 	}
 	return copy;
 }
+
 /* INT LIST COPY
  *		allocates an exact copy of the null-terminated int list.
  *
@@ -172,7 +172,6 @@ int * int_list_n_copy(const int * const list, int n){
 	copy[n] = -1;
 	return copy;
 }
-
 
 void free_meetings_list(Meeting * list){
 	int i_met;
@@ -214,10 +213,14 @@ void print_teacher(FILE * out, const Teacher * const t){
 		print_int_list(out, t->day_max_meetings);
 		fprintf(out,"\n\tday_scores: ");
 		print_int_list(out, t->day_scores);
-		fprintf(out,"\n\tperiods: ");
-		print_int_list(out, t->periods);
-		fprintf(out,"\n\trooms: ");
-		print_int_list(out, t->rooms);
+		fprintf(out,"\n\tlecture_period_scores: ");
+		print_int_list(out, t->lecture_period_scores);
+		fprintf(out,"\n\tplanning_period_scores: ");
+		print_int_list(out, t->planning_period_scores);
+		fprintf(out,"\n\tplanning_twin_scores: ");
+		print_int_list(out, t->planning_twin_scores);
+		fprintf(out,"\n\troom_scores: ");
+		print_int_list(out, t->room_scores);
 		fprintf(out,"\n\tsubordinates: ");
 		print_int_list(out, t->subordinates);
 		fprintf(out, "\n\tteaches: ");
@@ -235,7 +238,6 @@ void print_school(FILE * out, const School * const s){
 		fprintf(out, "\tn_periods_per_day: %d\n", s->n_periods_per_day);
 		fprintf(out, "\tn_days: 			 %d\n", s->n_days);
 		fprintf(out, "\tn_per: 			 %d\n", s->n_periods);
-		fprintf(out, "\tn_features: 		 %d\n", s->n_features);
 		fprintf(out, "\tn_classes: 		 %d\n", s->n_classes);
 		fprintf(out, "\tn_teachers: 	 	 %d\n", s->n_teachers);
 		fprintf(out, "\tn_subjects: 	 	 %d\n", s->n_subjects);
@@ -328,20 +330,14 @@ void free_school(School * s){
 	if(s != NULL){
 		if(s->teachers != NULL){
 			for(i = 0; i < s->n_teachers; ++i){
-				free(s->teachers[i].periods);
+				free(s->teachers[i].planning_period_scores);
+				free(s->teachers[i].lecture_period_scores);
 			}
 			free(s->teachers);
 		}
-		if(s->feature_names != NULL){
-			for(i = 0; i < s->n_features; ++i){
-				free(s->feature_names[i]);
-			}
-			free(s->feature_names);
-			free(s->feature_ids);
-		}
 		if(s->classes != NULL){
 			for(i = 0; i < s->n_classes; ++i){
-				free(s->classes[i].needs);
+				free(s->classes[i].assignments);
 			}
 			free(s->classes);
 		}
@@ -357,7 +353,6 @@ School * copy_school(const School * const s){
 	copy->id = s->id;
 	copy->name = copy_string(s->name);
 	copy->n_periods = s->n_periods;
-	copy->n_features = s->n_features;
 	copy->n_classes = s->n_classes;
 	copy->n_teachers = s->n_teachers;
 	copy->n_subjects = s->n_subjects;
@@ -365,9 +360,6 @@ School * copy_school(const School * const s){
 	copy->n_days = s->n_days;
 	copy->n_periods_per_day = s->n_periods_per_day;
 	copy->n_solutions = s->n_solutions;
-	copy->max_meetings_teacher_per_week = s->max_meetings_teacher_per_week;
-	copy->max_meetings_teacher_per_day = s->max_meetings_teacher_per_day;
-	copy->max_gemini_classes = s->max_gemini_classes;
 
 	if(copy->n_days > 0){
 		copy->day_names = calloc(copy->n_days, sizeof(char*));
@@ -391,14 +383,6 @@ School * copy_school(const School * const s){
 		for(i = 0; i < copy->n_periods; ++i){
 			copy->period_names[i] = copy_string(s->period_names[i]);
 			copy->period_ids[i] = s->period_ids[i];
-		}
-	}
-	if(copy->n_features > 0){
-		copy->feature_names = calloc(copy->n_features, sizeof(char*));
-		copy->feature_ids = calloc(copy->n_features, sizeof(int));
-		for(i = 0; i < copy->n_features; ++i){
-			copy->feature_names[i] = copy_string(s->feature_names[i]);
-			copy->feature_ids[i] = s->feature_ids[i];
 		}
 	}
 	if(copy->n_subject_groups > 0){
@@ -433,11 +417,8 @@ School * copy_school(const School * const s){
 			copy->rooms[i].short_name = copy_string(s->rooms[i].short_name);
 			copy->rooms[i].size = s->rooms[i].size;
 
-			for(j = 0; j < copy->n_features; ++j){
-				copy->rooms[i].room_features[j] = s->rooms[i].room_features[j];
-			}
 			for(j = 0; j < copy->n_periods; ++j){
-				copy->rooms[i].disponibility[j] = s->rooms[i].disponibility[j];
+				copy->rooms[i].availability[j] = s->rooms[i].availability[j];
 			}
 		}
 	}
@@ -499,6 +480,8 @@ School * copy_school(const School * const s){
 		}
 	}
 
+	// TODO  Copy Assignemnts
+
 	if(copy->n_classes > 0){
 		copy->classes = calloc(copy->n_classes, sizeof(Class));
 		for(i = 0; i < copy->n_classes; ++i){
@@ -509,24 +492,22 @@ School * copy_school(const School * const s){
 			copy->classes[i].short_name = copy_string(s->classes[i].short_name);
 			copy->classes[i].size = s->classes[i].size;
 			for(j = 0; j < copy->n_periods; ++j){
-				copy->classes[i].periods[j] = s->classes[i].periods[j];
+				copy->classes[i].period_scores[j] = s->classes[i].period_scores[j];
 			}
 			copy->classes[i].can_have_free_periods_flag = s->classes[i].can_have_free_periods_flag;
 			copy->classes[i].maximal_entry_period = s->classes[i].maximal_entry_period;
 			copy->classes[i].minimal_exit_period = s->classes[i].minimal_exit_period;
-			copy->classes[i].abstract = s->classes[i].abstract;
 			copy->classes[i].subordinates = int_list_n_copy(s->classes[i].subordinates,copy->n_classes);
 
-			if(s->classes[i].needs != NULL){
-				for(n_needs = 0; s->classes[i].needs[n_needs].subject != NULL; ++n_needs){
+			if(s->classes[i].assignments != NULL){
+				for(n_needs = 0; s->classes[i].assignments[n_needs]->subject != NULL; ++n_needs){
 					/* Blank on purpouse */
 				}
-				copy->classes[i].needs = calloc(n_needs, sizeof(SubjectQuantity));
+				copy->classes[i].assignments = calloc(n_needs, sizeof(Assignment*));
 				for(j = 0; j < n_needs; ++j){
-					index = s->classes[i].needs[j].subject - s->subjects;
 					if(index >= 0 && index < s->n_subjects){
-						copy->classes[i].needs[j].quantity = s->classes[i].needs[j].quantity;
-						copy->classes[i].needs[j].subject = &copy->subjects[index];
+						index = s->classes[i].assignments[j] - s->assignments;
+						copy->classes[i].assignments[j] = &copy->assignments[index];
 					}
 				}
 			}

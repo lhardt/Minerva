@@ -136,14 +136,14 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		m_entry_period_text->SetLabel(wxString::Format("%s",school->period_names[c->maximal_entry_period]));
 		m_exit_period_text->SetLabel(wxString::Format("%s",school->period_names[c->minimal_exit_period]));
 		m_subjects_text->SetLabel(wxString::FromUTF8(""));
-		if(c->needs != NULL){
-			for(i = 0; c->needs[i].subject != NULL; ++i){
+		if(c->assignments != NULL){
+			for(i = 0; c->assignments[i]->subject != NULL; ++i){
 				if(i == 0){
-					m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxString::FromUTF8(c->needs[i].subject->name) +
-						wxString::Format(wxString::FromUTF8(": %d períodos;"), c->needs[i].quantity));
+					m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxString::FromUTF8(c->assignments[i]->subject->name) +
+						wxString::Format(wxString::FromUTF8(": %d períodos;"), c->assignments[i]->amount));
 				} else {
-					m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxT("\n") + wxString::FromUTF8(c->needs[i].subject->name) +
-						wxString::Format(wxString::FromUTF8(": %d períodos;"), c->needs[i].quantity));
+					m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxT("\n") + wxString::FromUTF8(c->assignments[i]->subject->name) +
+						wxString::Format(wxString::FromUTF8(": %d períodos;"), c->assignments[i]->amount));
 				}
 			}
 		}
@@ -151,9 +151,9 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		for(i = 0; i < school->n_periods; ++i){
 			if(school->periods[i]){
 				m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						c->periods[i] > 0?m_owner->m_lang->str_class_availible:m_owner->m_lang->str_class_unavailible);
+						c->period_scores[i] > 0?m_owner->m_lang->str_class_availible:m_owner->m_lang->str_class_unavailible);
 				m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						(c->periods[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
+						(c->period_scores[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
 			}
 			m_periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
 		}

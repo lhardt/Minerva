@@ -199,6 +199,8 @@ typedef struct Language {
 	const wchar_t * const str_score_2;
 	const wchar_t * const str_score_3;
 	const wchar_t * const str_score_4;
+
+	const wchar_t * const str_duplicate;
 } Language;
 
 const extern Language LANG_POR;

@@ -130,6 +130,7 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 
 void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 	int i;
+	Assignment * alist = NULL;
 	School * school = m_owner->m_school;
 	if((!m_name_text->GetValue().IsEmpty()) && (m_size_text->GetValue() > 0)  && (m_entry_text->GetSelection() != wxNOT_FOUND)
 			&& (m_exit_text->GetSelection() != wxNOT_FOUND)){
@@ -137,32 +138,33 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.name = copy_wx_string(m_name_text->GetValue());
 		c.short_name = copy_wx_string(m_name_text->GetValue());
 		c.size = m_size_text->GetValue();
-		c.periods = (int *) calloc(school->n_periods + 1, sizeof(int));
+		c.period_scores = (int *) calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
-			c.periods[i] =
+			c.period_scores[i] =
 					(m_periods->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==wxT("Disponível") ? 1:0);
 		}
-		c.periods[school->n_periods] = -1;
-		c.rooms = nullptr;
+		c.period_scores[school->n_periods] = -1;
+		c.room_scores = nullptr;
 		c.can_have_free_periods_flag = m_free_periods_checkbox->GetValue();
 		c.maximal_entry_period = m_entry_text->GetSelection();
 		c.minimal_exit_period = m_exit_text->GetSelection();
-		c.abstract = false;
+		c.active = true;
 		if(m_selected_subjects_list->GetCount() > 0){
 			int n_needs = m_selected_subjects_list->GetCount();
-			c.needs = (SubjectQuantity*) calloc(n_needs + 1, sizeof(SubjectQuantity));
-			int i_need = 0;
+			c.assignments = (Assignment**) calloc(n_needs + 1, sizeof(Assignment*));
+			Assignment * alist = (Assignment *) calloc(n_needs+1, sizeof(Assignment));
 
+			int i_need = 0;
 			for(i_need = 0; i_need < n_needs; ++i_need){
 				IntPairClientData* item_data =(IntPairClientData*) m_selected_subjects_list->GetClientObject(i_need);
-				c.needs[i_need].subject = &school->subjects[ item_data->m_v1 ];
-				c.needs[i_need].quantity = item_data->m_v2;
+				alist[i_need].subject = &school->subjects[ item_data->m_v1 ];
+				alist[i_need].amount = item_data->m_v2;
+				c.assignments[i_need] = &alist[i_need];
 			}
-
-			c.needs[i_need].subject = NULL;
-			c.needs[i_need].quantity = -1;
+			alist[i_need].subject = NULL;
+			alist[i_need].amount = -1;
 		} else {
-			c.needs = nullptr;
+			c.assignments = nullptr;
 		}
 		c.subordinates = nullptr;
 
@@ -177,6 +179,9 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			free(c.name);
 			free(c.short_name);
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+		}
+		if(alist != NULL){	
+			free(alist);
 		}
 	} else {
 		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);

@@ -331,10 +331,10 @@ int count_required_meetings(School * school,Class * class,Subject * subject){
 	if(school->classes != NULL && school->n_classes > 0){
 		for(i_class = 0; i_class < school->n_classes; ++i_class){
 			if( (class == NULL) != (&school->classes[i_class] == class) ){
-				for(i_need = 0; school->classes[i_class].needs[i_need].subject != NULL; ++i_need){
-					if((subject == NULL) != (school->classes[i_class].needs[i_need].subject == subject)){
-						count += school->classes[i_class].needs[i_need].quantity;
-						printf("Count adding in %d\n", school->classes[i_class].needs[i_need].quantity);
+				for(i_need = 0; school->classes[i_class].assignments[i_need]->subject != NULL; ++i_need){
+					if((subject == NULL) != (school->classes[i_class].assignments[i_need]->subject == subject)){
+						count += school->classes[i_class].assignments[i_need]->amount;
+						printf("Count adding in %d\n", school->classes[i_class].assignments[i_need]->amount);
 					}
 				}
 			}
@@ -419,7 +419,7 @@ bool elim_analogous_ordering(const School * const school, DecisionNode * node){
 		for(j_meet = i_meet+1; meetings[j_meet].m_class != NULL; j_meet++){
 			/* If they are analogous and not fixed */
 			if(   meetings[i_meet].m_class == meetings[j_meet].m_class
-			   && meetings[i_meet].subj == meetings[j_meet].subj
+			   && meetings[i_meet].subject == meetings[j_meet].subject
 		       && meetings[i_meet].period == -1
 		       && meetings[j_meet].period == -1){
 
@@ -538,7 +538,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 		}
 		/* Rule 4. T teaches C in all periods of S for C */
 		if(meeting->m_class == fixed->m_class
-				&& meeting->subj == fixed->subj
+				&& meeting->subject == fixed->subject
 				&& meeting->teacher == NULL
 				&& fixed->teacher != NULL){
 			meeting->teacher = fixed->teacher;
@@ -546,7 +546,7 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 		}
 		/* Rule 5. R accomodates every period of S to C */
 		if(meeting->m_class == fixed->m_class
-				&& meeting->subj == fixed->subj
+				&& meeting->subject == fixed->subject
 				&& meeting->room == NULL
 				&& fixed->room != NULL){
 			meeting->room = fixed->room;
@@ -639,7 +639,7 @@ bool room_period_elimination(const School * const school, DecisionNode * node){
 	met = &node->conclusion[node->affected_meeting_index];
 	if(node->type == NODE_ROOM){
 		if(met->period >= 0){
-			if(met->m_class->periods[met->period] == 0){
+			if(met->m_class->period_scores[met->period] == 0){
 				// Selected a period that the class does not support.
 				// Theoretically, no nodes made by the program blocks
 				// tihs possibility by hindsight. But handmade, ...
@@ -649,19 +649,19 @@ bool room_period_elimination(const School * const school, DecisionNode * node){
 		} else {
 			for(i_per = 0; met->possible_periods[i_per] >= 0; ++i_per){
 				// TODO make this a consistent standard among other eliminations.
-				met->possible_periods[i_per] *= met->room->disponibility[i_per];
+				met->possible_periods[i_per] *= met->room->availability[i_per];
 				change = true;
 			}
 		}
 	} else if(node->type == NODE_PERIOD){
 		if(met->room != NULL){
-			if(met->room->disponibility[ met->period ] == 0){
+			if(met->room->availability[ met->period ] == 0){
 				node->is_consistent = false;
 				change = true;
 			}
 		} else {
 			for(i_room = 0; met->possible_rooms[i_room] >= 0; ++i_room){
-				met->possible_rooms[i_room] *= school->rooms[i_room].disponibility[i_per];
+				met->possible_rooms[i_room] *= school->rooms[i_room].availability[i_per];
 			}
 		}
 	}

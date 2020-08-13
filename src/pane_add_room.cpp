@@ -67,9 +67,9 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 
 	button_go->Bind(wxEVT_BUTTON, &AddRoomPane::OnCreateButtonClicked, this);
 
-	for(i = 0; (i < m_owner->m_school->n_features) && (NULL != m_owner->m_school->feature_names[i]) ; ++i){
-		m_features->Insert(wxString::FromUTF8(m_owner->m_school->feature_names[i]), i, new IntClientData(i));
-	}
+	// for(i = 0; (i < m_owner->m_school->n_features) && (NULL != m_owner->m_school->feature_names[i]) ; ++i){
+	// 	m_features->Insert(wxString::FromUTF8(m_owner->m_school->feature_names[i]), i, new IntClientData(i));
+	// }
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -140,18 +140,18 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		room.name = copy_wx_string(m_name_text->GetValue());
 		room.short_name = copy_wx_string(m_name_text->GetValue());
 		room.size = m_capacity_text->GetValue();
-		room.room_features = (int*)calloc(school->n_features + 11 - (school->n_features % 10), sizeof(int));
-		for(i = 0; i < m_added_features->GetCount(); ++i){
-			IntPairClientData * data = (IntPairClientData*) m_added_features->GetClientObject(i);
-			room.room_features[data->m_v1] = data->m_v2;
-		}
-		room.room_features[school->n_features] = -1;
-		room.disponibility = (int*)calloc(school->n_periods + 1, sizeof(int));
+		// room.room_features = (int*)calloc(school->n_features + 11 - (school->n_features % 10), sizeof(int));
+		// for(i = 0; i < m_added_features->GetCount(); ++i){
+		// 	IntPairClientData * data = (IntPairClientData*) m_added_features->GetClientObject(i);
+		// 	room.room_features[data->m_v1] = data->m_v2;
+		// }
+		// room.room_features[school->n_features] = -1;
+		room.availability = (int*)calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
-			room.disponibility[i] =
+			room.availability[i] =
 					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_adj__open ? 1:0);
 		}
-		room.disponibility[school->n_periods] = -1;
+		room.availability[school->n_periods] = -1;
 		int id = insert_room(stdout, m_owner->m_database, &room, school);
 		if(id != -1){
 			room.id = id;
@@ -169,30 +169,30 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 }
 
 void AddRoomPane::OnAddFeatureClicked(wxCommandEvent & ev){
-	int i_sel = m_features->GetSelection();
-	if(i_sel != wxNOT_FOUND && m_score_text->GetValue() > 0){
-		int i_feature = ((IntClientData*)m_features->GetClientObject(i_sel))->m_value;
-		wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[i_sel]) << wxT(": ") << m_score_text->GetValue();
-		m_added_features->Insert(to_be_inserted, m_added_features->GetCount(), new IntPairClientData(i_feature, m_score_text->GetValue()));
-		m_score_text->SetValue(0);
-		m_features->Delete(i_sel);
-	}
+	// int i_sel = m_features->GetSelection();
+	// if(i_sel != wxNOT_FOUND && m_score_text->GetValue() > 0){
+	// 	int i_feature = ((IntClientData*)m_features->GetClientObject(i_sel))->m_value;
+	// 	wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[i_sel]) << wxT(": ") << m_score_text->GetValue();
+	// 	m_added_features->Insert(to_be_inserted, m_added_features->GetCount(), new IntPairClientData(i_feature, m_score_text->GetValue()));
+	// 	m_score_text->SetValue(0);
+	// 	m_features->Delete(i_sel);
+	// }
 }
 
 void AddRoomPane::OnRemoveFeatureClicked(wxCommandEvent & ev){
-	int i_sel = m_added_features->GetSelection();
-	if(i_sel != wxNOT_FOUND){
-		int i_feature = ((IntPairClientData*)m_added_features->GetClientObject(i_sel))->m_v1;
-		wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[i_feature]);
-		m_features->Insert(to_be_inserted, m_added_features->GetCount(), new IntClientData(i_feature));
-		m_added_features->Delete(i_sel);
-	}
+	// int i_sel = m_added_features->GetSelection();
+	// if(i_sel != wxNOT_FOUND){
+	// 	int i_feature = ((IntPairClientData*)m_added_features->GetClientObject(i_sel))->m_v1;
+	// 	wxString to_be_inserted = wxString::FromUTF8(m_owner->m_school->feature_names[i_feature]);
+	// 	m_features->Insert(to_be_inserted, m_added_features->GetCount(), new IntClientData(i_feature));
+	// 	m_added_features->Delete(i_sel);
+	// }
 }
 
 void AddRoomPane::OnRemoveAllClicked(wxCommandEvent & ev){
-	m_features->Clear();
-	m_added_features->Clear();
-	for(int i = 0; (i < m_owner->m_school->n_features) && (NULL != m_owner->m_school->feature_names[i]) ; ++i){
-		m_features->Insert(wxString::FromUTF8(m_owner->m_school->feature_names[i]), i, new IntClientData(i));
-	}
+	// m_features->Clear();
+	// m_added_features->Clear();
+	// for(int i = 0; (i < m_owner->m_school->n_features) && (NULL != m_owner->m_school->feature_names[i]) ; ++i){
+	// 	m_features->Insert(wxString::FromUTF8(m_owner->m_school->feature_names[i]), i, new IntClientData(i));
+	// }
 }

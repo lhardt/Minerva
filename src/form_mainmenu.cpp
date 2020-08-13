@@ -13,7 +13,7 @@ extern "C" {
 	#include "util.h"
 };
 
-MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, owner->m_lang->str_minerva_school_timetables, wxPoint(30,30), wxSize(800,600)){
+MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wxT(""), wxPoint(30,30), wxSize(800,600)){
 	m_owner = owner;
 
 	SetFont(*m_owner->m_text_font);
@@ -22,19 +22,21 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 		SetIcon(wxICON(aaaaaaaa));
 	#endif
 
+	wxString title;
+	title << owner->m_lang->str_minerva_school_timetables << " - " << wxString::FromUTF8(m_owner->m_school->name);
+	SetTitle(title);
 	SetMinSize(wxSize(800,600));
 	SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
 
-
 	wxRibbonBar * m_ribbon = new wxRibbonBar(this,-1,wxDefaultPosition, wxSize(800,150), wxRIBBON_BAR_FLOW_HORIZONTAL | wxRIBBON_BAR_SHOW_PAGE_LABELS);
-	m_ribbon->SetArtProvider(new wxRibbonMetroArtProvider(true, m_owner->m_small_font));
+	// m_ribbon->SetArtProvider(new wxRibbonMetroArtProvider(true, m_owner->m_small_font));
 	wxRibbonButtonBar * m_rib_bbars[7][5];
 
 	const wchar_t * const menu_names[7] = {m_owner->m_lang->str_school, m_owner->m_lang->str_rooms, m_owner->m_lang->str_subjects, m_owner->m_lang->str_teachers, m_owner->m_lang->str_classes, m_owner->m_lang->str_lectures, m_owner->m_lang->str_timetable};
-	const wchar_t * const smenu_names[10][10] = {
+	const wchar_t * const smenu_names[7][7] = {
 		{m_owner->m_lang->str_data, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
@@ -42,9 +44,9 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	};
 
 	for(int i = 0; i < 7; ++i){
-		m_ribbon_pages[i] = new wxRibbonPage(m_ribbon, wxID_ANY, wxString(menu_names[i]));
+		m_ribbon_pages[i] = new wxRibbonPage(m_ribbon, wxID_ANY, (menu_names[i]));
 		for(int j = 0; smenu_names[i][j] != NULL; ++j){
-			m_rib_bbars[i][j] = new wxRibbonButtonBar(new wxRibbonPanel(m_ribbon_pages[i], wxID_ANY, wxString(smenu_names[i][j])));
+			m_rib_bbars[i][j] = new wxRibbonButtonBar(new wxRibbonPanel(m_ribbon_pages[i], wxID_ANY, smenu_names[i][j], wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxRIBBON_PANEL_NO_AUTO_MINIMISE));
 		}
 	}
 	m_ribbon->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &MainMenuForm::OnMenuItemClicked, this);
@@ -143,7 +145,6 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	Bind(wxEVT_BUTTON, &MainMenuForm::OnCloseCommand, this,LHID_OF(LHN_CLOSE));
 	Bind(wxEVT_BUTTON, &MainMenuForm::OnUndo, this,LHID_OF(LHN_UNDO));
 	Bind(wxEVT_BUTTON, &MainMenuForm::OnRedo, this,LHID_OF(LHN_REDO));
-	//m_footer->SetBackgroundColour(wxColor(0x25,0x75,0xb0));
 	wxAcceleratorEntry keyboard_shortcuts[4];
 	keyboard_shortcuts[0].Set(wxACCEL_CTRL, (int)'S', LHID_OF(LHN_SAVE));
 	keyboard_shortcuts[1].Set(wxACCEL_CTRL, (int)'Q', LHID_OF(LHN_CLOSE));
@@ -166,7 +167,6 @@ void MainMenuForm::OnCloseClose(wxCloseEvent &evt){
 }
 
 bool MainMenuForm::OnClose(){
-	printf("oh no we are closing.\n");
 	if(m_toolbar->GetToolEnabled(LHID_OF(LHN_SAVE))){
 		wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_confirm_close_without_saving, m_owner->m_lang->str_are_you_sure, wxCANCEL | wxYES_NO);
 		dialog->SetYesNoCancelLabels(m_owner->m_lang->str_close_and_save, m_owner->m_lang->str_close_without_saving, m_owner->m_lang->str_cancel);
@@ -266,7 +266,8 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Room */
 		case LHID_OF(LHN_ADD_FEATURE): {
 			CloseOpenedPane();
-			m_open_pane = new AddFeaturePane(m_owner, m_center_pane, wxPoint(100,15));
+			// obsolete
+			//m_open_pane = new AddFeaturePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_ADD_ROOM): {
@@ -276,7 +277,8 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		}
 		case LHID_OF(LHN_SEE_FEATURES):{
 			CloseOpenedPane();
-			m_open_pane = new ListFeaturesPane(m_owner, m_center_pane, wxPoint(100,15));
+			// OBSOLETE
+			// m_open_pane = new ListFeaturesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_ROOMS):{

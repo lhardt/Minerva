@@ -18,16 +18,16 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_size);
-	wxStaticText * features_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_features);
+	// wxStaticText * features_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_features);
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 
 	name_label->SetFont(*m_owner->m_bold_text_font);
 	size_label->SetFont(*m_owner->m_bold_text_font);
-	features_label->SetFont(*m_owner->m_bold_text_font);
+	// features_label->SetFont(*m_owner->m_bold_text_font);
 
 	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_size_text = new wxStaticText(this, wxID_ANY, wxT(""));
-	m_features_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	// m_features_text = new wxStaticText(this, wxID_ANY, wxT(""));
 
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
@@ -71,8 +71,8 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	fields_sz->Add(m_name_text, 0, wxEXPAND);
 	fields_sz->Add(size_label, 0, wxEXPAND);
 	fields_sz->Add(m_size_text, 0, wxEXPAND);
-	fields_sz->Add(features_label, 0, wxEXPAND);
-	fields_sz->Add(m_features_text, 0, wxEXPAND);
+	// fields_sz->Add(features_label, 0, wxEXPAND);
+	// fields_sz->Add(m_features_text, 0, wxEXPAND);
 
 	desc_sz->Add(fields_sz, 0, wxTOP | wxLEFT, 15);
 	desc_sz->Add(periods_text, 0, wxTOP | wxLEFT, 15);
@@ -142,27 +142,27 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 		m_size_text->SetLabel(wxString::Format("%d",room->size ));
 		m_features_text->SetLabel(wxT(""));
 
-		for(i = 0; i < school->n_features && room->room_features && room->room_features[i] >= 0; ++i){
-			if(room->room_features[i] > 0){
-				if(more_than_zero_features){
-					m_features_text->SetLabel(m_features_text->GetLabel().Append(
-						wxString::Format("\n%s: %d", wxString::FromUTF8(school->feature_names[i]), room->room_features[i])));
-				} else {
-					m_features_text->SetLabel(m_features_text->GetLabel().Append(
-						wxString::Format("%s: %d", wxString::FromUTF8(school->feature_names[i]), room->room_features[i])));
-					more_than_zero_features=true;
-				}
-			}
-		}
+		// for(i = 0; i < school->n_features && room->room_features && room->room_features[i] >= 0; ++i){
+		// 	if(room->room_features[i] > 0){
+		// 		if(more_than_zero_features){
+		// 			m_features_text->SetLabel(m_features_text->GetLabel().Append(
+		// 				wxString::Format("\n%s: %d", wxString::FromUTF8(school->feature_names[i]), room->room_features[i])));
+		// 		} else {
+		// 			m_features_text->SetLabel(m_features_text->GetLabel().Append(
+		// 				wxString::Format("%s: %d", wxString::FromUTF8(school->feature_names[i]), room->room_features[i])));
+		// 			more_than_zero_features=true;
+		// 		}
+		// 	}
+		// }
 		m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 		for(i = 0; i < school->n_periods; ++i){
 			if(school->periods[i] == false){
 				m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 			} else {
 				m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						wxString::Format("%s" , (room->disponibility[i] > 0?m_owner->m_lang->str_adj__open:m_owner->m_lang->str_adj__closed) ));
+						wxString::Format("%s" , (room->availability[i] > 0?m_owner->m_lang->str_adj__open:m_owner->m_lang->str_adj__closed) ));
 				m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						(room->disponibility[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
+						(room->availability[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
 			}
 			m_periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
 		}

@@ -107,12 +107,12 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		c.size = 0;
 		c.maximal_entry_period = school->n_periods_per_day -1;
 		c.minimal_exit_period = 0;
-		c.abstract = false;
-		c.needs = (SubjectQuantity*)calloc(n_needs + 1, sizeof(SubjectQuantity));
-		c.rooms = NULL; /* TODO */
+		c.active = true;
+		c.assignments = (Assignment**)calloc(n_needs + 1, sizeof(Assignment*));
+		c.room_scores = NULL; /* TODO */
 		c.subordinates = (int *) calloc(n_subordinates+1, sizeof(int));
-		c.periods = (int *) calloc(school->n_periods + 1, sizeof(int));
-		c.periods[school->n_periods] = -1;
+		c.period_scores = (int *) calloc(school->n_periods + 1, sizeof(int));
+		c.period_scores[school->n_periods] = -1;
 		for(i = 0; i < m_selected_classes_list->GetCount(); ++i){
 			int i_class = ((IntClientData*)m_selected_classes_list->GetClientObject(i))->m_value;
 
@@ -134,26 +134,28 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 				}
 			}
 			for(j = 0; j < school->n_periods; ++j){
-				if(school->classes[i_class].periods[j] == 0 ){
-					c.periods[j] = 0;
+				if(school->classes[i_class].period_scores[j] == 0 ){
+					c.period_scores[j] = 0;
 					break;
 				} else {
-					c.periods[j] += school->classes[i_class].periods[j];
+					c.period_scores[j] += school->classes[i_class].period_scores[j];
 				}
 			}
 			c.subordinates[i_class] = 1;
 			++i_member;
 		}
 		for(i = 0; i < school->n_periods; ++i){
-			if(c.periods[i] > 0){
+			if(c.period_scores[i] > 0){
 				/* Garanteed above zero since each is >1 */
-				c.periods[i] = c.periods[i]/m_selected_classes_list->GetCount();
+				c.period_scores[i] = c.period_scores[i]/m_selected_classes_list->GetCount();
 			}
 		}
+		Assignment * alist = (Assignment *) calloc(n_needs, sizeof(Assignment));
 		for(i = 0; i < n_needs; ++i){
 			IntPairClientData * data = (IntPairClientData*)m_selected_subjects_list->GetClientObject(i);
-			c.needs[i].subject = &(school->subjects[data->m_v1]);
-			c.needs[i].quantity = data->m_v2;
+			alist[i].subject = &(school->subjects[data->m_v1]);
+			alist[i].amount = data->m_v2;
+			c.assignments[i] = &alist[i];
 		}
 		/* TODO  populate * rooms; */
 		bool success = insert_class(stdout, m_owner->m_database, &c, school);
@@ -167,6 +169,7 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
+		free(alist);
 	}
 }
 

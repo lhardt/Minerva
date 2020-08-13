@@ -74,7 +74,7 @@ class ChoiceGrid : public wxGrid {
 	wxVector<wxColor>  m_background_colors;
 	wxVector<int> possible_values;
 
-	bool can_user_click = true;
+	bool m_can_user_click = true;
 
 	wxVector<int> GetValues(int i_day);
 	wxVector<int> GetValues();
