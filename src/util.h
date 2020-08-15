@@ -50,12 +50,18 @@ void print_school(FILE * out, const School * const s);
 
 /* Returns nullptr on not founding */
 Room * find_room_by_id(School * school, int id);
+int get_room_index_by_id(School * school, int id);
 Class * find_class_by_id(School * school, int id);
+int get_class_index_by_id(School * school, int id);
 Teacher * find_teacher_by_id(School * school, int id);
+int get_teacher_index_by_id(School * school, int id);
 Meeting * find_meeting_by_id(School * school, int id);
 Subject * find_subject_by_id(School * school, int id);
+Assignment * find_assignment_by_class_subj_id(School * school, int id_class, int id_subj);
+int get_per_index_by_id(School * school, int id);
 int get_day_index_by_id(School * school, int id);
 int get_daily_period_index_by_id(School * school, int id);
+int get_subject_group_index_by_id(School * school, int id);
 
 void copy_soluiton(const Solution * const solution);
 

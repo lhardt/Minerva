@@ -260,6 +260,17 @@ Room * find_room_by_id(School * school, int id){
 	return NULL;
 }
 
+int get_room_index_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_rooms; ++i){
+		if(school->rooms[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
 Class * find_class_by_id(School * school, int id) {
 	int i;
 
@@ -271,6 +282,18 @@ Class * find_class_by_id(School * school, int id) {
 	return NULL;
 }
 
+int get_class_index_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_classes; ++i){
+		if(school->classes[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
+
 Teacher * find_teacher_by_id(School * school, int id){
 	int i;
 
@@ -280,6 +303,17 @@ Teacher * find_teacher_by_id(School * school, int id){
 		}
 	}
 	return NULL;
+}
+
+int get_teacher_index_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_teachers; ++i){
+		if(school->teachers[i].id == id){
+			return i;
+		}
+	}
+	return -1;
 }
 
 Meeting * find_meeting_by_id(School * school, int id){
@@ -314,10 +348,40 @@ int get_day_index_by_id(School * school, int id){
 	return -1;
 }
 
+int get_per_index_by_id(School * school, int id){
+	int i;
+	for(i = 0; i < school->n_days; ++i){
+		if(school->period_ids[i] == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
+Assignment * find_assignment_by_class_subj_id(School * school, int id_class, int id_subj){
+	for(int i = 0; i < school->n_assignments; ++i){
+		if(school->assignments[i].m_class->id == id_class && school->assignments[i].subject->id == id_subj){
+			return &school->assignments[i];
+		}
+	}
+	return NULL;
+}
+
+
 int get_daily_period_index_by_id(School * school, int id){
 	int i;
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		if(school->daily_period_ids[i] == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
+int get_subject_group_index_by_id(School * school, int id){
+	int i;
+	for(i = 0; i < school->n_subject_groups; ++i){
+		if(school->subject_group_ids[i] == id){
 			return i;
 		}
 	}

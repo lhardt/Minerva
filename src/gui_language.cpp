@@ -13,7 +13,7 @@
 
 const Language LANG_POR = {
 	.str_minerva_school_timetables = L"Horário Escolar Minerva",
-	.str_minerva_welcome_description = L"Comece agora a criar seu próprio horário escolar.\nSobre qual escola estamos falando hoje?",
+	.str_minerva_welcome_description = L"Comece agora a criar o horário de sua escola gratuitamente.\nSobre qual escola estamos falando hoje?",
 	.str_system_config = L"Configurações do Sistema",
 	.str_language = L"Linguagem",
 	.str_settings = L"Configurações",
@@ -209,7 +209,7 @@ const Language LANG_POR = {
 
 const Language LANG_ENG = {
 	.str_minerva_school_timetables = L"Minerva School Timetables",
-	.str_minerva_welcome_description = L"Start creating your own timetable now.\nAbout what school are we talking today?",
+	.str_minerva_welcome_description = L"Start creating the timetable of your school free of charge.\nAbout what school are we talking today?",
 	.str_system_config = L"System Settings",
 	.str_language = L"Language",
 	.str_settings = L"Settings",
@@ -402,7 +402,7 @@ const Language LANG_ENG = {
 
 const Language LANG_SPA = {
 	.str_minerva_school_timetables = L"Horario Escolar Minerva",
-	.str_minerva_welcome_description = L"Cria ahora tu próprio horario escolar.\nSobre cual escuela falamos hoy?",
+	.str_minerva_welcome_description = L"Cría ahora el horario de su escuela gratuitamente.\nSobre cual escuela falamos hoy?",
 	.str_system_config = L"Ajustes del Sistema",
 	.str_language = L"Lenguaje",
 	.str_settings = L"Ajustes",
@@ -585,7 +585,7 @@ const Language LANG_SPA = {
 
 const Language LANG_DEU = {
 	.str_minerva_school_timetables = L"Minerva Stundenplan",
-	.str_minerva_welcome_description = L"Beginnen Sie zu seine eigene Stundenplan machen.\nÜber welcher Schule sprechen wir heute?",
+	.str_minerva_welcome_description = L"Beginnen Sie kostenlos, den Stundenplan deiner Schule zu erstellen.\nÜber welcher Schule sprechen wir heute?",
 	.str_system_config = L"Systemeinstellungen",
 	.str_language = L"Sprache",
 	.str_settings = L"Einstellungen",
