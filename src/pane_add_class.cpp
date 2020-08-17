@@ -148,6 +148,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.can_have_free_periods_flag = m_free_periods_checkbox->GetValue();
 		c.maximal_entry_period = m_entry_text->GetSelection();
 		c.minimal_exit_period = m_exit_text->GetSelection();
+		c.max_per_day_subject_group = NULL;
 		c.active = true;
 		if(m_selected_subjects_list->GetCount() > 0){
 			int n_needs = m_selected_subjects_list->GetCount();
@@ -180,7 +181,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			free(c.short_name);
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
-		if(alist != NULL){	
+		if(alist != NULL){
 			free(alist);
 		}
 	} else {

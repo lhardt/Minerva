@@ -350,7 +350,7 @@ int get_day_index_by_id(School * school, int id){
 
 int get_per_index_by_id(School * school, int id){
 	int i;
-	for(i = 0; i < school->n_days; ++i){
+	for(i = 0; i < school->n_periods; ++i){
 		if(school->period_ids[i] == id){
 			return i;
 		}

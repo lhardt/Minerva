@@ -88,6 +88,29 @@ class ChoiceGrid : public wxGrid {
 	void OnLeftClick(wxGridEvent &);
 };
 
+class AvailabilityPane : public wxScrolledWindow {
+ public:
+	~AvailabilityPane();
+	AvailabilityPane(Application * owner,
+					 wxWindow * parent,
+					 wxWindowID id = wxID_ANY,
+					 wxPoint pos = wxDefaultPosition,
+					 wxSize sz = wxDefaultSize);
+	
+	/*NOTE: You have to .skip() those events in client code. */
+	void 		  OnEditButtonClicked(wxCommandEvent &);
+	void		  OnCancelButtonClicked(wxCommandEvent &);
+	wxButton 	* GetCancelButton();
+	wxButton 	* GetEditButton();
+	int		 	* GetValues();
+	void	 	  SetValues(int * values);
+private:
+	Application * m_owner;
+	ChoiceGrid  * m_grid;
+	wxButton 	* m_edit_btn;
+	wxButton 	* m_cancel_btn;
+};
+
 class HoverToolTip : public wxStaticBitmap {
  public:
 	HoverToolTip(wxWindow * parent,
@@ -496,18 +519,21 @@ class ListClassesPane : public wxScrolledWindow {
  private:
 
 	wxListBox 	 * m_classes_list;
-	wxStaticText * m_name_text;
-	wxStaticText * m_size_text;
-	wxStaticText * m_free_periods_text;
-	wxStaticText * m_entry_period_text;
-	wxStaticText * m_exit_period_text;
+	wxTextCtrl   * m_name_text;
+	wxSpinCtrl   * m_size_text;
+	wxCheckBox   * m_free_periods_text;
+	wxChoice 	 * m_entry_period_text;
+	wxChoice     * m_exit_period_text;
 	wxStaticText * m_subjects_text;
-	ChoiceGrid   * m_periods_grid;
-
-	Application * m_owner;
+	wxCheckBox   * m_active_text;
+	AvailabilityPane * m_periods;
+	wxButton 	 * m_basic_edit_btn;
+	wxButton	 * m_basic_cancel_btn;
+	Application  * m_owner;
 
 	void OnSelectionChanged(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
+	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnRemoveButtonClicked(wxCommandEvent &);
 };
 

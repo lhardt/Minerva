@@ -1,8 +1,16 @@
 #include "gui.hpp"
 
+/* Credits to RemcoM in the wxWidgets forum for the NoSelect renderer. */
+class NoSelectGridCellRenderer : public wxGridCellStringRenderer {
+public:
+	virtual void Draw(wxGrid& grid, wxGridCellAttr& attr, wxDC& dc, const wxRect& rect, int row, int col, bool isSelected){
+		wxGridCellStringRenderer::Draw(grid, attr, dc, rect, row, col, false);
+	}
+};
+
 ChoiceGrid::ChoiceGrid(wxWindow * parent, wxWindowID id, wxPoint position, wxSize size) : wxGrid(parent,id,position,size){
 	Bind(wxEVT_GRID_CELL_LEFT_CLICK, &ChoiceGrid::OnLeftClick, this);
-
+	SetDefaultRenderer(new NoSelectGridCellRenderer);
 	CreateGrid(1,1);
 	HideColLabels();
 	HideRowLabels();
