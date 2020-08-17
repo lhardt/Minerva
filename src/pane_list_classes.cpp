@@ -38,8 +38,25 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	wxButton * delete_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_delete);
 	m_basic_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
 	m_basic_edit_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_edit);
-	m_periods = new AvailabilityPane(m_owner, notebook, wxID_ANY);
-	m_assignments = new AssignmentsPane(m_owner, notebook, wxID_ANY);
+
+	m_periods = new ScoreGridPane(m_owner,notebook, wxID_ANY);
+	// m_superclasses = new ScoreGridPane(m_owner,notebook, wxID_ANY);
+	m_rooms = new ScoreGridPane(m_owner,notebook, wxID_ANY);
+
+	wxVector<wxString> all_subject_names = wxVector<wxString>();
+	wxString subject_col_name = m_owner->m_lang->str_periods;
+	for(i = 0; i < school->n_subjects; ++i){
+		all_subject_names.push_back(wxString::FromUTF8(school->subjects[i].name));
+	}
+	m_assignments = new PosIntGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, subject_col_name, all_subject_names);
+
+	wxVector<wxString> all_sgroup_names = wxVector<wxString>();
+	wxString sgroup_col_name = m_owner->m_lang->str_max_number_of_periods_per_day;
+	for(i = 0; i < school->n_subject_groups; ++i){
+		all_sgroup_names.push_back(wxString::FromUTF8(school->subject_group_names[i]));
+	}
+	m_groups = new PosIntGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, sgroup_col_name, all_sgroup_names);
+
 
 	title->SetFont(*m_owner->m_page_title_font);
 	m_err_msg->SetFont(*m_owner->m_small_font);
@@ -80,8 +97,9 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 
 	notebook->InsertPage(0, m_periods, wxT("Disponibilidade"));
 	notebook->InsertPage(1, m_assignments, wxT("Disciplinas"));
-	notebook->InsertPage(2, new wxScrolledWindow(notebook, wxID_ANY), wxT("Professores"));
-	notebook->InsertPage(3, new wxScrolledWindow(notebook, wxID_ANY), wxT("Salas"));
+	notebook->InsertPage(2, m_rooms, wxT("Salas"));
+	notebook->InsertPage(3, m_groups, wxT("Grupos Disc."));
+	// notebook->InsertPage(4, m_superclasses, wxT("Superturmas"));
 
 	sizer->Add(title, 0, wxALL, 10);
 	sizer->Add(body_sizer, 1, wxEXPAND | wxALL, 10);
@@ -98,28 +116,53 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	delete_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnRemoveButtonClicked, this);
 	m_classes_list->Bind(wxEVT_LISTBOX, &ListClassesPane::OnSelectionChanged, this);
 
-	// wxVector<wxString> grid_values = wxVector<wxString>();
-	// grid_values.push_back(m_owner->m_lang->str_class_availible);
-	// grid_values.push_back(m_owner->m_lang->str_class_unavailible);
-	// m_periods_grid->SetPossibleValues(grid_values);
-	//
-	// wxVector<wxColor> grid_colors = wxVector<wxColor>();
-	// grid_colors.push_back(wxColor(200,200,255));
-	// grid_colors.push_back(wxColor(255,200,200));
-	// m_periods_grid->SetBackgroundColors(grid_colors);
-	//
-	// m_periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	// m_periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
-	//
-	// m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
-	// for(i = 0; i < school->n_periods; ++i){
-	// 	if(school->periods[i]){
-	// 		m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-	// 				wxT(""));
-	// 		m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-	// 				wxColor(255,255,255));
-	// 	}
-	// }
+
+	// AVAILABILITY PANE CODE
+	ChoiceGrid * periods_grid = m_periods->GetGrid();
+	wxVector<wxString> pgrid_values = wxVector<wxString>();
+	pgrid_values.push_back(m_owner->m_lang->str_class_availible);
+	pgrid_values.push_back(m_owner->m_lang->str_class_unavailible);
+	periods_grid->SetPossibleValues(pgrid_values);
+
+	wxVector<wxColor> pgrid_colors = wxVector<wxColor>();
+	pgrid_colors.push_back(wxColor(200,200,255));
+	pgrid_colors.push_back(wxColor(255,200,200));
+	periods_grid->SetBackgroundColors(pgrid_colors);
+
+	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
+	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
+	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
+
+	// ROOM PANE CODE
+	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
+	wxVector<wxString> grid_values = wxVector<wxString>();
+	grid_values.push_back(m_owner->m_lang->str_class_availible);
+	grid_values.push_back(m_owner->m_lang->str_class_unavailible);
+	rooms_grid->SetPossibleValues(grid_values);
+
+	wxVector<wxColor> grid_colors = wxVector<wxColor>();
+	grid_colors.push_back(wxColor(200,200,255));
+	grid_colors.push_back(wxColor(255,200,200));
+	rooms_grid->SetBackgroundColors(grid_colors);
+
+	rooms_grid->SetColName(0,m_owner->m_lang->str_name);
+	for(i = 0; i < school->n_rooms; ++i){
+		rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
+	}
+	rooms_grid->GridRemake(1, school->n_rooms);
+
+	for(i = 0; i < school->n_periods; ++i){
+		if(school->periods[i]){
+			periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+					wxT(""));
+			periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+					wxColor(255,255,255));
+		}
+	}
+
+	// ChoiceGrid * teachers_grid =
+
+
 	if(school->n_classes > 0){
 		wxArrayString list;
 		for(i = 0; i < school->n_classes; ++i){

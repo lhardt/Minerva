@@ -140,8 +140,8 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 		m_selected_index = m_rooms_list->GetSelection();
 		m_name_text->SetLabel(wxString::FromUTF8( room->name ));
 		m_size_text->SetLabel(wxString::Format("%d",room->size ));
-		m_features_text->SetLabel(wxT(""));
 
+		// m_features_text->SetLabel(wxT(""));
 		// for(i = 0; i < school->n_features && room->room_features && room->room_features[i] >= 0; ++i){
 		// 	if(room->room_features[i] > 0){
 		// 		if(more_than_zero_features){

@@ -54,6 +54,30 @@ enum AppFormType {
 	FORM_SETTINGS
 };
 
+/* Grid table that only accepts positive integers. */
+class PosIntGridTable : public wxGridTableBase{
+ public:
+	PosIntGridTable(int n_rows, int n_cols);
+	~PosIntGridTable();
+	virtual int GetNumberRows();
+	virtual int GetNumberCols();
+	virtual bool IsEmptyCell( int row, int col );
+	virtual wxString GetValue( int row, int col );
+	virtual void SetValue( int row, int col, const wxString& value );
+	virtual bool AppendRows(unsigned long n_new_rows);
+	virtual bool AppendCols(unsigned long n_new_cols);
+	virtual void SetColLabelValue(int col, wxString & str);
+	virtual void SetRowLabelValue(int row, wxString & str);
+	virtual wxString GetColLabelValue(int col);
+	virtual wxString GetRowLabelValue(int row);
+ private:
+	int n_rows;
+	int n_cols;
+	int * values;
+	wxVector<wxString> col_labels;
+	wxVector<wxString> row_labels;
+};
+
 class ChoiceGrid : public wxGrid {
  public:
 	ChoiceGrid(wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
@@ -81,6 +105,8 @@ class ChoiceGrid : public wxGrid {
 
 	void GridRemake(int n_cols, int n_rows);
 	void SetPossibleValues(wxVector<wxString> values);
+	void SetColName(int i_col, wxString name);
+	void SetRowName(int i_row, wxString name);
 	void SetBackgroundColors(wxVector<wxColor> values);
 	void SetCellImmutable(int i_col, int i_row);
 	void SetCanUserClick(bool can_user_click);
@@ -88,37 +114,40 @@ class ChoiceGrid : public wxGrid {
 	void OnLeftClick(wxGridEvent &);
 };
 
-class AvailabilityPane : public wxScrolledWindow {
+class ScoreGridPane : public wxScrolledWindow {
  public:
-	~AvailabilityPane();
-	AvailabilityPane(Application * owner,
-					 wxWindow * parent,
-					 wxWindowID id = wxID_ANY,
-					 wxPoint pos = wxDefaultPosition,
-					 wxSize sz = wxDefaultSize);
+	~ScoreGridPane();
+	ScoreGridPane(Application * owner,
+				  wxWindow * parent,
+				  wxWindowID id = wxID_ANY,
+				  wxPoint pos = wxDefaultPosition,
+				  wxSize sz = wxDefaultSize);
 
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);
 	void		  OnCancelButtonClicked(wxCommandEvent &);
 	wxButton 	* GetCancelButton();
 	wxButton 	* GetEditButton();
+	ChoiceGrid  * GetGrid();
 	int		 	* GetValues();
 	void	 	  SetValues(int * values);
-private:
+ private:
 	Application * m_owner;
 	ChoiceGrid  * m_grid;
 	wxButton 	* m_edit_btn;
 	wxButton 	* m_cancel_btn;
 };
 
-class AssignmentsPane : public wxScrolledWindow {
+class PosIntGridPane : public wxScrolledWindow {
  public:
-	~AssignmentsPane();
-	AssignmentsPane(Application * owner,
+	~PosIntGridPane();
+	PosIntGridPane(Application * owner,
 					 wxWindow * parent,
 					 wxWindowID id = wxID_ANY,
 					 wxPoint pos = wxDefaultPosition,
-					 wxSize sz = wxDefaultSize);
+					 wxSize sz = wxDefaultSize,
+				 	 wxString column_name = wxT("Col"),
+					 wxVector<wxString> row_names = wxVector<wxString>());
 
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);
@@ -127,7 +156,7 @@ class AssignmentsPane : public wxScrolledWindow {
 	wxButton 	* GetEditButton();
 	int		 	* GetValues();
 	void	 	  SetValues(int * values);
-private:
+ private:
 	Application * m_owner;
 	wxGrid		* m_grid;
 	wxButton 	* m_edit_btn;
@@ -541,7 +570,6 @@ class ListClassesPane : public wxScrolledWindow {
 	ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListClassesPane();
  private:
-
 	wxListBox 	 * m_classes_list;
 	wxTextCtrl   * m_name_text;
 	wxSpinCtrl   * m_size_text;
@@ -550,8 +578,10 @@ class ListClassesPane : public wxScrolledWindow {
 	wxChoice     * m_exit_period_text;
 	wxStaticText * m_subjects_text;
 	wxCheckBox   * m_active_text;
-	AvailabilityPane * m_periods;
-	AssignmentsPane * m_assignments;
+	ScoreGridPane * m_periods;
+	ScoreGridPane * m_rooms;
+	PosIntGridPane * m_assignments;
+	PosIntGridPane * m_groups;
 	wxButton 	 * m_basic_edit_btn;
 	wxButton	 * m_basic_cancel_btn;
 	Application  * m_owner;
@@ -793,6 +823,5 @@ class Application : public wxApp {
 	sqlite3 *		m_database = nullptr;
 	School *		m_school = nullptr;
 };
-
 
 #endif /* GUI_H */

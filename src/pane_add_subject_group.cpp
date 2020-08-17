@@ -130,8 +130,13 @@ void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
 }
 
 void AddSubjectGroupPane::ClearInsertedData(){
+	int i; School * school = m_owner->m_school;
 	m_name_text->Clear();
 	m_subjects_list->Clear();
+	m_subjects_choice->Clear();
+	for(i = 0; i < school->n_subjects; ++i){
+		m_subjects_choice->Insert(wxString::FromUTF8(school->subjects[i].name), i, new IntClientData(i));
+	}
 }
 
 AddSubjectGroupPane::~AddSubjectGroupPane(){

@@ -1527,7 +1527,8 @@ int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 	sqlite3_bind_text(stmt, 1, room->name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt, 2, room->name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_int(stmt,  3, room->size);
-	sqlite3_bind_int(stmt,  4, school->id);
+	sqlite3_bind_int(stmt,  4, room->active);
+	sqlite3_bind_int(stmt,  5, school->id);
 
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(-1);
