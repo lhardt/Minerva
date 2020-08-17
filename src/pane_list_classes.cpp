@@ -39,6 +39,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_basic_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
 	m_basic_edit_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_edit);
 	m_periods = new AvailabilityPane(m_owner, notebook, wxID_ANY);
+	m_assignments = new AssignmentsPane(m_owner, notebook, wxID_ANY);
 
 	title->SetFont(*m_owner->m_page_title_font);
 	m_err_msg->SetFont(*m_owner->m_small_font);
@@ -78,7 +79,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	description_sizer->Add(m_err_msg, 0, wxEXPAND);
 
 	notebook->InsertPage(0, m_periods, wxT("Disponibilidade"));
-	notebook->InsertPage(1, new wxScrolledWindow(notebook, wxID_ANY), wxT("Disciplinas"));
+	notebook->InsertPage(1, m_assignments, wxT("Disciplinas"));
 	notebook->InsertPage(2, new wxScrolledWindow(notebook, wxID_ANY), wxT("Professores"));
 	notebook->InsertPage(3, new wxScrolledWindow(notebook, wxID_ANY), wxT("Salas"));
 

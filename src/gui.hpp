@@ -96,7 +96,7 @@ class AvailabilityPane : public wxScrolledWindow {
 					 wxWindowID id = wxID_ANY,
 					 wxPoint pos = wxDefaultPosition,
 					 wxSize sz = wxDefaultSize);
-	
+
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);
 	void		  OnCancelButtonClicked(wxCommandEvent &);
@@ -110,6 +110,30 @@ private:
 	wxButton 	* m_edit_btn;
 	wxButton 	* m_cancel_btn;
 };
+
+class AssignmentsPane : public wxScrolledWindow {
+ public:
+	~AssignmentsPane();
+	AssignmentsPane(Application * owner,
+					 wxWindow * parent,
+					 wxWindowID id = wxID_ANY,
+					 wxPoint pos = wxDefaultPosition,
+					 wxSize sz = wxDefaultSize);
+
+	/*NOTE: You have to .skip() those events in client code. */
+	void 		  OnEditButtonClicked(wxCommandEvent &);
+	void		  OnCancelButtonClicked(wxCommandEvent &);
+	wxButton 	* GetCancelButton();
+	wxButton 	* GetEditButton();
+	int		 	* GetValues();
+	void	 	  SetValues(int * values);
+private:
+	Application * m_owner;
+	wxGrid		* m_grid;
+	wxButton 	* m_edit_btn;
+	wxButton 	* m_cancel_btn;
+};
+
 
 class HoverToolTip : public wxStaticBitmap {
  public:
@@ -527,6 +551,7 @@ class ListClassesPane : public wxScrolledWindow {
 	wxStaticText * m_subjects_text;
 	wxCheckBox   * m_active_text;
 	AvailabilityPane * m_periods;
+	AssignmentsPane * m_assignments;
 	wxButton 	 * m_basic_edit_btn;
 	wxButton	 * m_basic_cancel_btn;
 	Application  * m_owner;
