@@ -148,7 +148,6 @@ class PosIntGridPane : public wxScrolledWindow {
 					 wxSize sz = wxDefaultSize,
 				 	 wxString column_name = wxT("Col"),
 					 wxVector<wxString> row_names = wxVector<wxString>());
-
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);
 	void		  OnCancelButtonClicked(wxCommandEvent &);
@@ -156,6 +155,31 @@ class PosIntGridPane : public wxScrolledWindow {
 	wxButton 	* GetEditButton();
 	int		 	* GetValues();
 	void	 	  SetValues(int * values);
+ private:
+	Application * m_owner;
+	wxGrid		* m_grid;
+	wxButton 	* m_edit_btn;
+	wxButton 	* m_cancel_btn;
+};
+
+class StringGridPane : public wxScrolledWindow {
+ public:
+	~StringGridPane();
+	StringGridPane(Application * owner,
+					 wxWindow * parent,
+					 wxWindowID id = wxID_ANY,
+					 wxPoint pos = wxDefaultPosition,
+					 wxSize sz = wxDefaultSize,
+				 	 wxString column_name = wxT("Col"),
+					 wxVector<wxString> row_names = wxVector<wxString>());
+	/*NOTE: You have to .skip() those events in client code. */
+	void 		  OnEditButtonClicked(wxCommandEvent &);
+	void		  OnCancelButtonClicked(wxCommandEvent &);
+	wxButton 	* GetCancelButton();
+	wxButton 	* GetEditButton();
+	wxGrid		* GetGrid();
+	wxVector<wxString> GetValues();
+	void 		  SetValues(wxVector<wxString> values);
  private:
 	Application * m_owner;
 	wxGrid		* m_grid;
@@ -454,7 +478,15 @@ class DescSchoolPane : public wxScrolledWindow {
 
  private:
 	Application * m_owner;
+	wxButton * m_cancel_button;
+	wxButton * m_edit_button;
+	wxTextCtrl * m_name_text;
+	wxNotebook * m_notebook;
+
 	void OnRemoveButtonClicked(wxCommandEvent & );
+	void OnCancelButtonClicked(wxCommandEvent & );
+	void OnEditButtonClicked(wxCommandEvent & );
+	wxScrolledWindow * MakeStatisticsPane();
 };
 
 class ListFeaturesPane : public wxScrolledWindow {

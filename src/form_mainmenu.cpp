@@ -18,6 +18,8 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 
 	SetFont(*m_owner->m_text_font);
 
+	printf("n_days is: %d\n", m_owner->m_school->n_days);
+
 	#ifdef __WXMSW__
 		SetIcon(wxICON(aaaaaaaa));
 	#endif
