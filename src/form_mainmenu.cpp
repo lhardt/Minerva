@@ -37,11 +37,11 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	const wchar_t * const menu_names[7] = {m_owner->m_lang->str_school, m_owner->m_lang->str_rooms, m_owner->m_lang->str_subjects, m_owner->m_lang->str_teachers, m_owner->m_lang->str_classes, m_owner->m_lang->str_lectures, m_owner->m_lang->str_timetable};
 	const wchar_t * const smenu_names[7][7] = {
 		{m_owner->m_lang->str_data, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_preferences, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_help, NULL}
 	};
 
@@ -80,13 +80,10 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[0][0]->AddButton(LHID_OF(LHN_SCHOOL_DATA),m_owner->m_lang->str_school_details, image_list);
 	m_rib_bbars[0][1]->AddButton(LHID_OF(LHN_OPEN_SCHOOL_MANUAL),m_owner->m_lang->str_open_manual, image_help);
 	/* SALAS E CARACTERISTICAS DE SALAS */
-	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_FEATURES), m_owner->m_lang->str_list_features, image_list);
 	m_rib_bbars[1][0]->AddButton(LHID_OF(LHN_SEE_ROOMS), m_owner->m_lang->str_list_rooms, image_list);
-	m_rib_bbars[1][1]->AddButton(LHID_OF(LHN_ADD_FEATURE), m_owner->m_lang->str_add_feature, image_add);
 	m_rib_bbars[1][1]->AddButton(LHID_OF(LHN_ADD_ROOM), m_owner->m_lang->str_add_room, image_add);
-	m_rib_bbars[1][2]->AddButton(LHID_OF(LHN_ROOM_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
-	m_rib_bbars[1][3]->AddButton(LHID_OF(LHN_CHECK_ALL_ROOMS), m_owner->m_lang->str_check_all, image_detail);
-	m_rib_bbars[1][4]->AddButton(LHID_OF(LHN_OPEN_ROOMS_MANUAL), m_owner->m_lang->str_open_manual, image_detail);
+	m_rib_bbars[1][2]->AddButton(LHID_OF(LHN_CHECK_ALL_ROOMS), m_owner->m_lang->str_check_all, image_detail);
+	m_rib_bbars[1][3]->AddButton(LHID_OF(LHN_OPEN_ROOMS_MANUAL), m_owner->m_lang->str_open_manual, image_detail);
 	/* DISCIPLINAS */
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECTS), m_owner->m_lang->str_list_subjects, image_list);
 	m_rib_bbars[2][0]->AddButton(LHID_OF(LHN_SEE_SUBJECT_GROUPS), m_owner->m_lang->str_list_subject_groups, image_detail);
@@ -99,30 +96,20 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[3][0]->AddButton(LHID_OF(LHN_SEE_TEACHER_GROUPS), m_owner->m_lang->str_list_teacher_groups, image_detail);
 	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER), m_owner->m_lang->str_add_teacher, image_add);
 	m_rib_bbars[3][1]->AddButton(LHID_OF(LHN_ADD_TEACHER_GROUP), m_owner->m_lang->str_add_teacher_group, image_detail);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_SUBJECT_PREF), m_owner->m_lang->str_subject_preference, image_detail);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
-	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_TEACHER_ROOM_PREF), m_owner->m_lang->str_room_preference, image_detail);
-	m_rib_bbars[3][3]->AddButton(LHID_OF(LHN_CHECK_ALL_TEACHERS), m_owner->m_lang->str_check_all, image_detail);
-	m_rib_bbars[3][4]->AddButton(LHID_OF(LHN_OPEN_TEACHERS_MANUAL), m_owner->m_lang->str_open_manual, image_help);
+	m_rib_bbars[3][2]->AddButton(LHID_OF(LHN_CHECK_ALL_TEACHERS), m_owner->m_lang->str_check_all, image_detail);
+	m_rib_bbars[3][3]->AddButton(LHID_OF(LHN_OPEN_TEACHERS_MANUAL), m_owner->m_lang->str_open_manual, image_help);
 	/* TURMAS */
 	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASSES), m_owner->m_lang->str_list_classes, image_list);
 	m_rib_bbars[4][0]->AddButton(LHID_OF(LHN_SEE_CLASS_GROUPS), m_owner->m_lang->str_list_class_groups, image_detail);
 	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS), m_owner->m_lang->str_add_class, image_add);
 	m_rib_bbars[4][1]->AddButton(LHID_OF(LHN_ADD_CLASS_GROUP), m_owner->m_lang->str_add_class_group, image_detail);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_TEACHER_PREF), m_owner->m_lang->str_teacher_preference, image_detail);
-	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CLASS_ROOM_PREF), m_owner->m_lang->str_room_preference, image_detail);
-	m_rib_bbars[4][3]->AddButton(LHID_OF(LHN_CHECK_ALL_CLASSES), m_owner->m_lang->str_check_all, image_detail);
-	m_rib_bbars[4][4]->AddButton(LHID_OF(LHN_OPEN_CLASSES_MANUAL), m_owner->m_lang->str_open_manual, image_help);
+	m_rib_bbars[4][2]->AddButton(LHID_OF(LHN_CHECK_ALL_CLASSES), m_owner->m_lang->str_check_all, image_detail);
+	m_rib_bbars[4][3]->AddButton(LHID_OF(LHN_OPEN_CLASSES_MANUAL), m_owner->m_lang->str_open_manual, image_help);
 	/* AULAS */
 	m_rib_bbars[5][0]->AddButton(LHID_OF(LHN_SEE_LECTURES), m_owner->m_lang->str_list_lectures_by_class, image_list);
 	m_rib_bbars[5][1]->AddButton(LHID_OF(LHN_ADD_LECTURES), m_owner->m_lang->str_add_lectures_by_class, image_add);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_PERIOD_PREF), m_owner->m_lang->str_period_preference, image_detail);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TEACHER_PREF), m_owner->m_lang->str_teacher_preference, image_detail);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_TWIN_PREF), m_owner->m_lang->str_twin_preference, image_detail);
-	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_LECTURE_ROOM_PREF), m_owner->m_lang->str_room_preference, image_detail);
-	m_rib_bbars[5][3]->AddButton(LHID_OF(LHN_CHECK_ALL_LECTURES), m_owner->m_lang->str_check_all, image_detail);
-	m_rib_bbars[5][4]->AddButton(LHID_OF(LHN_OPEN_LECTURES_MAUAL), m_owner->m_lang->str_open_manual, image_help);
+	m_rib_bbars[5][2]->AddButton(LHID_OF(LHN_CHECK_ALL_LECTURES), m_owner->m_lang->str_check_all, image_detail);
+	m_rib_bbars[5][3]->AddButton(LHID_OF(LHN_OPEN_LECTURES_MAUAL), m_owner->m_lang->str_open_manual, image_help);
 	/* HORÁRIO */
 	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_SEE_TIMETABLE), m_owner->m_lang->str_see_timetable, image_list);
 	m_rib_bbars[6][0]->AddButton(LHID_OF(LHN_EXPORT_TIMETABLE), m_owner->m_lang->str_export_timetable, image_detail);
@@ -266,31 +253,14 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			break;
 		}
 		/* Room */
-		case LHID_OF(LHN_ADD_FEATURE): {
-			CloseOpenedPane();
-			// obsolete
-			//m_open_pane = new AddFeaturePane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
 		case LHID_OF(LHN_ADD_ROOM): {
 			CloseOpenedPane();
 			m_open_pane = new AddRoomPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-		case LHID_OF(LHN_SEE_FEATURES):{
-			CloseOpenedPane();
-			// OBSOLETE
-			// m_open_pane = new ListFeaturesPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
 		case LHID_OF(LHN_SEE_ROOMS):{
 			CloseOpenedPane();
 			m_open_pane = new ListRoomsPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_ROOM_PERIOD_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new RoomPeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_CHECK_ALL_ROOMS):{
@@ -342,21 +312,6 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new ListTeacherGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-		case LHID_OF(LHN_TEACHER_SUBJECT_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new TeacherSubjPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_TEACHER_PERIOD_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new TeacherPeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_TEACHER_ROOM_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new TeacherRoomPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
 		case LHID_OF(LHN_CHECK_ALL_TEACHERS):{
 			printf("Not there yet.\n");
 			break;
@@ -382,21 +337,6 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			m_open_pane = new ListClassGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
-		case LHID_OF(LHN_CLASS_PERIOD_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new ClassPeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_CLASS_TEACHER_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new ClassTeacherPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_CLASS_ROOM_PREF):{
-			CloseOpenedPane();
-			m_open_pane = new ClassRoomPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
 		case LHID_OF(LHN_CHECK_ALL_CLASSES):{
 			printf("Not there yet.\n");
 			break;
@@ -410,26 +350,6 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		case LHID_OF(LHN_ADD_LECTURES): {
 			CloseOpenedPane();
 			m_open_pane = new AddLecturePane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_LECTURE_PERIOD_PREF): {
-			CloseOpenedPane();
-			m_open_pane = new LecturePeriodPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_LECTURE_TEACHER_PREF): {
-			CloseOpenedPane();
-			m_open_pane = new LectureTeacherPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_LECTURE_TWIN_PREF): {
-			CloseOpenedPane();
-			m_open_pane = new LectureTwinPrefPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case LHID_OF(LHN_LECTURE_ROOM_PREF): {
-			CloseOpenedPane();
-			m_open_pane = new LectureRoomPrefPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_CHECK_ALL_LECTURES): {

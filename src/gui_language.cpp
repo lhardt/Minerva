@@ -148,7 +148,7 @@ const Language LANG_POR = {
 	.str_class_can_have_free_periods=L"Essa turma pode ter períodos livres",
 	.str_class_availible=L"Disponível",
 	.str_class_unavailible=L"Indisponível",
-	.str_room_size_in_students=L"Tamanho da turma, em alunos",
+	.str_room_size_in_students=L"Tamanho da sala, em alunos",
 	.str_room_availibility=L"Disponibilidade da Sala",
 	.str_room_add_features_with_scores=L"Adicione características à sala com suas \"notas\"",
 

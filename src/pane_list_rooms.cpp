@@ -3,6 +3,7 @@
 extern "C" {
 	#include "loader.h"
 };
+#include <wx/spinctrl.h>
 
 ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
 	int i = 0;
@@ -18,37 +19,32 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_size);
-	// wxStaticText * features_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_features);
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
+	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, wxT("Ativo"));
+	wxNotebook   * notebook = new wxNotebook(this, wxID_ANY);
+	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
+	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
+	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove);
+	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""));
+	m_periods 	= new ScoreGridPane(m_owner, notebook, wxID_ANY);
+	m_err_msg 	= new wxStaticText(this, wxID_ANY, wxT(""));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
+	m_size_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 
-	name_label->SetFont(*m_owner->m_bold_text_font);
-	size_label->SetFont(*m_owner->m_bold_text_font);
-	// features_label->SetFont(*m_owner->m_bold_text_font);
+	notebook->AddPage(m_periods, m_owner->m_lang->str_periods);
 
-	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
-	m_size_text = new wxStaticText(this, wxID_ANY, wxT(""));
-	// m_features_text = new wxStaticText(this, wxID_ANY, wxT(""));
-
-	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
-	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
-
-	wxStaticText * periods_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_periods, wxDefaultPosition, wxSize(300,15));
-	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(300,200));
-
+	ChoiceGrid * periods_grid = m_periods->GetGrid();
 	wxVector<wxString> grid_values = wxVector<wxString>();
 	grid_values.push_back(m_owner->m_lang->str_adj__open);
 	grid_values.push_back(m_owner->m_lang->str_adj__closed);
-	m_periods_grid->SetPossibleValues(grid_values);
+	periods_grid->SetPossibleValues(grid_values);
 
 	wxVector<wxColor> grid_colors = wxVector<wxColor>();
 	grid_colors.push_back(wxColor(200,200,255));
 	grid_colors.push_back(wxColor(255,200,200));
-	m_periods_grid->SetBackgroundColors(grid_colors);
+	periods_grid->SetBackgroundColors(grid_colors);
 
-	m_periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	m_periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
-
-	edit_btn->Disable();
+	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
+	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
 	if(school->n_rooms > 0){
 		wxArrayString list;
@@ -57,28 +53,32 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 		}
 		m_rooms_list->InsertItems(list,0);
 	}
+	periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * fields_sz = new wxFlexGridSizer(2,5,5);
+	wxSizer * fields_sz = new wxFlexGridSizer(4,5,5);
+	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados Básicos"));
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
 
-	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
-	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
-
-	fields_sz->Add(name_label, 0, wxEXPAND);
+	fields_sz->Add(name_label, 0, wxRIGHT | wxEXPAND, 10);
 	fields_sz->Add(m_name_text, 0, wxEXPAND);
-	fields_sz->Add(size_label, 0, wxEXPAND);
+	fields_sz->Add(size_label, 0, wxRIGHT |wxLEFT |wxEXPAND, 10);
 	fields_sz->Add(m_size_text, 0, wxEXPAND);
-	// fields_sz->Add(features_label, 0, wxEXPAND);
-	// fields_sz->Add(m_features_text, 0, wxEXPAND);
+	fields_sz->Add(active_label, 0, wxRIGHT | wxEXPAND, 10);
+	fields_sz->Add(m_active_text, 0, wxEXPAND);
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
+	fields_sz->Add(m_cancel_btn, 0, wxEXPAND);
+	fields_sz->Add(m_edit_btn, 0, wxEXPAND);
 
-	desc_sz->Add(fields_sz, 0, wxTOP | wxLEFT, 15);
-	desc_sz->Add(periods_text, 0, wxTOP | wxLEFT, 15);
-	desc_sz->Add(m_periods_grid, 0, wxBOTTOM|wxLEFT, 15);
+	fields_wrap->Add(fields_sz, 0, wxALL | wxEXPAND, 10);
+	desc_sz->Add(fields_wrap, 0, wxTOP | wxLEFT, 10);
+	desc_sz->Add(notebook, 0, wxEXPAND |wxTOP | wxBOTTOM | wxLEFT, 10);
 	desc_sz->AddStretchSpacer();
-	desc_sz->Add(butn_sz, 0, wxBOTTOM, 5);
+	desc_sz->Add(delete_btn, 0, wxEXPAND |wxBOTTOM, 5);
 	desc_sz->Add(m_err_msg, 0, 0);
 
 	body_sz->Add(m_rooms_list, 0, wxEXPAND|wxALL, 15);
@@ -93,13 +93,45 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
 
-	edit_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnEditButtonClicked, this);
+	m_edit_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnEditButtonClicked, this);
+	m_cancel_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnDeleteButtonClicked, this);
 	m_rooms_list->Bind(wxEVT_LISTBOX, &ListRoomsPane::OnSelectionChanged, this);
+
+	m_cancel_btn->Hide();
+	m_cancel_btn->Hide();
+	m_name_text->Disable();
+	m_size_text->Disable();
+	m_active_text->Disable();
+	m_size_text->Enable();
 }
 
 void ListRoomsPane::OnEditButtonClicked(wxCommandEvent &){
-	printf("Edit clicked\n");
+	if(m_name_text->IsEnabled()){
+		m_cancel_btn->Hide();
+		m_name_text->Disable();
+		m_size_text->Disable();
+		m_active_text->Disable();
+		m_size_text->Enable();
+		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+	} else {
+		m_cancel_btn->Show();
+		m_name_text->Enable();
+		m_size_text->Enable();
+		m_active_text->Enable();
+		m_size_text->Enable();
+		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
+	}
+}
+
+
+void ListRoomsPane::OnCancelButtonClicked(wxCommandEvent &){
+	m_cancel_btn->Hide();
+	m_name_text->Disable();
+	m_size_text->Disable();
+	m_active_text->Disable();
+	m_size_text->Enable();
+	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 }
 
 void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
@@ -138,33 +170,22 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
 		Room * room = & school->rooms[m_rooms_list->GetSelection()];
 		m_selected_index = m_rooms_list->GetSelection();
-		m_name_text->SetLabel(wxString::FromUTF8( room->name ));
-		m_size_text->SetLabel(wxString::Format("%d",room->size ));
+		m_name_text->SetValue(wxString::FromUTF8( room->name ));
+		m_size_text->SetValue(room->size);
+		m_active_text->SetValue(room->active);
 
-		// m_features_text->SetLabel(wxT(""));
-		// for(i = 0; i < school->n_features && room->room_features && room->room_features[i] >= 0; ++i){
-		// 	if(room->room_features[i] > 0){
-		// 		if(more_than_zero_features){
-		// 			m_features_text->SetLabel(m_features_text->GetLabel().Append(
-		// 				wxString::Format("\n%s: %d", wxString::FromUTF8(school->feature_names[i]), room->room_features[i])));
-		// 		} else {
-		// 			m_features_text->SetLabel(m_features_text->GetLabel().Append(
-		// 				wxString::Format("%s: %d", wxString::FromUTF8(school->feature_names[i]), room->room_features[i])));
-		// 			more_than_zero_features=true;
-		// 		}
-		// 	}
-		// }
-		m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
+		ChoiceGrid * periods_grid = m_periods->GetGrid();
+		periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 		for(i = 0; i < school->n_periods; ++i){
 			if(school->periods[i] == false){
-				m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+				periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 			} else {
-				m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+				periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
 						wxString::Format("%s" , (room->availability[i] > 0?m_owner->m_lang->str_adj__open:m_owner->m_lang->str_adj__closed) ));
-				m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+				periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
 						(room->availability[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
 			}
-			m_periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
+			periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
 		}
 
 	}

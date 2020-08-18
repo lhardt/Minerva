@@ -317,15 +317,11 @@ class AddRoomPane : public wxScrolledWindow {
 	wxChoice   * m_features;
 	wxSpinCtrl * m_score_text;
 	wxListBox  * m_added_features;
-
 	wxStaticText * m_err_msg;
 
 	Application * m_owner;
 
-	void OnRemoveFeatureClicked(wxCommandEvent &);
-	void OnRemoveAllClicked(wxCommandEvent &);
 	void OnCreateButtonClicked(wxCommandEvent &);
-	void OnAddFeatureClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };
 
@@ -514,16 +510,19 @@ class ListRoomsPane : public wxScrolledWindow {
    ~ListRoomsPane();
  private:
 	wxListBox * m_rooms_list;
-	wxStaticText * m_name_text;
-	wxStaticText * m_size_text;
-	wxStaticText * m_features_text;
-	ChoiceGrid * m_periods_grid;
+	wxTextCtrl * m_name_text;
+	wxSpinCtrl * m_size_text;
+	wxCheckBox * m_active_text;
 	wxStaticText * m_err_msg;
 	Application * m_owner;
+	ScoreGridPane * m_periods;
+	wxButton 	 * m_edit_btn;
+	wxButton  	 * m_cancel_btn;
 
 	int m_selected_index;
 
 	void OnEditButtonClicked(wxCommandEvent &);
+	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnDeleteButtonClicked(wxCommandEvent &);
 	void OnSelectionChanged(wxCommandEvent &);
 };
@@ -646,114 +645,6 @@ class ListLecturesPane : public wxScrolledWindow {
  public:
 	ListLecturesPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListLecturesPane();
-
- private:
-	Application * m_owner;
-};
-
-/* PREFERENCE Panes. */
-
-class RoomPeriodPrefPane : public wxScrolledWindow {
- public:
-	RoomPeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~RoomPeriodPrefPane();
-
- private:
-	Application * m_owner;
-
-	wxChoice * m_room_choice;
-};
-
-class TeacherSubjPrefPane : public wxScrolledWindow {
- public:
-	TeacherSubjPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~TeacherSubjPrefPane();
-
- private:
-	Application * m_owner;
-};
-
-class TeacherPeriodPrefPane : public wxScrolledWindow {
- public:
-	TeacherPeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~TeacherPeriodPrefPane();
- private:
-	Application * m_owner;
-};
-
-class TeacherRoomPrefPane : public wxScrolledWindow {
- public:
-	TeacherRoomPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~TeacherRoomPrefPane();
-
- private:
-	Application * m_owner;
-};
-
-class ClassPeriodPrefPane : public wxScrolledWindow {
- public:
-	ClassPeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~ClassPeriodPrefPane();
- private:
-	Application * m_owner;
-};
-
-class ClassTeacherPrefPane : public wxScrolledWindow {
- public:
-	ClassTeacherPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~ClassTeacherPrefPane();
-
- private:
-	Application * m_owner;
-};
-
-class ClassRoomPrefPane : public wxScrolledWindow {
- public:
-	ClassRoomPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~ClassRoomPrefPane();
-
- private:
-	Application * m_owner;
-};
-
-class LecturePeriodPrefPane : public wxScrolledWindow {
- public:
-	LecturePeriodPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~LecturePeriodPrefPane();
-
- private:
-	Application * m_owner;
-	wxChoice * m_class_choice;
-	wxChoice * m_subj_choice;
-	wxChoice * m_occurence_choice;
-	ChoiceGrid * m_periods_grid;
-
-	void OnSaveButtonClicked(wxCommandEvent &);
-	void OnBackButtonClicked(wxCommandEvent &);
-};
-
-class LectureTeacherPrefPane : public wxScrolledWindow {
- public:
-	LectureTeacherPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~LectureTeacherPrefPane();
-
- private:
-	Application * m_owner;
-};
-
-class LectureTwinPrefPane : public wxScrolledWindow {
- public:
-	LectureTwinPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~LectureTwinPrefPane();
-
- private:
-	Application * m_owner;
-};
-
-class LectureRoomPrefPane : public wxScrolledWindow {
- public:
-	LectureRoomPrefPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~LectureRoomPrefPane();
 
  private:
 	Application * m_owner;
