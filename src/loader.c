@@ -436,7 +436,7 @@ const char * const CREATE_TABLE_TEACHER_DAY =
 				"UNIQUE (id_teacher, id_day)"
 			")");
 const char * const INSERT_TABLE_TEACHER_DAY =
-			("INSERT INTO TABLE TeacherDay(id_teacher, id_day, max_periods, score) VALUES (?,?,?,?)");
+			("INSERT INTO TeacherDay(id_teacher, id_day, max_periods, score) VALUES (?,?,?,?)");
 const char * const UPDATE_TABLE_TEACHER_DAY =
 			("UPDATE TeacherDay SET (id_teacher, id_day, max_periods, score) = (?1, ?2, ?3, ?4) WHERE id_teacher=?1 AND id_day=?2");
 const char * const LASTID_TABLE_TEACHER_DAY =
@@ -548,9 +548,9 @@ const char * const CREATE_TABLE_TEACHER_TWIN_PREFERENCE =
 				"UNIQUE (id_teacher, twin_val)"
 			")");
 const char * const INSERT_TABLE_TEACHER_TWIN_PREFERENCE =
-			("INSERT INTO TeacherTwinPreference(twin_val, score, id_teacher) VALUES (?,?,?)");
+			("INSERT INTO TeacherTwinPreference(twin_val, score_planning, id_teacher) VALUES (?,?,?)");
 const char * const UPDATE_TABLE_TEACHER_TWIN_PREFERENCE =
-			("UPDATE TeacherTwinPreference SET (twin_val, score, id_teacher) = (?1,?2,?3) WHERE twin_val=?1 AND id_teacher=?3");
+			("UPDATE TeacherTwinPreference SET (twin_val, score_planning, id_teacher) = (?1,?2,?3) WHERE twin_val=?1 AND id_teacher=?3");
 const char * const LASTID_TEACHER_TWIN_PREFERENCE =
 			("SELECT id FROM TeacherTwinPreference WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_TWIN_PREFERENCE_BY_TEACHER_ID =
@@ -597,7 +597,7 @@ const char * const UPDATE_TABLE_TEACHES_ROOM =
 const char * const LASTID_TABLE_TEACHES_ROOM =
 			("SELECT id FROM TeachesRoom WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TABLE_TEACHES_ROOM_BY_TEACHES_ID =
-			("SELECT * FROM TeachesRoom WHERE Teaches.id=?");
+			("SELECT * FROM TeachesRoom WHERE id_teaches=?");
 const char * const DELETE_TEACHES_ROOM_BY_ROOM_ID =
 			("DELETE FROM TeachesRoom WHERE id_room=?");
 const char * const DELETE_TEACHES_ROOM_BY_TEACHES_ID =
@@ -2167,8 +2167,8 @@ static bool select_teacher_attendance_by_teacher_id(FILE * console_out, sqlite3*
 	errc = sqlite3_prepare_v2(db, SELECT_TEACHER_ATTENDANCE_BY_TEACHER_ID,-1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	sqlite3_bind_int(stmt,1,teacher->id);
-	errc = sqlite3_step(false);
-	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(stmt);
+	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(false);
 	if(errc == SQLITE_ROW){
 		teacher->lecture_period_scores = calloc(1+school->n_periods, sizeof(int));
 		teacher->planning_period_scores = calloc(1+school->n_periods, sizeof(int));
@@ -2438,15 +2438,16 @@ static Teaches * select_all_teaches_by_school_id(FILE * console_out, sqlite3 * d
 				teaches = realloc(teaches, (i + 11)*sizeof(Teaches));
 			}
 		}
+		sqlite3_finalize(stmt);
 	}
 	n = i;
 	if(n_teaches != NULL){
 		*n_teaches = n;
 	}
-	for(int i = 0; i < n; ++i){
-		school->teaches[i].period_scores = select_period_scores(console_out, db, SELECT_TEACHES_PERIOD_BY_TEACHES_ID, school->teaches[i].id, school);
-		school->teaches[i].room_scores = select_room_scores(console_out, db, SELECT_TABLE_TEACHES_ROOM_BY_TEACHES_ID, school->teaches[i].id, school);
-		school->teaches[i].twin_scores = select_twin_scores(console_out, db, SELECT_TEACHES_TWIN_PREFERENCE_BY_TEACHES_ID, school->teaches[i].id, school);
+	for(i = 0; i < n; ++i){
+		teaches[i].period_scores = select_period_scores(console_out, db, SELECT_TEACHES_PERIOD_BY_TEACHES_ID, teaches[i].id, school);
+		teaches[i].room_scores = select_room_scores(console_out, db, SELECT_TABLE_TEACHES_ROOM_BY_TEACHES_ID, teaches[i].id, school);
+		teaches[i].twin_scores = select_twin_scores(console_out, db, SELECT_TEACHES_TWIN_PREFERENCE_BY_TEACHES_ID, teaches[i].id, school);
 	}
 	return teaches;
 }

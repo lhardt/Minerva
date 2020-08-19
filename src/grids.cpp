@@ -234,6 +234,5 @@ void ChoiceGrid::SetRowName(int i_row, wxString name){
 	if(m_row_names.size() <= i_row){
 		m_row_names.resize(i_row+1);
 	}
-	printf("Set row names %d ", i_row);
 	m_row_names[i_row] = name;
 }

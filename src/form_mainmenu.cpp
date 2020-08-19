@@ -18,8 +18,6 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 
 	SetFont(*m_owner->m_text_font);
 
-	printf("n_days is: %d\n", m_owner->m_school->n_days);
-
 	#ifdef __WXMSW__
 		SetIcon(wxICON(aaaaaaaa));
 	#endif
@@ -204,11 +202,9 @@ void MainMenuForm::OnSave(wxCommandEvent & evt){
 		m_owner->SaveDatabase();
 		m_toolbar->EnableTool(LHID_OF(LHN_SAVE), false);
 	}
-	printf("hello\n");
 }
 
 void MainMenuForm::OnNotificationAction(wxHyperlinkEvent & ev){
-	printf("Everything ok\n");
 	Layout();
 	ev.Skip();
 }

@@ -581,19 +581,25 @@ class ListTeachersPane : public wxScrolledWindow {
 	ListTeachersPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListTeachersPane();
  private:
-
-	wxListBox    * m_teachers_list;
-	wxStaticText * m_name_text;
-	wxStaticText * m_max_days_text;
-	wxStaticText * m_max_periods_text;
-	wxStaticText * m_max_ppd_text;
-	wxStaticText * m_planning_periods_text;
-	wxStaticText * m_teaches_text;
-	ChoiceGrid   * m_periods_grid;
+	wxListBox     * m_teachers_list;
+	wxTextCtrl    * m_name_text;
+	wxSpinCtrl	  * m_max_days_text;
+	wxSpinCtrl    * m_max_periods_text;
+	wxSpinCtrl	  * m_max_ppd_text;
+	wxSpinCtrl    * m_planning_periods_text;
+	wxCheckBox    * m_active_text;
+	ScoreGridPane * m_periods;
+	ScoreGridPane * m_teaches;
+	PosIntGridPane * m_days;
+	ScoreGridPane * m_rooms;
+	ScoreGridPane * m_planning_twinning;
+	wxButton 	  * m_cancel_btn;
+	wxButton 	  * m_edit_btn;
 
 	Application * m_owner;
 
 	void OnEditButtonClicked(wxCommandEvent &);
+	void OnCancelButtonClicked(wxCommandEvent &);
     void OnDeleteButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
 };
