@@ -89,7 +89,6 @@ void AddRoomPane::ClearInsertedData(){
 			m_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 		}
 	}
-	m_score_text->SetValue(0);
 }
 
 AddRoomPane::~AddRoomPane(){

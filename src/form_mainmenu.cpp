@@ -122,13 +122,13 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 
 	m_center_pane = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
-	wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(m_ribbon, 0, wxEXPAND);
-	sizer->Add(m_center_pane, 1, wxEXPAND);
-	sizer->Add(m_toolbar,0,wxEXPAND);
+	m_sizer = new wxBoxSizer(wxVERTICAL);
+	m_sizer->Add(m_ribbon, 0, wxEXPAND);
+	m_sizer->Add(m_center_pane, 1, wxEXPAND);
+	m_sizer->Add(m_toolbar,0,wxEXPAND);
 
-	sizer->SetMinSize(wxSize(800,600));
-	SetSizerAndFit(sizer);
+	m_sizer->SetMinSize(wxSize(800,600));
+	SetSizerAndFit(m_sizer);
 	Bind(wxEVT_CLOSE_WINDOW, &MainMenuForm::OnCloseClose, this);
 	Bind(wxEVT_BUTTON, &MainMenuForm::OnSave, this,LHID_OF(LHN_SAVE));
 	Bind(wxEVT_BUTTON, &MainMenuForm::OnCloseCommand, this,LHID_OF(LHN_CLOSE));
@@ -141,6 +141,12 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	keyboard_shortcuts[3].Set(wxACCEL_CTRL | wxACCEL_SHIFT, (int)'Z', LHID_OF(LHN_REDO));
 	wxAcceleratorTable shortcuts_table(4,keyboard_shortcuts);
 	SetAcceleratorTable(shortcuts_table);
+}
+
+void MainMenuForm::AddNotification(Notification * notification){
+	m_sizer->Insert(2, notification, 0, wxEXPAND);
+	Layout();
+	notification->Start();
 }
 
 void MainMenuForm::OnCloseCommand(wxCommandEvent &evt){
@@ -185,6 +191,11 @@ bool MainMenuForm::OnClose(){
 }
 
 void MainMenuForm::NotifyNewUnsavedData(){
+	Notification * notification = new Notification(m_owner, this, wxID_ANY, wxT("Ação taltaltal Realizada"), wxT("Desfazer"), wxDefaultPosition, wxDefaultSize);
+	notification->GetTimer()->Bind(wxEVT_TIMER, &MainMenuForm::OnNotificationTimer, this);
+	notification->GetAction()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
+
+	AddNotification(notification);
 	m_toolbar->EnableTool(LHID_OF(LHN_SAVE), true);
 }
 
@@ -195,6 +206,18 @@ void MainMenuForm::OnSave(wxCommandEvent & evt){
 	}
 	printf("hello\n");
 }
+
+void MainMenuForm::OnNotificationAction(wxHyperlinkEvent & ev){
+	printf("Everything ok\n");
+	Layout();
+	ev.Skip();
+}
+
+void MainMenuForm::OnNotificationTimer(wxTimerEvent & ev){
+	Layout();
+	ev.Skip();
+}
+
 
 void MainMenuForm::OnUndo(wxCommandEvent &){
 	printf("Undo!\n");

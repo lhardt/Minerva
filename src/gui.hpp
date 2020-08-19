@@ -19,6 +19,7 @@
 #include <wx/notebook.h>
 #include <wx/artprov.h>
 #include <wx/event.h>
+#include <wx/hyperlink.h>
 
 #include "gui_language.hpp"
 
@@ -76,6 +77,24 @@ class PosIntGridTable : public wxGridTableBase{
 	int * values;
 	wxVector<wxString> col_labels;
 	wxVector<wxString> row_labels;
+};
+
+class Notification : public wxPanel {
+public:
+	Notification(Application * owner, wxWindow * parent, wxWindowID id, wxString text, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
+	Notification(Application * owner, wxWindow * parent, wxWindowID id, wxString text,  wxString action_str, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
+
+	void Start(int ms = 5000);
+	wxHyperlinkCtrl * GetAction();
+	wxTimer * GetTimer();
+private:
+	wxStaticText * m_text;
+	wxHyperlinkCtrl * m_action;
+	wxTimer * m_timer;
+	/* Just to prevent skipping of the event. */
+	void OnHyperlikAction(wxHyperlinkEvent &);
+	void OnCloseTimer(wxTimerEvent &);
+	void Close();
 };
 
 class ChoiceGrid : public wxGrid {
@@ -187,7 +206,6 @@ class StringGridPane : public wxScrolledWindow {
 	wxButton 	* m_cancel_btn;
 };
 
-
 class HoverToolTip : public wxStaticBitmap {
  public:
 	HoverToolTip(wxWindow * parent,
@@ -256,9 +274,14 @@ class MainMenuForm : public wxFrame{
 	~MainMenuForm();
 
 	void NotifyNewUnsavedData();
+	void AddNotification(Notification* n);
+	void OnNotificationAction(wxHyperlinkEvent & ev);
+	void OnNotificationTimer(wxTimerEvent & ev);
+
  private:
 	wxRibbonBar * m_ribbon;
 	wxRibbonPage * m_ribbon_pages[7];
+	wxSizer* m_sizer; /* To add notifications */
 
 	wxPanel * m_open_pane = nullptr;
 	wxPanel * m_center_pane = nullptr;
@@ -313,10 +336,6 @@ class AddRoomPane : public wxScrolledWindow {
 	wxTextCtrl * m_name_text;
 	wxSpinCtrl * m_capacity_text;
 	ChoiceGrid * m_grid;
-
-	wxChoice   * m_features;
-	wxSpinCtrl * m_score_text;
-	wxListBox  * m_added_features;
 	wxStaticText * m_err_msg;
 
 	Application * m_owner;
