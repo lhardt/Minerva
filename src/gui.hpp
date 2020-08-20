@@ -172,6 +172,7 @@ class PosIntGridPane : public wxScrolledWindow {
 	void		  OnCancelButtonClicked(wxCommandEvent &);
 	wxButton 	* GetCancelButton();
 	wxButton 	* GetEditButton();
+	wxGrid 		* GetGrid();
 	int		 	* GetValues();
 	void	 	  SetValues(int * values);
  private:
@@ -672,7 +673,12 @@ class ListLecturesPane : public wxScrolledWindow {
 	~ListLecturesPane();
 
  private:
+	wxChoice * class_choice;
+	wxChoice * subject_choice;
+	wxChoice * occurence_choice;
+
 	Application * m_owner;
+	void OnClassSelectionChanged(wxCommandEvent &);
 };
 
 /* GENERATION Panes. */

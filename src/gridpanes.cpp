@@ -78,6 +78,7 @@ int		 * ScoreGridPane::GetValues(){
 	return values;
 }
 
+//  TODO FIXME
 void 	   ScoreGridPane::SetValues(int * values){
 	School * school = m_owner->m_school;
 	for(int i = 0; i < school->n_periods; ++i){
@@ -89,7 +90,6 @@ void 	   ScoreGridPane::SetValues(int * values){
 		}
 		m_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
 	}
-
 }
 
 ScoreGridPane::~ScoreGridPane(){
@@ -132,11 +132,28 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
 	SetSizerAndFit(sz);
-	m_grid->SetEditable(false);
+	m_grid->EnableEditing(false);
 	m_cancel_btn->Show(false);
 
 	m_edit_btn->Bind(wxEVT_BUTTON, &PosIntGridPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &PosIntGridPane::OnCancelButtonClicked, this);
+}
+
+wxGrid * PosIntGridPane::GetGrid(){
+	return m_grid;
+}
+
+void 	   PosIntGridPane::SetValues(int * values){
+	School * school = m_owner->m_school;
+	if(values == NULL){
+		for(int i = 0; i < m_grid->GetNumberRows(); ++i){
+			m_grid->SetCellValue(i, 0, wxString::Format("%d", 0));
+		}
+	} else {
+		for(int i = 0; i < m_grid->GetNumberRows() && values[i] >= 0; ++i){
+			m_grid->SetCellValue(i, 0, wxString::Format("%d", values[i]));
+		}
+	}
 }
 
 
@@ -144,12 +161,12 @@ void 	PosIntGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 	if(m_grid->IsEditable()){
 		printf("Save clicked\n");
 		m_cancel_btn->Show(false);
-		m_grid->SetEditable(false);
+		m_grid->EnableEditing(false);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	} else {
 		printf("Edit clicked\n");
 		m_cancel_btn->Show(true);
-		m_grid->SetEditable(true);
+		m_grid->EnableEditing(true);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
 	}
 	FitInside();
@@ -157,7 +174,7 @@ void 	PosIntGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 void	PosIntGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
 	printf("Cancel clicked\n");
 	m_cancel_btn->Show(false);
-	m_grid->SetEditable(false);
+	m_grid->EnableEditing(false);
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 }
 
@@ -199,7 +216,7 @@ StringGridPane::StringGridPane(Application * owner,
 	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
 	SetSizerAndFit(sz);
-	m_grid->SetEditable(false);
+	m_grid->EnableEditing(false);
 	m_cancel_btn->Show(false);
 
 	m_edit_btn->Bind(wxEVT_BUTTON, &StringGridPane::OnEditButtonClicked, this);
@@ -215,12 +232,12 @@ void 	StringGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 	if(m_grid->IsEditable()){
 		printf("Save clicked\n");
 		m_cancel_btn->Show(false);
-		m_grid->SetEditable(false);
+		m_grid->EnableEditing(false);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	} else {
 		printf("Edit clicked\n");
 		m_cancel_btn->Show(true);
-		m_grid->SetEditable(true);
+		m_grid->EnableEditing(true);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
 	}
 	FitInside();
@@ -229,7 +246,7 @@ void 	StringGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 void	StringGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
 	printf("Cancel clicked\n");
 	m_cancel_btn->Show(false);
-	m_grid->SetEditable(false);
+	m_grid->EnableEditing(false);
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 }
 

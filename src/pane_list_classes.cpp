@@ -5,6 +5,7 @@
 extern "C" {
 	#include "loader.h"
 	#include "preprocess.h"
+	#include "util.h"
 };
 
 ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
@@ -240,26 +241,14 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		m_exit_period_text->SetSelection(c->minimal_exit_period);
 		m_subjects_text->SetLabel(wxString::FromUTF8(""));
 		if(c->assignments != NULL){
-			for(i = 0; i < school->n_assignments && c->assignments[i]->subject != NULL; ++i){
-				if(i == 0){
-					m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxString::FromUTF8(c->assignments[i]->subject->name) +
-						wxString::Format(wxString::FromUTF8(": %d períodos;"), c->assignments[i]->amount));
-				} else {
-					m_subjects_text->SetLabel(m_subjects_text->GetLabel() + wxT("\n") + wxString::FromUTF8(c->assignments[i]->subject->name) +
-						wxString::Format(wxString::FromUTF8(": %d períodos;"), c->assignments[i]->amount));
-				}
+			for(i = 0; i < school->n_assignments && c->assignments[i] != NULL; ++i){
+				int i_subject = get_subject_index_by_id(school, c->assignments[i]->subject->id);
+				m_assignments->GetGrid()->SetCellValue(i_subject,0,wxString::Format("%d",c->assignments[i]->amount));
 			}
 		}
 		m_periods->SetValues(c->period_scores);
-		// for(i = 0; i < school->n_periods; ++i){
-		// 	if(school->periods[i]){
-		// 		->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-		// 				c->period_scores[i] > 0?m_owner->m_lang->str_class_availible:m_owner->m_lang->str_class_unavailible);
-		// 		m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-		// 				(c->period_scores[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
-		// 	}
-		// 	m_periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
-		// }
+		m_groups->SetValues(c->max_per_day_subject_group);
+
 	}
 }
 

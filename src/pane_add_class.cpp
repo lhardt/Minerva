@@ -160,6 +160,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 				IntPairClientData* item_data =(IntPairClientData*) m_selected_subjects_list->GetClientObject(i_need);
 				alist[i_need].subject = &school->subjects[ item_data->m_v1 ];
 				alist[i_need].amount = item_data->m_v2;
+				alist[i_need].m_class = &c;
 				c.assignments[i_need] = &alist[i_need];
 			}
 			alist[i_need].subject = NULL;

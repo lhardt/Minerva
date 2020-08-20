@@ -21,7 +21,7 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_subjects, wxDefaultPosition, wxSize(400,25));
 	title->SetFont(*m_owner->m_page_title_font);
 
-	m_subjects_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300));
+	m_subjects_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 
 	if(school->n_subjects > 0){
 		wxArrayString list;

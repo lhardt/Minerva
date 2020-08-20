@@ -338,6 +338,17 @@ Subject * find_subject_by_id(School * school, int id){
 	return NULL;
 }
 
+int get_subject_index_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_subjects; ++i){
+		if(school->subjects[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
 int get_day_index_by_id(School * school, int id){
 	int i;
 	for(i = 0; i < school->n_days; ++i){

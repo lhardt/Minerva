@@ -57,6 +57,7 @@ Teacher * find_teacher_by_id(School * school, int id);
 int get_teacher_index_by_id(School * school, int id);
 Meeting * find_meeting_by_id(School * school, int id);
 Subject * find_subject_by_id(School * school, int id);
+int get_subject_index_by_id(School * school, int id);
 Assignment * find_assignment_by_class_subj_id(School * school, int id_class, int id_subj);
 int get_per_index_by_id(School * school, int id);
 int get_day_index_by_id(School * school, int id);

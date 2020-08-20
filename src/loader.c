@@ -1947,7 +1947,7 @@ static int * select_teacher_scores(FILE * console_out, sqlite3* db, const char *
 	errc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(NULL);
 	sqlite3_bind_int(stmt,1,id);
-	sqlite3_step(stmt);
+	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(NULL);
 	if(errc == SQLITE_ROW){
 		scores = calloc(school->n_teachers +1, sizeof(int));
@@ -2306,7 +2306,7 @@ static Assignment * select_all_assignments_by_school_id(FILE * console_out, sqli
 		*n_assignments = n;
 	}
 	for(i = 0; i < n; ++i){
-		school->assignments[i].possible_teachers = select_teacher_scores(console_out, db, SELECT_TABLE_POSSIBLE_TEACHER_BY_CLASS_SUBJECT_ID, assignments[i].id, school);
+		assignments[i].possible_teachers = select_teacher_scores(console_out, db, SELECT_TABLE_POSSIBLE_TEACHER_BY_CLASS_SUBJECT_ID, assignments[i].id, school);
 	}
 	return assignments;
 }

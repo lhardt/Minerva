@@ -25,7 +25,7 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 		group_names.push_back(wxString::FromUTF8(school->subject_group_names[i]));
 	}
 
-	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), group_names);
+	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300), group_names);
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * members_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_subjects_in_the_group);

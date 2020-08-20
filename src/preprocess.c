@@ -69,7 +69,7 @@ void school_class_add(School * school, const Class * const c){
 	school->classes[ school->n_classes ] = *c;
 
 	if(c->assignments != NULL){
-		for(n = 0; c->assignments[n]->subject != NULL; ++n){
+		for(n = 0; c->assignments[n] != NULL; ++n){
 			/* Blank on purpouse */
 		}
 		if( n != 0 ){
