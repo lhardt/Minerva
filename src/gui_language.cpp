@@ -86,6 +86,8 @@ const Language LANG_POR = {
 	.str_list_of_classes=L"Lista de Turmas",
 	.str_list_class_groups=L"Listar Grupos de Turmas",
 	.str_list_of_class_groups=L"Lista de Grupos de Turmas",
+	.str_list_lectures=L"",
+	.str_list_of_lectures=L"",
 	/* Adding */
 	.str_add_feature=L"Adicionar Característica",
 	.str_add_room=L"Adicionar Sala",
@@ -282,6 +284,8 @@ const Language LANG_ENG = {
 	.str_list_of_classes=L"List of classes",
 	.str_list_class_groups=L"List class groups",
 	.str_list_of_class_groups=L"List of class groups",
+	.str_list_lectures=L"",
+	.str_list_of_lectures=L"",
 	/* Adding */
 	.str_add_feature=L"Add feature",
 	.str_add_room=L"Add room",
@@ -465,6 +469,8 @@ const Language LANG_SPA = {
 	.str_list_of_classes=L"Lista de Clases",
 	.str_list_class_groups=L"Listar Grupos de Clases",
 	.str_list_of_class_groups=L"Lista de Grupos de Clases",
+	.str_list_lectures=L"",
+	.str_list_of_lectures=L"",
 	/* Adding */
 	.str_add_feature=L"Añadir Característica",
 	.str_add_room=L"Añadir Sala",
@@ -648,6 +654,8 @@ const Language LANG_DEU = {
 	.str_list_of_classes=L"Klassenliste",
 	.str_list_class_groups=L"Klassengruppen auflisten",
 	.str_list_of_class_groups=L"Klassengruppenlisten",
+	.str_list_lectures=L"",
+	.str_list_of_lectures=L"",
 	/* Adding */
 	.str_add_feature=L"Merkmal hinzufügen",
 	.str_add_room=L"Klassenzimmer hinzufügen",

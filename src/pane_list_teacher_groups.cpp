@@ -11,13 +11,9 @@ ListTeacherGroupsPane::ListTeacherGroupsPane(Application * owner, wxWindow * par
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
-
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, wxT("Grupos de Professores"), wxDefaultPosition, wxSize(400,25));
-	title->SetFont(*m_owner->m_page_title_font);
 
 	wxArrayString group_names;
 	for(i = 0; i < school->n_teachers; ++i){
@@ -25,13 +21,12 @@ ListTeacherGroupsPane::ListTeacherGroupsPane(Application * owner, wxWindow * par
 			group_names.push_back(school->teachers[i].name);
 		}
 	}
-
-	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), group_names);
+	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300), group_names);
 	m_name_text = new wxStaticText(this, wxID_ANY, wxT("Nome do Grupo: "), wxDefaultPosition, wxSize(400,25));
 	m_members_text = new wxStaticText(this, wxID_ANY, wxT("Membros do Grupo: "), wxDefaultPosition, wxSize(400,-1));
 
-	wxButton * edit_btn = new wxButton(this, wxID_ANY, wxT("Editar"), wxDefaultPosition, wxSize(200,30));
-	wxButton * delete_btn = new wxButton(this, wxID_ANY,wxT("Remover"), wxDefaultPosition, wxSize(200,30));
+	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
+	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
 
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
@@ -41,14 +36,11 @@ ListTeacherGroupsPane::ListTeacherGroupsPane(Application * owner, wxWindow * par
 	desc_sz->Add(m_name_text, 0, wxBOTTOM, 5);
 	desc_sz->Add(m_members_text, 0, wxBOTTOM, 5);
 	desc_sz->AddStretchSpacer();
-	desc_sz->Add(butn_sz, 0, 0);
+	desc_sz->Add(m_err_msg,0, wxBOTTOM, 5);
+	desc_sz->Add(butn_sz);
 
-	body_sz->Add(m_groups_list, 0, wxEXPAND|wxALL, 15);
-	body_sz->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
-
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(body_sz, 1, wxALL, 15);
-	sizer->Add(m_err_msg, 0, wxBOTTOM | wxLEFT | wxRIGHT, 15);
+	sizer->Add(m_groups_list, 0, wxEXPAND|wxALL, 15);
+	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);

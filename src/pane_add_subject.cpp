@@ -9,9 +9,6 @@ AddSubjectPane::AddSubjectPane(Application * owner, wxWindow * parent, wxPoint p
 	this->m_owner = owner;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_subject);
-	title->SetFont(*m_owner->m_page_title_font);
-
 	wxStaticText * subject_name_label = new wxStaticText(this,wxID_ANY,m_owner->m_lang->str_name);
 	subject_name_label->SetFont(*m_owner->m_small_font);
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
@@ -24,12 +21,11 @@ AddSubjectPane::AddSubjectPane(Application * owner, wxWindow * parent, wxPoint p
 
 	wxSizer * wrapper = new wxBoxSizer(wxVERTICAL);
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(title, 0, wxEXPAND | wxBOTTOM, 15);
 	sizer->Add(subject_name_label, 0, wxEXPAND | wxBOTTOM, 5);
 	sizer->Add(m_name_text, 0, wxBOTTOM, 15);
 	sizer->Add(button, 0,  wxBOTTOM, 15);
 	sizer->Add(m_err_msg, 0, wxEXPAND | wxBOTTOM, 15);
-	wrapper->Add(sizer, 1, wxEXPAND | wxALL, 30);
+	wrapper->Add(sizer, 1, wxEXPAND | wxALL, 15);
 	SetSizerAndFit(wrapper);
 }
 

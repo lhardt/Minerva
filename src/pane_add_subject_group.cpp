@@ -11,9 +11,6 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	School * school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_subject_group, wxPoint(30,30), wxSize(400,25));
-	title->SetFont(*m_owner->m_page_title_font);
-
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name, wxDefaultPosition, wxSize(200,15));
 	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_subjects_to_the_group, wxDefaultPosition, wxSize(400,15));
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
@@ -47,8 +44,7 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	subjects_sizer->Add(m_subjects_list, 0, wxRIGHT, 10);
 	subjects_sizer->Add(buttons_sizer, 0, 0);
 
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(name_label, 0, wxLEFT ,15);
+	sizer->Add(name_label, 0, wxLEFT | wxTOP ,15);
 	sizer->Add(m_name_text, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(subjects_label, 0, wxLEFT, 15);
 	sizer->Add(add_sizer, 0, wxLEFT | wxBOTTOM,15);

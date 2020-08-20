@@ -22,9 +22,9 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 		SetIcon(wxICON(aaaaaaaa));
 	#endif
 
-	wxString title;
-	title << owner->m_lang->str_minerva_school_timetables << " - " << wxString::FromUTF8(m_owner->m_school->name);
-	SetTitle(title);
+	wxString wnd_title;
+	wnd_title << owner->m_lang->str_minerva_school_timetables << " - " << wxString::FromUTF8(m_owner->m_school->name);
+	SetTitle(wnd_title);
 	SetMinSize(wxSize(800,600));
 	SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
 
@@ -119,6 +119,20 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_ribbon->Realize();
 
 	m_center_pane = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+
+	m_page_title = new wxStaticText(m_center_pane, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
+	m_page_detail = new wxStaticText(m_center_pane, wxID_ANY, wxT(""));
+
+	m_page_title->SetFont(*m_owner->m_page_title_font);
+	m_page_title->SetForegroundColour(wxColour(255,255,255));
+	m_page_title->SetLabel(m_page_title->GetLabel()); // maybe it recalculates size.
+	m_page_detail->SetFont(*m_owner->m_small_font);
+	m_page_detail->SetForegroundColour(wxColour(255,255,255));
+
+	wxSizer * center_sizer = new wxBoxSizer(wxVERTICAL);
+	center_sizer->Add(m_page_title,0, wxEXPAND | wxLEFT | wxTOP | wxRIGHT, 15);
+	center_sizer->Add(m_page_detail,0, wxEXPAND | wxLEFT |  wxRIGHT, 15);
+	m_center_pane->SetSizerAndFit(center_sizer);
 
 	m_sizer = new wxBoxSizer(wxVERTICAL);
 	m_sizer->Add(m_ribbon, 0, wxEXPAND);
@@ -264,22 +278,27 @@ void MainMenuForm::CloseOpenedPane(){
 
 
 void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
+	wxString title, detail;
+	wxPanel * pane_to_open = nullptr;
 	switch(ev.GetId()){
 		/* School */
 		case LHID_OF(LHN_SCHOOL_DATA): {
-			CloseOpenedPane();
-			m_open_pane = new DescSchoolPane(m_owner, m_center_pane, wxPoint(100,15));
+			pane_to_open = new DescSchoolPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_school_details;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
 			break;
 		}
 		/* Room */
 		case LHID_OF(LHN_ADD_ROOM): {
-			CloseOpenedPane();
-			m_open_pane = new AddRoomPane(m_owner, m_center_pane, wxPoint(100,15));
+			pane_to_open = new AddRoomPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_add_room;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
 			break;
 		}
 		case LHID_OF(LHN_SEE_ROOMS):{
-			CloseOpenedPane();
-			m_open_pane = new ListRoomsPane(m_owner, m_center_pane, wxPoint(100,15));
+			pane_to_open = new ListRoomsPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_list_of_rooms;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
 			break;
 		}
 		case LHID_OF(LHN_CHECK_ALL_ROOMS):{
@@ -287,23 +306,27 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		}
 		/* Subject */
 		case LHID_OF(LHN_ADD_SUBJECT):{
-			CloseOpenedPane();
-			m_open_pane = new AddSubjectPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_add_subject;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new AddSubjectPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_ADD_SUBJECT_GROUP):{
-			CloseOpenedPane();
-			m_open_pane = new AddSubjectGroupPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_add_subject_group;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new AddSubjectGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_SUBJECTS):{
-			CloseOpenedPane();
-			m_open_pane = new ListSubjectsPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_list_of_subjects;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new ListSubjectsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_SUBJECT_GROUPS):{
-			CloseOpenedPane();
-			m_open_pane =new ListSubjectGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_list_of_subject_groups;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open =new ListSubjectGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_CHECK_ALL_SUBJECTS):{
@@ -312,23 +335,27 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		}
 		/* Teacher */
 		case LHID_OF(LHN_ADD_TEACHER):{
-			CloseOpenedPane();
-			m_open_pane = new AddTeacherPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_add_teacher;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new AddTeacherPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_ADD_TEACHER_GROUP):{
-			CloseOpenedPane();
-			m_open_pane = new AddTeacherGroupPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_add_teacher_group;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new AddTeacherGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_TEACHERS):{
-			CloseOpenedPane();
-			m_open_pane = new ListTeachersPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_list_of_teachers;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new ListTeachersPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_TEACHER_GROUPS):{
-			CloseOpenedPane();
-			m_open_pane = new ListTeacherGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_list_teacher_groups;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new ListTeacherGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_CHECK_ALL_TEACHERS):{
@@ -337,23 +364,27 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		}
 		/* Class */
 		case LHID_OF(LHN_ADD_CLASS):{
-			CloseOpenedPane();
-			m_open_pane = new AddClassPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_add_class;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new AddClassPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_ADD_CLASS_GROUP):{
-			CloseOpenedPane();
-			m_open_pane = new AddClassGroupPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_add_class_group;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new AddClassGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_CLASSES):{
-			CloseOpenedPane();
-			m_open_pane = new ListClassesPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_list_classes;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new ListClassesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_CLASS_GROUPS):{
-			CloseOpenedPane();
-			m_open_pane = new ListClassGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_list_of_class_groups;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new ListClassGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_CHECK_ALL_CLASSES):{
@@ -362,13 +393,15 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		}
 		/* Lecture */
 		case LHID_OF(LHN_SEE_LECTURES): {
-			CloseOpenedPane();
-			m_open_pane = new ListLecturesPane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_list_of_lectures;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new ListLecturesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_ADD_LECTURES): {
-			CloseOpenedPane();
-			m_open_pane = new AddLecturePane(m_owner, m_center_pane, wxPoint(100,15));
+			title = wxT("Is this really necessary?");
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new AddLecturePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_CHECK_ALL_LECTURES): {
@@ -377,13 +410,14 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		}
 		/* Timetable */
 		case LHID_OF(LHN_GENERATE_TIMETABLE):{
-			CloseOpenedPane();
-			m_open_pane = new GenerateTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_generate_timetable;
+			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			pane_to_open = new GenerateTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case LHID_OF(LHN_SEE_TIMETABLE):{
-			CloseOpenedPane();
-			m_open_pane = new DescTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
+			title = m_owner->m_lang->str_see_timetable;
+			pane_to_open = new DescTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		/* Manual */
@@ -394,6 +428,8 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		case LHID_OF(LHN_OPEN_CLASSES_MANUAL):
 		case LHID_OF(LHN_OPEN_LECTURES_MAUAL):
 		case LHID_OF(LHN_OPEN_TIMETABLE_MANUAL):{
+			title = m_page_title->GetLabel();
+			detail = m_page_detail->GetLabel();
 			if(m_owner->m_window_manual == nullptr){
 				m_owner->m_window_manual = new ManualWindow(m_owner);
 				m_owner->m_window_manual->Show();
@@ -405,10 +441,12 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			break;
 		}
 	}
-	if(m_open_pane != nullptr){
-		wxSizer * center_sizer = new wxBoxSizer(wxVERTICAL);
-		center_sizer->Add(m_open_pane,1, wxEXPAND | wxALL, 15);
-		m_center_pane->SetSizerAndFit(center_sizer);
+	if(pane_to_open != nullptr){
+		CloseOpenedPane();
+		m_open_pane = pane_to_open;
+		m_page_title->SetLabel(title);
+		m_page_detail->SetLabel(detail);
+		m_center_pane->GetSizer()->Add(m_open_pane,1, wxEXPAND | wxALL, 15);
 	}
 	Layout();
 }

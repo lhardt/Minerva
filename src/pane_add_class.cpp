@@ -13,9 +13,6 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	int i;
 	School * school = m_owner->m_school;
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_class);
-	title->SetFont(*m_owner->m_page_title_font);
-
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_name);
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_size);
 	wxStaticText * entry_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_entry_period);
@@ -96,8 +93,7 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	subjects_sizer->Add(m_selected_subjects_list, 0, wxRIGHT, 10);
 	subjects_sizer->Add(buttons_sizer, 0, 0);
 
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(name_label, 0, wxLEFT ,15);
+	sizer->Add(name_label, 0, wxLEFT | wxTOP ,15);
 	sizer->Add(m_name_text, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(size_label, 0, wxLEFT ,15);
 	sizer->Add(m_size_text, 0, wxLEFT | wxBOTTOM,15);

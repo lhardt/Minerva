@@ -19,7 +19,6 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	wxNotebook  * notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	/* Declaration of members */
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_classes);
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_size);
 	wxStaticText * free_periods_label = new wxStaticText(this, wxID_ANY, wxT("Períodos Livres: "));
@@ -58,20 +57,17 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	}
 	m_groups = new PosIntGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, sgroup_col_name, all_sgroup_names);
 
-
-	title->SetFont(*m_owner->m_page_title_font);
 	m_err_msg->SetFont(*m_owner->m_small_font);
 
 	/* Sizers */
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
+	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * btn_sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * body_sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * description_sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * box_field_sizer = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados básicos"));
 	wxSizer * fields_sizer = new wxFlexGridSizer(4,5,5);
 
-	body_sizer->Add(m_classes_list, 0, wxEXPAND|wxALL, 10);
-	body_sizer->Add(description_sizer, 1, wxEXPAND|wxALL, 10);
+	sizer->Add(m_classes_list, 0, wxEXPAND|wxALL, 10);
+	sizer->Add(description_sizer, 1, wxEXPAND|wxALL, 10);
 
 	fields_sizer->Add(name_label, 0, wxEXPAND);
 	fields_sizer->Add(m_name_text, 0, wxEXPAND);
@@ -100,10 +96,6 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	notebook->InsertPage(1, m_assignments, wxT("Disciplinas"));
 	notebook->InsertPage(2, m_rooms, wxT("Salas"));
 	notebook->InsertPage(3, m_groups, wxT("Grupos Disc."));
-	// notebook->InsertPage(4, m_superclasses, wxT("Superturmas"));
-
-	sizer->Add(title, 0, wxALL, 10);
-	sizer->Add(body_sizer, 1, wxEXPAND | wxALL, 10);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);

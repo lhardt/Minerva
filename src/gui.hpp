@@ -284,6 +284,9 @@ class MainMenuForm : public wxFrame{
 	wxRibbonPage * m_ribbon_pages[7];
 	wxSizer* m_sizer; /* To add notifications */
 
+	wxStaticText * m_page_title;
+	wxStaticText * m_page_detail;
+
 	wxPanel * m_open_pane = nullptr;
 	wxPanel * m_center_pane = nullptr;
 	Application * m_owner = nullptr;
@@ -677,8 +680,14 @@ class ListLecturesPane : public wxScrolledWindow {
 	wxChoice * subject_choice;
 	wxChoice * occurence_choice;
 
+	wxButton * m_edit_btn;
+	wxButton * m_cancel_btn;
+
 	Application * m_owner;
 	void OnClassSelectionChanged(wxCommandEvent &);
+	void OnSubjectSelectionChanged(wxCommandEvent &);
+	void OnEditButtonClicked(wxCommandEvent &);
+	void OnCancelButtonClicked(wxCommandEvent &);
 };
 
 /* GENERATION Panes. */

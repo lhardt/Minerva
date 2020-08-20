@@ -11,9 +11,6 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	int i;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_class_group);
-	title->SetFont(*m_owner->m_page_title_font);
-
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name);
 	wxStaticText * classes_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_classes_to_the_group);
 	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_subjects);
@@ -70,8 +67,7 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	subjects_sizer->Add(subject_buttons_sizer, 0, 0);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(name_label, 0, wxLEFT ,15);
+	sizer->Add(name_label, 0, wxLEFT | wxTOP,15);
 	sizer->Add(m_name_text, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(classes_label, 0, wxLEFT, 15);
 	sizer->Add(add_class_sizer, 0, wxLEFT | wxBOTTOM,15);

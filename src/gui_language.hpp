@@ -78,6 +78,8 @@ typedef struct Language {
 	const wchar_t * const str_list_of_classes;
 	const wchar_t * const str_list_class_groups;
 	const wchar_t * const str_list_of_class_groups;
+	const wchar_t * const str_list_lectures;
+	const wchar_t * const str_list_of_lectures;
 	/* Adding */
 	const wchar_t * const str_add_feature;
 	const wchar_t * const str_add_room;

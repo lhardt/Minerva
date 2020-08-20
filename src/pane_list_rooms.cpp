@@ -12,9 +12,6 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_rooms, wxDefaultPosition, wxSize(400,25));
-	title->SetFont(*m_owner->m_page_title_font);
-
 	m_rooms_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
@@ -55,8 +52,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	}
 	periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * fields_sz = new wxFlexGridSizer(4,5,5);
 	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados Básicos"));
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
@@ -75,17 +71,14 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	fields_sz->Add(m_edit_btn, 0, wxEXPAND);
 
 	fields_wrap->Add(fields_sz, 0, wxALL | wxEXPAND, 10);
-	desc_sz->Add(fields_wrap, 0, wxTOP | wxLEFT, 10);
-	desc_sz->Add(notebook, 0, wxEXPAND |wxTOP | wxBOTTOM | wxLEFT, 10);
+	desc_sz->Add(fields_wrap, 0, wxBOTTOM, 5);
+	desc_sz->Add(notebook, 0, wxEXPAND | wxBOTTOM, 5);
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(delete_btn, 0, wxEXPAND |wxBOTTOM, 5);
 	desc_sz->Add(m_err_msg, 0, 0);
 
-	body_sz->Add(m_rooms_list, 0, wxEXPAND|wxALL, 15);
-	body_sz->Add(desc_sz, 0, wxEXPAND|wxALL, 15);
-
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(body_sz, 1, wxALL, 15);
+	sizer->Add(m_rooms_list, 0, wxEXPAND|wxALL, 15);
+	sizer->Add(desc_sz, 0, wxEXPAND|wxALL, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);

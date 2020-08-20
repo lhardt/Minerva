@@ -20,7 +20,9 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, owner
 
 	SetFont(*m_owner->m_text_font);
 	wxPanel * panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(800,600), wxTAB_TRAVERSAL);
+	wxPanel * buttons_wrap = new wxPanel(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	panel->SetBackgroundColour(wxColour(0x25,0x75,0xb0));
+	buttons_wrap->SetBackgroundColour(wxColour(0xFF,0xFF,0xFF));
 
 	wxStaticText * m_footer_text = new wxStaticText(panel, wxID_ANY,m_owner->m_lang->str_copyright_notice,wxDefaultPosition, wxSize(800,-1), wxST_NO_AUTORESIZE |wxALIGN_CENTRE | wxALIGN_CENTRE_HORIZONTAL);
 	m_footer_text->SetForegroundColour(wxColor(0xFF, 0xFF, 0xFF));
@@ -36,7 +38,7 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, owner
 	school_names = select_all_school_names(stdout, m_owner->m_database, &school_ids);
 
 	m_image = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(*owner->m_island_image), wxDefaultPosition);
-	m_dropdown = new wxChoice(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	m_dropdown = new wxChoice(buttons_wrap, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	for(i = 0; school_names[i] != NULL; ++i){
 		m_dropdown->Append(wxString(school_names[i]), new IntClientData(school_ids[i], wxString::FromUTF8(school_names[i])));
@@ -44,10 +46,10 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, owner
 
 	m_dropdown->SetSelection(0);
 
-	m_button_open = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_open);
-	m_button_help = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_help);
-	m_button_settings = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_settings);
-	m_button_create = new wxButton(panel, wxID_ANY, m_owner->m_lang->str_create);
+	m_button_open = new wxButton(buttons_wrap, wxID_ANY, m_owner->m_lang->str_open);
+	m_button_help = new wxButton(buttons_wrap, wxID_ANY, m_owner->m_lang->str_help);
+	m_button_settings = new wxButton(buttons_wrap, wxID_ANY, m_owner->m_lang->str_settings);
+	m_button_create = new wxButton(buttons_wrap, wxID_ANY, m_owner->m_lang->str_create);
 
 	if(i == 0){
 		m_button_open->Disable();
@@ -89,9 +91,11 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, owner
 	buttons_sz->Add(button_sz1, 0,wxEXPAND);
 	buttons_sz->Add(button_sz2, 0,wxEXPAND);
 
+	buttons_wrap->SetSizer(buttons_sz);
+
 	left_sz->Add(m_title, 0, wxALL,  15);
 	left_sz->Add(m_description, 0, wxALL, 15);
-	left_sz->Add(buttons_sz, 0, wxALL, 15);
+	left_sz->Add(buttons_wrap, 0, wxALL, 15);
 
 	center_sz->Add(left_sz, 0, wxCENTER |wxRIGHT, 15);
 	center_sz->Add(m_image, 0, wxCENTER |wxLEFT, 15);

@@ -11,25 +11,17 @@ ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent,
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_class_groups, wxDefaultPosition, wxSize(400,25));
-	title->SetFont(*m_owner->m_page_title_font);
-
 	wxArrayString group_names;
 	for(i = 0; i < school->n_classes; ++i){
 		if(school->classes[i].subordinates != NULL){
 			group_names.push_back(wxString::FromUTF8(school->classes[i].name));
 		}
 	}
-	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), group_names);
 
+	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300), group_names);
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name);
 	wxStaticText * members_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_members);
 	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_availibility);
-
-	name_label->SetFont(*m_owner->m_bold_text_font);
-	members_label->SetFont(*m_owner->m_bold_text_font);
-	periods_label->SetFont(*m_owner->m_bold_text_font);
-	periods_label->SetFont(*m_owner->m_bold_text_font);
 
 	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_members_text = new wxStaticText(this, wxID_ANY, wxT(""));
@@ -53,12 +45,10 @@ ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent,
 
 	m_periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * fields_sz = new wxFlexGridSizer(2,10,10);
 	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
-
 
 	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
 	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
@@ -71,14 +61,11 @@ ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent,
 	desc_sz->Add(periods_label, 0, wxBOTTOM, 5);
 	desc_sz->Add(m_periods_grid, 0, wxBOTTOM, 5);
 	desc_sz->AddStretchSpacer();
-	desc_sz->Add(butn_sz, 0, 0);
+	desc_sz->Add(butn_sz, 0, wxBOTTOM, 5);
+	desc_sz->Add(m_err_msg, 0, 15);
 
-	body_sz->Add(m_groups_list, 0, wxEXPAND|wxALL, 15);
-	body_sz->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
-
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(body_sz, 1, wxALL, 15);
-	sizer->Add(m_err_msg, 0, wxBOTTOM | wxLEFT | wxRIGHT, 15);
+	sizer->Add(m_groups_list, 0, wxEXPAND|wxALL, 15);
+	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);

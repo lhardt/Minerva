@@ -10,11 +10,6 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	School * school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_teacher);
-	title->SetFont(*m_owner->m_page_title_font);
-
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availibility);
 	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_teaches);
@@ -63,6 +58,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 		m_all_subjects_list->Insert(wxString::FromUTF8(m_owner->m_school->subjects[i].name), i, new IntClientData(i));
 	}
 
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * subjects_sizer  = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * buttons_sizer = new wxBoxSizer(wxVERTICAL);
@@ -74,8 +70,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	buttons_sizer->Add(remove_subject, 0, wxALL, 10);
 	buttons_sizer->Add(remove_all, 0, wxLEFT, 10);
 
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(name_label, 0, wxLEFT ,15);
+	sizer->Add(name_label, 0, wxLEFT | wxTOP ,15);
 	sizer->Add(m_name_text, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(grid_label, 0, wxLEFT, 15);
 	sizer->Add(m_grid, 0, wxLEFT | wxBOTTOM,15);

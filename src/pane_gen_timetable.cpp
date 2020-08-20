@@ -15,31 +15,25 @@ GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * par
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_generated_timetables, wxDefaultPosition, wxSize(400,40));
-	title->SetFont(*m_owner->m_page_title_font);
-
 	wxStaticText * description = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_generate_timetable_text , wxDefaultPosition, wxSize(400,-1));
 	wxStaticText * last_gen_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_last_generated_timetables, wxDefaultPosition, wxSize(400,-1));
+	wxStaticText * tt_name_label = new wxStaticText(this,wxID_ANY, m_owner->m_lang->str_name);
+	m_tt_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,30));
+	wxButton * gen_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_generate, wxDefaultPosition, wxSize(150,30));
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
 	if(school->solutions){
 		for(i = 0; i < school->n_solutions; ++i){
 			last_gen_label->SetLabel(last_gen_label->GetLabel()  + "\n- " + wxString::FromUTF8(school->solutions[i].name));
 		}
 	}
+
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * gen_sizer = new wxBoxSizer(wxHORIZONTAL);
-
-	wxStaticText * tt_name_label = new wxStaticText(this,wxID_ANY, m_owner->m_lang->str_name);
-	m_tt_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,30));
-
-	wxButton * gen_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_generate, wxDefaultPosition, wxSize(150,30));
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
 	gen_sizer->Add(m_tt_name_text, 1, wxRIGHT, 10);
 	gen_sizer->Add(gen_button, 1, wxRIGHT, 10);
 
-	sizer->Add(title, 0, wxALL | wxCENTER, 15);
 	sizer->Add(description, 0, wxALL, 15 );
 	sizer->Add(last_gen_label, 0, wxLEFT | wxTOP, 15 );
 	sizer->Add(tt_name_label, 0, wxLEFT | wxRIGHT | wxTOP, 15);

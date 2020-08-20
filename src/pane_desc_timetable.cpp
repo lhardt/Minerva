@@ -17,66 +17,47 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 	wxSizer * fields_sz = new wxFlexGridSizer(2,5,5);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_desc_timetable, wxPoint(30,30), wxSize(200,25));
-	title->SetFont(*m_owner->m_page_title_font);
-
-	wxArrayString solution_arr;
-	solution_arr.push_back(m_owner->m_lang->str_timetable__none);
-	if(school->solutions != NULL){
-		for(i = 0; i < school->n_solutions; ++i){
-			solution_arr.push_back(wxString::FromUTF8(school->solutions[i].name));
-		}
-
-	}
-	m_solution_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30), solution_arr);
-	m_solution_choice->SetSelection(0);
 	wxStaticText * solution_choice_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_choose_a_timetable, wxDefaultPosition, wxSize(170,20));
+	m_solution_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30));
+	m_class_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30));
+	m_teacher_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30));
+	m_subject_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30));
+	m_room_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30));
 
-	wxArrayString class_arr;
-	class_arr.push_back(m_owner->m_lang->str_class__none);
-	if(school->classes != NULL){
-		for(i = 0; i < school->n_classes; ++i){
-			class_arr.push_back(wxString::FromUTF8(school->classes[i].name));
-		}
-
+	m_solution_choice->Insert(m_owner->m_lang->str_timetable__none, 0, new IntClientData(-1));
+	for(i = 0; i < school->n_solutions; ++i){
+		m_solution_choice->Insert(wxString::FromUTF8(school->solutions[i].name), i+1, new IntClientData(i));
 	}
-	m_class_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30), class_arr);
-	m_class_choice->SetSelection(0);
-	wxStaticText * class_choice_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class, wxDefaultPosition, wxSize(170,20));
 
-	wxArrayString teacher_arr;
-	teacher_arr.push_back(m_owner->m_lang->str_teacher__none);
-	if(school->teachers != NULL){
-		for(i = 0; i < school->n_teachers; ++i){
-			teacher_arr.push_back(wxString::FromUTF8(school->teachers[i].name));
-		}
-
+	m_class_choice->Insert(m_owner->m_lang->str_class__none, i);
+	for(i = 0; i < school->n_classes; ++i){
+		m_class_choice->Insert(wxString::FromUTF8(school->classes[i].name), i+1, new IntClientData(i));
 	}
-	m_teacher_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30), teacher_arr);
-	m_teacher_choice->SetSelection(0);
-	wxStaticText * teacher_choice_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher, wxDefaultPosition, wxSize(170,20));
 
-	wxArrayString subj_arr;
-	subj_arr.push_back(m_owner->m_lang->str_subject__none);
-	if(school->subjects != NULL){
-		for(i = 0; i < school->n_subjects; ++i){
-			subj_arr.push_back(wxString::FromUTF8(school->subjects[i].name));
-		}
-
+	m_teacher_choice->Insert(m_owner->m_lang->str_teacher__none, 0);
+	for(i = 0; i < school->n_teachers; ++i){
+		m_teacher_choice->Insert(wxString::FromUTF8(school->teachers[i].name), i+1, new IntClientData(i));
 	}
-	m_subject_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30), subj_arr);
-	m_subject_choice->SetSelection(0);
-	wxStaticText * subject_choice_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_subject, wxDefaultPosition, wxSize(170,20));
 
-	wxArrayString room_arr;
-	room_arr.push_back(m_owner->m_lang->str_room__none);
+	m_subject_choice->Insert(m_owner->m_lang->str_subject__none, 0);
+	for(i = 0; i < school->n_subjects; ++i){
+		m_subject_choice->Insert(wxString::FromUTF8(school->subjects[i].name), i+1, new IntClientData(i));
+	}
+
+	m_room_choice->Insert(m_owner->m_lang->str_room__none, 0);
 	if(school->rooms != NULL){
 		for(i = 0; i < school->n_rooms; ++i){
-			room_arr.push_back(wxString::FromUTF8(school->rooms[i].name));
+			m_room_choice->Insert(wxString::FromUTF8(school->rooms[i].name), i+1, new IntClientData(i));
 		}
 	}
-	m_room_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(170,30), room_arr);
+	m_solution_choice->SetSelection(0);
+	m_class_choice->SetSelection(0);
+	m_teacher_choice->SetSelection(0);
+	m_subject_choice->SetSelection(0);
 	m_room_choice->SetSelection(0);
+	wxStaticText * class_choice_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class, wxDefaultPosition, wxSize(170,20));
+	wxStaticText * teacher_choice_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher, wxDefaultPosition, wxSize(170,20));
+	wxStaticText * subject_choice_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_subject, wxDefaultPosition, wxSize(170,20));
 	wxStaticText * room_choice_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room, wxDefaultPosition, wxSize(170,20));
 
 	m_grid = new wxGrid(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
@@ -149,9 +130,8 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 	grid_sz->Add(m_grid, 1, wxRIGHT | wxEXPAND, 5);
 	grid_sz->Add(desc_sz, 0, wxEXPAND | wxLEFT, 5);
 
-	sizer->Add(title, 0, wxALL | wxALIGN_CENTER, 15);
-	sizer->Add(solution_choice_label, 0, wxLEFT | wxRIGHT, 20);
-	sizer->Add(m_solution_choice, 0, wxLEFT | wxRIGHT | wxBOTTOM, 20);
+	sizer->Add(solution_choice_label, 0, wxLEFT | wxRIGHT | wxTOP, 15);
+	sizer->Add(m_solution_choice, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
 	sizer->Add(labels_sz, 0, wxEXPAND | wxALIGN_CENTER | wxLEFT | wxRIGHT, 15);
 	sizer->Add(choice_sz, 0, wxEXPAND | wxALIGN_CENTER | wxLEFT | wxRIGHT, 15);
 	sizer->Add(grid_sz, 1, wxEXPAND | wxALL, 15);

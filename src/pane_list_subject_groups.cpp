@@ -11,14 +11,10 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * body_sz = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * fields_sz = new wxFlexGridSizer(2,5,5);
 	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
-
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_of_subject_groups, wxDefaultPosition, wxSize(400,25));
-	title->SetFont(*m_owner->m_page_title_font);
 
 	wxArrayString group_names;
 	for(i = 0; i < school->n_subject_groups; ++i){
@@ -49,11 +45,8 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(butn_sz, 0, 0);
 
-	body_sz->Add(m_groups_list, 0, wxEXPAND|wxALL, 15);
-	body_sz->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
-
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(body_sz, 1, wxALL, 15);
+	sizer->Add(m_groups_list, 0, wxEXPAND|wxALL, 10);
+	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 10);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);

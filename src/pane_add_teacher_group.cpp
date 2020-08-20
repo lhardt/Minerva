@@ -10,9 +10,6 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 	this->m_owner = owner;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_teacher_group, wxDefaultPosition, wxSize(400,25));
-	title->SetFont(*m_owner->m_page_title_font);
-
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name);
 	wxStaticText * teachers_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_add_teachers_to_the_group);
 	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teachers_teach);
@@ -72,8 +69,7 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 	subjects_sizer->Add(m_selected_subjects_list, 0, wxRIGHT, 10);
 	subjects_sizer->Add(sbuttons_sizer, 0, 0);
 
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(name_label, 0, wxLEFT ,15);
+	sizer->Add(name_label, 0, wxLEFT | wxTOP ,15);
 	sizer->Add(m_name_text, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(teachers_label, 0, wxLEFT, 15);
 	sizer->Add(addt_sizer, 0, wxLEFT | wxBOTTOM,15);
