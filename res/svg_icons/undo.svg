@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
+	<defs></defs>
+	<!-- Arrowhead -->
+	<polyline points="16,22 12,18 16,14" x1="10" y1="14" x2="14" y2="10" fill="transparent" style="fill:none"  stroke="black" stroke-width="2"/>
+	<!-- Lines + curve -->
+	<path d="M 16,18 30,18 A 8 8 0 0 1 28 34 H 10" fill="transparent" style="fill:none" stroke="black" stroke-width="2"/>
+</svg>

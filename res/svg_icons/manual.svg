@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
+
+	<defs></defs>
+
+	<!-- <polygon points="0,0 0,48 48,48 48,0" stroke="black" fill="transparent"/> -->
+	<line x1="20" y1="38" x2="28" y2="38" stroke="black" />
+	<line x1="18" y1="36" x2="30" y2="36" stroke="black" />
+	<line x1="19" y1="34" x2="29" y2="34" stroke="black" />
+	<path d="M 20 32 V 28 A 10 10 0 1 1 28 28 V 32" stroke="black" style="fill:none" fill="transparent" />
+
+</svg>

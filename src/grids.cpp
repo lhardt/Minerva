@@ -96,7 +96,7 @@ void PosIntGridTable::SetValue( int row, int col, const wxString& value ){
 }
 
 
-ChoiceGrid::ChoiceGrid(wxWindow * parent, wxWindowID id, wxPoint position, wxSize size) : wxGrid(parent,id,position,size){
+ChoiceGrid::ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id, wxPoint position, wxSize size) : wxGrid(parent,id,position,size), m_owner(owner){
 	Bind(wxEVT_GRID_CELL_LEFT_CLICK, &ChoiceGrid::OnLeftClick, this);
 	SetDefaultRenderer(new NoSelectGridCellRenderer);
 	CreateGrid(1,1);
@@ -123,7 +123,6 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 	m_immutable_cell_text = wxT("");
 	m_immutable_cell_color = wxColor(200, 200, 200);
 
-	SetCellBackgroundColour(0,0,wxColor(200,200,200));
 	if(n_rows > old_n_rows){
 		AppendRows(n_rows - old_n_rows);
 		for(i = old_n_rows; i < n_rows; ++i){
@@ -134,6 +133,7 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 				} else {
 						SetCellValue(i,0, m_row_names[i-1]);
 				}
+				SetCellFont(i,0, *m_owner->m_bold_text_font);
 			}
 			for(j = 1; j < old_n_cols; ++j){
 				if(m_background_colors.size() > 0){
@@ -158,6 +158,7 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 				} else {
 					SetCellValue(0, j, m_col_names[j-1]);
 				}
+				SetCellFont(0,j, *m_owner->m_bold_text_font);
 			}
 			for(i = 1; i < n_rows; ++i){
 				if(m_background_colors.size() > 0){

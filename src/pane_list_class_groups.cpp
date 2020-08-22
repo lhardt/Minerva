@@ -4,7 +4,7 @@ extern "C" {
 	#include "loader.h"
 };
 
-ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
+ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	int i = 0;
 	School * school = NULL;
 	this->m_owner = owner;
@@ -25,7 +25,7 @@ ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent,
 
 	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_members_text = new wxStaticText(this, wxID_ANY, wxT(""));
-	m_periods_grid = new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(400,300));
+	m_periods_grid = new ChoiceGrid(m_owner,this, wxID_ANY, wxDefaultPosition, wxSize(400,300));
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));

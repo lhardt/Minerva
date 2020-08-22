@@ -44,7 +44,7 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	wxStaticText * m_names_label = new wxStaticText(m_left_pane, wxID_ANY, m_owner->m_lang->str_in_what_periods_the_school_is_open);
 	m_names_label->SetFont(*m_owner->m_small_font);
 
-	m_grid = new ChoiceGrid(m_left_pane, wxID_ANY, wxDefaultPosition, wxSize(300,200));
+	m_grid = new ChoiceGrid(m_owner,m_left_pane, wxID_ANY, wxDefaultPosition, wxSize(300,200));
 
 	wxVector<wxString> grid_values = wxVector<wxString>();
 	grid_values.push_back(m_owner->m_lang->str_adj__open);
@@ -171,6 +171,7 @@ void CreateSchoolForm::OnCreateClicked(wxCommandEvent & ev){
 			m_owner->m_school = school;
 			m_owner->SwitchForm(FORM_MAIN_MENU);
 			m_owner->SaveDatabase();
+			m_owner->NotifyNewUnsavedData();
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}

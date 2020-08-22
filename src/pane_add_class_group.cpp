@@ -5,7 +5,7 @@ extern "C" {
 	#include "loader.h"
 };
 
-AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
+AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
 	int i;

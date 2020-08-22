@@ -2429,9 +2429,11 @@ static Teaches * select_all_teaches_by_school_id(FILE * console_out, sqlite3 * d
 		teaches = calloc(11, sizeof(Teaches));
 		while(errc == SQLITE_ROW){
 			teaches[i].id = sqlite3_column_int(stmt,0);
-			teaches[i].teacher = find_teacher_by_id(school, sqlite3_column_int(stmt,1));
-			teaches[i].subject = find_subject_by_id(school, sqlite3_column_int(stmt,2));
-			teaches[i].score = sqlite3_column_int(stmt,3);
+			teaches[i].score = sqlite3_column_int(stmt,1);
+			teaches[i].max_per_day = sqlite3_column_int(stmt,2);
+			teaches[i].max_per_class_per_day = sqlite3_column_int(stmt,3);
+			teaches[i].teacher = find_teacher_by_id(school, sqlite3_column_int(stmt,4));
+			teaches[i].subject = find_subject_by_id(school, sqlite3_column_int(stmt,5));
 			errc = sqlite3_step(stmt);
 			++i;
 			if(i % 10 == 0){

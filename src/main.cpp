@@ -126,7 +126,7 @@ bool Application::OnInit(){
 	printf("Sizeof Solution: %d\n", sizeof(Solution));
 
 	errc = sqlite3_open(":memory:",&m_database);
-	loaded = load_backup(m_database, "db/Database.db");
+	loaded = load_backup(m_database, "./Database.db");
 
 	if(m_database != nullptr && loaded && (errc == SQLITE_OK)){
 		init_all_tables(stdout, m_database);
@@ -154,7 +154,7 @@ bool Application::OnInit(){
 }
 
 bool Application::SaveDatabase(){
-	return save_backup(m_database, "db/Database.db");
+	return save_backup(m_database, "./Database.db");
 }
 
 void Application::SwitchForm(AppFormType next){

@@ -24,7 +24,7 @@
 #include "gui_language.hpp"
 
 
-extern "C"{
+extern "C" {
 	#include "types.h"
 };
 
@@ -99,7 +99,7 @@ private:
 
 class ChoiceGrid : public wxGrid {
  public:
-	ChoiceGrid(wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
+	ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 	~ChoiceGrid();
 
 	int m_n_cols;
@@ -131,6 +131,7 @@ class ChoiceGrid : public wxGrid {
 	void SetCanUserClick(bool can_user_click);
  private:
 	void OnLeftClick(wxGridEvent &);
+	Application * m_owner;
 };
 
 class ScoreGridPane : public wxScrolledWindow {
@@ -318,19 +319,6 @@ class SettingsForm : public wxFrame {
 
 /* ADD Panes. */
 
-class AddFeaturePane : public wxPanel {
- public:
-	AddFeaturePane(Application * owner, wxWindow * parent, wxPoint pos);
-	~AddFeaturePane();
-
-	wxTextCtrl * m_name_text;
-	wxStaticText * m_err_msg;
-	Application * m_owner;
- private:
-	void OnCreateButtonClicked(wxCommandEvent &);
-	void ClearInsertedData();
-};
-
 class AddRoomPane : public wxScrolledWindow {
  public:
 	AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos);
@@ -428,28 +416,19 @@ class AddClassPane : public wxScrolledWindow {
 	AddClassPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddClassPane();
  private:
-
-	wxTextCtrl * m_name_text;
-	ChoiceGrid * m_periods;
-	wxChoice   * m_all_subjects_list;
-	wxListBox  * m_selected_subjects_list;
-	wxSpinCtrl * m_score_text;
-	wxSpinCtrl * m_size_text;
-	wxCheckBox * m_free_periods_checkbox;
-	int last_entry, last_exit;
-
-
-	wxChoice * m_entry_text;
-	wxChoice * m_exit_text;
-
-	wxStaticText * m_err_msg;
+	wxTextCtrl 		* m_name_text;
+	ChoiceGrid 		* m_periods;
+	wxSpinCtrl 		* m_size_text;
+	wxCheckBox 		* m_free_periods_checkbox;
+	wxChoice 		* m_entry_text;
+	wxChoice 		* m_exit_text;
+	wxStaticText 	* m_err_msg;
+	wxGrid 			* m_subjects_grid;
 
 	Application * m_owner;
+	int last_entry, last_exit;
 
-	void OnAddSubjectButtonClicked(wxCommandEvent &);
 	void OnAddClassButtonClicked(wxCommandEvent &);
-	void OnRemoveSubjectButtonClicked(wxCommandEvent & ev);
-	void OnRemoveAllButtonClicked(wxCommandEvent & ev);
 	void OnPeriodChoice(wxCommandEvent &);
 	void ClearInsertedData();
 };
@@ -479,15 +458,6 @@ class AddClassGroupPane : public wxScrolledWindow {
 	void ClearInsertedData();
 };
 
-class AddLecturePane : public wxScrolledWindow {
- public:
-	AddLecturePane(Application * owner, wxWindow * parent, wxPoint pos);
-	~AddLecturePane();
-
- private:
-	Application * m_owner;
-};
-
 /* LIST Panes. */
 
 class DescSchoolPane : public wxScrolledWindow {
@@ -506,25 +476,6 @@ class DescSchoolPane : public wxScrolledWindow {
 	void OnCancelButtonClicked(wxCommandEvent & );
 	void OnEditButtonClicked(wxCommandEvent & );
 	wxScrolledWindow * MakeStatisticsPane();
-};
-
-class ListFeaturesPane : public wxScrolledWindow {
- public:
-	ListFeaturesPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~ListFeaturesPane();
- private:
-
-	wxStaticText*  m_name_text;
-
-
-	wxListBox * m_features_list;
-	Application * m_owner;
-
-	int m_selected_index;
-
-	void OnEditButtonClicked(wxCommandEvent &);
-	void OnRemoveButtonClicked(wxCommandEvent &);
-	void OnSelectionChange(wxCommandEvent &);
 };
 
 class ListRoomsPane : public wxScrolledWindow {
@@ -773,7 +724,7 @@ class Application : public wxApp {
 	const Language * m_lang;
 	int m_font_sz;
 
-	ManualWindow *		m_window_manual = nullptr;
+	ManualWindow *	m_window_manual = nullptr;
 	wxFont * 		m_title_font = nullptr;
 	wxFont * 		m_page_title_font = nullptr;
 	wxFont * 		m_small_font = nullptr;
@@ -785,6 +736,58 @@ class Application : public wxApp {
 
 	sqlite3 *		m_database = nullptr;
 	School *		m_school = nullptr;
+};
+
+
+/* This is not a complete list of widgets in the program.
+ * It is, however, the list of ones that need an explicit
+ * id.
+ */
+enum MinervaWidgetId {
+	ID_SAVE = wxID_HIGHEST+1,
+	ID_CLOSE,
+	ID_UNDO,
+	ID_REDO,
+	ID_HELP,
+	ID_SCHOOL_DATA,
+	ID_OPEN_SCHOOL_MANUAL,
+
+	ID_VIEW_ROOMS,
+	ID_ADD_ROOM,
+	ID_CHECK_ALL_ROOMS,
+	ID_OPEN_ROOMS_MANUAL,
+
+	ID_VIEW_SUBJECTS,
+	ID_VIEW_SUBJECT_GROUPS,
+	ID_ADD_SUBJECT,
+	ID_ADD_SUBJECT_GROUP,
+	ID_CHECK_ALL_SUBJECTS,
+	ID_OPEN_SUBJECTS_MANUAL,
+
+	ID_VIEW_TEACHERS,
+	ID_VIEW_TEACHER_GROUPS,
+	ID_ADD_TEACHER,
+	ID_ADD_TEACHER_GROUP,
+	ID_CHECK_ALL_TEACHERS,
+	ID_OPEN_TEACHERS_MANUAL,
+
+	ID_VIEW_CLASSES,
+	ID_VIEW_CLASS_GROUPS,
+	ID_ADD_CLASS,
+	ID_ADD_CLASS_GROUP,
+	ID_CHECK_ALL_CLASSES,
+	ID_OPEN_CLASSES_MANUAL,
+
+	ID_VIEW_LECTURES,
+	ID_VIEW_PLANNING_TIMES,
+	ID_CHECK_ALL_EVENTS,
+	ID_OPEN_EVENTS_MANUAL,
+
+	ID_VIEW_TIMETABLE,
+	ID_EXPORT_TIMETABLE,
+	ID_GENERATE_TIMETABLE,
+	ID_CREATE_TIMETABLE,
+	ID_OPEN_TIMETABLE_MANUAL
 };
 
 #endif /* GUI_H */

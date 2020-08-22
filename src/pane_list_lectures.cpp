@@ -10,13 +10,20 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	School * school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_list_lectures_by_class);
 	wxStaticText * class_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class);
 	wxStaticText * subject_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_subject);
 	wxStaticText * occurence_label = new wxStaticText(this, wxID_ANY, wxT("Ocasião"));
 	wxStaticText * teacher_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher);
 	wxStaticText * room_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room);
 	wxStaticText * period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_period);
+
+	wxNotebook *   notebook = new wxNotebook(this, wxID_ANY);
+	ScoreGridPane * m_periods = new ScoreGridPane(m_owner, notebook, wxID_ANY);
+	ScoreGridPane * m_teachers = new ScoreGridPane(m_owner, notebook, wxID_ANY);
+	ScoreGridPane * m_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
+	notebook->InsertPage(0, m_periods, m_owner->m_lang->str_periods);
+	notebook->InsertPage(1, m_teachers, m_owner->m_lang->str_teachers);
+	notebook->InsertPage(2, m_rooms, m_owner->m_lang->str_rooms);
 
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
@@ -29,14 +36,11 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	wxChoice * room_text = new wxChoice(this, wxID_ANY);
 	wxChoice * period_text = new wxChoice(this, wxID_ANY);
 
-	title->SetFont(*m_owner->m_bold_text_font);
 	class_label->SetFont(*m_owner->m_small_font);
 	subject_label->SetFont(*m_owner->m_small_font);
 	occurence_label->SetFont(*m_owner->m_small_font);
 
-	wxSizer * wrapper = new wxBoxSizer(wxVERTICAL);
-	wxSizer * sizer   = new wxBoxSizer(wxVERTICAL);
-	wxSizer * content_sz = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * sizer   = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * left_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * right_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados a fixar"));
@@ -63,17 +67,13 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	fields_sz->Add(m_edit_btn, 0, wxEXPAND);
 
 	fields_wrap->Add(fields_sz, 0, wxEXPAND | wxALL, 10);
-	right_sz->Add(fields_wrap, 0, wxEXPAND | wxALL, 10);
+	right_sz->Add(fields_wrap, 0, wxEXPAND | wxBOTTOM, 10);
+	right_sz->Add(notebook, 1, wxEXPAND | wxBOTTOM, 10);
 
-	content_sz->Add(left_sz, 0, wxRIGHT, 10);
-	content_sz->Add(right_sz);
+	sizer->Add(left_sz, 0, wxALL, 10);
+	sizer->Add(right_sz, 0, wxRIGHT | wxTOP | wxBOTTOM, 10);
 
-	sizer->Add(title, 0, wxBOTTOM, 10);
-	sizer->Add(content_sz);
-
-	wrapper->Add(sizer, 0, wxALL, 15);
-
-	this->SetSizer(wrapper);
+	this->SetSizer(sizer);
 	Layout();
 
 	for(i = 0; i < school->n_classes; ++i){
@@ -86,6 +86,24 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	subject_choice->Bind(wxEVT_CHOICE, &ListLecturesPane::OnSubjectSelectionChanged, this);
 	m_edit_btn->Bind(wxEVT_CHOICE, &ListLecturesPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_CHOICE, &ListLecturesPane::OnCancelButtonClicked, this);
+
+
+	// m_periods code
+	ChoiceGrid * periods_grid = m_periods->GetGrid();
+	wxVector<wxString> periods_values = wxVector<wxString>();
+	periods_values.push_back(m_owner->m_lang->str_adj__open);
+	periods_values.push_back(m_owner->m_lang->str_adj__closed);
+	periods_grid->SetPossibleValues(periods_values);
+
+	wxVector<wxColor> periods_colors = wxVector<wxColor>();
+	periods_colors.push_back(wxColor(200,200,255));
+	periods_colors.push_back(wxColor(255,200,200));
+	periods_grid->SetBackgroundColors(periods_colors);
+
+	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
+	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
+	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
+
 }
 
 void ListLecturesPane::OnCancelButtonClicked(wxCommandEvent&){
@@ -125,7 +143,6 @@ void ListLecturesPane::OnSubjectSelectionChanged(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
 	occurence_choice->Clear();
 	if(subject_choice->GetSelection() != wxNOT_FOUND){
-		int i_assignment = ((IntClientData*)subject_choice->GetClientObject( subject_choice->GetSelection() ))->m_value;
 		for(i = 0; i < school->assignments[i].amount; ++i){
 			// TODO  check if i > 26
 			occurence_choice->Insert(wxString::Format(wxT("%C"), 'A' + i), i);

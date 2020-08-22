@@ -8,7 +8,7 @@ extern "C" {
 	#include "util.h"
 };
 
-ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
+ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	School * school = NULL;
 	this->m_owner = owner;
 	school = m_owner->m_school;

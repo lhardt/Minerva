@@ -5,7 +5,7 @@ extern "C" {
 	#include "util.h"
 };
 
-DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
+DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	int i;
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
@@ -52,16 +52,19 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	m_notebook->AddPage(MakeStatisticsPane(), wxT("Estatísticas"));
 
 	wxGrid * day_names_grid = m_days->GetGrid();
+	day_names_grid->SetColSize(0, 200);
 	for(i = 0; i < school->n_days; ++i){
 		day_names_grid->SetCellValue(i,0, wxString::FromUTF8(school->day_names[i]));
 	}
 
 	wxGrid * daily_period_names_grid = m_daily_periods->GetGrid();
+	daily_period_names_grid->SetColSize(0, 200);
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		daily_period_names_grid->SetCellValue(i,0, wxString::FromUTF8(school->daily_period_names[i]));
 	}
 
 	wxGrid * per_names_grid = m_period_names->GetGrid();
+	per_names_grid->SetColSize(0, 200);
 	for(i = 0; i < school->n_periods; ++i){
 		per_names_grid->SetCellValue(i,0, wxString::FromUTF8(school->period_names[i]));
 	}

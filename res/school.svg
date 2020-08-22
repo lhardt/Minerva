@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Edit this text area to see live preview to the right -->
+<svg width="500" height="800" xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
+
+  <defs>
+
+
+    <linearGradient id="sky-gradient"
+                    x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#000"/>
+	  <stop offset="20%" stop-color="#128"/>
+	  <stop offset="100%" stop-color="#24c"/>
+    </linearGradient>
+    <radialGradient id="earth-gradient"
+                     cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000"/>
+      <stop offset="50%" stop-color="#072"/>
+      <stop offset="100%" stop-color="#042"/>
+    </radialGradient>
+
+	<linearGradient id="frontal-gradient"
+					x1="0%" y1="0%" x2="100%" y2="0%">
+		<stop offset="0%" stop-color="#e0770f" />
+		<stop offset="100%" stop-color="#d46c00" />
+	</linearGradient>
+
+
+	<linearGradient id="lateral-gradient"
+					x1="0%" y1="0%" x2="100%" y2="0%">
+		<stop offset="0%" stop-color="#f17b00" />
+		<stop offset="100%" stop-color="#d46c00" />
+	</linearGradient>
+  </defs>
+
+  <rect x="0" y="0"
+        width="500" height="900"
+        fill="url(#sky-gradient)"/>
+
+  <rect x="0" y="0"
+        width="500" height="900"
+        fill="url(#sky-gradient)"/>
+
+
+  <circle cx="50%" cy="1200" r="800" fill="url(#earth-gradient)"/>
+
+	<!-- Escola Fundo -->
+	<polygon points="130,330 370,330 370,450 130,450"  fill="url(#frontal-gradient)"  stroke="#333"/>
+	<polygon points="130,450 370,450 370,465 130,465" fill="#ddd"  stroke="#333"/>
+	<!-- Escola Frente -->
+	<polygon points="200,375 298,375 300,490 200,490"  fill="url(#frontal-gradient)"  stroke="#333"/>
+	<polygon points="225,480 275,480 275,440 225,440"  fill="brown"  stroke="#333"/>
+	<!-- Três Degraus -->
+	<polygon points="190,485 310,485 310,490 190,490" fill="#ddd"  stroke="#333"/>
+	<polygon points="195,480 305,480 305,485 195,485" fill="#ddd"  stroke="#333"/>
+	<polygon points="200,475 300,475 300,480 200,480" fill="#ddd"  stroke="#333"/>
+	<!-- Três Colunas -->
+	<polygon points="215,380 215,475 220,475 220,380" fill="#ddd"  stroke="#333"/>
+	<polygon points="247.5,380 247.5,475 252.5,475 252.5,380" fill="#ddd"  stroke="#333"/>
+	<polygon points="285,380 285,475 280,475 280,380" fill="#ddd"  stroke="#333"/>
+	<!-- Mastro e Telhado -->
+	<polygon points="130,330 370,330 370,325 130,325" fill="#ddd"  stroke="#333"/>
+	<polygon points="248,310 248,360 252,350 252,310" fill="#ddd"  stroke="#333"/>
+	<polygon points="250,350 180,380 320,380" fill="#ddd"  stroke="#333"/>
+	<!-- Bandeira -->
+	<polygon points="252,315 282,315 282,330 252,330" fill="#009b3a" stroke="#333"/>
+	<polygon points="268,317 280,322 268,328 254,322" fill="#ffcd14" />
+	<!-- Janelas -->
+	<polygon points="160,352 175,360 145,360" fill="#ddd" stroke="#333" />
+	<polygon points="150,360 170,360 170,380 150,380" fill="#ddd" stroke="#333" />
+	<polygon points="148,380 172,380 172,383 148,383 " fill="#ddd" stroke="#333" />
+	<!-- <polygon points="160,350 180,360 140,360" fill="#ddd" stroke="#333" /> -->
+
+  <text x="210" y="405" textLength="80" style="font-weight:bold; font-size:1.8em" fill="white" stroke="black">
+	  <!-- ESCOLA -->
+  </text>
+
+</svg>

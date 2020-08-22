@@ -6,13 +6,12 @@
  *
  * This program is free software. See LICENSE.
  *
- * This module contains structures related to
- * decision trees for school timetabling.
+ * This module contains lists of strings used to translate the program
+ * between languages.
  */
 #ifndef GUI_LANGUAGE
 #define GUI_LANGUAGE
 
-/* Language per se */
 typedef struct Language {
 	const wchar_t * const str_minerva_school_timetables;
 	const wchar_t * const str_minerva_welcome_description;
@@ -53,6 +52,7 @@ typedef struct Language {
 	const wchar_t * const str_teachers;
 	const wchar_t * const str_classes;
 	const wchar_t * const str_lectures;
+	const wchar_t * const str_events;
 	const wchar_t * const str_timetable;
 	/* Subheader names */
 	const wchar_t * const str_file;
@@ -80,6 +80,8 @@ typedef struct Language {
 	const wchar_t * const str_list_of_class_groups;
 	const wchar_t * const str_list_lectures;
 	const wchar_t * const str_list_of_lectures;
+	const wchar_t * const str_list_planning_times;
+	const wchar_t * const str_list_of_planning_times;
 	/* Adding */
 	const wchar_t * const str_add_feature;
 	const wchar_t * const str_add_room;
@@ -213,68 +215,4 @@ const extern Language LANG_SPA;
 
 const extern Language LANG_DEU;
 
-/* IDs of buttons. */
-
-#define LH_ID_PADDING 10000
-
-#define LHID_OF(i) (LH_ID_PADDING + (i))
-
-#define LHN_SAVE	 				1
-#define LHN_CLOSE		 			2
-#define LHN_UNDO			 		3
-#define LHN_REDO			 		4
-#define LHN_SCHOOL_DATA				5
-#define LHN_OPEN_SCHOOL_MANUAL		6
-
-#define LHN_SEE_FEATURES			7
-#define LHN_SEE_ROOMS				8
-#define LHN_ADD_FEATURE				9
-#define LHN_ADD_ROOM				10
-#define LHN_ROOM_PERIOD_PREF 		11
-#define LHN_CHECK_ALL_ROOMS			12
-#define LHN_OPEN_ROOMS_MANUAL		13
-
-#define LHN_SEE_SUBJECTS			14
-#define LHN_SEE_SUBJECT_GROUPS		15
-#define LHN_ADD_SUBJECT				16
-#define LHN_ADD_SUBJECT_GROUP		17
-#define LHN_CHECK_ALL_SUBJECTS		20
-#define LHN_OPEN_SUBJECTS_MANUAL	21
-
-#define LHN_SEE_TEACHERS			22
-#define LHN_SEE_TEACHER_GROUPS		23
-#define LHN_ADD_TEACHER				24
-#define LHN_ADD_TEACHER_GROUP		25
-#define LHN_TEACHER_SUBJECT_PREF	26
-#define LHN_TEACHER_PERIOD_PREF		27
-#define LHN_TEACHER_ROOM_PREF		29
-#define LHN_CHECK_ALL_TEACHERS		30
-#define LHN_OPEN_TEACHERS_MANUAL	31
-
-#define LHN_SEE_CLASSES				32
-#define LHN_SEE_CLASS_GROUPS		33
-#define LHN_ADD_CLASS				34
-#define LHN_ADD_CLASS_GROUP			35
-#define LHN_CLASS_PERIOD_PREF		36
-#define LHN_CLASS_TEACHER_PREF		37
-#define LHN_CLASS_ROOM_PREF			39
-#define LHN_CHECK_ALL_CLASSES		40
-#define LHN_OPEN_CLASSES_MANUAL 	41
-
-#define LHN_SEE_LECTURES			42
-#define LHN_ADD_LECTURES			43
-#define LHN_LECTURE_PERIOD_PREF		44
-#define LHN_LECTURE_TEACHER_PREF	45
-#define LHN_LECTURE_TWIN_PREF		46
-#define LHN_LECTURE_ROOM_PREF		47
-#define LHN_CHECK_ALL_LECTURES		48
-#define LHN_OPEN_LECTURES_MAUAL 	49
-
-#define LHN_SEE_TIMETABLE			50
-#define LHN_EXPORT_TIMETABLE		51
-#define LHN_GENERATE_TIMETABLE		52
-#define LHN_CREATE_TIMETABLE		53
-#define LHN_OPEN_TIMETABLE_MANUAL	54
-
-#define LHN_HELP					55
 #endif /* GUI_LANGUAGE */

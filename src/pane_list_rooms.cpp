@@ -5,7 +5,7 @@ extern "C" {
 };
 #include <wx/spinctrl.h>
 
-ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
+ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	int i = 0;
 	School * school = NULL;
 	this->m_owner = owner;

@@ -61,6 +61,7 @@ const Language LANG_POR = {
 	.str_teachers=L"Professores",
 	.str_classes=L"Turmas",
 	.str_lectures=L"Aulas",
+	.str_events=L"Eventos",
 	.str_timetable=L"Horário",
 	/* Subheader names */
 	.str_file=L"Arquivo",
@@ -87,7 +88,9 @@ const Language LANG_POR = {
 	.str_list_class_groups=L"Listar Grupos de Turmas",
 	.str_list_of_class_groups=L"Lista de Grupos de Turmas",
 	.str_list_lectures=L"",
-	.str_list_of_lectures=L"",
+	.str_list_of_lectures=L"Lista de Aulas",
+	.str_list_planning_times=L"Listar Horários de Planejamento",
+	.str_list_of_planning_times=L"Lista de Horários de Planejamento",
 	/* Adding */
 	.str_add_feature=L"Adicionar Característica",
 	.str_add_room=L"Adicionar Sala",
@@ -259,6 +262,7 @@ const Language LANG_ENG = {
 	.str_teachers=L"Teachers",
 	.str_classes=L"Classes",
 	.str_lectures=L"Lectures",
+	.str_events=L"Events",
 	.str_timetable=L"Timetable",
 	/* Subheader names */
 	.str_file=L"File",
@@ -285,7 +289,9 @@ const Language LANG_ENG = {
 	.str_list_class_groups=L"List class groups",
 	.str_list_of_class_groups=L"List of class groups",
 	.str_list_lectures=L"",
-	.str_list_of_lectures=L"",
+	.str_list_of_lectures=L"List of Lectures",
+	.str_list_planning_times=L"List Planning Times",
+	.str_list_of_planning_times=L"Lista of Planning Times",
 	/* Adding */
 	.str_add_feature=L"Add feature",
 	.str_add_room=L"Add room",
@@ -443,7 +449,8 @@ const Language LANG_SPA = {
 	.str_subjects=L"Asignaturas",
 	.str_teachers=L"Maestros",
 	.str_classes=L"Turmas",
-	.str_lectures=L"Lección",
+	.str_lectures=L"Lecciónes",
+	.str_events=L"",
 	.str_timetable=L"Horario",
 	/* Subheader names */
 	.str_file=L"Arquivo",
@@ -469,8 +476,10 @@ const Language LANG_SPA = {
 	.str_list_of_classes=L"Lista de Clases",
 	.str_list_class_groups=L"Listar Grupos de Clases",
 	.str_list_of_class_groups=L"Lista de Grupos de Clases",
-	.str_list_lectures=L"",
-	.str_list_of_lectures=L"",
+	.str_list_lectures=L"Listar Lecciones",
+	.str_list_of_lectures=L"Lista de Lecciones",
+	.str_list_planning_times=L" ",
+	.str_list_of_planning_times=L" ",
 	/* Adding */
 	.str_add_feature=L"Añadir Característica",
 	.str_add_room=L"Añadir Sala",
@@ -629,6 +638,7 @@ const Language LANG_DEU = {
 	.str_teachers=L"Lehrer",
 	.str_classes=L"Klassen",
 	.str_lectures=L"Vorträge",
+	.str_events=L"?",
 	.str_timetable=L"Zeitplan",
 	/* Subheader names */
 	.str_file=L"Datei",
@@ -654,8 +664,11 @@ const Language LANG_DEU = {
 	.str_list_of_classes=L"Klassenliste",
 	.str_list_class_groups=L"Klassengruppen auflisten",
 	.str_list_of_class_groups=L"Klassengruppenlisten",
-	.str_list_lectures=L"",
-	.str_list_of_lectures=L"",
+	.str_list_lectures=L"Vorträge auflisten",
+	.str_list_of_lectures=L"Vortragsliste",
+	/* Isn't 'List of lectures' translated in the same way as 'a cup of tea' (eine tasse tee?) */
+	.str_list_planning_times=L"?",
+	.str_list_of_planning_times=L"?",
 	/* Adding */
 	.str_add_feature=L"Merkmal hinzufügen",
 	.str_add_room=L"Klassenzimmer hinzufügen",

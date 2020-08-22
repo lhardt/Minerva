@@ -14,7 +14,7 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
-	m_grid = new ChoiceGrid(this);
+	m_grid = new ChoiceGrid(m_owner, this);
 
 	m_grid->SetCanUserClick(false);
 
@@ -114,7 +114,6 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 	m_grid = new wxGrid(this, wxID_ANY);
 	PosIntGridTable * grid_table = new PosIntGridTable(row_names.size(),1);
 
-	wxString col_name = column_name;
 	grid_table->SetColLabelValue(0, column_name);
 	for(i = 0; i < row_names.size(); ++i){
 		grid_table->SetRowLabelValue(i, row_names[i]);
@@ -199,7 +198,6 @@ StringGridPane::StringGridPane(Application * owner,
 	m_grid = new wxGrid(this, wxID_ANY);
 	m_grid->CreateGrid(row_names.size(),1);
 
-	wxString col_name = column_name;
 	m_grid->SetColLabelValue(0, column_name);
 	for(i = 0; i < row_names.size(); ++i){
 		m_grid->SetRowLabelValue(i, row_names[i]);
