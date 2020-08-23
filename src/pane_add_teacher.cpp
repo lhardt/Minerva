@@ -142,6 +142,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
 	if(!m_name_text->GetValue().IsEmpty()){
 		Teacher t;
+
 		t.name = copy_wx_string(m_name_text->GetValue());
 		t.short_name = copy_wx_string(m_name_text->GetValue());
 		t.max_days = school->n_days;
@@ -149,7 +150,13 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.max_meetings_per_day = school->n_periods_per_day;
 		t.max_meetings_per_class_per_day = school->n_periods_per_day;
 		t.num_planning_periods = 0;
+		t.planning_needs_room = false;
+		t.active = true;
 		t.subordinates = NULL;
+		t.room_scores = NULL;
+		t.day_max_meetings = NULL;
+		t.day_scores = NULL;
+		t.planning_twin_scores = NULL;
 
 		if(m_teaches_subjects_list->GetCount() > 0){
 			int n_teaches = m_teaches_subjects_list->GetCount();

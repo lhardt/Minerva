@@ -808,7 +808,7 @@ const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_ROOM_ID =
 			("DELETE FROM LecturePossibleRoom WHERE id_room = ?");
 const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_CLASS_ID =
 			("DELETE FROM LecturePossibleRoom WHERE EXISTS ("
-				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossiblePeriod.id_lecture "
+				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossibleRoom.id_lecture "
 					"AND EXISTS("
 						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject "
 							"AND ClassSubject.id_class=?"
@@ -817,7 +817,10 @@ const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_CLASS_ID =
 const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_SUBJECT_ID =
 			("DELETE FROM LecturePossibleRoom WHERE EXISTS ("
 				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossibleRoom.id_lecture "
-					"AND Lecture.id_subject = ?"
+					"AND EXISTS ("
+						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject "
+							"AND ClassSubject.id_subject=?"
+					")"
 			")");
 const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_SCHOOL_ID =
 			("DELETE FROM LecturePossibleRoom WHERE EXISTS("
@@ -847,7 +850,7 @@ const char * const DELETE_LECTURE_POSSIBLE_PERIOD_BY_LECTURE_ID =
 			("DELETE FROM LecturePossiblePeriod WHERE id_lecture = ?");
 const char * const DELETE_LECTURE_POSSIBLE_PERIOD_BY_CLASS_ID =
 			("DELETE FROM LecturePossiblePeriod WHERE EXISTS ("
-				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossiblePeriod.id_lecture "
+				"SELECT id FROM Lecture WHERE Lecture.id = id_lecture "
 					"AND EXISTS ("
 						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject "
 							"AND ClassSubject.id_class = ?"
@@ -856,7 +859,10 @@ const char * const DELETE_LECTURE_POSSIBLE_PERIOD_BY_CLASS_ID =
 const char * const DELETE_LECTURE_POSSIBLE_PERIOD_BY_SUBJECT_ID =
 			("DELETE FROM LecturePossiblePeriod WHERE EXISTS ("
 				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossiblePeriod.id_lecture "
-					"AND Lecture.subject=?"
+					"AND EXISTS ("
+						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject "
+							"AND Classsubject.id_subject = ?"
+					")"
 			")");
 const char * const DELETE_LECTURE_POSSIBLE_PERIOD_BY_SCHOOL_ID =
 			("DELETE FROM LecturePossiblePeriod WHERE EXISTS("
@@ -898,7 +904,10 @@ const char * const UNSET_LECTURE_TEACHER_BY_TEACHER_ID =
 const char * const DELETE_LECTURE_SOLUTION_BY_SUBJECT_ID =
 			("DELETE FROM LectureSolution WHERE EXISTS ("
 				"SELECT id FROM Lecture WHERE Lecture.id = LectureSolution.id_lecture "
-					"AND Lecture.id_subject=?"
+					"AND EXISTS ("
+						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject "
+							"AND ClassSubject.id_subject=?"
+					")"
 			")");
 const char * const DELETE_LECTURE_SOLUTION_BY_SOLUTION_ID =
 			("DELETE FROM LectureSolution WHERE id_solution = ?");
@@ -906,8 +915,8 @@ const char * const DELETE_LECTURE_SOLUTION_BY_CLASS_ID =
 			("DELETE FROM LectureSolution WHERE EXISTS("
 				"SELECT id FROM Lecture WHERE Lecture.id = LectureSolution.id_lecture "
 					"AND EXISTS("
-						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject AND"
-							"ClassSubject.id_class=?"
+						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject "
+							"AND ClassSubject.id_class=?"
 					")"
 			")");
 const char * const DELETE_LECTURE_SOLUTION_BY_SCHOOL_ID =

@@ -101,23 +101,25 @@ void school_teacher_add(School * school, const Teacher * const t){
 	}
 	school->teachers[ school->n_teachers ] = *t;
 
-	for(n_teaches = 0; t->teaches[n_teaches] != NULL; ++n_teaches){
-		/* Blank on purpouse */
+	if(t->teaches){
+		for(n_teaches = 0; t->teaches[n_teaches] != NULL; ++n_teaches){
+			/* Blank on purpouse */
+		}
+		/* Correcting teacher addresses and mallocs. */
+		if(school->teaches == NULL || school->n_teaches == 0){
+			school->teaches = calloc(11 + (n_teaches - n_teaches % 10), sizeof(Teaches));
+			school->n_teaches = 0;
+		} else if(school->n_teaches %10 == 0){
+			school->teaches = realloc(school->teaches, (11 + (school->n_teaches + n_teaches - (school->n_teaches + n_teaches) % 10)) * sizeof(Teaches));
+		}
+
+		for(i_teaches = 0; i_teaches < n_teaches; ++i_teaches){
+			school->teaches[school->n_teaches] = * t->teaches[i_teaches];
+			t->teaches[i_teaches] = &school->teaches[school->n_teaches];
+			++ school->n_teaches;
+		}
 	}
 
-	/* Correcting teacher addresses and mallocs. */
-	if(school->teaches == NULL || school->n_teaches == 0){
-		school->teaches = calloc(11 + (n_teaches - n_teaches % 10), sizeof(Teaches));
-		school->n_teaches = 0;
-	} else if(school->n_teaches %10 == 0){
-		school->teaches = realloc(school->teaches, (11 + (school->n_teaches + n_teaches - (school->n_teaches + n_teaches) % 10)) * sizeof(Teaches));
-	}
-
-	for(i_teaches = 0; i_teaches < n_teaches; ++i_teaches){
-		school->teaches[school->n_teaches] = * t->teaches[i_teaches];
-		t->teaches[i_teaches] = &school->teaches[school->n_teaches];
-		++ school->n_teaches;
-	}
 	++school->n_teachers;
 }
 
