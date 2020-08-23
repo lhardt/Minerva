@@ -66,8 +66,8 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	wxSizer * box_field_sizer = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados básicos"));
 	wxSizer * fields_sizer = new wxFlexGridSizer(4,5,5);
 
-	sizer->Add(m_classes_list, 0, wxEXPAND|wxALL, 10);
-	sizer->Add(description_sizer, 1, wxEXPAND|wxALL, 10);
+	sizer->Add(m_classes_list, 0, wxEXPAND|wxALL, 15);
+	sizer->Add(description_sizer, 1, wxEXPAND|wxALL, 15);
 
 	fields_sizer->Add(name_label, 0, wxEXPAND);
 	fields_sizer->Add(m_name_text, 0, wxEXPAND);

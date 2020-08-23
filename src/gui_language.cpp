@@ -210,6 +210,7 @@ const Language LANG_POR = {
 	.str_score_4=L"Adoraria",
 
 	.str_duplicate=L"Duplicar",
+	.str_lorem=L"Lorem ipsum dolor sit amet consecteur adiscipling elit.",
 };
 
 const Language LANG_ENG = {
@@ -408,6 +409,7 @@ const Language LANG_ENG = {
 	.str_score_3=L"Prefers",
 	.str_score_4=L"Would love to",
 	.str_duplicate=L"Duplicar",
+	.str_lorem=L"Lorem ipsum dolor sit amet consecteur adiscipling elit.",
 };
 
 const Language LANG_SPA = {
@@ -596,6 +598,7 @@ const Language LANG_SPA = {
 	.str_score_3=L" ",
 	.str_score_4=L" ",
 	.str_duplicate=L" ",
+	.str_lorem=L"Lorem ipsum dolor sit amet consecteur adiscipling elit.",
 };
 
 const Language LANG_DEU = {
@@ -782,4 +785,6 @@ const Language LANG_DEU = {
 	.str_score_3=L" ",
 	.str_score_4=L" ",
 	.str_duplicate=L" ",
+
+	.str_lorem=L"Lorem ipsum dolor sit amet consecteur adiscipling elit.",
 };

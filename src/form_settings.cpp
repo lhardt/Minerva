@@ -4,10 +4,16 @@ SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	this->m_owner = owner;
 	SetMinSize(wxSize(800,600));
 	SetFont(*m_owner->m_text_font);
-	SetBackgroundColour(wxColour(240,240,240));
-	
+	SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
+
 	wxStaticText * title = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_system_config, wxDefaultPosition, wxSize(400,30));
+	wxStaticText * subtitle = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_lorem, wxDefaultPosition, wxSize(400,30));
 	title->SetFont(*m_owner->m_page_title_font);
+	title->SetForegroundColour(wxColour(255,255,255));
+	subtitle->SetForegroundColour(wxColour(255,255,255));
+
+	wxPanel * pane = new wxPanel(this, wxID_ANY);
+	pane->SetBackgroundColour(wxColour(255,255,255));
 
 	wxArrayString lang_names;
 	lang_names.Add(wxT("Deutsch"));
@@ -15,34 +21,41 @@ SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	lang_names.Add(wxT("Español"));
 	lang_names.Add(wxT("Português"));
 
-	wxStaticText * lang_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_language, wxDefaultPosition, wxSize(300,20));
-	m_lang_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), lang_names);
+	wxStaticText * lang_label = new wxStaticText(pane, wxID_ANY, m_owner->m_lang->str_language, wxDefaultPosition, wxSize(300,20));
+	m_lang_choice = new wxChoice(pane, wxID_ANY, wxDefaultPosition, wxSize(300,30), lang_names);
 
 	wxArrayString size_names;
 	size_names.Add(m_owner->m_lang->str_small_font);
 	size_names.Add(m_owner->m_lang->str_medium_font);
 	size_names.Add(m_owner->m_lang->str_large_font);
 
-	wxStaticText * font_size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_font_sz, wxDefaultPosition, wxSize(300,20));
-	m_font_size_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(300,30), size_names);
+	wxStaticText * font_size_label = new wxStaticText(pane, wxID_ANY, m_owner->m_lang->str_font_sz, wxDefaultPosition, wxSize(300,20));
+	m_font_size_choice = new wxChoice(pane, wxID_ANY, wxDefaultPosition, wxSize(300,30), size_names);
 
-	wxButton * save_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_save, wxDefaultPosition, wxSize(150,30));
-	wxButton * back_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_back, wxDefaultPosition, wxSize(150,30));
+	wxButton * save_btn = new wxButton(pane, wxID_ANY, m_owner->m_lang->str_save, wxDefaultPosition, wxSize(150,30));
+	wxButton * back_btn = new wxButton(pane, wxID_ANY, m_owner->m_lang->str_back, wxDefaultPosition, wxSize(150,30));
 
 	wxSizer * btn_sz = new wxBoxSizer(wxHORIZONTAL);
+	wxSizer * pane_sz = new wxBoxSizer(wxVERTICAL);
+	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
+	wxSizer * buffer_sz = new wxBoxSizer(wxVERTICAL);
+
 	btn_sz->Add(save_btn, 0, wxRIGHT, 5);
 	btn_sz->Add(back_btn, 0, wxRIGHT, 5);
 
-	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(title, 0, wxALL, 15);
-	sizer->Add(lang_label, 0, wxLEFT | wxRIGHT, 15);
-	sizer->Add(m_lang_choice, 0, wxBOTTOM | wxLEFT | wxRIGHT, 15);
-	sizer->Add(font_size_label, 0, wxLEFT | wxRIGHT, 15);
-	sizer->Add(m_font_size_choice, 0, wxBOTTOM | wxLEFT | wxRIGHT, 15);
-	sizer->Add(btn_sz, 0, wxBOTTOM | wxLEFT | wxRIGHT, 15);
+	pane_sz->Add(lang_label, 0, wxLEFT | wxRIGHT, 15);
+	pane_sz->Add(m_lang_choice, 0, wxBOTTOM | wxLEFT | wxRIGHT, 15);
+	pane_sz->Add(font_size_label, 0, wxLEFT | wxRIGHT, 15);
+	pane_sz->Add(m_font_size_choice, 0, wxBOTTOM | wxLEFT | wxRIGHT, 15);
+	pane_sz->Add(btn_sz, 0, wxBOTTOM | wxLEFT | wxRIGHT, 15);
 
-	wxSizer * buffer_sz = new wxBoxSizer(wxVERTICAL);
-	buffer_sz->Add(sizer, 1, wxALL, 15);
+	buffer_sz->Add(pane_sz, 1, wxALL, 15);
+	pane->SetSizer(buffer_sz);
+	//
+	sizer->Add(title, 0, wxLEFT | wxTOP , 15);
+	sizer->Add(subtitle, 0, wxLEFT , 15);
+	sizer->Add(pane, 0,  wxLEFT | wxTOP | wxBOTTOM, 15);
+	this->SetSizer(sizer);
 
 	save_btn->Bind(wxEVT_BUTTON, &SettingsForm::OnSaveButtonClicked, this);
 	back_btn->Bind(wxEVT_BUTTON, &SettingsForm::OnBackButtonClicked, this);
@@ -76,8 +89,6 @@ SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	if(m_owner->m_lang == NULL){
 		printf("wtf man;");
 	}
-
-	SetSizer(buffer_sz);
 	Layout();
 }
 

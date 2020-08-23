@@ -128,6 +128,10 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	button_sz->Add(duplicate_button, 0, wxALL, 15);
 
 	SetSizerAndFit(sizer);
+	SetScrollRate(5,5);
+	ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_ALWAYS);
+	this->GetSizer()->SetSizeHints(this);
+	Layout();
 
 	m_cancel_button->Hide();
 
@@ -174,7 +178,7 @@ void DescSchoolPane::OnCancelButtonClicked(wxCommandEvent & ){
 }
 
 void DescSchoolPane::OnRemoveButtonClicked(wxCommandEvent & ){
-	wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_school_deletion_popup_text, m_owner->m_lang->str_are_you_sure, wxCANCEL | wxOK);
+	wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_school_deletion_popup_text, m_owner->m_lang->str_are_you_sure, wxYES | wxNO);
 	dialog->SetYesNoLabels(m_owner->m_lang->str_yes, m_owner->m_lang->str_no);
 	int confirmation = dialog->ShowModal();
 	if(confirmation == wxID_YES){
@@ -183,9 +187,9 @@ void DescSchoolPane::OnRemoveButtonClicked(wxCommandEvent & ){
 			free_school(m_owner->m_school);
 			m_owner->m_school = nullptr;
 			m_owner->SwitchForm(FORM_WELCOME);
+			m_owner->SaveDatabase();
 			Destroy();
 		}
-		printf("To delete school\n");
 	}
 }
 

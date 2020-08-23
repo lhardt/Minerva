@@ -412,6 +412,12 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			pane_to_open = new ListLecturesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
+		case ID_VIEW_PLANNING_TIMES: {
+			title = m_owner->m_lang->str_list_of_planning_times;
+			detail = m_owner->m_lang->str_lorem;
+			pane_to_open = new ListPlanningTimesPane(m_owner, m_center_pane, wxPoint(100,15));
+			break;
+		}
 		case ID_CHECK_ALL_EVENTS: {
 			printf("Not there yet.\n");
 			break;

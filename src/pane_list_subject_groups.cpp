@@ -45,8 +45,8 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(butn_sz, 0, 0);
 
-	sizer->Add(m_groups_list, 0, wxEXPAND|wxALL, 10);
-	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 10);
+	sizer->Add(m_groups_list, 0, wxEXPAND|wxALL, 15);
+	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);

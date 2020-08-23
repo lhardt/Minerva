@@ -4,7 +4,7 @@ extern "C" {
 	#include "loader.h"
 };
 
-ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400)){
+ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	int i;
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
@@ -17,7 +17,7 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	wxStaticText * room_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room);
 	wxStaticText * period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_period);
 
-	wxNotebook *   notebook = new wxNotebook(this, wxID_ANY);
+	wxNotebook 	  * notebook = new wxNotebook(this, wxID_ANY);
 	ScoreGridPane * m_periods = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	ScoreGridPane * m_teachers = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	ScoreGridPane * m_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
@@ -74,7 +74,6 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	sizer->Add(right_sz, 0, wxRIGHT | wxTOP | wxBOTTOM, 10);
 
 	this->SetSizer(sizer);
-	Layout();
 
 	for(i = 0; i < school->n_classes; ++i){
 		class_choice->Insert(wxString::FromUTF8(school->classes[i].name), i, new IntClientData(i));
@@ -104,6 +103,7 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
 
+	Layout();
 }
 
 void ListLecturesPane::OnCancelButtonClicked(wxCommandEvent&){

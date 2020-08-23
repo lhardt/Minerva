@@ -641,6 +641,30 @@ class ListLecturesPane : public wxScrolledWindow {
 	void OnCancelButtonClicked(wxCommandEvent &);
 };
 
+class ListPlanningTimesPane : public wxScrolledWindow {
+ public:
+	ListPlanningTimesPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListPlanningTimesPane();
+
+ private:
+	wxChoice 		* m_teacher_choice;
+	wxChoice 		* m_occurence_choice;
+	wxCheckBox 		* m_needs_room_text;
+	ScoreGridPane 	* m_periods;
+	ScoreGridPane 	* m_rooms;
+	wxChoice 		* m_room_choice;
+	wxChoice 		* m_period_choice;
+	wxButton 		* m_edit_btn;
+	wxButton 		* m_cancel_btn;
+	Application 	* m_owner;
+
+	void OnTeacherSelectionChanged(wxCommandEvent &);
+	void OnOccurenceSelectionChanged(wxCommandEvent &);
+	void OnEditButtonClicked(wxCommandEvent &);
+	void OnCancelButtonClicked(wxCommandEvent &);
+};
+
+
 /* GENERATION Panes. */
 
 class GenerateTimetablePane : public wxScrolledWindow {

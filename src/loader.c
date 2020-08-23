@@ -326,9 +326,9 @@ const char * const DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID =
 			("DELETE FROM SubjectInGroup WHERE id_subject = ?");
 const char * const DELETE_SUBJECT_IN_GROUP_BY_GROUP_ID =
 			("DELETE FROM SubjectInGroup WHERE id_group = ?");
-const char * const DELETE_FROM_SUBJECT_IN_GROUP_BY_SCHOOL_ID =
+const char * const DELETE_SUBJECT_IN_GROUP_BY_SCHOOL_ID =
 			("DELETE FROM SubjectInGroup WHERE EXISTS("
-				"SELECT Subject WHERE SubjectInGroup.id_subject = Subject.id "
+				"SELECT id FROM Subject WHERE SubjectInGroup.id_subject = Subject.id "
 					"AND Subject.id_school=?"
 			")");
 
@@ -391,7 +391,7 @@ const char * const DELETE_CLASS_SUBJECT_GROUP_BY_GROUP_ID =
 			("DELETE FROM ClassSubjectGroup WHERE id_group=?");
 const char * const DELETE_CLASS_SUBJECT_GROUP_BY_SCHOOL_ID =
 			("DELETE FROM ClassSubjectGroup WHERE EXISTS ("
-				"SELECT Class WHERE Class.id = ClassSubjectGroup.id_class "
+				"SELECT id FROM Class WHERE Class.id = ClassSubjectGroup.id_class "
 					"AND Class.id_school = ?"
 			")");
 
@@ -507,7 +507,7 @@ const char * const DELETE_TEACHER_SUBORDINATION_BY_SUB_ID =
 const char * const DELETE_TEACHER_SUBORDINATION_BY_SCHOOL_ID =
 			/* Selecting id_sup is sufficient and equivalent to selecting id_sub*/
 			("DELETE FROM TeacherSubordination WHERE EXISTS("
-				"SELECT Teacher WHERE Teacher.id = TeacherSubordination.id_sup "
+				"SELECT id FROM Teacher WHERE Teacher.id = TeacherSubordination.id_sup "
 					"AND Teacher.id_school=? "
 			")");
 
@@ -533,9 +533,9 @@ const char * const SELECT_TEACHER_ATTENDANCE_BY_TEACHER_ID =
 const char * const DELETE_TEACHER_ATTENDANCE_BY_TEACHER_ID =
 			("DELETE FROM TeacherAttendance WHERE id_teacher = ?");
 const char * const DELETE_TEACHER_ATTENDANCE_BY_SCHOOL_ID =
-			("DELETE FROM TeacherAtteandance WHERE EXISTS ("
-				"SELECT Teacher WHERE Teacher.id = TeacherAttendance.id_teacher "
-					"AND Teacher.id_school=?"
+			("DELETE FROM TeacherAttendance WHERE EXISTS ("
+				"SELECT id FROM Teacher WHERE Teacher.id = TeacherAttendance.id_teacher "
+					"AND Teacher.id_school = ?"
 			")");
 
 const char * const CREATE_TABLE_TEACHER_TWIN_PREFERENCE =
@@ -557,6 +557,11 @@ const char * const SELECT_TEACHER_TWIN_PREFERENCE_BY_TEACHER_ID =
 			("SELECT * FROM TeacherTwinPreference WHERE id_teacher=?");
 const char * const DELETE_TEACHER_TWIN_PREFERENCE_BY_TEACHER_ID =
 			("DELETE FROM TeacherTwinPreference WHERE id_teacher=?");
+const char * const DELETE_TEACHER_TWIN_PREFERENCE_BY_SCHOOL_ID =
+			("DELETE FROM TeacherTwinPreference WHERE EXISTS ("
+				"SELECT id FROM Teacher WHERE Teacher.id = TeacherTwinPreference.id_teacher "
+					"AND Teacher.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_TEACHER_ROOM =
 			("CREATE TABLE IF NOT EXISTS TeacherRoom("
@@ -579,6 +584,13 @@ const char * const SELECT_TABLE_TEACHER_ROOM_BY_TEACHER_ID =
 			("SELECT * from TeacherRoom WHERE id_teacher = ?");
 const char * const DELETE_TEACHER_ROOM_BY_TEACHER_ID =
 			("DELETE FROM TeacherRoom WHERE id_teacher=?");
+const char * const DELETE_TEACHER_ROOM_BY_ROOM_ID =
+			("DELETE FROM TeacherRoom WHERE id_room=?");
+const char * const DELETE_TEACHER_ROOM_BY_SCHOOL_ID =
+			("DELETE FROM TeacherRoom WHERE EXISTS("
+				"SELECT id FROM Teacher WHERE Teacher.id = TeacherRoom.id_teacher "
+					"AND Teacher.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_TEACHES_ROOM =
 			("CREATE TABLE IF NOT EXISTS TeachesRoom("
@@ -600,8 +612,23 @@ const char * const SELECT_TABLE_TEACHES_ROOM_BY_TEACHES_ID =
 			("SELECT * FROM TeachesRoom WHERE id_teaches=?");
 const char * const DELETE_TEACHES_ROOM_BY_ROOM_ID =
 			("DELETE FROM TeachesRoom WHERE id_room=?");
+const char * const DELETE_TEACHES_ROOM_BY_TEACHER_ID =
+			("DELETE FROM TeachesRoom WHERE EXISTS ("
+				"SELECT id FROM Teaches WHERE Teaches.id = TeachesRoom.id_teaches "
+					"AND Teaches.id_teacher=?"
+			")");
 const char * const DELETE_TEACHES_ROOM_BY_TEACHES_ID =
 			("DELETE FROM TeachesRoom WHERE id_room=?");
+const char * const DELETE_TEACHES_ROOM_BY_SUBJECT_ID =
+			("DELETE FROM TeachesRoom WHERE EXISTS("
+				"SELECT id FROM Teaches WHERE Teaches.id = TeachesRoom.id_teaches "
+					"AND Teaches.id_subject=?"
+			")");
+const char * const DELETE_TEACHES_ROOM_BY_SCHOOL_ID =
+			("DELETE FROM TeachesRoom WHERE EXISTS("
+				"SELECT id FROM Room WHERE Room.id = TeachesRoom.id_room "
+					"AND Room.id_school=?"
+			")");
 
 const char * const CREATE_TABLE_TEACHES_PERIOD =
 			("CREATE TABLE IF NOT EXISTS TeachesPeriod("
@@ -745,7 +772,12 @@ const char * const DELETE_POSSIBLE_TEACHER_BY_CLASS_ID =
 					"AND ClassSubject.id_class=?"
 			")");
 const char * const DELETE_POSSIBLE_TEACHER_BY_SUBJECT_ID =
-			("DELETE FROM PossibleTeacher WHERE id_subject=?");
+			("DELETE FROM PossibleTeacher WHERE EXISTS("
+				"SELECT id FROM ClassSubject WHERE ClassSubject.id = PossibleTeacher.id_classsubject "
+					"AND ClassSubject.id_subject = ?"
+			")");
+const char * const DELETE_POSSIBLE_TEACHER_BY_TEACHER_ID =
+			("DELETE FROM PossibleTeacher WHERE id_teacher=?");
 const char * const DELETE_POSSIBLE_TEACHER_BY_SCHOOL_ID =
 			("DELETE FROM PossibleTeacher WHERE EXISTS("
 				"SELECT id FROM Teacher WHERE Teacher.id = PossibleTeacher.id_teacher "
@@ -772,6 +804,21 @@ const char * const SELECT_TABLE_LECTURE_POSSIBLE_ROOM_BY_LECTURE_ID =
 			("SELECT * FROM LecturePossibleRoom WHERE id_lecture = ?");
 const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_LECTURE_ID =
 			("DELETE FROM LecturePossibleRoom WHERE id_lecture = ?");
+const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_ROOM_ID =
+			("DELETE FROM LecturePossibleRoom WHERE id_room = ?");
+const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_CLASS_ID =
+			("DELETE FROM LecturePossibleRoom WHERE EXISTS ("
+				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossiblePeriod.id_lecture "
+					"AND EXISTS("
+						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject "
+							"AND ClassSubject.id_class=?"
+					")"
+			")");
+const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_SUBJECT_ID =
+			("DELETE FROM LecturePossibleRoom WHERE EXISTS ("
+				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossibleRoom.id_lecture "
+					"AND Lecture.id_subject = ?"
+			")");
 const char * const DELETE_LECTURE_POSSIBLE_ROOM_BY_SCHOOL_ID =
 			("DELETE FROM LecturePossibleRoom WHERE EXISTS("
 				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossibleRoom.id_lecture "
@@ -798,6 +845,19 @@ const char * const SELECT_TABLE_LECTURE_POSSIBLE_PERIOD_BY_LECTURE_ID =
 			("SELECT * FROM LecturePossiblePeriod WHERE id_lecture = ?");
 const char * const DELETE_LECTURE_POSSIBLE_PERIOD_BY_LECTURE_ID =
 			("DELETE FROM LecturePossiblePeriod WHERE id_lecture = ?");
+const char * const DELETE_LECTURE_POSSIBLE_PERIOD_BY_CLASS_ID =
+			("DELETE FROM LecturePossiblePeriod WHERE EXISTS ("
+				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossiblePeriod.id_lecture "
+					"AND EXISTS ("
+						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject "
+							"AND ClassSubject.id_class = ?"
+					")"
+			")");
+const char * const DELETE_LECTURE_POSSIBLE_PERIOD_BY_SUBJECT_ID =
+			("DELETE FROM LecturePossiblePeriod WHERE EXISTS ("
+				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossiblePeriod.id_lecture "
+					"AND Lecture.subject=?"
+			")");
 const char * const DELETE_LECTURE_POSSIBLE_PERIOD_BY_SCHOOL_ID =
 			("DELETE FROM LecturePossiblePeriod WHERE EXISTS("
 				"SELECT id FROM Lecture WHERE Lecture.id = LecturePossiblePeriod.id_lecture "
@@ -835,8 +895,21 @@ const char * const UNSET_LECTURE_SOLUTION_ROOM_BY_ROOM_ID =
 			("UPDATE LectureSolution SET id_room=null where id_room=?");
 const char * const UNSET_LECTURE_TEACHER_BY_TEACHER_ID =
 			("UPDATE LectureSolution SET id_teacher=null WHERE id_teacher = ?");
+const char * const DELETE_LECTURE_SOLUTION_BY_SUBJECT_ID =
+			("DELETE FROM LectureSolution WHERE EXISTS ("
+				"SELECT id FROM Lecture WHERE Lecture.id = LectureSolution.id_lecture "
+					"AND Lecture.id_subject=?"
+			")");
 const char * const DELETE_LECTURE_SOLUTION_BY_SOLUTION_ID =
 			("DELETE FROM LectureSolution WHERE id_solution = ?");
+const char * const DELETE_LECTURE_SOLUTION_BY_CLASS_ID =
+			("DELETE FROM LectureSolution WHERE EXISTS("
+				"SELECT id FROM Lecture WHERE Lecture.id = LectureSolution.id_lecture "
+					"AND EXISTS("
+						"SELECT id FROM ClassSubject WHERE ClassSubject.id = Lecture.id_classsubject AND"
+							"ClassSubject.id_class=?"
+					")"
+			")");
 const char * const DELETE_LECTURE_SOLUTION_BY_SCHOOL_ID =
 			("DELETE FROM LectureSolution WHERE EXISTS("
 				"SELECT id_school FROM Lecture WHERE Lecture.id = LectureSolution.id "
@@ -951,7 +1024,18 @@ const char * const SELECT_PLANNING_SOLUTION_BY_SOLUTION_ID =
 			("SELECT * FROM PlanningSolution WHERE id_solution = ?");
 const char * const DELETE_PLANNING_SOLUTION_BY_SOLUTION_ID =
 			("DELETE FROM PlanningSolution WHERE id_solution = ?");
-
+const char * const DELETE_PLANNING_SOLUTION_BY_TEACHER_ID =
+			("DELETE FROM PlanningSolution WHERE EXISTS("
+				"SELECT id FROM Planning WHERE Planning.id = PlanningSolution.id_planning "
+					"AND Planning.id_teacher=?"
+			")");
+const char * const UNSET_PLANNING_SOLUTION_ROOM_ID =
+			("UPDATE PlanningSolution SET id_room=null WHERE id_room=?");
+const char * const DELETE_PLANNING_SOLUTION_BY_SCHOOL_ID =
+			("DELETE FROM PlanningSolution WHERE EXISTS ("
+				"SELECT id FROM Room WHERE Room.id = PlanningSolution.id_room "
+					"AND Room.id_school=?"
+			")");
 /*
  * Table                 | Insert | Select | Update | Delete
  * ----------------------|--------|--------|--------|----------------
@@ -1007,12 +1091,12 @@ static bool exec_and_check(sqlite3 * db, const char * const sql, int id){
 		sqlite3_bind_int(stmt,1,id);
 		errc =sqlite3_step(stmt);
 		if(errc != SQLITE_DONE){
-			printf("Could not execute. %d %s.\n", errc, sqlite3_errmsg(db));
+			printf("Could not execute SQL %s. %d %s.\n", sql, errc, sqlite3_errmsg(db));
 			retc = false;
 		}
 		sqlite3_finalize(stmt);
 	} else {
-		printf("Could not execute. %d %s.\n", errc, sqlite3_errmsg(db));
+		printf("Could not execute SQL %s. %d %s.\n", sql, errc, sqlite3_errmsg(db));
 		retc = false;
 	}
 
@@ -2816,22 +2900,33 @@ bool load_backup(sqlite3* memory_db, const char * const filename){
 /*********************************************************/
 /*                   REMOVE  FUNCTIONS                   */
 /*********************************************************/
+/* NOTE for logical deletes, try updates; 				 */
 
 bool remove_room(FILE * console_out, sqlite3* db, int id){
-	return
-			!exec_and_check(db, UNSET_LECTURE_SOLUTION_ROOM_BY_ROOM_ID, id)?false:
+	return	!exec_and_check(db, UNSET_LECTURE_SOLUTION_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(db, UNSET_PLANNING_SOLUTION_ROOM_ID, id)?false:
+			!exec_and_check(db, DELETE_PLANNING_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_ROOM_BY_ROOM_ID, id)?false:
 			!exec_and_check(db, DELETE_ROOM_AVAILABILITY_BY_ROOM_ID, id)?false:
 			!exec_and_check(db, DELETE_ROOM_BY_ID, id)?false:
 			true;
 }
 
 bool remove_subject(FILE * console_out, sqlite3* db, int id){
-	return  !exec_and_check(db,DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID, id)?false:
+	return  !exec_and_check(db,DELETE_LECTURE_SOLUTION_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_LECTURE_POSSIBLE_PERIOD_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_LECTURE_POSSIBLE_ROOM_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_POSSIBLE_TEACHER_BY_SUBJECT_ID, id)?false:
 			!exec_and_check(db,DELETE_LECTURE_BY_SUBJECT_ID, id)?false:
 			!exec_and_check(db,DELETE_TEACHES_TWIN_PREFERENCE_BY_SUBJECT_ID, id)?false:
 			!exec_and_check(db,DELETE_TEACHES_PERIOD_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_CLASS_SUBJECT_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_TEACHES_ROOM_BY_SUBJECT_ID, id)?false:
 			!exec_and_check(db,DELETE_TEACHES_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_CLASS_SUBJECT_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(db,DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID, id)?false:
 			!exec_and_check(db,DELETE_SUBJECT_BY_ID, id)?false:
 			true;
 }
@@ -2843,8 +2938,17 @@ bool remove_subject_group(FILE * console_out, sqlite3* db, int id){
 }
 
 bool remove_teacher(FILE * console_out, sqlite3* db, int id) {
-	return  !exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
+	return	!exec_and_check(db, DELETE_PLANNING_SOLUTION_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_PLANNING_ROOM_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_PLANNING_PERIOD_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_PLANNING_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, UNSET_LECTURE_TEACHER_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_POSSIBLE_TEACHER_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHES_PERIOD_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_ROOM_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_ROOM_BY_TEACHER_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHER_ATTENDANCE_BY_TEACHER_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SUB_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SUP_ID, id)?false:
@@ -2852,13 +2956,18 @@ bool remove_teacher(FILE * console_out, sqlite3* db, int id) {
 			!exec_and_check(db, DELETE_TEACHER_DAY_BY_TEACHER_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHER_BY_ID, id)?false:
 			true;
-			// If we are to logically delete, then this is not needed. TODO FIXME
 			// !exec_and_check(db, UNSET_MEETING_SOLUTION_TEACHER_BY_TEACHER_ID, id)?false:
 }
 
 bool remove_class(FILE * console_out, sqlite3* db, int id) {
-	return  !exec_and_check(db, DELETE_LECTURE_BY_CLASS_ID, id)?false:
+	return  !exec_and_check(db, DELETE_LECTURE_SOLUTION_BY_CLASS_ID, id)?false:
+			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_PERIOD_BY_CLASS_ID, id)?false:
+			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_ROOM_BY_CLASS_ID, id)?false:
+			!exec_and_check(db, DELETE_POSSIBLE_TEACHER_BY_CLASS_ID, id)?false:
+			!exec_and_check(db, DELETE_LECTURE_BY_CLASS_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_SUBJECT_GROUP_BY_CLASS_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_SUBJECT_BY_CLASS_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_ROOM_BY_CLASS_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_SUBORDINATION_BY_SUB_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_SUBORDINATION_BY_SUP_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_ATTENDANCE_BY_CLASS_ID, id)?false:
@@ -2867,14 +2976,21 @@ bool remove_class(FILE * console_out, sqlite3* db, int id) {
 }
 
 bool remove_school(FILE * console_out, sqlite3 * db, int id){
-	return	!exec_and_check(db, DELETE_LECTURE_POSSIBLE_PERIOD_BY_SCHOOL_ID, id)?false:
+	return	!exec_and_check(db, DELETE_PLANNING_SOLUTION_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_PLANNING_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_PLANNING_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_PLANNING_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_LECTURE_SOLUTION_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_PERIOD_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_ROOM_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_POSSIBLE_TEACHER_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_LECTURE_SOLUTION_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_LECTURE_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_SOLUTION_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHES_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHER_TWIN_PREFERENCE_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHER_ATTENDANCE_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHES_BY_SCHOOL_ID, id)?false:
@@ -2882,8 +2998,11 @@ bool remove_school(FILE * console_out, sqlite3 * db, int id){
 			!exec_and_check(db, DELETE_TEACHER_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_SUBJECT_GROUP_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_SUBJECT_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_SUBJECT_IN_GROUP_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_SUBJECT_GROUP_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_SUBJECT_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(db, DELETE_CLASS_SUBORDINATION_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_ATTENDANCE_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_CLASS_BY_SCHOOL_ID, id)?false:
 			!exec_and_check(db, DELETE_ROOM_AVAILABILITY_BY_SCHOOL_ID, id)?false:
@@ -2894,9 +3013,6 @@ bool remove_school(FILE * console_out, sqlite3 * db, int id){
 			!exec_and_check(db, DELETE_SCHOOL_BY_ID, id)?false:
 			true;
 }
-
-// bool remove_teaches(FILE * console_out, sqlite3* db, int id);
-// bool remove_meeting(FILE * console_out, sqlite3* db, int id);
 
 /*********************************************************/
 /*                 EXTERNAL ABSTRACTIONS                 */
