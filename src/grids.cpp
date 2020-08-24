@@ -227,7 +227,7 @@ void ChoiceGrid::SetCellImmutable(int i, int j){
 	SetCellBackgroundColour(i,j,m_immutable_cell_color);
 }
 
-void ChoiceGrid::SetCellState(int i_col, int i_row, int state){
+void ChoiceGrid::SetCellState(int i_row, int i_col, int state){
 	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
 		if(state == -1){
 			SetCellValue(i_row + 1, i_col + 1, m_immutable_cell_text);
@@ -239,7 +239,7 @@ void ChoiceGrid::SetCellState(int i_col, int i_row, int state){
 	}
 }
 
-int ChoiceGrid::GetCellState(int i_col, int i_row){
+int ChoiceGrid::GetCellState(int i_row, int i_col){
 	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
 		wxColor bgcolor = GetCellBackgroundColour(i_row + 1, i_col + 1);
 		for(int i = 0; i < m_background_colors.size(); ++i){

@@ -113,7 +113,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.size = m_size_text->GetValue();
 		c.period_scores = (int *) calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
-			c.period_scores[i] = (m_periods->GetCellState(i / school->n_periods_per_day, i % school->n_periods_per_day) == 0)? 1:0;
+			c.period_scores[i] = (m_periods->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day) == 0)? 1:0;
 		}
 		c.period_scores[school->n_periods] = -1;
 		c.room_scores = nullptr;
@@ -130,6 +130,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 				++n_needs;
 			}
 		}
+		printf("Number of assignments is %d\n", n_needs);
 		if(n_needs > 0){
 			i_need = 0;
 			c.assignments = (Assignment**) calloc(n_needs + 1, sizeof(Assignment*));
@@ -138,6 +139,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			for(i_subject = 0; i_subject < school->n_subjects; ++i_subject){
 				long n_per;
 				if(m_subjects_grid->GetCellValue(i_subject,0).ToLong(&n_per) && n_per > 0){
+					c.assignments[i_need] = &alist[i_need];
 					alist[i_need].subject = &school->subjects[i_subject];
 					alist[i_need].amount = (int) n_per;
 					alist[i_need].m_class = &c;

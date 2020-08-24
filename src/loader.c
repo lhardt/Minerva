@@ -70,7 +70,7 @@ const char * const CREATE_TABLE_DAY =
 			")");
 const char * const INSERT_TABLE_DAY =
 			("INSERT INTO Day(name, day_index, id_school) values(?,?,?)");
-const char * const UPDATE_TALBE_DAY =
+const char * const UPDATE_TABLE_DAY =
 			("UPDATE DailyPeriod SET (name, day_index, id_school) = (?,?,?) WHERE id=?");
 const char * const LASTID_TABLE_DAY =
 			("SELECT id FROM Day where rowid = last_insert_rowid()");
@@ -1779,8 +1779,16 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 
 	errc = sqlite3_prepare(db, INSERT_TABLE_LECTURE_SOLUTION, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
-	for(i = 0; sol->meetings[i].type != meet_NULL; ++i){
+	printf("Nmeetings %d\n", sol->n_meetings);
+	for(i = 0; i < sol->n_meetings; ++i){
 		if(sol->meetings[i].type == meet_LECTURE){
+			printf("Null checks: ");
+			printf(", %d", school->meetings);
+			printf(", %d,", sol);
+			printf(", %d", school->period_ids);
+			printf(", %d", sol->meetings[i]);
+			printf(", %d", sol->meetings[i].teacher);
+			printf(", %d\n", sol->meetings[i].room);
 			sqlite3_bind_int(stmt, 1, school->meetings[i].id);
 			sqlite3_bind_int(stmt, 2, sol->id);
 			sqlite3_bind_int(stmt, 3, school->period_ids[ sol->meetings[i].period ]);
@@ -2346,6 +2354,7 @@ static Teacher * select_all_teachers_by_school_id(FILE * console_out, sqlite3* d
 		teachers[i].planning_needs_room = sqlite3_column_int(stmt,7);
 		teachers[i].num_planning_periods = sqlite3_column_int(stmt,8);
 		teachers[i].active = sqlite3_column_int(stmt,9);
+		teachers[i].teaches = NULL;
 		errc = sqlite3_step(stmt);
 		++i;
 		if(i % 10 == 0){

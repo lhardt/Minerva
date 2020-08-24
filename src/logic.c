@@ -331,7 +331,7 @@ int count_required_meetings(School * school,Class * class,Subject * subject){
 	if(school->classes != NULL && school->n_classes > 0){
 		for(i_class = 0; i_class < school->n_classes; ++i_class){
 			if( (class == NULL) != (&school->classes[i_class] == class) ){
-				for(i_need = 0; school->classes[i_class].assignments[i_need]->subject != NULL; ++i_need){
+				for(i_need = 0; school->classes[i_class].assignments[i_need] != NULL; ++i_need){
 					if((subject == NULL) != (school->classes[i_class].assignments[i_need]->subject == subject)){
 						count += school->classes[i_class].assignments[i_need]->amount;
 						printf("Count adding in %d\n", school->classes[i_class].assignments[i_need]->amount);
@@ -342,6 +342,7 @@ int count_required_meetings(School * school,Class * class,Subject * subject){
 	} else {
 		printf("Count called with invalid school\n");
 	}
+	printf("Counted %d required meetings.\n", count);
 	return count;
 }
 

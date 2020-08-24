@@ -14,30 +14,27 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 
 	m_subjects_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
-	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
-	name_label->SetFont(*m_owner->m_bold_text_font);
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
 	for(i = 0; i < school->n_subjects; ++i){
 		m_subjects_list->Insert(wxString::FromUTF8(school->subjects[i].name), i, new IntClientData(i));
 	}
+	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
+	m_cancel_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_cancel);
+	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove);
 
-	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
-	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
+	m_name_text->Disable();
+	m_cancel_btn->Hide();
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * field_sz= new wxGridSizer(2,10,10);
-	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
-
-	edit_btn->Disable();
-
-	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
-	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
-
+	wxSizer * field_sz= new wxGridSizer(4,5,5);
 	field_sz->Add(name_label);
 	field_sz->Add(m_name_text, 1, wxEXPAND);
+	field_sz->Add(m_cancel_btn, 1, wxEXPAND);
+	field_sz->Add(m_edit_btn, 1, wxEXPAND);
 	desc_sz->Add(field_sz, 0, wxBOTTOM , 5);
 	desc_sz->AddStretchSpacer();
-	desc_sz->Add(butn_sz, 0, 0);
+	desc_sz->Add(delete_btn, 0, 0);
 
 	sizer->Add(m_subjects_list, 0, wxEXPAND|wxALL, 15);
 	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
@@ -48,7 +45,8 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
 
-	edit_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnEditButtonClicked, this);
+	m_edit_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnEditButtonClicked, this);
+	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnEditButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnDeleteButtonClicked, this);
 	m_subjects_list->Bind(wxEVT_LISTBOX, &ListSubjectsPane::OnSelectionChanged, this);
 }
@@ -58,7 +56,21 @@ ListSubjectsPane::~ListSubjectsPane(){
 }
 
 void ListSubjectsPane::OnEditButtonClicked(wxCommandEvent & ev){
-	printf("Not Implemented\n");
+	if(m_cancel_btn->IsShown()){
+		m_name_text->Disable();
+		m_cancel_btn->Hide();
+		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+	} else {
+		m_name_text->Enable();
+		m_cancel_btn->Show();
+		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
+	}
+}
+
+void ListSubjectsPane::OnCancelButtonClicked(wxCommandEvent & ev){
+	m_name_text->Enable();
+	m_cancel_btn->Show();
+	m_edit_btn->SetLabel(m_owner->m_lang->str_save);
 }
 
 void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
@@ -83,7 +95,7 @@ void ListSubjectsPane::OnSelectionChanged(wxCommandEvent & ev){
 	Subject * subject = nullptr;
 	if(m_subjects_list->GetSelection() != wxNOT_FOUND){
 		subject = &(m_owner->m_school->subjects[m_subjects_list->GetSelection()]);
-		m_name_text->SetLabel(wxString::FromUTF8(subject->name));
+		m_name_text->SetValue(wxString::FromUTF8(subject->name));
 	} else {
 		m_name_text->SetLabel(wxT(""));
 	}

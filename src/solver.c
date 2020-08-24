@@ -107,8 +107,9 @@ DecisionTree * init_decision_tree(School * school){
 
 	for(i_class = 0; i_class < school->n_classes; i_class++){
 		class = &(school->classes[i_class]);
-		for(i_need = 0; class->assignments[i_need]->subject != NULL; i_need++){
+		for(i_need = 0; class->assignments[i_need] != NULL; i_need++){
 			for(i_quant = 0; i_quant < class->assignments[i_need]->amount; i_quant++){
+				conclusion[i_meet].type = meet_LECTURE;
 				conclusion[i_meet].m_class = class;
 				conclusion[i_meet].subject = class->assignments[i_need]->subject;
 				conclusion[i_meet].teacher = NULL;
@@ -242,8 +243,6 @@ Meeting * create_timetable(School * school){
 		return NULL;
 	}
 
-	//root_elimination(school, tree->start);
-
 	DecisionNode * solution = dfs_timetable_create(school, tree->start);
 
 	if(solution != NULL){
@@ -254,9 +253,5 @@ Meeting * create_timetable(School * school){
 	free(tree->start);
 	free(tree);
 
-	if(ret_val == NULL){
-		return NULL;
-	} else {
-		return ret_val;
-	}
+	return ret_val;
 }

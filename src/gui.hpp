@@ -128,8 +128,8 @@ class ChoiceGrid : public wxGrid {
 	void SetRowName(int i_row, wxString name);
 	void SetBackgroundColors(wxVector<wxColor> values);
 	void SetCellImmutable(int i_col, int i_row);
-	void SetCellState(int i_col, int i_row, int state);
-	int  GetCellState(int i_col, int i_row);
+	void SetCellState(int i_row, int i_col, int state);
+	int  GetCellState(int i_row, int i_col);
 	int  AddState(wxString state_name, wxColor state_value);
 	void SetCanUserClick(bool can_user_click);
  private:
@@ -375,17 +375,14 @@ class AddTeacherPane : public wxScrolledWindow {
 	AddTeacherPane(Application * owner, wxWindow* parent, wxPoint pos);
 	~AddTeacherPane();
  private:
-	wxTextCtrl * m_name_text;
-	wxChoice   * m_all_subjects_list;
-	wxListBox  * m_teaches_subjects_list;
+	Application  * m_owner;
+
+	wxTextCtrl   * m_name_text;
+	ChoiceGrid   * m_subjects_grid;
+	ChoiceGrid   * m_periods_grid;
 	wxStaticText * m_err_msg;
-	ChoiceGrid * m_grid;
-	Application * m_owner;
 
 	void OnAddTeacherButtonClicked(wxCommandEvent &);
-	void OnAddSubjectButtonClicked(wxCommandEvent &);
-	void OnRemoveAllButtonClicked(wxCommandEvent &);
-	void OnRemoveSubjectButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };
 
@@ -497,11 +494,14 @@ class ListSubjectsPane : public wxScrolledWindow {
 	ListSubjectsPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListSubjectsPane();
  private:
-	Application * m_owner;
-	wxListBox * m_subjects_list;
-	wxStaticText* m_name_text;
+	Application	* m_owner;
+	wxListBox	* m_subjects_list;
+	wxTextCtrl	* m_name_text;
+	wxButton	* m_edit_btn;
+	wxButton 	* m_cancel_btn;
 
 	void OnEditButtonClicked(wxCommandEvent &);
+	void OnCancelButtonClicked(wxCommandEvent &);
     void OnDeleteButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
 };

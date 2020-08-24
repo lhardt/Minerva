@@ -3,6 +3,7 @@
 extern "C" {
 	#include "loader.h"
 	#include "preprocess.h"
+	#include "util.h"
 };
 
 ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
@@ -91,6 +92,11 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 		twinning_grid->SetRowName(i, wxString::Format("%d", i+1));
 	}
 	twinning_grid->GridRemake(1, school->n_periods_per_day);
+	for(i = 0; i < school->n_periods; ++i){
+		if(school->periods[i] == false){
+			periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+		}
+	}
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
@@ -137,6 +143,14 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	for(i = 0; i < school->n_teachers; ++i){
 		m_teachers_list->Insert(wxString::FromUTF8(school->teachers[i].name), i, new IntClientData(i));
 	}
+
+	m_cancel_btn->Hide();
+	m_name_text->Disable();
+	m_max_days_text->Disable();
+	m_max_periods_text->Disable();
+	m_max_ppd_text->Disable();
+	m_planning_periods_text->Disable();
+	m_active_text->Disable();
 }
 
 void ListTeachersPane::OnEditButtonClicked(wxCommandEvent &) {
@@ -193,30 +207,23 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		Teacher * t = & school->teachers[i_select];
 
-		m_name_text->SetLabel(wxString::FromUTF8(t->name));
-		m_max_days_text->SetLabel(wxString::Format("%d", (t->max_days)));
-		m_max_periods_text->SetLabel(wxString::Format("%d", (t->max_meetings)));
-		m_max_ppd_text->SetLabel(wxString::Format("%d", (t->max_meetings_per_day)));
-		m_planning_periods_text->SetLabel(wxString::Format("%d", (t->num_planning_periods)));
-		// if(t->teaches != NULL){
-		// 	for(int i = 0; t->teaches[i] != NULL; ++i){
-		// 		m_teaches_text->SetLabel(m_teaches_text->GetLabel() +
-		// 					wxString::Format(" %s;", wxString::FromUTF8(t->teaches[i]->subject->name)));
-		// 	}
-		// }
-		// m_teaches_text->Wrap(300);
-
-		periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
-		for(int i = 0; i < school->n_periods; ++i){
-			if(school->periods[i] == false){
-				periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
-			} else {
-				periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						wxString::Format("%s" , (t->lecture_period_scores[i] > 0?m_owner->m_lang->str_teacher_available:m_owner->m_lang->str_teacher_unavailable) ));
-				periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						(t->lecture_period_scores[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
+		m_name_text->SetValue(wxString::FromUTF8(t->name));
+		m_max_days_text->SetValue(t->max_days);
+		m_max_periods_text->SetValue(t->max_meetings);
+		m_max_ppd_text->SetValue(t->max_meetings_per_day);
+		m_planning_periods_text->SetValue(t->num_planning_periods);
+		if(t->teaches != NULL){
+			ChoiceGrid * teaches_grid = m_teaches->GetGrid();
+			for(int i = 0; t->teaches[i] != NULL; ++i){
+				int subj_i = get_subject_index_by_id(school, t->teaches[i]->subject->id);
+				teaches_grid->SetCellState(subj_i, 0, t->teaches[i]->score > 0);
 			}
-			periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
+		}
+		// m_teaches_text->Wrap(300);
+		for(int i = 0; i < school->n_periods; ++i){
+			if(school->periods[i]){
+				periods_grid->SetCellState(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), t->lecture_period_scores[i] > 0);
+			}
 		}
 		FitInside();
 	}

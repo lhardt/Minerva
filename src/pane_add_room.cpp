@@ -32,8 +32,8 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	m_capacity_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxPoint(30,150), wxSize(200,30));
 	m_grid = new ChoiceGrid(m_owner,this, wxID_ANY);
 
-	m_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
 	m_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
+	m_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
 
 	m_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	m_grid->m_basic_row_name = m_owner->m_lang->str_period;
@@ -95,7 +95,7 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		room.active = true;
 		room.availability = (int*)calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
-			room.availability[i] = (m_grid->GetCellState(i / school->n_periods_per_day, i % school->n_periods_per_day) == 0)?1:0;
+			room.availability[i] = m_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
 		}
 		room.availability[school->n_periods] = -1;
 		int id = insert_room(stdout, m_owner->m_database, &room, school);

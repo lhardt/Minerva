@@ -75,7 +75,7 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		}
 	}
 	for(int i_class = 0; i_class < school->n_classes; ++i_class){
-		if(m_classes_grid->GetCellState(0,i_class) == 0){
+		if(m_classes_grid->GetCellState(i_class,0) == 0){
 			++n_members;
 		}
 	}
@@ -96,7 +96,7 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		c.period_scores = (int *) calloc(school->n_periods + 1, sizeof(int));
 		c.period_scores[school->n_periods] = -1;
 		for(int i_class = 0; i_class < school->n_classes; ++i_class){
-			if(m_classes_grid->GetCellState(0,i_class) == 0){
+			if(m_classes_grid->GetCellState(i_class,0) == 0){
 				c.size += school->classes[i_class].size;
 
 				if(c.maximal_entry_period > school->classes[i_class].maximal_entry_period){
@@ -169,7 +169,7 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 void AddClassGroupPane::ClearInsertedData(){
 	m_name_text->Clear();
 	for(int i = 0; i < m_owner->m_school->n_classes; ++i){
-		m_classes_grid->SetCellState(0,i,0);
+		m_classes_grid->SetCellState(i,0,0);
 	}
 	for(int i = 0; i < m_owner->m_school->n_subjects; ++i){
 		m_subjects_grid->SetCellValue(i,0,wxT("0"));

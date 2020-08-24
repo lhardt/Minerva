@@ -29,7 +29,7 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 		m_solution_choice->Insert(wxString::FromUTF8(school->solutions[i].name), i+1, new IntClientData(i));
 	}
 
-	m_class_choice->Insert(m_owner->m_lang->str_class__none, i);
+	m_class_choice->Insert(m_owner->m_lang->str_class__none, 0);
 	for(i = 0; i < school->n_classes; ++i){
 		m_class_choice->Insert(wxString::FromUTF8(school->classes[i].name), i+1, new IntClientData(i));
 	}
@@ -197,7 +197,7 @@ void DescTimetablePane::OnRedrawGridRequest(wxCommandEvent & evt){
 		return;
 	}
 	Meeting * chosen_solution = school->solutions[ m_solution_choice->GetSelection()-1].meetings;
-	for(int i = 0; chosen_solution[i].m_class != NULL; ++i){
+	for(int i = 0; i < school->solutions[ m_solution_choice->GetSelection()-1].n_meetings; ++i){
 		char * class_name    = chosen_solution[i].m_class->name;
 		char * teacher_name  = chosen_solution[i].teacher->name;
 		char * subject_name  = chosen_solution[i].subject->name;
