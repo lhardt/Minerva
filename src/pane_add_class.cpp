@@ -113,8 +113,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.size = m_size_text->GetValue();
 		c.period_scores = (int *) calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
-			c.period_scores[i] =
-					(m_periods->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==wxT("Disponível") ? 1:0);
+			c.period_scores[i] = (m_periods->GetCellState(i / school->n_periods_per_day, i % school->n_periods_per_day) == 0)? 1:0;
 		}
 		c.period_scores[school->n_periods] = -1;
 		c.room_scores = nullptr;

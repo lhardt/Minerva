@@ -152,8 +152,6 @@ class ScoreGridPane : public wxScrolledWindow {
 	wxButton 	* GetCancelButton();
 	wxButton 	* GetEditButton();
 	ChoiceGrid  * GetGrid();
-	int		 	* GetValues();
-	void	 	  SetValues(int * values);
  private:
 	Application * m_owner;
 	ChoiceGrid  * m_grid;
@@ -443,21 +441,11 @@ class AddClassGroupPane : public wxScrolledWindow {
 	Application * m_owner;
 
 	wxTextCtrl 		* m_name_text;
-	wxChoice		* m_all_classes_list;
-	wxChoice 		* m_all_subjects_list;
-	wxListBox 		* m_selected_classes_list;
-	wxListBox  		* m_selected_subjects_list;
 	wxStaticText 	* m_err_msg;
-	wxSpinCtrl 		* m_nper_text;
 	ChoiceGrid		* m_classes_grid;
+	wxGrid			* m_subjects_grid;
 
 	void OnAddGroupButtonClicked(wxCommandEvent &);
-	void OnAddClassButtonClicked(wxCommandEvent &);
-	void OnRemoveClassButtonClicked(wxCommandEvent &);
-	void OnAddSubjectButtonClicked(wxCommandEvent &);
-	void OnRemoveSubjectButtonClicked(wxCommandEvent &);
-	void OnRemoveAllClassesButtonClicked(wxCommandEvent &);
-	void OnRemoveAllSubjectsButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };
 

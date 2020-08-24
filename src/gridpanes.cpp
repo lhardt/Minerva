@@ -66,31 +66,31 @@ wxButton * ScoreGridPane::GetCancelButton(){
 wxButton * ScoreGridPane::GetEditButton(){
 	return m_edit_btn;
 }
-int		 * ScoreGridPane::GetValues(){
-	School * school = m_owner->m_school;
-	int * values = (int*) calloc(school->n_periods + 1, sizeof(int));
-	values[school->n_periods] = -1;
-
-	for(int i = 0; i < school->n_periods; ++i){
-		values[i] = (m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_class_available? 1:0);
-	}
-
-	return values;
-}
-
-//  TODO FIXME
-void 	   ScoreGridPane::SetValues(int * values){
-	School * school = m_owner->m_school;
-	for(int i = 0; i < school->n_periods; ++i){
-		if(school->periods[i]){
-			m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-					values[i] > 0?m_owner->m_lang->str_class_available:m_owner->m_lang->str_class_unavailable);
-			m_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-					(values[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
-		}
-		m_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
-	}
-}
+// int		 * ScoreGridPane::GetValues(){
+// 	School * school = m_owner->m_school;
+// 	int * values = (int*) calloc(school->n_periods + 1, sizeof(int));
+// 	values[school->n_periods] = -1;
+//
+// 	for(int i = 0; i < school->n_periods; ++i){
+// 		values[i] = (m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_class_available? 1:0);
+// 	}
+//
+// 	return values;
+// }
+//
+// //  TODO FIXME
+// void 	   ScoreGridPane::SetValues(int * values){
+// 	School * school = m_owner->m_school;
+// 	for(int i = 0; i < school->n_periods; ++i){
+// 		if(school->periods[i]){
+// 			m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+// 					values[i] > 0?m_owner->m_lang->str_class_available:m_owner->m_lang->str_class_unavailable);
+// 			m_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+// 					(values[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
+// 		}
+// 		m_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
+// 	}
+// }
 
 ScoreGridPane::~ScoreGridPane(){
 

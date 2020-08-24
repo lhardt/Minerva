@@ -268,10 +268,18 @@ void ChoiceGrid::SetColName(int i_col, wxString name){
 		m_col_names.resize(i_col+1);
 	}
 	m_col_names[i_col] = name;
+	if(GetNumberCols() > 1+i_col){
+		SetCellValue(0,1 + i_col, name);
+		SetCellFont(0,1 + i_col, *m_owner->m_bold_text_font);
+	}
 }
 void ChoiceGrid::SetRowName(int i_row, wxString name){
 	if(m_row_names.size() <= i_row){
 		m_row_names.resize(i_row+1);
 	}
 	m_row_names[i_row] = name;
+	if(GetNumberRows() > 1+ i_row){
+		SetCellValue(1+i_row,0, name);
+		SetCellFont(1+i_row, 0, *m_owner->m_bold_text_font);
+	}
 }

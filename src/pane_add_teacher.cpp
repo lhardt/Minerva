@@ -169,11 +169,12 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.lecture_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
 		t.planning_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
 		for(int i = 0; i < school->n_periods; ++i){
-			t.lecture_period_scores[i] =
-					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_teacher_available ? 1:0);
-			t.planning_period_scores[i] =
-					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_teacher_available ? 1:0);
+			t.lecture_period_scores[i] = (m_grid->GetCellState(i / school->n_periods_per_day, i % school->n_periods_per_day) == 0)?1:0;
+			t.planning_period_scores[i] = t.lecture_period_scores[i];
 		}
+		t.lecture_period_scores[school->n_periods] = -1;
+		t.planning_period_scores[school->n_periods] = -1;
+
 		int result = insert_teacher(stdout, m_owner->m_database, &t, school);
 
 		if(result != -1){

@@ -219,8 +219,13 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 				m_assignments->GetGrid()->SetCellValue(i_subject,0,wxString::Format("%d",c->assignments[i]->amount));
 			}
 		}
-		m_periods->SetValues(c->period_scores);
-		m_groups->SetValues(c->max_per_day_subject_group);
+		for(i = 0; i < school->n_periods; ++i){
+			m_periods->GetGrid()->SetCellState(i / school->n_periods_per_day,i % school->n_periods_per_day,c->period_scores[i] > 0 ? 0:1);
+		}
+		for(i = 0; i < school->n_subject_groups; ++i){
+			m_groups->GetGrid()->SetCellValue(i,0, wxString::Format("%d", c->max_per_day_subject_group[i]));
+
+		}
 
 	}
 }
