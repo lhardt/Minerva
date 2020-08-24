@@ -69,19 +69,11 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 		per_names_grid->SetCellValue(i,0, wxString::FromUTF8(school->period_names[i]));
 	}
 
-
 	ChoiceGrid * periods_grid = m_periods->GetGrid();//new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(500,200));
 	periods_grid->SetCanUserClick(false);
-	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(m_owner->m_lang->str_adj__open);
-	grid_values.push_back(m_owner->m_lang->str_adj__closed);
-	periods_grid->SetPossibleValues(grid_values);
-
-	wxVector<wxColor> grid_colors = wxVector<wxColor>();
-	grid_colors.push_back(wxColor(200,200,255));
-	grid_colors.push_back(wxColor(255,200,200));
-	periods_grid->SetBackgroundColors(grid_colors);
-
+	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
+	periods_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
+	
 	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 

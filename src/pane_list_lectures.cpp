@@ -86,19 +86,10 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	m_edit_btn->Bind(wxEVT_CHOICE, &ListLecturesPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_CHOICE, &ListLecturesPane::OnCancelButtonClicked, this);
 
-
 	// m_periods code
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
-	wxVector<wxString> periods_values = wxVector<wxString>();
-	periods_values.push_back(m_owner->m_lang->str_adj__open);
-	periods_values.push_back(m_owner->m_lang->str_adj__closed);
-	periods_grid->SetPossibleValues(periods_values);
-
-	wxVector<wxColor> periods_colors = wxVector<wxColor>();
-	periods_colors.push_back(wxColor(200,200,255));
-	periods_colors.push_back(wxColor(255,200,200));
-	periods_grid->SetBackgroundColors(periods_colors);
-
+	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
+	periods_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
 	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);

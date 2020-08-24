@@ -45,16 +45,8 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	m_names_label->SetFont(*m_owner->m_small_font);
 
 	m_grid = new ChoiceGrid(m_owner,m_left_pane, wxID_ANY, wxDefaultPosition, wxSize(300,200));
-
-	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(m_owner->m_lang->str_adj__open);
-	grid_values.push_back(m_owner->m_lang->str_adj__closed);
-	m_grid->SetPossibleValues(grid_values);
-
-	wxVector<wxColor> grid_colors = wxVector<wxColor>();
-	grid_colors.push_back(wxColor(200,200,255));
-	grid_colors.push_back(wxColor(255,200,200));
-	m_grid->SetBackgroundColors(grid_colors);
+	m_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
+	m_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
 
 	m_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	m_grid->m_basic_row_name = m_owner->m_lang->str_period;

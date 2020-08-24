@@ -72,7 +72,7 @@ int		 * ScoreGridPane::GetValues(){
 	values[school->n_periods] = -1;
 
 	for(int i = 0; i < school->n_periods; ++i){
-		values[i] = (m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_class_availible? 1:0);
+		values[i] = (m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_class_available? 1:0);
 	}
 
 	return values;
@@ -84,7 +84,7 @@ void 	   ScoreGridPane::SetValues(int * values){
 	for(int i = 0; i < school->n_periods; ++i){
 		if(school->periods[i]){
 			m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-					values[i] > 0?m_owner->m_lang->str_class_availible:m_owner->m_lang->str_class_unavailible);
+					values[i] > 0?m_owner->m_lang->str_class_available:m_owner->m_lang->str_class_unavailable);
 			m_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
 					(values[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
 		}

@@ -30,15 +30,8 @@ ListClassGroupsPane::ListClassGroupsPane(Application * owner, wxWindow * parent,
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
 
-	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(m_owner->m_lang->str_group_availible);
-	grid_values.push_back(m_owner->m_lang->str_group_unavailible);
-	m_periods_grid->SetPossibleValues(grid_values);
-
-	wxVector<wxColor> grid_colors = wxVector<wxColor>();
-	grid_colors.push_back(wxColor(200,200,255));
-	grid_colors.push_back(wxColor(255,200,200));
-	m_periods_grid->SetBackgroundColors(grid_colors);
+	m_periods_grid->AddState(m_owner->m_lang->str_group_available, wxColor(200,200,255));
+	m_periods_grid->AddState(m_owner->m_lang->str_group_unavailable, wxColor(255,200,200));
 
 	m_periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	m_periods_grid->m_basic_row_name = m_owner->m_lang->str_period;

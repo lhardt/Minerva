@@ -29,15 +29,8 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	wxButton * add_teacher = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_teacher, wxDefaultPosition, wxSize(180,30));
 	m_teaches_subjects_list   = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
 
-	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(m_owner->m_lang->str_teacher_availible);
-	grid_values.push_back(m_owner->m_lang->str_teacher_unavailible);
-	m_grid->SetPossibleValues(grid_values);
-
-	wxVector<wxColor> grid_colors = wxVector<wxColor>();
-	grid_colors.push_back(wxColor(200,200,255));
-	grid_colors.push_back(wxColor(255,200,200));
-	m_grid->SetBackgroundColors(grid_colors);
+	m_grid->AddState(m_owner->m_lang->str_teacher_available, wxColor(200,200,255));
+	m_grid->AddState(m_owner->m_lang->str_teacher_unavailable, wxColor(255,200,200));
 
 	m_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	m_grid->m_basic_row_name = m_owner->m_lang->str_period;
@@ -177,9 +170,9 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.planning_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
 		for(int i = 0; i < school->n_periods; ++i){
 			t.lecture_period_scores[i] =
-					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_teacher_availible ? 1:0);
+					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_teacher_available ? 1:0);
 			t.planning_period_scores[i] =
-					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_teacher_availible ? 1:0);
+					(m_grid->GetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day))==m_owner->m_lang->str_teacher_available ? 1:0);
 		}
 		int result = insert_teacher(stdout, m_owner->m_database, &t, school);
 

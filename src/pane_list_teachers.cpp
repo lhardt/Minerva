@@ -53,16 +53,9 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
 
 	/* PERIODS CODE */
-	ChoiceGrid * periods_grid =  m_periods->GetGrid();/// new ChoiceGrid(this, wxID_ANY, wxDefaultPosition,wxSize(300,200));
-	wxVector<wxString> pgrid_values = wxVector<wxString>();
-	pgrid_values.push_back(m_owner->m_lang->str_teacher_availible);
-	pgrid_values.push_back(m_owner->m_lang->str_teacher_unavailible);
-	periods_grid->SetPossibleValues(pgrid_values);
-
-	wxVector<wxColor> pgrid_colors = wxVector<wxColor>();
-	pgrid_colors.push_back(wxColor(200,200,255));
-	pgrid_colors.push_back(wxColor(255,200,200));
-	periods_grid->SetBackgroundColors(pgrid_colors);
+	ChoiceGrid * periods_grid =  m_periods->GetGrid();
+	periods_grid->AddState(m_owner->m_lang->str_teacher_available, wxColor(200,200,255));
+	periods_grid->AddState(m_owner->m_lang->str_teacher_unavailable, wxColor(255,200,200));
 	// TODO substitute by the names
 	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
@@ -70,15 +63,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	/* TEACHES CODE */
 	ChoiceGrid * teaches_grid = m_teaches->GetGrid();
-	wxVector<wxString> tgrid_values = wxVector<wxString>();
-	tgrid_values.push_back(wxT("Leciona"));
-	tgrid_values.push_back(wxT("Não Leciona"));
-	teaches_grid->SetPossibleValues(tgrid_values);
-
-	wxVector<wxColor> tgrid_colors = wxVector<wxColor>();
-	tgrid_colors.push_back(wxColor(200,200,255));
-	tgrid_colors.push_back(wxColor(255,200,200));
-	teaches_grid->SetBackgroundColors(tgrid_colors);
+	teaches_grid->AddState(wxT("Leciona"), wxColor(200,200,255));
+	teaches_grid->AddState(wxT("Não Leciona"), wxColor(255,200,200));
 
 	teaches_grid->SetColName(i, wxT("Leciona"));
 	for(i = 0; i < school->n_subjects;++i){
@@ -88,15 +74,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	// ROOM PANE CODE
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
-	wxVector<wxString> rgrid_values = wxVector<wxString>();
-	rgrid_values.push_back(m_owner->m_lang->str_class_availible);
-	rgrid_values.push_back(m_owner->m_lang->str_class_unavailible);
-	rooms_grid->SetPossibleValues(rgrid_values);
-
-	wxVector<wxColor> rgrid_colors = wxVector<wxColor>();
-	rgrid_colors.push_back(wxColor(200,200,255));
-	rgrid_colors.push_back(wxColor(255,200,200));
-	rooms_grid->SetBackgroundColors(rgrid_colors);
+	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
+	rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	rooms_grid->SetColName(0,m_owner->m_lang->str_name);
 	for(i = 0; i < school->n_rooms; ++i){
 		rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
@@ -105,15 +84,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	// Planning twinning code
 	ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();
-	wxVector<wxString> twgrid_values = wxVector<wxString>();
-	twgrid_values.push_back(m_owner->m_lang->str_class_availible);
-	twgrid_values.push_back(m_owner->m_lang->str_class_unavailible);
-	twinning_grid->SetPossibleValues(twgrid_values);
-
-	wxVector<wxColor> twgrid_colors = wxVector<wxColor>();
-	twgrid_colors.push_back(wxColor(200,200,255));
-	twgrid_colors.push_back(wxColor(255,200,200));
-	twinning_grid->SetBackgroundColors(twgrid_colors);
+	twinning_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
+	twinning_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	twinning_grid->SetColName(0,m_owner->m_lang->str_name);
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		twinning_grid->SetRowName(i, wxString::Format("%d", i+1));
@@ -240,7 +212,7 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 				periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 			} else {
 				periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						wxString::Format("%s" , (t->lecture_period_scores[i] > 0?m_owner->m_lang->str_teacher_availible:m_owner->m_lang->str_teacher_unavailible) ));
+						wxString::Format("%s" , (t->lecture_period_scores[i] > 0?m_owner->m_lang->str_teacher_available:m_owner->m_lang->str_teacher_unavailable) ));
 				periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
 						(t->lecture_period_scores[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
 			}

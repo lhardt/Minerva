@@ -32,15 +32,8 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	m_capacity_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxPoint(30,150), wxSize(200,30));
 	m_grid = new ChoiceGrid(m_owner,this, wxID_ANY);
 
-	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(m_owner->m_lang->str_adj__open);
-	grid_values.push_back(m_owner->m_lang->str_adj__closed);
-	m_grid->SetPossibleValues(grid_values);
-
-	wxVector<wxColor> grid_colors = wxVector<wxColor>();
-	grid_colors.push_back(wxColor(200,200,255));
-	grid_colors.push_back(wxColor(255,200,200));
-	m_grid->SetBackgroundColors(grid_colors);
+	m_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
+	m_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
 
 	m_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	m_grid->m_basic_row_name = m_owner->m_lang->str_period;

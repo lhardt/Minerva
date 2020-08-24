@@ -80,14 +80,14 @@ class PosIntGridTable : public wxGridTableBase{
 };
 
 class Notification : public wxPanel {
-public:
+ public:
 	Notification(Application * owner, wxWindow * parent, wxWindowID id, wxString text, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 	Notification(Application * owner, wxWindow * parent, wxWindowID id, wxString text,  wxString action_str, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 
 	void Start(int ms = 5000);
 	wxHyperlinkCtrl * GetAction();
 	wxTimer * GetTimer();
-private:
+ private:
 	wxStaticText * m_text;
 	wxHyperlinkCtrl * m_action;
 	wxTimer * m_timer;
@@ -128,6 +128,9 @@ class ChoiceGrid : public wxGrid {
 	void SetRowName(int i_row, wxString name);
 	void SetBackgroundColors(wxVector<wxColor> values);
 	void SetCellImmutable(int i_col, int i_row);
+	void SetCellState(int i_col, int i_row, int state);
+	int  GetCellState(int i_col, int i_row);
+	int  AddState(wxString state_name, wxColor state_value);
 	void SetCanUserClick(bool can_user_click);
  private:
 	void OnLeftClick(wxGridEvent &);
@@ -424,7 +427,6 @@ class AddClassPane : public wxScrolledWindow {
 	wxChoice 		* m_exit_text;
 	wxStaticText 	* m_err_msg;
 	wxGrid 			* m_subjects_grid;
-
 	Application * m_owner;
 	int last_entry, last_exit;
 
@@ -440,13 +442,14 @@ class AddClassGroupPane : public wxScrolledWindow {
  private:
 	Application * m_owner;
 
-	wxTextCtrl * m_name_text;
-	wxChoice * m_all_classes_list;
-	wxChoice * m_all_subjects_list;
-	wxListBox  * m_selected_classes_list;
-	wxListBox  * m_selected_subjects_list;
-	wxStaticText * m_err_msg;
-	wxSpinCtrl * m_nper_text;
+	wxTextCtrl 		* m_name_text;
+	wxChoice		* m_all_classes_list;
+	wxChoice 		* m_all_subjects_list;
+	wxListBox 		* m_selected_classes_list;
+	wxListBox  		* m_selected_subjects_list;
+	wxStaticText 	* m_err_msg;
+	wxSpinCtrl 		* m_nper_text;
+	ChoiceGrid		* m_classes_grid;
 
 	void OnAddGroupButtonClicked(wxCommandEvent &);
 	void OnAddClassButtonClicked(wxCommandEvent &);

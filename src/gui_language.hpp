@@ -143,8 +143,8 @@ typedef struct Language {
 	const wchar_t * const str_class_subjects;
 
 	const wchar_t * const str_class_can_have_free_periods;
-	const wchar_t * const str_class_availible;
-	const wchar_t * const str_class_unavailible;
+	const wchar_t * const str_class_available;
+	const wchar_t * const str_class_unavailable;
 
 	const wchar_t * const str_room_size_in_students;
 	const wchar_t * const str_room_availibility;
@@ -154,8 +154,8 @@ typedef struct Language {
 	const wchar_t * const str_add_teachers_to_the_group;
 
 	const wchar_t * const str_teacher_availibility;
-	const wchar_t * const str_teacher_availible;
-	const wchar_t * const str_teacher_unavailible;
+	const wchar_t * const str_teacher_available;
+	const wchar_t * const str_teacher_unavailable;
 	const wchar_t * const str_teacher_teaches;
 
 	const wchar_t * const str_choose_a_timetable;
@@ -193,8 +193,8 @@ typedef struct Language {
 	const wchar_t * const str_number_of_planning_periods;
 	const wchar_t * const str_teachers_teach;
 
-	const wchar_t * const str_group_availible;
-	const wchar_t * const str_group_unavailible;
+	const wchar_t * const str_group_available;
+	const wchar_t * const str_group_unavailable;
 	const wchar_t * const str_group_availibility;
 	const wchar_t * const str_group_members;
 

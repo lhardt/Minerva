@@ -105,6 +105,8 @@ ChoiceGrid::ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id, wx
 
 	m_row_names=wxVector<wxString>();
 	m_col_names=wxVector<wxString>();
+	m_value_names=wxVector<wxString>();
+	m_background_colors=wxVector<wxColour>();
 }
 ChoiceGrid::~ChoiceGrid(){
 
@@ -223,6 +225,42 @@ void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
 void ChoiceGrid::SetCellImmutable(int i, int j){
 	SetCellValue(i,j, m_immutable_cell_text);
 	SetCellBackgroundColour(i,j,m_immutable_cell_color);
+}
+
+void ChoiceGrid::SetCellState(int i_col, int i_row, int state){
+	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
+		if(state == -1){
+			SetCellValue(i_row + 1, i_col + 1, m_immutable_cell_text);
+			SetCellBackgroundColour(i_row + 1, i_col + 1,m_immutable_cell_color);
+		} else if(state < m_value_names.size() && state < m_background_colors.size()){
+			SetCellValue(i_row + 1, i_col + 1, m_value_names[state]);
+			SetCellBackgroundColour(i_row + 1, i_col + 1, m_background_colors[state]);
+		}
+	}
+}
+
+int ChoiceGrid::GetCellState(int i_col, int i_row){
+	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
+		wxColor bgcolor = GetCellBackgroundColour(i_row + 1, i_col + 1);
+		for(int i = 0; i < m_background_colors.size(); ++i){
+			if(bgcolor == m_background_colors[i]){
+				printf("Returning %d\n", i);
+				return i;
+			}
+		}
+		/* The immutable might not have been set yet */
+		if(bgcolor == m_immutable_cell_color){
+			printf("Returning -1\n");
+			return -1;
+		}
+		printf("wtf");
+	}
+	return -1;
+}
+
+int  ChoiceGrid::AddState(wxString state_name, wxColor state_value){
+	m_value_names.push_back(state_name);
+	m_background_colors.push_back(state_value);
 }
 
 void ChoiceGrid::SetColName(int i_col, wxString name){

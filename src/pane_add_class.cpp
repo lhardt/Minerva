@@ -55,16 +55,8 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	}
 	m_free_periods_checkbox->SetFont(*m_owner->m_small_font);
 
-	wxVector<wxString> possible_values;
-	possible_values.push_back(m_owner->m_lang->str_class_availible);
-	possible_values.push_back(m_owner->m_lang->str_class_unavailible);
-
-	wxVector<wxColor> possible_backgrounds;
-	possible_backgrounds.push_back(wxColor(200,200,255));
-	possible_backgrounds.push_back(wxColor(255,200,200));
-
-	m_periods->SetPossibleValues(possible_values);
-	m_periods->SetBackgroundColors(possible_backgrounds);
+	m_periods->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
+	m_periods->AddState(m_owner->m_lang->str_class_unavailable, wxColor(200,200,255));
 
 	m_periods->m_basic_col_name = m_owner->m_lang->str_day;
 	m_periods->m_basic_row_name = m_owner->m_lang->str_period;
@@ -188,7 +180,7 @@ void AddClassPane::ClearInsertedData(){
 		if(school->periods[i] == false){
 			m_periods->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 		} else {
-			m_periods->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), m_owner->m_lang->str_class_availible);
+			m_periods->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), m_owner->m_lang->str_class_available);
 			m_periods->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxColor(200,200,255));
 		}
 	}
@@ -197,8 +189,8 @@ void AddClassPane::ClearInsertedData(){
 	last_entry = -1;
 	last_exit = -1;
 
-	m_entry_text->Clear();
-	m_exit_text->Clear();
+	m_entry_text->SetSelection(wxNOT_FOUND);
+	m_exit_text->SetSelection(wxNOT_FOUND);
 }
 
 void AddClassPane::OnPeriodChoice(wxCommandEvent& ev){
@@ -216,7 +208,7 @@ void AddClassPane::OnPeriodChoice(wxCommandEvent& ev){
 			for(int i = new_entry; i < last_entry; ++i){
 				for(int j = 0; j < school->n_days; ++j){
 					if(school->periods[j * school->n_periods_per_day + i]){
-						m_periods->SetCellValue(1 + i, 1 + j, m_owner->m_lang->str_class_availible);
+						m_periods->SetCellValue(1 + i, 1 + j, m_owner->m_lang->str_class_available);
 						m_periods->SetCellBackgroundColour(1 + i, 1 + j, wxColor(200,200,255));
 					} /* Else the cell is immutable anyway */
 				}
@@ -230,7 +222,7 @@ void AddClassPane::OnPeriodChoice(wxCommandEvent& ev){
 			for(int i = last_exit; i < new_exit; ++i){
 				for(int j = 0; j < school->n_days; ++j){
 					if(school->periods[j * school->n_periods_per_day + i]){
-						m_periods->SetCellValue(1 + i, 1 + j, m_owner->m_lang->str_class_availible);
+						m_periods->SetCellValue(1 + i, 1 + j, m_owner->m_lang->str_class_available);
 						m_periods->SetCellBackgroundColour(1 + i, 1 + j, wxColor(200,200,255));
 					}
 				}

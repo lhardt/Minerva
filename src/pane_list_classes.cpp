@@ -112,32 +112,16 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 
 	// AVAILABILITY PANE CODE
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
-	wxVector<wxString> pgrid_values = wxVector<wxString>();
-	pgrid_values.push_back(m_owner->m_lang->str_class_availible);
-	pgrid_values.push_back(m_owner->m_lang->str_class_unavailible);
-	periods_grid->SetPossibleValues(pgrid_values);
-
-	wxVector<wxColor> pgrid_colors = wxVector<wxColor>();
-	pgrid_colors.push_back(wxColor(200,200,255));
-	pgrid_colors.push_back(wxColor(255,200,200));
-	periods_grid->SetBackgroundColors(pgrid_colors);
-
+	periods_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
+	periods_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
 
 	// ROOM PANE CODE
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
-	wxVector<wxString> grid_values = wxVector<wxString>();
-	grid_values.push_back(m_owner->m_lang->str_class_availible);
-	grid_values.push_back(m_owner->m_lang->str_class_unavailible);
-	rooms_grid->SetPossibleValues(grid_values);
-
-	wxVector<wxColor> grid_colors = wxVector<wxColor>();
-	grid_colors.push_back(wxColor(200,200,255));
-	grid_colors.push_back(wxColor(255,200,200));
-	rooms_grid->SetBackgroundColors(grid_colors);
-
+	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
+	rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	rooms_grid->SetColName(0,m_owner->m_lang->str_name);
 	for(i = 0; i < school->n_rooms; ++i){
 		rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
@@ -152,9 +136,6 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 					wxColor(255,255,255));
 		}
 	}
-
-	// ChoiceGrid * teachers_grid =
-
 
 	if(school->n_classes > 0){
 		wxArrayString list;
