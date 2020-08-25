@@ -1686,7 +1686,7 @@ int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * 
 	errc = sqlite3_exec(db, LASTID_TABLE_SUBJECT, get_id_callback, &subject->id, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
 
-	for(i = 0; i < school->n_subjects && subject->in_groups && subject->in_groups[i] >= 0 ; ++i){
+	for(i = 0; i < school->n_subject_groups && subject->in_groups && subject->in_groups[i] >= 0 ; ++i){
 		if(subject->in_groups[i] > 0){
 			insert_subject_in_group(console_out, db, subject->id, school->subject_group_ids[i]);
 		}
@@ -2355,6 +2355,8 @@ static Teacher * select_all_teachers_by_school_id(FILE * console_out, sqlite3* d
 		teachers[i].num_planning_periods = sqlite3_column_int(stmt,8);
 		teachers[i].active = sqlite3_column_int(stmt,9);
 		teachers[i].teaches = NULL;
+		teachers[i].day_scores = NULL;
+		teachers[i].day_max_meetings = NULL;
 		errc = sqlite3_step(stmt);
 		++i;
 		if(i % 10 == 0){
@@ -2598,12 +2600,8 @@ static bool select_all_subjects_by_school_id(FILE * console_out, sqlite3* db, in
 					school->subjects[i].in_groups[school->n_subjects]  = -1;
 				}
 				while(errc == SQLITE_ROW){
-					bool found = false;
-					int id_group = sqlite3_column_int(stmt,2);
-					int i_group = get_subject_group_index_by_id(sqlite3_column_int(stmt,2));
-					if(!found){
-						fprintf(console_out, "Did not found subject_in_group groupid %d\n", id_group);
-					}
+					int i_group = get_subject_group_index_by_id(school, sqlite3_column_int(stmt,2));
+					school->subjects[i].in_groups[i_group]  = 1;
 					errc = sqlite3_step(stmt);
 				}
 				if(errc != SQLITE_DONE){

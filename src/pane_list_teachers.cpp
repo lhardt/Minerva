@@ -55,8 +55,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	/* PERIODS CODE */
 	ChoiceGrid * periods_grid =  m_periods->GetGrid();
-	periods_grid->AddState(m_owner->m_lang->str_teacher_available, wxColor(200,200,255));
 	periods_grid->AddState(m_owner->m_lang->str_teacher_unavailable, wxColor(255,200,200));
+	periods_grid->AddState(m_owner->m_lang->str_teacher_available, wxColor(200,200,255));
 	// TODO substitute by the names
 	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
@@ -64,8 +64,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	/* TEACHES CODE */
 	ChoiceGrid * teaches_grid = m_teaches->GetGrid();
-	teaches_grid->AddState(wxT("Leciona"), wxColor(200,200,255));
 	teaches_grid->AddState(wxT("Não Leciona"), wxColor(255,200,200));
+	teaches_grid->AddState(wxT("Leciona"), wxColor(200,200,255));
 
 	teaches_grid->SetColName(i, wxT("Leciona"));
 	for(i = 0; i < school->n_subjects;++i){
@@ -75,8 +75,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	// ROOM PANE CODE
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
-	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
+	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	rooms_grid->SetColName(0,m_owner->m_lang->str_name);
 	for(i = 0; i < school->n_rooms; ++i){
 		rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
@@ -85,8 +85,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	// Planning twinning code
 	ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();
-	twinning_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	twinning_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
+	twinning_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	twinning_grid->SetColName(0,m_owner->m_lang->str_name);
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		twinning_grid->SetRowName(i, wxString::Format("%d", i+1));
@@ -205,7 +205,9 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 	School * school = m_owner->m_school;
 	if(school != NULL && school->teachers != NULL && i_select != wxNOT_FOUND){
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
+		ChoiceGrid * teaches_grid = m_teaches->GetGrid();
 		Teacher * t = & school->teachers[i_select];
+		teaches_grid->SetAllCellsState(0);
 
 		m_name_text->SetValue(wxString::FromUTF8(t->name));
 		m_max_days_text->SetValue(t->max_days);
@@ -213,16 +215,14 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		m_max_ppd_text->SetValue(t->max_meetings_per_day);
 		m_planning_periods_text->SetValue(t->num_planning_periods);
 		if(t->teaches != NULL){
-			ChoiceGrid * teaches_grid = m_teaches->GetGrid();
 			for(int i = 0; t->teaches[i] != NULL; ++i){
 				int subj_i = get_subject_index_by_id(school, t->teaches[i]->subject->id);
-				teaches_grid->SetCellState(subj_i, 0, t->teaches[i]->score > 0);
+				teaches_grid->SetCellState(subj_i, 0, t->teaches[i]->score > 0 ? 1:0);
 			}
 		}
-		// m_teaches_text->Wrap(300);
 		for(int i = 0; i < school->n_periods; ++i){
 			if(school->periods[i]){
-				periods_grid->SetCellState(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), t->lecture_period_scores[i] > 0);
+				periods_grid->SetCellState(i % school->n_periods_per_day,i / school->n_periods_per_day, t->lecture_period_scores[i] > 0? 1:0);
 			}
 		}
 		FitInside();

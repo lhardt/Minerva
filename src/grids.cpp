@@ -239,6 +239,15 @@ void ChoiceGrid::SetCellState(int i_row, int i_col, int state){
 	}
 }
 
+void ChoiceGrid::SetAllCellsState(int state){
+	/* Inneficiently elegant. Refactor before production*/
+	for(int i = 0; i < GetNumberRows() -1; ++i){
+		for(int j = 0; j < GetNumberCols() -1; ++j){
+			SetCellState(i,j,state);
+		}
+	}
+}
+
 int ChoiceGrid::GetCellState(int i_row, int i_col){
 	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
 		wxColor bgcolor = GetCellBackgroundColour(i_row + 1, i_col + 1);

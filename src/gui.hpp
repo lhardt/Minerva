@@ -129,6 +129,7 @@ class ChoiceGrid : public wxGrid {
 	void SetBackgroundColors(wxVector<wxColor> values);
 	void SetCellImmutable(int i_col, int i_row);
 	void SetCellState(int i_row, int i_col, int state);
+	void SetAllCellsState(int state);
 	int  GetCellState(int i_row, int i_col);
 	int  AddState(wxString state_name, wxColor state_value);
 	void SetCanUserClick(bool can_user_click);
@@ -387,19 +388,10 @@ class AddTeacherGroupPane : public wxScrolledWindow {
 	~AddTeacherGroupPane();
  private:
 	wxTextCtrl * m_name_text;
-	wxChoice * m_all_teachers_list;
-	wxListBox  * m_selected_teachers_list;
-	wxChoice * m_all_subjects_list;
-	wxListBox  * m_selected_subjects_list;
+	ChoiceGrid * m_teachers_grid;
+	ChoiceGrid * m_subjects_grid;
 	wxStaticText * m_err_msg;
 	Application * m_owner;
-
-	void OnRemoveTeacherButtonClicked(wxCommandEvent & evt);
-	void OnRemoveSubjectButtonClicked(wxCommandEvent & evt);
-	void OnRemoveAllTeachersButtonClicked(wxCommandEvent &);
-	void OnRemoveAllSubjectsButtonClicked(wxCommandEvent &);
-	void OnAddTeacherButtonClicked(wxCommandEvent & evt);
-	void OnAddSubjectButtonClicked(wxCommandEvent & evt);
 	void OnAddGroupButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };
