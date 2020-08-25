@@ -11,40 +11,53 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * fields_sz = new wxFlexGridSizer(2,5,5);
-	wxSizer * butn_sz = new wxBoxSizer(wxHORIZONTAL);
-
 	wxArrayString group_names;
 	for(i = 0; i < school->n_subject_groups; ++i){
 		group_names.push_back(wxString::FromUTF8(school->subject_group_names[i]));
 	}
 
 	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300), group_names);
-
+	wxNotebook * notebook = new wxNotebook(this, wxID_ANY);
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
-	wxStaticText * members_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_subjects_in_the_group);
+	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
+	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
+	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove);
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
+	m_members = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 
 	name_label->SetFont(*m_owner->m_bold_text_font);
-	members_label->SetFont(*m_owner->m_bold_text_font);
+	notebook->AddPage(m_members, wxT("Membro"));
 
-	m_name_text = new wxStaticText(this, wxID_ANY, wxT(""));
-	m_members_text = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,-1));
-	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
-	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
+	ChoiceGrid * members_grid = m_members->GetGrid();
+	members_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
+	members_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 
-	butn_sz->Add(edit_btn, 1, wxEXPAND|wxALL, 5);
-	butn_sz->Add(delete_btn, 1, wxEXPAND|wxALL,5);
+	wxString col_name = wxT("Membro");
+	members_grid->SetColName(0,col_name);
+	for(i = 0; i < school->n_subjects; ++i){
+		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
+		members_grid->SetRowName(i, row_name);
+	}
+	members_grid->GridRemake(1, school->n_subjects);
 
+	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados Básicos"));
+	wxSizer * fields_sz = new wxGridSizer(4,5,5);
 	fields_sz->Add(name_label);
 	fields_sz->Add(m_name_text);
-	fields_sz->Add(members_label);
-	fields_sz->Add(m_members_text);
-	desc_sz->Add(fields_sz, 0, wxBOTTOM, 5);
-	desc_sz->AddStretchSpacer();
-	desc_sz->Add(butn_sz, 0, 0);
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
+	fields_sz->Add(m_cancel_btn, 0, wxEXPAND);
+	fields_sz->Add(m_edit_btn, 0, wxEXPAND);
+	fields_wrap->Add(fields_sz, 1, wxEXPAND | wxALL, 5);
 
+	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
+	desc_sz->Add(fields_wrap, 0, wxEXPAND | wxBOTTOM, 5);
+	desc_sz->Add(notebook, 1, wxEXPAND | wxBOTTOM, 5);
+	desc_sz->Add(delete_btn, 0, wxEXPAND);
+
+	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->Add(m_groups_list, 0, wxEXPAND|wxALL, 15);
 	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
 
@@ -54,45 +67,55 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
 
-	edit_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnEditButtonClicked, this);
+
+	m_edit_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnEditButtonClicked, this);
+	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnDeleteButtonClicked, this);
 	m_groups_list->Bind(wxEVT_LISTBOX, &ListSubjectGroupsPane::OnSelectionChanged, this);
 
+	m_cancel_btn->Hide();
+	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+	m_name_text->Enable(false);
 }
 
 void ListSubjectGroupsPane::OnEditButtonClicked(wxCommandEvent & evt){
+	if(m_cancel_btn->IsShown()){
+		m_cancel_btn->Hide();
+		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+		m_name_text->Enable(false);
+	} else {
+		m_cancel_btn->Show();
+		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
+		m_name_text->Enable(true);
+	}
+}
 
+void ListSubjectGroupsPane::OnCancelButtonClicked(wxCommandEvent & evt){
+	m_cancel_btn->Hide();
+	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+	m_name_text->Enable(false);
 }
 
 void ListSubjectGroupsPane::OnDeleteButtonClicked(wxCommandEvent & evt){
-	/* TODO */
 	int sel = m_groups_list->GetSelection();
-	int id =((IntClientData*) m_groups_list->GetClientData(sel))->m_value;
 	if(sel != wxNOT_FOUND){
-		remove_subject_group(stdout, m_owner->m_database, m_owner->m_school->subject_group_ids[id]);
-		m_groups_list->Delete(sel);
-		m_owner->NotifyNewUnsavedData();
+		if(remove_subject_group(stdout, m_owner->m_database, m_owner->m_school->subject_group_ids[sel])){
+			m_groups_list->Delete(sel);
+			m_owner->NotifyNewUnsavedData();
+		} else {
+			printf("Error! Could not delete\n");
+		}
 	}
 }
 
 void ListSubjectGroupsPane::OnSelectionChanged(wxCommandEvent & evt){
 	int i = 0, i_select = m_groups_list->GetSelection();
-	bool more_than_zero = false;
 	School * school = m_owner->m_school;
 	if(i_select != wxNOT_FOUND){
-		m_name_text->SetLabel(wxString::FromUTF8(school->subject_group_names[i_select]));
-		m_members_text->SetLabel("");
+		ChoiceGrid * members_grid = m_members->GetGrid();
+		m_name_text->SetValue(wxString::FromUTF8(school->subject_group_names[i_select]));
 		for(i = 0; i < school->n_subjects; ++i){
-			if(school->subjects[i].in_groups[i_select] > 0){
-				if(more_than_zero){
-					m_members_text->SetLabel(m_members_text->GetLabel() + wxString::Format(wxT("\n%s"),
-						wxString::FromUTF8(school->subjects[i].name)));
-				} else {
-					m_members_text->SetLabel(m_members_text->GetLabel() + wxString::Format(wxT("%s"),
-						wxString::FromUTF8(school->subjects[i].name)));
-					more_than_zero = true;
-				}
-			}
+			members_grid->SetCellState(i, 0, school->subjects[i].in_groups[i_select] > 0 ? 1:0);
 		}
 	}
 	Layout();

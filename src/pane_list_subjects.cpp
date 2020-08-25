@@ -27,12 +27,18 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * field_sz= new wxGridSizer(4,5,5);
-	field_sz->Add(name_label);
-	field_sz->Add(m_name_text, 1, wxEXPAND);
-	field_sz->Add(m_cancel_btn, 1, wxEXPAND);
-	field_sz->Add(m_edit_btn, 1, wxEXPAND);
-	desc_sz->Add(field_sz, 0, wxBOTTOM , 5);
+	wxSizer * fields_sz= new wxGridSizer(4,5,5);
+	wxSizer * fields_wrap= new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados Básicos"));
+	fields_sz->Add(name_label);
+	fields_sz->Add(m_name_text, 1, wxEXPAND);
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
+	fields_sz->Add(m_cancel_btn, 1, wxEXPAND);
+	fields_sz->Add(m_edit_btn, 1, wxEXPAND);
+	fields_wrap->Add(fields_sz, 1, wxALL | wxEXPAND, 5);
+	desc_sz->Add(fields_wrap, 0, wxBOTTOM , 5);
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(delete_btn, 0, 0);
 

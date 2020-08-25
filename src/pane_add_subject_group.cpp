@@ -19,36 +19,25 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	subjects_label->SetFont(*m_owner->m_small_font);
 
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
-	m_subjects_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(310,30));
-	wxButton * add_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_subject, wxDefaultPosition, wxSize(180,30));
-	wxButton * remove_subject = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(180,30));
-	wxButton * remove_all_subjects = new wxButton(this, wxID_ANY, m_owner->m_lang->str_remove_all, wxDefaultPosition, wxSize(180,30));
-	m_subjects_list = new wxListBox(this,wxID_ANY,wxDefaultPosition, wxSize(310,300));
+	m_subjects_grid = new ChoiceGrid(m_owner, this, wxID_ANY);
 	wxButton * add_group = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_group, wxDefaultPosition, wxSize(180,30));
 
+	m_subjects_grid->AddState(wxT("Não Pertence"), wxColor(255,200,200));
+	m_subjects_grid->AddState(wxT("Pertence"), wxColor(200,200,255));
+	wxString col_name = wxT("Ao Grupo");
+	m_subjects_grid->SetColName(0, col_name);
 	for(i = 0; i < school->n_subjects; ++i){
-		m_subjects_choice->Insert(wxString::FromUTF8(school->subjects[i].name), i, new IntClientData(i));
+		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
+		m_subjects_grid->SetRowName(i, row_name);
 	}
+	m_subjects_grid->GridRemake(1, school->n_subjects);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * add_sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * buttons_sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * subjects_sizer = new wxBoxSizer(wxHORIZONTAL);
-
-	add_sizer->Add(m_subjects_choice,0,wxRIGHT,10);
-	add_sizer->Add(add_subject,0,wxRIGHT,10);
-
-	buttons_sizer->Add(remove_subject, 0, wxBOTTOM, 10);
-	buttons_sizer->Add(remove_all_subjects, 0, wxBOTTOM, 10);
-
-	subjects_sizer->Add(m_subjects_list, 0, wxRIGHT, 10);
-	subjects_sizer->Add(buttons_sizer, 0, 0);
 
 	sizer->Add(name_label, 0, wxLEFT | wxTOP ,15);
 	sizer->Add(m_name_text, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(subjects_label, 0, wxLEFT, 15);
-	sizer->Add(add_sizer, 0, wxLEFT | wxBOTTOM,15);
-	sizer->Add(subjects_sizer, 0, wxLEFT | wxBOTTOM, 15);
+	sizer->Add(m_subjects_grid, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(add_group, 0, wxLEFT | wxBOTTOM, 15);
 	sizer->Add(m_err_msg, 0, wxLEFT | wxBOTTOM, 15);
 
@@ -58,60 +47,35 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
 
-	add_subject->Bind(wxEVT_BUTTON, &AddSubjectGroupPane::OnAddSubjectButtonClicked, this);
-	remove_subject->Bind(wxEVT_BUTTON, &AddSubjectGroupPane::OnRemoveSubjectButtonClicked, this);
-	remove_all_subjects->Bind(wxEVT_BUTTON, &AddSubjectGroupPane::OnRemoveAllButtonClicked, this);
 	add_group->Bind(wxEVT_BUTTON, &AddSubjectGroupPane::OnCreateButtonClicked, this);
 }
 
-void AddSubjectGroupPane::OnAddSubjectButtonClicked(wxCommandEvent & evt){
-	int add_i = m_subjects_choice->GetSelection();
-	if(add_i != wxNOT_FOUND){
-		wxString name = m_subjects_choice->GetString(add_i);
-		m_subjects_list->Insert(name, m_subjects_list->GetCount(), new IntClientData(((IntClientData*)m_subjects_choice->GetClientObject(add_i))->m_value));
-		m_subjects_choice->Delete(add_i);
-	}
-}
-
-void AddSubjectGroupPane::OnRemoveSubjectButtonClicked(wxCommandEvent & evt){
-	int rem_i = m_subjects_list->GetSelection();
-	if(rem_i != wxNOT_FOUND){
-		wxString name = m_subjects_list->GetString(rem_i);
-		m_subjects_choice->Insert(name, m_subjects_choice->GetCount(), new IntClientData(((IntClientData*)m_subjects_list->GetClientObject(rem_i))->m_value));
-		m_subjects_list->Delete(rem_i);
-	}
-}
-
-void AddSubjectGroupPane::OnRemoveAllButtonClicked(wxCommandEvent & evt){
-	m_subjects_list->Clear();
-	m_subjects_choice->Clear();
-	for(int i = 0; i < m_owner->m_school->n_subjects; ++i){
-		m_subjects_choice->Insert(wxString::FromUTF8(m_owner->m_school->subjects[i].name), i, new IntClientData(i));
-	}
-}
-
 void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
-	int i, id, sing_id;
+	int i, id, sing_id, n_subjects=0;
 	School * school = m_owner->m_school;
-	if(!m_name_text->IsEmpty() && !m_subjects_list->IsEmpty()){
+
+	for(i = 0; i < school->n_subjects; ++i){
+		n_subjects += (m_subjects_grid->GetCellState(i, 0) > 0)?1:0;
+	}
+
+	if(!m_name_text->IsEmpty() && n_subjects > 0){
 		char * name = copy_wx_string(m_name_text->GetValue());
 		id = insert_subject_group(stdout, m_owner->m_database, school, name);
 		if(id != -1){
-			int n_members = m_subjects_list->GetCount();
 			school_subjectgroup_add(school, name,id);
-			for(i = 0; i < n_members; ++i){
-				int i_subj = ((IntClientData*)m_subjects_list->GetClientObject(i))->m_value;
-				sing_id = insert_subject_in_group(stdout, m_owner->m_database, school->subjects[i_subj].id, id);
-				if(sing_id >= 0){
-					if(school->subjects[i_subj].in_groups == NULL){
-						school->subjects[i_subj].in_groups = (int *)calloc(1 + school->n_subject_groups, sizeof(int));
-						school->subjects[i_subj].in_groups[school->n_subject_groups] = -1;
+			for(i = 0; i < school->n_subjects; ++i){
+				if(m_subjects_grid->GetCellState(i,0) > 0){
+					sing_id = insert_subject_in_group(stdout, m_owner->m_database, school->subjects[i].id, id);
+					if(sing_id >= 0){
+						if(school->subjects[i].in_groups == NULL){
+							school->subjects[i].in_groups = (int *)calloc(1 + school->n_subject_groups, sizeof(int));
+							school->subjects[i].in_groups[school->n_subject_groups] = -1;
+						}
+						school->subjects[i].in_groups[school->n_subject_groups -1] = 1;
+					} else {
+						m_err_msg->SetLabel(m_owner->m_lang->str_error);
+						break;
 					}
-
-					school->subjects[i_subj].in_groups[school->n_subject_groups -1] = 1;
-				} else {
-					m_err_msg->SetLabel(m_owner->m_lang->str_error);
-					break;
 				}
 			}
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
@@ -128,10 +92,8 @@ void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
 void AddSubjectGroupPane::ClearInsertedData(){
 	int i; School * school = m_owner->m_school;
 	m_name_text->Clear();
-	m_subjects_list->Clear();
-	m_subjects_choice->Clear();
 	for(i = 0; i < school->n_subjects; ++i){
-		m_subjects_choice->Insert(wxString::FromUTF8(school->subjects[i].name), i, new IntClientData(i));
+		m_subjects_grid->SetCellState(i,0, 0);
 	}
 }
 

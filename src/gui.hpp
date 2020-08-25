@@ -357,15 +357,10 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 	~AddSubjectGroupPane();
 
  private:
-	wxTextCtrl * m_name_text;
-	wxChoice * m_subjects_choice;
-	wxListBox * m_subjects_list;
-	wxStaticText * m_err_msg;
-	Application * m_owner;
-
-	void OnAddSubjectButtonClicked(wxCommandEvent &);
-	void OnRemoveSubjectButtonClicked(wxCommandEvent &);
-	void OnRemoveAllButtonClicked(wxCommandEvent &);
+	wxTextCtrl 		* m_name_text;
+	ChoiceGrid 		* m_subjects_grid;
+	wxStaticText 	* m_err_msg;
+	Application 	* m_owner;
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 };
@@ -511,12 +506,15 @@ class ListSubjectGroupsPane : public wxScrolledWindow {
 	ListSubjectGroupsPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListSubjectGroupsPane();
  private:
-	Application * m_owner;
+	Application 	* m_owner;
+	wxListBox 		* m_groups_list;
+	wxTextCtrl	 	* m_name_text;
+	ScoreGridPane 	* m_members;
+	wxButton	 	* m_cancel_btn;
+	wxButton	 	* m_edit_btn;
 
-	wxListBox * m_groups_list;
-	wxStaticText * m_name_text;
-	wxStaticText * m_members_text;
 
+	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
     void OnDeleteButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);

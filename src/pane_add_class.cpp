@@ -181,8 +181,7 @@ void AddClassPane::ClearInsertedData(){
 		if(school->periods[i] == false){
 			m_periods->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 		} else {
-			m_periods->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), m_owner->m_lang->str_class_available);
-			m_periods->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxColor(200,200,255));
+			m_periods->SetCellState(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), 0);
 		}
 	}
 	m_size_text->SetValue(0);

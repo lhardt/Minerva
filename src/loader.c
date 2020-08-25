@@ -2600,14 +2600,7 @@ static bool select_all_subjects_by_school_id(FILE * console_out, sqlite3* db, in
 				while(errc == SQLITE_ROW){
 					bool found = false;
 					int id_group = sqlite3_column_int(stmt,2);
-					for(int j = 0; j < school->n_subject_groups; ++j){
-						if(id_group == school->subject_group_ids[j]){
-							found = true;
-							/* TODO FIXME is there any purpouse of scoring? Maybe a bool suffices. */
-							school->subjects[i].in_groups[j] = 1;
-							break;
-						}
-					}
+					int i_group = get_subject_group_index_by_id(sqlite3_column_int(stmt,2));
 					if(!found){
 						fprintf(console_out, "Did not found subject_in_group groupid %d\n", id_group);
 					}
