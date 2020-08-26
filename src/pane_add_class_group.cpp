@@ -27,7 +27,7 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 
 	PosIntGridTable * grid_table = new PosIntGridTable(school->n_subjects,1);
 
-	wxString col_name = wxT("Quantidade");
+	wxString col_name = m_owner->m_lang->str_amount;
 	grid_table->SetColLabelValue(0,col_name);
 	for(i = 0; i < school->n_subjects; ++i){
 		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
@@ -35,12 +35,12 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	}
 	m_subjects_grid->SetTable(grid_table, true);
 
-	m_classes_grid->SetColName(0, "WHATNAME");
+	m_classes_grid->SetColName(0, m_owner->m_lang->str_belongs);
 	for(i = 0; i < school->n_classes; ++i){
 		m_classes_grid->SetRowName(i, wxString::FromUTF8(school->classes[i].name));
 	}
-	m_classes_grid->AddState(wxT("Pertence"), wxColor(200,200,255));
-	m_classes_grid->AddState(wxT("Não Pertence"), wxColor(255,200,200));
+	m_classes_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
+	m_classes_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	m_classes_grid->GridRemake(1, school->n_classes);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
@@ -79,7 +79,6 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 			++n_members;
 		}
 	}
-	printf("In front of the if. %d %d %d \n ", !m_name_text->GetValue().IsEmpty(), n_members, n_subjects);
 	if(!m_name_text->GetValue().IsEmpty() && n_members > 0 && n_subjects > 0){
 		Class c;
 		c.name = copy_wx_string(m_name_text->GetValue());
@@ -146,7 +145,6 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 				++i_assignment;
 			}
 		}
-		printf("trying to insert\n");
 		/* TODO  populate * rooms; */
 		bool success = insert_class(stdout, m_owner->m_database, &c, school);
 		if(success){
@@ -158,7 +156,6 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			m_owner->NotifyNewUnsavedData();
 		} else {
-			printf("could not insert\n");
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}
 		free(alist);

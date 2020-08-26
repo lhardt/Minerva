@@ -21,10 +21,10 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	/* Declaration of members */
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_size);
-	wxStaticText * free_periods_label = new wxStaticText(this, wxID_ANY, wxT("Períodos Livres: "));
-	wxStaticText * entry_period_label = new wxStaticText(this, wxID_ANY, wxT("Período de Entrada: "));
-	wxStaticText * exit_period_label = new wxStaticText(this, wxID_ANY, wxT("Período de Saída: "));
-	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, wxT("Ativo:"));
+	wxStaticText * free_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_free_periods);
+	wxStaticText * entry_period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_entry_period);
+	wxStaticText * exit_period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_exit_period);
+	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
 	wxStaticText * m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_classes_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,30));
@@ -63,7 +63,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * btn_sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * description_sizer = new wxBoxSizer(wxVERTICAL);
-	wxSizer * box_field_sizer = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados básicos"));
+	wxSizer * box_field_sizer = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 	wxSizer * fields_sizer = new wxFlexGridSizer(4,5,5);
 
 	sizer->Add(m_classes_list, 0, wxEXPAND|wxALL, 15);
@@ -92,10 +92,10 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	description_sizer->Add(delete_btn, 0, wxEXPAND);
 	description_sizer->Add(m_err_msg, 0, wxEXPAND);
 
-	notebook->InsertPage(0, m_periods, wxT("Disponibilidade"));
-	notebook->InsertPage(1, m_assignments, wxT("Disciplinas"));
-	notebook->InsertPage(2, m_rooms, wxT("Salas"));
-	notebook->InsertPage(3, m_groups, wxT("Grupos Disc."));
+	notebook->InsertPage(0, m_periods, m_owner->m_lang->str_availability);
+	notebook->InsertPage(1, m_assignments, m_owner->m_lang->str_subjects);
+	notebook->InsertPage(2, m_rooms, m_owner->m_lang->str_rooms);
+	notebook->InsertPage(3, m_groups, m_owner->m_lang->str_subject_groups);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -251,15 +251,8 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 			m_entry_period_text->SetLabel(wxT(""));
 			m_exit_period_text->SetLabel(wxT(""));
 			m_subjects_text->SetLabel(wxT(""));
+			m_periods->GetGrid()->SetAllCellsState(0);
 
-			// for(i = 0; i < school->n_periods; ++i){
-			// 	if(school->periods[i]){
-			// 		m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-			// 				wxT(""));
-			// 		m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-			// 				wxColor(255,255,255));
-			// 	}
-			// }
 			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Não foi possível deletar.\n");

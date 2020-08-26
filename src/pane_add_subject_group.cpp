@@ -22,9 +22,9 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	m_subjects_grid = new ChoiceGrid(m_owner, this, wxID_ANY);
 	wxButton * add_group = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_group, wxDefaultPosition, wxSize(180,30));
 
-	m_subjects_grid->AddState(wxT("Não Pertence"), wxColor(255,200,200));
-	m_subjects_grid->AddState(wxT("Pertence"), wxColor(200,200,255));
-	wxString col_name = wxT("Ao Grupo");
+	m_subjects_grid->AddState(m_owner->m_lang->str_does_not_belong, wxColor(255,200,200));
+	m_subjects_grid->AddState(m_owner->m_lang->str_belongs, wxColor(200,200,255));
+	wxString col_name = m_owner->m_lang->str_to_the_group;
 	m_subjects_grid->SetColName(0, col_name);
 	for(i = 0; i < school->n_subjects; ++i){
 		wxString row_name = wxString::FromUTF8(school->subjects[i].name);

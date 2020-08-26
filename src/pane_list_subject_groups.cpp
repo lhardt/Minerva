@@ -25,7 +25,6 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
 	m_members = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 
-	name_label->SetFont(*m_owner->m_bold_text_font);
 	notebook->AddPage(m_members, wxT("Membro"));
 
 	ChoiceGrid * members_grid = m_members->GetGrid();

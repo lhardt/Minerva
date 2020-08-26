@@ -108,8 +108,8 @@ class ChoiceGrid : public wxGrid {
 	wxString m_immutable_cell_text;
 	wxColor  m_immutable_cell_color;
 
-	wxString m_basic_col_name = L"Coluna";
-	wxString m_basic_row_name = L"Linha";
+	wxString m_basic_col_name;
+	wxString m_basic_row_name;
 	wxVector<wxString> m_col_names;
 	wxVector<wxString> m_row_names;
 
@@ -168,7 +168,7 @@ class PosIntGridPane : public wxScrolledWindow {
 					 wxWindowID id = wxID_ANY,
 					 wxPoint pos = wxDefaultPosition,
 					 wxSize sz = wxDefaultSize,
-				 	 wxString column_name = wxT("Col"),
+				 	 wxString column_name = wxT(""),
 					 wxVector<wxString> row_names = wxVector<wxString>());
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);
@@ -193,7 +193,7 @@ class StringGridPane : public wxScrolledWindow {
 					 wxWindowID id = wxID_ANY,
 					 wxPoint pos = wxDefaultPosition,
 					 wxSize sz = wxDefaultSize,
-				 	 wxString column_name = wxT("Col"),
+				 	 wxString column_name = wxT(""),
 					 wxVector<wxString> row_names = wxVector<wxString>());
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);

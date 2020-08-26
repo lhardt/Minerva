@@ -41,15 +41,15 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 		per_row_names.push_back(wxString::Format("%s %d", m_owner->m_lang->str_period, 1+i));
 	}
 
-	StringGridPane * m_days = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxT("Nome"), day_row_names);
-	StringGridPane * m_daily_periods = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxT("Nome"), daily_period_row_names);
-	StringGridPane * m_period_names = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxT("Nome"), per_row_names);
+	StringGridPane * m_days = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_name, day_row_names);
+	StringGridPane * m_daily_periods = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_name, daily_period_row_names);
+	StringGridPane * m_period_names = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_name, per_row_names);
 	ScoreGridPane * m_periods = new ScoreGridPane(m_owner, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	m_notebook->AddPage(m_periods, m_owner->m_lang->str_periods);
-	m_notebook->AddPage(m_days, wxT("Nomes dos Dias"));
-	m_notebook->AddPage(m_daily_periods, wxT("Nomes dos Períodos Diários"));
-	m_notebook->AddPage(m_period_names,wxT("Nomes dos Períodos"));
-	m_notebook->AddPage(MakeStatisticsPane(), wxT("Estatísticas"));
+	m_notebook->AddPage(m_days, m_owner->m_lang->str_day_names);
+	m_notebook->AddPage(m_daily_periods, m_owner->m_lang->str_daily_period_names);
+	m_notebook->AddPage(m_period_names, m_owner->m_lang->str_period_names);
+	m_notebook->AddPage(MakeStatisticsPane(), m_owner->m_lang->str_statistics);
 
 	wxGrid * day_names_grid = m_days->GetGrid();
 	day_names_grid->SetColSize(0, 200);
@@ -71,29 +71,22 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 
 	ChoiceGrid * periods_grid = m_periods->GetGrid();//new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(500,200));
 	periods_grid->SetCanUserClick(false);
-	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
 	periods_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
-	
+	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
+
 	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
 	periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 
 	for(int i = 0; i < school->n_periods; ++i){
-		if(school->periods[i] == false){
-			periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), m_owner->m_lang->str_adj__closed);
-			periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),wxColor(255,200,200));
-		} else {
-			periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), m_owner->m_lang->str_adj__open);
-			periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),wxColor(200,200,255));
-		}
-		periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
+		periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i]?1:0);
 	}
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * content_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * button_sz = new wxStaticBoxSizer(wxHORIZONTAL, this, wxT("Ações"));
-	wxStaticBoxSizer * text_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados Básicos"));
+	wxSizer * button_sz = new wxStaticBoxSizer(wxHORIZONTAL, this, m_owner->m_lang->str_actions);
+	wxStaticBoxSizer * text_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 	wxGridSizer * text_sz = new wxGridSizer(4,5,5);
 
 	text_wrap->Add(text_sz, 1, wxEXPAND | wxALL, 5);
@@ -137,11 +130,11 @@ wxScrolledWindow* DescSchoolPane::MakeStatisticsPane(){
 	wxScrolledWindow * wnd = new wxScrolledWindow(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	// TODO internationalize
 	wxString string = "";
-	string << wxString::FromUTF8("Número de Turmas: ") << school->n_classes << "\n";
-	string << wxString::FromUTF8("Número de Professores: ") << school->n_teachers << "\n";
-	string << wxString::FromUTF8("Número de Salas: ") << school->n_rooms << "\n";
-	string << wxString::FromUTF8("Número de Grupos de Disciplinas: ") << school->n_subject_groups << "\n";
-	string << wxString::FromUTF8("To do: Complementar informações") << "\n";
+	string << m_owner->m_lang->str_number_of_classes << ": " << school->n_classes << "\n";
+	string << m_owner->m_lang->str_number_of_teachers << ": " << school->n_teachers << "\n";
+	string << m_owner->m_lang->str_number_of_rooms << ": " << school->n_rooms << "\n";
+	string << m_owner->m_lang->str_number_of_subjects << ": " << school->n_subjects << "\n";
+	string << m_owner->m_lang->str_number_of_subject_groups << ": " << school->n_subject_groups << "\n";
 	// TODO complement information
 	wxStaticText * text = new wxStaticText(wnd, wxID_ANY, string, wxDefaultPosition, wxDefaultSize);
 

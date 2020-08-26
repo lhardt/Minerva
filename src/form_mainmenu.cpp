@@ -217,7 +217,7 @@ bool MainMenuForm::OnClose(){
 }
 
 void MainMenuForm::NotifyNewUnsavedData(){
-	Notification * notification = new Notification(m_owner, this, wxID_ANY, wxT("Ação taltaltal Realizada"), wxT("Desfazer"), wxDefaultPosition, wxDefaultSize);
+	Notification * notification = new Notification(m_owner, this, wxID_ANY, m_owner->m_lang->str_success, m_owner->m_lang->str_undo, wxDefaultPosition, wxDefaultSize);
 	notification->GetTimer()->Bind(wxEVT_TIMER, &MainMenuForm::OnNotificationTimer, this);
 	notification->GetAction()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
 
@@ -299,20 +299,20 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		case ID_SCHOOL_DATA: {
 			pane_to_open = new DescSchoolPane(m_owner, m_center_pane, wxPoint(100,15));
 			title = m_owner->m_lang->str_school_details;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			break;
 		}
 		/* Room */
 		case ID_ADD_ROOM: {
 			pane_to_open = new AddRoomPane(m_owner, m_center_pane, wxPoint(100,15));
 			title = m_owner->m_lang->str_add_room;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			break;
 		}
 		case ID_VIEW_ROOMS:{
 			pane_to_open = new ListRoomsPane(m_owner, m_center_pane, wxPoint(100,15));
 			title = m_owner->m_lang->str_list_of_rooms;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			break;
 		}
 		case ID_CHECK_ALL_ROOMS:{
@@ -321,25 +321,25 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Subject */
 		case ID_ADD_SUBJECT:{
 			title = m_owner->m_lang->str_add_subject;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new AddSubjectPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_ADD_SUBJECT_GROUP:{
 			title = m_owner->m_lang->str_add_subject_group;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new AddSubjectGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_SUBJECTS:{
 			title = m_owner->m_lang->str_list_of_subjects;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new ListSubjectsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_SUBJECT_GROUPS:{
 			title = m_owner->m_lang->str_list_of_subject_groups;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open =new ListSubjectGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
@@ -350,25 +350,25 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Teacher */
 		case ID_ADD_TEACHER:{
 			title = m_owner->m_lang->str_add_teacher;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new AddTeacherPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_ADD_TEACHER_GROUP:{
 			title = m_owner->m_lang->str_add_teacher_group;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new AddTeacherGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_TEACHERS:{
 			title = m_owner->m_lang->str_list_of_teachers;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new ListTeachersPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_TEACHER_GROUPS:{
 			title = m_owner->m_lang->str_list_teacher_groups;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new ListTeacherGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
@@ -379,25 +379,25 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Class */
 		case ID_ADD_CLASS:{
 			title = m_owner->m_lang->str_add_class;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new AddClassPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_ADD_CLASS_GROUP:{
 			title = m_owner->m_lang->str_add_class_group;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new AddClassGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_CLASSES:{
 			title = m_owner->m_lang->str_list_classes;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new ListClassesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_CLASS_GROUPS:{
 			title = m_owner->m_lang->str_list_of_class_groups;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new ListClassGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
@@ -408,7 +408,7 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Lecture */
 		case ID_VIEW_LECTURES: {
 			title = m_owner->m_lang->str_list_of_lectures;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new ListLecturesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
@@ -425,7 +425,7 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Timetable */
 		case ID_GENERATE_TIMETABLE:{
 			title = m_owner->m_lang->str_generate_timetable;
-			detail = wxT("Lorem Ipsum dolor sit amet consecteur adiscipling elit.");
+			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new GenerateTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}

@@ -25,8 +25,10 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	m_subjects_grid = new ChoiceGrid(m_owner, this, wxID_ANY);
 	wxButton * add_teacher = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_teacher, wxDefaultPosition, wxSize(180,30));
 
-	m_subjects_grid->AddState(wxT("Não Leciona"), wxColor(255,200,200));
-	m_subjects_grid->AddState(wxT("Leciona"), wxColor(200,200,255));
+	wxString col_name = m_owner->m_lang->str_teaches;
+	m_subjects_grid->SetColName(0, col_name);
+	m_subjects_grid->AddState(m_owner->m_lang->str_no, wxColor(200,200,255));
+	m_subjects_grid->AddState(m_owner->m_lang->str_yes, wxColor(255,200,200));
 	for(i = 0; i < m_owner->m_school->n_subjects; ++i){
 		m_subjects_grid->SetRowName(i, wxString::FromUTF8(m_owner->m_school->subjects[i].name));
 	}
@@ -74,8 +76,7 @@ void AddTeacherPane::ClearInsertedData(){
 		if(school->periods[i] == false){
 			m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 		} else {
-			m_periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxT("Disponível"));
-			m_periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxColor(200,200,255));
+			m_periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, 1);
 		}
 	}
 

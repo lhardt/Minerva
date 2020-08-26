@@ -39,7 +39,7 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	m_subjects_grid = new wxGrid(this, wxID_ANY);
 	PosIntGridTable * subjects_grid_table = new PosIntGridTable(school->n_subjects,1);
 
-	wxString col_name = wxT("Quantidade");
+	wxString col_name = m_owner->m_lang->str_amount;
 	subjects_grid_table->SetColLabelValue(0, col_name);
 	for(i = 0; i < school->n_subjects; ++i){
 		wxString name = wxString::FromUTF8(school->subjects[i].name);
@@ -130,7 +130,6 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 				++n_needs;
 			}
 		}
-		printf("Number of assignments is %d\n", n_needs);
 		if(n_needs > 0){
 			i_need = 0;
 			c.assignments = (Assignment**) calloc(n_needs + 1, sizeof(Assignment*));

@@ -206,6 +206,31 @@ typedef struct Language {
 
 	const wchar_t * const str_duplicate;
 	const wchar_t * const str_lorem;
+	const wchar_t * const str_amount;
+	const wchar_t * const str_belongs;
+	const wchar_t * const str_does_not_belong;
+	const wchar_t * const str_to_the_group;
+	const wchar_t * const str_teaches;
+
+	const wchar_t * const str_day_names;
+	const wchar_t * const str_daily_period_names;
+	const wchar_t * const str_period_names;
+	const wchar_t * const str_statistics;
+
+	const wchar_t * const str_number_of_classes;
+	const wchar_t * const str_number_of_teachers;
+	const wchar_t * const str_number_of_rooms;
+	const wchar_t * const str_number_of_subjects;
+	const wchar_t * const str_number_of_subject_groups;
+	const wchar_t * const str_basic_data;
+	const wchar_t * const str_actions;
+
+	const wchar_t * const str_free_periods;
+	const wchar_t * const str_entry_period;
+	const wchar_t * const str_exit_period;
+	const wchar_t * const str_active;
+	const wchar_t * const str_availability;
+	const wchar_t * const str_subject_groups;
 } Language;
 
 const extern Language LANG_POR;

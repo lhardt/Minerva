@@ -40,12 +40,10 @@ ChoiceGrid * ScoreGridPane::GetGrid(){
 
 void 	ScoreGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 	if(m_grid->m_can_user_click){
-		printf("Save clicked\n");
 		m_cancel_btn->Show(false);
 		m_grid->SetCanUserClick(false);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	} else {
-		printf("Edit clicked\n");
 		m_cancel_btn->Show(true);
 		m_grid->SetCanUserClick(true);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
@@ -53,7 +51,6 @@ void 	ScoreGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 	FitInside();
 }
 void	ScoreGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
-	printf("Cancel clicked\n");
 	m_cancel_btn->Show(false);
 	m_grid->SetCanUserClick(false);
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
@@ -158,12 +155,10 @@ void 	   PosIntGridPane::SetValues(int * values){
 
 void 	PosIntGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 	if(m_grid->IsEditable()){
-		printf("Save clicked\n");
 		m_cancel_btn->Show(false);
 		m_grid->EnableEditing(false);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	} else {
-		printf("Edit clicked\n");
 		m_cancel_btn->Show(true);
 		m_grid->EnableEditing(true);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
@@ -171,7 +166,6 @@ void 	PosIntGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 	FitInside();
 }
 void	PosIntGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
-	printf("Cancel clicked\n");
 	m_cancel_btn->Show(false);
 	m_grid->EnableEditing(false);
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
@@ -228,12 +222,10 @@ wxGrid  * StringGridPane::GetGrid(){
 
 void 	StringGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 	if(m_grid->IsEditable()){
-		printf("Save clicked\n");
 		m_cancel_btn->Show(false);
 		m_grid->EnableEditing(false);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	} else {
-		printf("Edit clicked\n");
 		m_cancel_btn->Show(true);
 		m_grid->EnableEditing(true);
 		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
@@ -242,7 +234,6 @@ void 	StringGridPane::OnEditButtonClicked(wxCommandEvent &evt){
 }
 
 void	StringGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
-	printf("Cancel clicked\n");
 	m_cancel_btn->Show(false);
 	m_grid->EnableEditing(false);
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);

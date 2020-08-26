@@ -103,6 +103,8 @@ ChoiceGrid::ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id, wx
 	HideColLabels();
 	HideRowLabels();
 
+	m_basic_col_name=wxT("");
+	m_basic_row_name=wxT("");
 	m_row_names=wxVector<wxString>();
 	m_col_names=wxVector<wxString>();
 	m_value_names=wxVector<wxString>();
@@ -253,16 +255,14 @@ int ChoiceGrid::GetCellState(int i_row, int i_col){
 		wxColor bgcolor = GetCellBackgroundColour(i_row + 1, i_col + 1);
 		for(int i = 0; i < m_background_colors.size(); ++i){
 			if(bgcolor == m_background_colors[i]){
-				printf("Returning %d\n", i);
 				return i;
 			}
 		}
 		/* The immutable might not have been set yet */
 		if(bgcolor == m_immutable_cell_color){
-			printf("Returning -1\n");
 			return -1;
 		}
-		printf("wtf");
+		printf("Something is wrong. GetCellState with invalid/blank cell");
 	}
 	return -1;
 }
