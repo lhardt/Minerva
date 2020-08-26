@@ -527,7 +527,8 @@ class ListTeachersPane : public wxScrolledWindow {
 	ScoreGridPane * m_periods;
 	ScoreGridPane * m_teaches;
 	PosIntGridPane * m_days;
-	ScoreGridPane * m_rooms;
+	ScoreGridPane * m_planning_rooms;
+	ScoreGridPane * m_lecture_rooms;
 	ScoreGridPane * m_planning_twinning;
 	wxButton 	  * m_cancel_btn;
 	wxButton 	  * m_edit_btn;

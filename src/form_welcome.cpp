@@ -71,7 +71,6 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, owner
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * center_sz = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * left_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * right_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * buttons_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * button_sz1 = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * button_sz2 = new wxBoxSizer(wxHORIZONTAL);

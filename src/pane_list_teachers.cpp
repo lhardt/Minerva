@@ -30,7 +30,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_periods = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	m_teaches = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	m_days = new PosIntGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxT("Max. Per"),day_names);
-	m_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
+	m_lecture_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
+	m_planning_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	wxScrolledWindow * groups = new wxScrolledWindow(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	new wxStaticText(groups, wxID_ANY, wxT("O professor $x não participa de nenhum grupo. (TO DO)"), wxDefaultPosition, wxDefaultSize);
 	m_planning_twinning = new ScoreGridPane(m_owner, notebook, wxID_ANY);
@@ -38,8 +39,9 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	notebook->InsertPage(1,m_teaches, wxT("Disciplinas"));
 	notebook->InsertPage(2,m_days, wxT("Dias"));
 	notebook->InsertPage(3,m_planning_twinning, wxT("Geminação do Planejamento"));
-	notebook->InsertPage(4,m_rooms, wxT("Salas"));
-	notebook->InsertPage(5, groups, wxT("Grupos de Profs."));
+	notebook->InsertPage(4,m_lecture_rooms, wxT("Salas de Aula"));
+	notebook->InsertPage(5,m_planning_rooms, wxT("Salas de Planejamento"));
+	notebook->InsertPage(6, groups, wxT("Grupos de Profs."));
 
 	m_teachers_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
@@ -73,15 +75,26 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	}
 	teaches_grid->GridRemake(1,school->n_subjects);
 
-	// ROOM PANE CODE
-	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
-	rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
-	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
-	rooms_grid->SetColName(0,m_owner->m_lang->str_name);
+	// LECTURE ROOM PANE CODE
+	ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
+	lec_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
+	lec_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
+	lec_rooms_grid->SetColName(0,m_owner->m_lang->str_name);
 	for(i = 0; i < school->n_rooms; ++i){
-		rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
+		lec_rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
 	}
-	rooms_grid->GridRemake(1, school->n_rooms);
+	lec_rooms_grid->GridRemake(1, school->n_rooms);
+
+	// PLANNING ROOM PANE CODE
+	ChoiceGrid * planning_rooms_grid = m_planning_rooms->GetGrid();
+	planning_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
+	planning_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
+	planning_rooms_grid->SetColName(0,m_owner->m_lang->str_name);
+	for(i = 0; i < school->n_rooms; ++i){
+		planning_rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
+	}
+	planning_rooms_grid->GridRemake(1, school->n_rooms);
+
 
 	// Planning twinning code
 	ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();

@@ -150,7 +150,6 @@ void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 
 void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 	int i;
-	bool more_than_zero_features = 0;
 	School * school = m_owner->m_school;
 	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
 		Room * room = & school->rooms[m_rooms_list->GetSelection()];

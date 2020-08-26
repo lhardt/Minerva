@@ -93,7 +93,10 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		group.planning_twin_scores = NULL;
 		group.day_max_meetings = (int*)calloc(school->n_days+1, sizeof(int));
 		group.day_scores = (int*)calloc(school->n_days+1, sizeof(int));
-		group.room_scores = (int*)calloc(school->n_rooms, sizeof(int));
+		group.lecture_room_scores = (int*)calloc(1+school->n_rooms, sizeof(int));
+		group.planning_room_scores = (int*)calloc(1+school->n_rooms, sizeof(int));
+		group.lecture_room_scores[school->n_rooms] = -1;
+		group.planning_room_scores[school->n_rooms] = -1;
 		group.subordinates = (int *)calloc(n_members + 1, sizeof(int));
 		Teaches * teaches_vals = (Teaches*)calloc(n_subjects + 1, sizeof(Teaches));
 		group.teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*));
@@ -123,11 +126,6 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 						group.lecture_period_scores[j] = teacher->lecture_period_scores[j];
 						group.planning_period_scores[j] = teacher->planning_period_scores[j];
 					}
-					if(teacher->room_scores){
-						for(j  = 0; j < school->n_rooms; ++j){
-							group.room_scores[j] = teacher->room_scores[j];
-						}
-					}
 				} else {
 					if(group.max_meetings_per_class_per_day > teacher->max_meetings_per_class_per_day){
 						group.max_meetings_per_class_per_day = teacher->max_meetings_per_class_per_day;
@@ -156,11 +154,6 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 						}
 						if(group.planning_period_scores[j] > teacher->planning_period_scores[j]){
 							group.planning_period_scores[j] = teacher->planning_period_scores[j];
-						}
-					}
-					for(j = 0; j < school->n_rooms; ++j){
-						if(teacher->room_scores && teacher->room_scores[j] < group.room_scores[j]){
-							group.room_scores[j] = teacher->room_scores[j];
 						}
 					}
 				}

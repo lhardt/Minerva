@@ -1286,6 +1286,39 @@ static bool insert_or_update_room_scores(FILE * console_out, sqlite3 * db, const
 }
 
 /**
+ * Insert/Update function for table TeacherRoom.
+ */
+static bool insert_or_update_teacher_room_scores(FILE * console_out, sqlite3 * db, const Teacher * teacher, const School * const school, bool is_update){
+	int i = 0, errc;
+	sqlite3_stmt * stmt;
+
+	LMH_ASSERT(teacher != NULL && db != NULL);
+
+	errc = sqlite3_prepare_v2(db, is_update?UPDATE_TABLE_TEACHER_ROOM:INSERT_TABLE_TEACHER_ROOM,-1,&stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	while(i < school->n_rooms){
+		sqlite3_bind_int(stmt,1, teacher->id);
+		sqlite3_bind_int(stmt,2, school->rooms[i].id);
+		if(teacher->lecture_room_scores != NULL){
+			sqlite3_bind_int(stmt,3, teacher->lecture_room_scores[i]);
+		} else {
+			sqlite3_bind_int(stmt, 3, 0);
+		}
+		if(teacher->planning_room_scores != NULL){
+			sqlite3_bind_int(stmt,4, teacher->planning_room_scores[i]);
+		} else {
+			sqlite3_bind_int(stmt, 4, 0);
+		}
+		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
+		++i;
+		CERTIFY_ERRC_SQLITE_ROW_OR_DONE(false);
+	}
+	sqlite3_finalize(stmt);
+	return true;
+}
+
+/**
  * Insert/Update function for table PossibleTeacher
  */
 static bool insert_or_update_teacher_scores(FILE * console_out, sqlite3 * db, const char * const sql, int obj_id, const int * const scores, const School * const school){
@@ -1489,8 +1522,8 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 			}
 		}
 	}
-	if(teacher->room_scores != NULL){
-		insert_or_update_room_scores(console_out, db, INSERT_TABLE_TEACHER_ROOM, teacher->id, teacher->room_scores, school);
+	if(teacher->lecture_room_scores != NULL || teacher->planning_room_scores != NULL){
+		insert_or_update_teacher_room_scores(console_out, db, teacher, school, false);
 	}
 	if(teacher->day_max_meetings != NULL || teacher->day_scores != NULL){
 		insert_or_update_teacher_day_scores(console_out, db, teacher, school, false);
@@ -2063,6 +2096,7 @@ static int * select_teacher_scores(FILE * console_out, sqlite3* db, const char *
 
 	return scores;
 }
+
 /*
  * General select function for tables LecturePossibleRoom, ClassRoom, TeachesRoom, and PlanningRoom.
  */
@@ -2089,6 +2123,37 @@ static int * select_room_scores(FILE * console_out, sqlite3* db, const char * co
 	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(NULL);
 	sqlite3_finalize(stmt);
 	return scores;
+}
+
+/*
+ * Select function for table TeacherRoom.
+ */
+static bool select_teacher_room_scores(FILE * console_out, sqlite3* db, Teacher * teacher, School * school){
+	int i = 0, errc, i_room;
+	sqlite3_stmt * stmt;
+
+	errc = sqlite3_prepare_v2(db, SELECT_TABLE_TEACHER_ROOM_BY_TEACHER_ID, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+
+	sqlite3_bind_int(stmt,1, teacher->id);
+	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(NULL);
+	teacher->planning_room_scores = calloc(11, sizeof(int));
+	teacher->lecture_room_scores = calloc(11, sizeof(int));
+	while(errc == SQLITE_ROW){
+		i_room = get_room_index_by_id(school, sqlite3_column_int(stmt,1));
+		teacher->lecture_room_scores[i_room] = sqlite3_column_int(stmt,2);
+		teacher->planning_room_scores[i_room] = sqlite3_column_int(stmt,3);
+		errc = sqlite3_step(stmt);
+		++i;
+		if(i % 10 == 0){
+			teacher->planning_room_scores = realloc(teacher->planning_room_scores, (i + 11)*sizeof(int));
+			teacher->lecture_room_scores = realloc(teacher->lecture_room_scores, (i + 11)*sizeof(int));
+		}
+	}
+	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(false);
+	sqlite3_finalize(stmt);
+	return true;
 }
 
 // TODO select planning
@@ -2372,7 +2437,7 @@ static Teacher * select_all_teachers_by_school_id(FILE * console_out, sqlite3* d
 	for(i = 0; i < n; ++i){
 		teachers[i].subordinates = select_teacher_subordinates_by_teacher_id(console_out, db, &teachers[i], school);
 		select_teacher_attendance_by_teacher_id(console_out, db, &teachers[i], school);
-		select_room_scores(console_out, db, SELECT_TABLE_TEACHER_ROOM_BY_TEACHER_ID, teachers[i].id, school);
+		select_teacher_room_scores(console_out, db, &teachers[i], school);
 		select_teacher_day_by_teacher_id(console_out, db, &teachers[i], school);
 		teachers[i].planning_twin_scores = select_twin_scores(console_out, db, SELECT_TEACHER_TWIN_PREFERENCE_BY_TEACHER_ID, teachers[i].id, school);
 	}
@@ -2402,6 +2467,11 @@ static Assignment * select_all_assignments_by_school_id(FILE * console_out, sqli
 				assignments = realloc(assignments,(i + 11)*sizeof(Assignment));
 			}
 		}
+		assignments[i].id = -1;
+		assignments[i].amount = 0;
+		assignments[i].max_per_day = 0;
+		assignments[i].m_class = NULL;
+		assignments[i].subject = NULL;
 	}
 	sqlite3_finalize(stmt);
 
@@ -2491,6 +2561,11 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 			classes[i].active = sqlite3_column_int(stmt,7);
 			classes[i].maximal_entry_period = get_daily_period_index_by_id(school, sqlite3_column_int(stmt,5));
 			classes[i].minimal_exit_period = get_daily_period_index_by_id(school, sqlite3_column_int(stmt,6));
+			classes[i].period_scores = NULL;
+			classes[i].room_scores = NULL;
+			classes[i].subordinates = NULL;
+			classes[i].max_per_day_subject_group = NULL;
+			classes[i].assignments = NULL;
 			printf("\n");
 			++i;
 			errc = sqlite3_step(stmt);
@@ -2768,6 +2843,7 @@ static void link_all_assignments(School * school){
 					++n;
 				}
 			}
+			school->classes[i].assignments[n] = NULL;
 	}
 }
 

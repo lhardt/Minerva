@@ -219,8 +219,10 @@ void print_teacher(FILE * out, const Teacher * const t){
 		print_int_list(out, t->planning_period_scores);
 		fprintf(out,"\n\tplanning_twin_scores: ");
 		print_int_list(out, t->planning_twin_scores);
-		fprintf(out,"\n\troom_scores: ");
-		print_int_list(out, t->room_scores);
+		fprintf(out,"\n\tlecture_room_scores: ");
+		print_int_list(out, t->lecture_room_scores);
+		fprintf(out,"\n\tplanning_room_scores: ");
+		print_int_list(out, t->planning_room_scores);
 		fprintf(out,"\n\tsubordinates: ");
 		print_int_list(out, t->subordinates);
 		fprintf(out, "\n\tteaches: ");

@@ -231,7 +231,7 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 }
 
 void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
-	int i, del_i;
+	int del_i;
 	bool success = false;
 	School * school = m_owner->m_school;
 	Class * c;

@@ -57,7 +57,8 @@ typedef struct Teacher {
 	bool 			active; /* Logical delete. To delete and not corrupt solutions */
 	Teaches      ** teaches; /* Null-terminated pointer list */
 	int 		  * subordinates;
-	int 		  * room_scores;
+	int 		  * planning_room_scores;
+	int 		  * lecture_room_scores;
 	int			  * day_max_meetings;
 	int			  * day_scores;
 	int    		  * lecture_period_scores;

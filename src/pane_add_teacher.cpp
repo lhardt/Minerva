@@ -82,7 +82,7 @@ void AddTeacherPane::ClearInsertedData(){
 }
 
 void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
-	int i_subject = 0, i_teaches = 0, n_subjects = 0;
+	int i_subject = 0, n_subjects = 0;
 	Teaches * teaches_vals;
 	School * school = m_owner->m_school;
 
@@ -104,7 +104,8 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.planning_needs_room = false;
 		t.active = true;
 		t.subordinates = NULL;
-		t.room_scores = NULL;
+		t.lecture_room_scores = NULL;
+		t.planning_room_scores = NULL;
 		t.day_max_meetings = NULL;
 		t.day_scores = NULL;
 		t.planning_twin_scores = NULL;
