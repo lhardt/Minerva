@@ -18,7 +18,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	wxStaticText * max_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods);
 	wxStaticText * max_ppd_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods_per_day);
 	wxStaticText * planning_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_number_of_planning_periods);
-	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, wxT("Ativo"));
+	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
 	wxNotebook   * notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	/* DAYS CODE */
@@ -29,19 +29,19 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	m_periods = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	m_teaches = new ScoreGridPane(m_owner, notebook, wxID_ANY);
-	m_days = new PosIntGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxT("Max. Per"),day_names);
+	m_days = new PosIntGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_max_number_of_periods,day_names);
 	m_lecture_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	m_planning_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	wxScrolledWindow * groups = new wxScrolledWindow(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	new wxStaticText(groups, wxID_ANY, wxT("O professor $x não participa de nenhum grupo. (TO DO)"), wxDefaultPosition, wxDefaultSize);
 	m_planning_twinning = new ScoreGridPane(m_owner, notebook, wxID_ANY);
-	notebook->InsertPage(0,m_periods, wxT("Períodos"));
-	notebook->InsertPage(1,m_teaches, wxT("Disciplinas"));
-	notebook->InsertPage(2,m_days, wxT("Dias"));
-	notebook->InsertPage(3,m_planning_twinning, wxT("Geminação do Planejamento"));
-	notebook->InsertPage(4,m_lecture_rooms, wxT("Salas de Aula"));
-	notebook->InsertPage(5,m_planning_rooms, wxT("Salas de Planejamento"));
-	notebook->InsertPage(6, groups, wxT("Grupos de Profs."));
+	notebook->InsertPage(0,m_periods, m_owner->m_lang->str_periods);
+	notebook->InsertPage(1,m_teaches, m_owner->m_lang->str_subjects);
+	notebook->InsertPage(2,m_days, m_owner->m_lang->str_days);
+	notebook->InsertPage(3,m_planning_twinning, m_owner->m_lang->str_planning_time_twinning);
+	notebook->InsertPage(4,m_lecture_rooms, m_owner->m_lang->str_lecture_rooms);
+	notebook->InsertPage(5,m_planning_rooms, m_owner->m_lang->str_planning_rooms);
+	notebook->InsertPage(6, groups, m_owner->m_lang->str_teacher_groups);
 
 	m_teachers_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
@@ -66,8 +66,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	/* TEACHES CODE */
 	ChoiceGrid * teaches_grid = m_teaches->GetGrid();
-	teaches_grid->AddState(wxT("Não Leciona"), wxColor(255,200,200));
-	teaches_grid->AddState(wxT("Leciona"), wxColor(200,200,255));
+	teaches_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
+	teaches_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 
 	teaches_grid->SetColName(i, wxT("Leciona"));
 	for(i = 0; i < school->n_subjects;++i){
@@ -114,7 +114,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * fields_sz = new wxFlexGridSizer(4,5,5);
-	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados Básicos"));
+	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 
 	fields_sz->Add(name_label);
 	fields_sz->Add(m_name_text);

@@ -233,7 +233,14 @@ const Language LANG_POR = {
 	.str_active=L"Ativo",
 	.str_availability=L"Disponibilidade",
 	.str_subject_groups=L"Grupos de Disciplinas",
-
+	.str_data_to_fix=L"Dados a Fixar",
+	.str_occurence=L"Ocorrência",
+	.str_needs_room=L"Precisa de Sala",
+	.str_days=L"Dias",
+	.str_planning_time_twinning=L"Geminação / Planejamento",
+	.str_lecture_rooms=L"Salas / Aula",
+	.str_planning_rooms=L"Salas / Planejamento",
+	.str_teacher_groups=L"Grupos de Professores",
 };
 
 const Language LANG_ENG = {
@@ -455,6 +462,14 @@ const Language LANG_ENG = {
 	.str_active=L"Active",
 	.str_availability=L"Availability",
 	.str_subject_groups=L"Subject Groups",
+	.str_data_to_fix=L"Data to Set",
+	.str_occurence=L"Occurence",
+	.str_needs_room=L"Needs Room",
+	.str_days=L"Days",
+	.str_planning_time_twinning=L"Twinning / Planning",
+	.str_lecture_rooms=L"Rooms / Lectures",
+	.str_planning_rooms=L"Rooms / Planning",
+	.str_teacher_groups=L"Teacher Groups",
 };
 
 const Language LANG_SPA = {
@@ -666,6 +681,14 @@ const Language LANG_SPA = {
 	.str_active=L"?",
 	.str_availability=L"?",
 	.str_subject_groups=L"?",
+	.str_data_to_fix=L"",
+	.str_occurence=L"",
+	.str_needs_room=L"",
+	.str_days=L"",
+	.str_planning_time_twinning=L"",
+	.str_lecture_rooms=L"",
+	.str_planning_rooms=L"",
+	.str_teacher_groups=L"",
 };
 
 const Language LANG_DEU = {
@@ -876,4 +899,12 @@ const Language LANG_DEU = {
 	.str_active=L"?",
 	.str_availability=L"?",
 	.str_subject_groups=L"?",
+	.str_data_to_fix=L"",
+	.str_occurence=L"",
+	.str_needs_room=L"",
+	.str_days=L"Tage",
+	.str_planning_time_twinning=L"",
+	.str_lecture_rooms=L"",
+	.str_planning_rooms=L"",
+	.str_teacher_groups=L"",
 };

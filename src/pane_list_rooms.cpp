@@ -16,7 +16,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_size);
-	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, wxT("Ativo"));
+	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
 	wxNotebook   * notebook = new wxNotebook(this, wxID_ANY);
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
@@ -46,7 +46,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * fields_sz = new wxFlexGridSizer(4,5,5);
-	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados Básicos"));
+	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_active);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 
 	fields_sz->Add(name_label, 0, wxRIGHT | wxEXPAND, 10);

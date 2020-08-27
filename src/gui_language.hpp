@@ -231,6 +231,14 @@ typedef struct Language {
 	const wchar_t * const str_active;
 	const wchar_t * const str_availability;
 	const wchar_t * const str_subject_groups;
+	const wchar_t * const str_data_to_fix;
+	const wchar_t * const str_occurence;
+	const wchar_t * const str_needs_room;
+	const wchar_t * const str_days;
+	const wchar_t * const str_planning_time_twinning;
+	const wchar_t * const str_lecture_rooms;
+	const wchar_t * const str_planning_rooms;
+	const wchar_t * const str_teacher_groups;
 } Language;
 
 const extern Language LANG_POR;

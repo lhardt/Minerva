@@ -22,8 +22,8 @@ ListTeacherGroupsPane::ListTeacherGroupsPane(Application * owner, wxWindow * par
 		}
 	}
 	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300), group_names);
-	m_name_text = new wxStaticText(this, wxID_ANY, wxT("Nome do Grupo: "), wxDefaultPosition, wxSize(400,25));
-	m_members_text = new wxStaticText(this, wxID_ANY, wxT("Membros do Grupo: "), wxDefaultPosition, wxSize(400,-1));
+	m_name_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name, wxDefaultPosition, wxSize(400,25));
+	m_members_text = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_members, wxDefaultPosition, wxSize(400,-1));
 
 	wxButton * edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
@@ -97,8 +97,8 @@ void ListTeacherGroupsPane::OnSelectionChanged(wxCommandEvent &) {
 		if(i_group == i_sel+1){
 			--i_teacher;
 			t = &school->teachers[i_teacher];
-			m_name_text->SetLabel("Nome do Grupo: " + wxString::FromUTF8(t->name));
-			m_members_text->SetLabel("Membros do Grupo: ");
+			m_name_text->SetLabel(m_owner->m_lang->str_name + wxString::FromUTF8(t->name));
+			m_members_text->SetLabel(m_owner->m_lang->str_group_members);
 			for(i = 0; i < school->n_teachers; ++i){
 				if(t->subordinates[i] > 0){
 					m_members_text->SetLabel(m_members_text->GetLabel() + wxT("\n\t") + wxString::FromUTF8(school->teachers[i].name));

@@ -12,7 +12,7 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 
 	wxStaticText * class_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class);
 	wxStaticText * subject_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_subject);
-	wxStaticText * occurence_label = new wxStaticText(this, wxID_ANY, wxT("Ocasião"));
+	wxStaticText * occurence_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_occurence);
 	wxStaticText * teacher_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher);
 	wxStaticText * room_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room);
 	wxStaticText * period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_period);
@@ -43,7 +43,7 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	wxSizer * sizer   = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * left_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * right_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados a fixar"));
+	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_data_to_fix);
 	wxSizer * fields_sz = new wxGridSizer(4,5,5);
 
 	left_sz->Add(class_label, 0, wxBOTTOM, 5);

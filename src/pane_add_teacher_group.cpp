@@ -83,23 +83,30 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		}
 	}
 	if(!m_name_text->GetValue().IsEmpty() && n_members > 0 && n_subjects > 0){
-		Teacher group;
 		int i = 0, j = 0, added_ctr = 0;
-		group.name = copy_wx_string(m_name_text->GetValue());
-		group.short_name = copy_wx_string(m_name_text->GetValue());
-		group.num_planning_periods = 0;
-		group.lecture_period_scores = (int*)calloc(school->n_periods+1, sizeof(int));
-		group.planning_period_scores = (int*)calloc(school->n_periods+1, sizeof(int));
-		group.planning_twin_scores = NULL;
-		group.day_max_meetings = (int*)calloc(school->n_days+1, sizeof(int));
-		group.day_scores = (int*)calloc(school->n_days+1, sizeof(int));
-		group.lecture_room_scores = (int*)calloc(1+school->n_rooms, sizeof(int));
-		group.planning_room_scores = (int*)calloc(1+school->n_rooms, sizeof(int));
+		Teacher group = (Teacher){
+			.name =  copy_wx_string(m_name_text->GetValue()),
+			.short_name = copy_wx_string(m_name_text->GetValue()),
+			.max_days = 0,
+			.max_meetings_per_day = 0,
+			.max_meetings_per_class_per_day = 0,
+			.max_meetings = 0,
+			.planning_needs_room = false,
+			.num_planning_periods = 0,
+			.active = true,
+			.teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*)),
+			.subordinates = (int *)calloc(n_members + 1, sizeof(int)),
+			.planning_room_scores = (int*)calloc(1+school->n_rooms, sizeof(int)),
+			.lecture_room_scores = (int*)calloc(1+school->n_rooms, sizeof(int)),
+			.day_max_meetings = (int*)calloc(school->n_days+1, sizeof(int)),
+			.day_scores = (int*)calloc(school->n_days+1, sizeof(int)),
+			.lecture_period_scores = (int*)calloc(school->n_periods+1, sizeof(int)),
+			.planning_period_scores = (int*)calloc(school->n_periods+1, sizeof(int)),
+			.planning_twin_scores = NULL
+		};
 		group.lecture_room_scores[school->n_rooms] = -1;
 		group.planning_room_scores[school->n_rooms] = -1;
-		group.subordinates = (int *)calloc(n_members + 1, sizeof(int));
 		Teaches * teaches_vals = (Teaches*)calloc(n_subjects + 1, sizeof(Teaches));
-		group.teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*));
 		/* group.max_days will be the least of .max_days of all teachers. Similarly */
 		for(i = 0; i < school->n_teachers; ++i){
 			if(m_teachers_grid->GetCellState(i,0) > 0){

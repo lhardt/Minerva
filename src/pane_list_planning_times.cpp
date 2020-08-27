@@ -7,14 +7,14 @@ ListPlanningTimesPane::ListPlanningTimesPane(Application * owner, wxWindow * par
 	SetBackgroundColour(wxColour(240,240,240));
 
 	wxStaticText * teacher_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher);
-	wxStaticText * occurence_label = new wxStaticText(this, wxID_ANY, wxT("Ocasião"));
+	wxStaticText * occurence_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_occurence);
 
 	teacher_label->SetFont(*m_owner->m_small_font);
 	occurence_label->SetFont(*m_owner->m_small_font);
 
-	wxStaticText * needs_room_label = new wxStaticText(this, wxID_ANY, wxT("Necessita de sala"));
-	wxStaticText * room_label = new wxStaticText(this, wxID_ANY, wxT("Sala"));
-	wxStaticText * period_label = new wxStaticText(this, wxID_ANY, wxT("Período"));
+	wxStaticText * needs_room_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_needs_room);
+	wxStaticText * room_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room);
+	wxStaticText * period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_period);
 
 	m_teacher_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(200,30));
 	m_occurence_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(200,30));
@@ -33,7 +33,7 @@ ListPlanningTimesPane::ListPlanningTimesPane(Application * owner, wxWindow * par
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * left_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * right_sz = new wxBoxSizer(wxVERTICAL);
-	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados a Fixar"));
+	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_data_to_fix);
 	wxSizer * fields_sz = new wxGridSizer(4,5,5);
 
 	left_sz->Add(teacher_label);

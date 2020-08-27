@@ -39,7 +39,7 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	}
 	members_grid->GridRemake(1, school->n_subjects);
 
-	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Dados Básicos"));
+	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 	wxSizer * fields_sz = new wxGridSizer(4,5,5);
 	fields_sz->Add(name_label);
 	fields_sz->Add(m_name_text);
