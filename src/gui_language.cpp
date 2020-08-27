@@ -241,6 +241,10 @@ const Language LANG_POR = {
 	.str_lecture_rooms=L"Salas / Aula",
 	.str_planning_rooms=L"Salas / Planejamento",
 	.str_teacher_groups=L"Grupos de Professores",
+	.str_list_of_teachers_and_their_groups=L"Lista de Professores e seus Grupos",
+	.str_list_teachers_and_their_groups=L"Listar Professores e seus Grupos",
+	.str_group=L"Grupo",
+	.str_dependency=L"Dependência",
 };
 
 const Language LANG_ENG = {
@@ -470,6 +474,10 @@ const Language LANG_ENG = {
 	.str_lecture_rooms=L"Rooms / Lectures",
 	.str_planning_rooms=L"Rooms / Planning",
 	.str_teacher_groups=L"Teacher Groups",
+	.str_list_of_teachers_and_their_groups=L"List of Teachers and their Groups",
+	.str_list_teachers_and_their_groups=L"List Teachers and their Groups",
+	.str_group=L"Group",
+	.str_dependency=L"Dependency",
 };
 
 const Language LANG_SPA = {
@@ -681,14 +689,18 @@ const Language LANG_SPA = {
 	.str_active=L"?",
 	.str_availability=L"?",
 	.str_subject_groups=L"?",
-	.str_data_to_fix=L"",
-	.str_occurence=L"",
-	.str_needs_room=L"",
-	.str_days=L"",
-	.str_planning_time_twinning=L"",
-	.str_lecture_rooms=L"",
-	.str_planning_rooms=L"",
-	.str_teacher_groups=L"",
+	.str_data_to_fix=L"?",
+	.str_occurence=L"?",
+	.str_needs_room=L"?",
+	.str_days=L"?",
+	.str_planning_time_twinning=L"?",
+	.str_lecture_rooms=L"?",
+	.str_planning_rooms=L"?",
+	.str_teacher_groups=L"?",
+	.str_list_of_teachers_and_their_groups=L"?",
+	.str_list_teachers_and_their_groups=L"",
+	.str_group=L"?",
+	.str_dependency=L"?",
 };
 
 const Language LANG_DEU = {
@@ -864,10 +876,10 @@ const Language LANG_DEU = {
 	.str_number_of_planning_periods=L"Die Anzahl von Klassenplanungszeiträume",
 	.str_teachers_teach=L"Die Lehrer lehren",
 
-	.str_group_available=L"",
-	.str_group_unavailable=L"",
-	.str_group_availibility=L"",
-	.str_group_members=L"",
+	.str_group_available=L"?",
+	.str_group_unavailable=L"?",
+	.str_group_availibility=L"?",
+	.str_group_members=L"?",
 
 	.str_score_0=L" ",
 	.str_score_1=L" ",
@@ -903,8 +915,12 @@ const Language LANG_DEU = {
 	.str_occurence=L"",
 	.str_needs_room=L"",
 	.str_days=L"Tage",
-	.str_planning_time_twinning=L"",
-	.str_lecture_rooms=L"",
-	.str_planning_rooms=L"",
-	.str_teacher_groups=L"",
+	.str_planning_time_twinning=L"?",
+	.str_lecture_rooms=L"?",
+	.str_planning_rooms=L"?",
+	.str_teacher_groups=L"?",
+	.str_list_of_teachers_and_their_groups=L"?",
+	.str_list_teachers_and_their_groups=L"?",
+	.str_group=L"?",
+	.str_dependency=L"?",
 };

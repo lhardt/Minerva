@@ -104,8 +104,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[2][2]->AddButton(ID_CHECK_ALL_SUBJECTS, m_owner->m_lang->str_check_all, image_check);
 	m_rib_bbars[2][3]->AddButton(ID_OPEN_SUBJECTS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 	/* PROFESSORES */
-	m_rib_bbars[3][0]->AddButton(ID_VIEW_TEACHERS, m_owner->m_lang->str_list_teachers, image_list);
-	m_rib_bbars[3][0]->AddButton(ID_VIEW_TEACHER_GROUPS, m_owner->m_lang->str_list_teacher_groups, image_list);
+	m_rib_bbars[3][0]->AddButton(ID_VIEW_TEACHERS, m_owner->m_lang->str_list_teachers_and_their_groups, image_list);
 	m_rib_bbars[3][1]->AddButton(ID_ADD_TEACHER, m_owner->m_lang->str_add_teacher, image_add);
 	m_rib_bbars[3][1]->AddButton(ID_ADD_TEACHER_GROUP, m_owner->m_lang->str_add_teacher_group, image_add);
 	m_rib_bbars[3][2]->AddButton(ID_CHECK_ALL_TEACHERS, m_owner->m_lang->str_check_all, image_check);
@@ -361,15 +360,9 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			break;
 		}
 		case ID_VIEW_TEACHERS:{
-			title = m_owner->m_lang->str_list_of_teachers;
+			title = m_owner->m_lang->str_list_of_teachers_and_their_groups;
 			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new ListTeachersPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case ID_VIEW_TEACHER_GROUPS:{
-			title = m_owner->m_lang->str_list_teacher_groups;
-			detail = m_owner->m_lang->str_lorem;
-			pane_to_open = new ListTeacherGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_CHECK_ALL_TEACHERS:{

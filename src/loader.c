@@ -2322,6 +2322,8 @@ static int * select_teacher_subordinates_by_teacher_id(FILE * console_out, sqlit
 			errc = sqlite3_step(stmt);
 			++i;
 		}
+	} else {
+		t->subordinates = NULL;
 	}
 	return t->subordinates;
 }

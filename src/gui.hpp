@@ -23,7 +23,6 @@
 
 #include "gui_language.hpp"
 
-
 extern "C" {
 	#include "types.h"
 };
@@ -517,45 +516,31 @@ class ListTeachersPane : public wxScrolledWindow {
 	ListTeachersPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListTeachersPane();
  private:
-	wxListBox     * m_teachers_list;
-	wxTextCtrl    * m_name_text;
-	wxSpinCtrl	  * m_max_days_text;
-	wxSpinCtrl    * m_max_periods_text;
-	wxSpinCtrl	  * m_max_ppd_text;
-	wxSpinCtrl    * m_planning_periods_text;
-	wxCheckBox    * m_active_text;
-	ScoreGridPane * m_periods;
-	ScoreGridPane * m_teaches;
+	wxListBox      * m_teachers_list;
+	wxTextCtrl     * m_name_text;
+	wxSpinCtrl	   * m_max_days_text;
+	wxSpinCtrl     * m_max_periods_text;
+	wxSpinCtrl	   * m_max_ppd_text;
+	wxSpinCtrl     * m_planning_periods_text;
+	wxCheckBox     * m_active_text;
+	wxCheckBox	   * m_dependency_text;
+	ScoreGridPane  * m_periods;
+	ScoreGridPane  * m_teaches;
 	PosIntGridPane * m_days;
-	ScoreGridPane * m_planning_rooms;
-	ScoreGridPane * m_lecture_rooms;
-	ScoreGridPane * m_planning_twinning;
-	wxButton 	  * m_cancel_btn;
-	wxButton 	  * m_edit_btn;
+	ScoreGridPane  * m_planning_rooms;
+	ScoreGridPane  * m_lecture_rooms;
+	ScoreGridPane  * m_planning_twinning;
+	wxButton 	   * m_cancel_btn;
+	wxButton 	   * m_edit_btn;
+	ScoreGridPane  * m_groups;
 
 	Application * m_owner;
 
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnCancelButtonClicked(wxCommandEvent &);
     void OnDeleteButtonClicked(wxCommandEvent &);
+	void OnDependencyButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
-};
-
-class ListTeacherGroupsPane : public wxScrolledWindow {
- public:
-	ListTeacherGroupsPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~ListTeacherGroupsPane();
- private:
-	Application * m_owner;
-
-	wxListBox * m_groups_list;
-	wxStaticText * m_name_text;
-	wxStaticText * m_members_text;
-	wxStaticText * m_err_msg;
-
-	void OnEditButtonClicked(wxCommandEvent &);
-	void OnDeleteButtonClicked(wxCommandEvent &);
-	void OnSelectionChanged(wxCommandEvent &);
 };
 
 class ListClassesPane : public wxScrolledWindow {

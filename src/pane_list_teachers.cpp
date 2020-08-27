@@ -4,6 +4,7 @@ extern "C" {
 	#include "loader.h"
 	#include "preprocess.h"
 	#include "util.h"
+	#include "maths.h"
 };
 
 ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
@@ -19,6 +20,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	wxStaticText * max_ppd_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods_per_day);
 	wxStaticText * planning_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_number_of_planning_periods);
 	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
+	wxStaticText * dependency_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_dependency);
 	wxNotebook   * notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	/* DAYS CODE */
@@ -32,17 +34,15 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_days = new PosIntGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_max_number_of_periods,day_names);
 	m_lecture_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	m_planning_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
-	wxScrolledWindow * groups = new wxScrolledWindow(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	new wxStaticText(groups, wxID_ANY, wxT("O professor $x não participa de nenhum grupo. (TO DO)"), wxDefaultPosition, wxDefaultSize);
+	m_groups = new ScoreGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	m_planning_twinning = new ScoreGridPane(m_owner, notebook, wxID_ANY);
-	notebook->InsertPage(0,m_periods, m_owner->m_lang->str_periods);
-	notebook->InsertPage(1,m_teaches, m_owner->m_lang->str_subjects);
-	notebook->InsertPage(2,m_days, m_owner->m_lang->str_days);
-	notebook->InsertPage(3,m_planning_twinning, m_owner->m_lang->str_planning_time_twinning);
-	notebook->InsertPage(4,m_lecture_rooms, m_owner->m_lang->str_lecture_rooms);
-	notebook->InsertPage(5,m_planning_rooms, m_owner->m_lang->str_planning_rooms);
-	notebook->InsertPage(6, groups, m_owner->m_lang->str_teacher_groups);
-
+	notebook->InsertPage(0, m_periods, m_owner->m_lang->str_periods);
+	notebook->InsertPage(1, m_teaches, m_owner->m_lang->str_subjects);
+	notebook->InsertPage(2, m_days, m_owner->m_lang->str_days);
+	notebook->InsertPage(3, m_planning_twinning, m_owner->m_lang->str_planning_time_twinning);
+	notebook->InsertPage(4, m_lecture_rooms, m_owner->m_lang->str_lecture_rooms);
+	notebook->InsertPage(5, m_planning_rooms, m_owner->m_lang->str_planning_rooms);
+	notebook->InsertPage(6, m_groups, m_owner->m_lang->str_teacher_groups);
 	m_teachers_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
 	m_max_days_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
@@ -50,6 +50,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_max_ppd_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 	m_planning_periods_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""));
+	m_dependency_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
 	m_cancel_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_cancel, wxDefaultPosition, wxSize(200,30));
 
@@ -128,8 +129,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	fields_sz->Add(m_planning_periods_text);
 	fields_sz->Add(active_label);
 	fields_sz->Add(m_active_text);
-	fields_sz->AddStretchSpacer();
-	fields_sz->AddStretchSpacer();
+	fields_sz->Add(dependency_label);
+	fields_sz->Add(m_dependency_text);
 	fields_sz->Add(m_cancel_btn);
 	fields_sz->Add(m_edit_btn);
 
@@ -152,9 +153,14 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnDeleteButtonClicked, this);
+	m_dependency_text->Bind(wxEVT_CHECKBOX, &ListTeachersPane::OnDependencyButtonClicked,this);
 
 	for(i = 0; i < school->n_teachers; ++i){
-		m_teachers_list->Insert(wxString::FromUTF8(school->teachers[i].name), i, new IntClientData(i));
+		if(school->teachers[i].subordinates && (find_first_positive(school->teachers[i].subordinates) >= 0)){
+			m_teachers_list->Insert(wxString::Format("(%s) %s", m_owner->m_lang->str_group, wxString::FromUTF8(school->teachers[i].name)), i, new IntClientData(i));
+		} else {
+			m_teachers_list->Insert(wxString::FromUTF8(school->teachers[i].name), i, new IntClientData(i));
+		}
 	}
 
 	m_cancel_btn->Hide();
@@ -164,6 +170,18 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_max_ppd_text->Disable();
 	m_planning_periods_text->Disable();
 	m_active_text->Disable();
+	m_dependency_text->Disable();
+	m_groups->Hide();
+}
+
+void ListTeachersPane::OnDependencyButtonClicked(wxCommandEvent &){
+	printf("OnDep\n");
+	if(m_dependency_text->GetValue()){
+		m_groups->Show();
+	} else {
+		m_groups->Hide();
+	}
+	Layout();
 }
 
 void ListTeachersPane::OnEditButtonClicked(wxCommandEvent &) {
@@ -176,6 +194,7 @@ void ListTeachersPane::OnEditButtonClicked(wxCommandEvent &) {
 		m_max_ppd_text->Disable();
 		m_planning_periods_text->Disable();
 		m_active_text->Disable();
+		m_dependency_text->Disable();
 	} else {
 		m_cancel_btn->Show();
 		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
@@ -185,6 +204,7 @@ void ListTeachersPane::OnEditButtonClicked(wxCommandEvent &) {
 		m_max_ppd_text->Enable();
 		m_planning_periods_text->Enable();
 		m_active_text->Enable();
+		m_dependency_text->Enable();
 	}
 }
 
