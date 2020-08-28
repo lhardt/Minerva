@@ -218,7 +218,7 @@ const char * const CREATE_TABLE_CLASS_SUBORDINATION =
 				"UNIQUE (id_sup, id_sub)"
 			")");
 const char * const INSERT_TABLE_CLASS_SUBORDINATION =
-			("INSERT INTO ClassSubordination(id_sub, id_sup) VALUES(?,?)");
+			("INSERT INTO ClassSubordination(id_sup, id_sub) VALUES(?,?)");
 /* NOTE: there is no reason to update this table. Only delete and add accordingly */
 const char * const LASTID_TABLE_CLASS_SUBORDINATION =
 			("SELECT id FROM ClassSubordination where rowid = last_insert_rowid()");
@@ -494,7 +494,7 @@ const char * const CREATE_TABLE_TEACHER_SUBORDINATION =
 				"UNIQUE (id_sub, id_sup)"
 			")");
 const char * const INSERT_TABLE_TEACHER_SUBORDINATION =
-			("INSERT INTO TeacherSubordination(id_sub, id_sup) VALUES (?,?)");
+			("INSERT INTO TeacherSubordination(id_sup, id_sub) VALUES (?,?)");
 /* NOTE: there is no reason to update this table. Only delete and add accordingly */
 const char * const LASTID_TEACHER_SUBORDINATION =
 			("SELECT id FROM TeacherSubordination where rowid = last_insert_rowid()");
@@ -2317,7 +2317,7 @@ static int * select_teacher_subordinates_by_teacher_id(FILE * console_out, sqlit
 	if(errc == SQLITE_ROW) {
 		t->subordinates = calloc(1+ school->n_teachers, sizeof(int));
 		while(errc == SQLITE_ROW){
-			i_sub = get_teacher_index_by_id(school, sqlite3_column_int(stmt,1));
+			i_sub = get_teacher_index_by_id(school, sqlite3_column_int(stmt,2));
 			t->subordinates[i_sub] = 1;
 			errc = sqlite3_step(stmt);
 			++i;
