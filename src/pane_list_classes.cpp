@@ -25,22 +25,23 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	wxStaticText * entry_period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_entry_period);
 	wxStaticText * exit_period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_exit_period);
 	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
+	wxStaticText * composite_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_is_superclass);
 	wxStaticText * m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_classes_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,30));
 	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
 	m_size_text = new wxSpinCtrl(this, wxID_ANY);
 	m_free_periods_text = new wxCheckBox(this, wxID_ANY, wxT(""));
+	m_composite_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_entry_period_text = new wxChoice(this, wxID_ANY);
 	m_exit_period_text = new wxChoice(this, wxID_ANY);
 	m_subjects_text = new wxStaticText(this, wxID_ANY, wxT(""));
-	// m_periods_grid = new ChoiceGrid(notebook, wxID_ANY, wxDefaultPosition,wxSize(250,200));
 	wxButton * delete_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_delete);
 	m_basic_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
 	m_basic_edit_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_edit);
 
 	m_periods = new ScoreGridPane(m_owner,notebook, wxID_ANY);
-	// m_superclasses = new ScoreGridPane(m_owner,notebook, wxID_ANY);
+	m_superclasses = new ScoreGridPane(m_owner,notebook, wxID_ANY);
 	m_rooms = new ScoreGridPane(m_owner,notebook, wxID_ANY);
 
 	wxVector<wxString> all_subject_names = wxVector<wxString>();
@@ -81,8 +82,8 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	fields_sizer->Add(m_free_periods_text, 0, wxEXPAND);
 	fields_sizer->Add(active_label, 0, wxEXPAND);
 	fields_sizer->Add(m_active_text, 0, wxEXPAND);
-	fields_sizer->AddStretchSpacer();
-	fields_sizer->AddStretchSpacer();
+	fields_sizer->Add(composite_label, 0, wxEXPAND);
+	fields_sizer->Add(m_composite_text, 0, wxEXPAND);
 	fields_sizer->Add(m_basic_cancel_btn, 0, wxEXPAND);
 	fields_sizer->Add(m_basic_edit_btn, 0, wxEXPAND);
 	box_field_sizer->Add(fields_sizer, 0, wxALL, 5);
@@ -96,6 +97,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	notebook->InsertPage(1, m_assignments, m_owner->m_lang->str_subjects);
 	notebook->InsertPage(2, m_rooms, m_owner->m_lang->str_rooms);
 	notebook->InsertPage(3, m_groups, m_owner->m_lang->str_subject_groups);
+	notebook->InsertPage(4, m_superclasses, m_owner->m_lang->str_group);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -222,11 +224,11 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		for(i = 0; i < school->n_periods; ++i){
 			m_periods->GetGrid()->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day,c->period_scores[i] > 0 ? 0:1);
 		}
-		for(i = 0; i < school->n_subject_groups; ++i){
-			m_groups->GetGrid()->SetCellValue(i,0, wxString::Format("%d", c->max_per_day_subject_group[i]));
-
+		if(c->max_per_day_subject_group){
+			for(i = 0; i < school->n_subject_groups; ++i){
+				m_groups->GetGrid()->SetCellValue(i,0, wxString::Format("%d", c->max_per_day_subject_group[i]));
+			}
 		}
-
 	}
 }
 
@@ -240,7 +242,6 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 	if(del_i != wxNOT_FOUND){
 		c = &school->classes[del_i];
 		success = remove_class(stdout, m_owner->m_database, c->id);
-
 		if(success) {
 			school_class_remove(school, del_i);
 			m_classes_list->Delete(del_i);
@@ -257,7 +258,6 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 		} else {
 			printf("Não foi possível deletar.\n");
 		}
-
 	}
 }
 

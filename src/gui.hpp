@@ -548,44 +548,28 @@ class ListClassesPane : public wxScrolledWindow {
 	ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos);
 	~ListClassesPane();
  private:
-	wxListBox 	 * m_classes_list;
-	wxTextCtrl   * m_name_text;
-	wxSpinCtrl   * m_size_text;
-	wxCheckBox   * m_free_periods_text;
-	wxChoice 	 * m_entry_period_text;
-	wxChoice     * m_exit_period_text;
-	wxStaticText * m_subjects_text;
-	wxCheckBox   * m_active_text;
-	ScoreGridPane * m_periods;
-	ScoreGridPane * m_rooms;
+	wxListBox 	   * m_classes_list;
+	wxTextCtrl     * m_name_text;
+	wxSpinCtrl     * m_size_text;
+	wxCheckBox     * m_free_periods_text;
+	wxChoice 	   * m_entry_period_text;
+	wxChoice       * m_exit_period_text;
+	wxStaticText   * m_subjects_text;
+	wxCheckBox     * m_active_text;
+	wxCheckBox     * m_composite_text;
+	ScoreGridPane  * m_periods;
+	ScoreGridPane  * m_rooms;
 	PosIntGridPane * m_assignments;
 	PosIntGridPane * m_groups;
-	wxButton 	 * m_basic_edit_btn;
-	wxButton	 * m_basic_cancel_btn;
-	Application  * m_owner;
+	ScoreGridPane  * m_superclasses;
+	wxButton 	   * m_basic_edit_btn;
+	wxButton	   * m_basic_cancel_btn;
+	Application    * m_owner;
 
 	void OnSelectionChanged(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnRemoveButtonClicked(wxCommandEvent &);
-};
-
-class ListClassGroupsPane : public wxScrolledWindow {
- public:
-	ListClassGroupsPane(Application * owner, wxWindow * parent, wxPoint pos);
-	~ListClassGroupsPane();
- private:
-	Application * m_owner;
-
-	wxListBox * m_groups_list;
-	wxStaticText * m_name_text;
-	wxStaticText * m_members_text;
-	ChoiceGrid * m_periods_grid;
-	wxStaticText * m_err_msg;
-
-	void OnSelectionChanged(wxCommandEvent &);
-	void OnEditButtonClicked(wxCommandEvent &);
-	void OnDeleteButtonClicked(wxCommandEvent &);
 };
 
 class ListLecturesPane : public wxScrolledWindow {

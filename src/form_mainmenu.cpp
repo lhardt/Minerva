@@ -111,7 +111,6 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[3][3]->AddButton(ID_OPEN_TEACHERS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 	/* TURMAS */
 	m_rib_bbars[4][0]->AddButton(ID_VIEW_CLASSES, m_owner->m_lang->str_list_classes, image_list);
-	m_rib_bbars[4][0]->AddButton(ID_VIEW_CLASS_GROUPS, m_owner->m_lang->str_list_class_groups, image_list);
 	m_rib_bbars[4][1]->AddButton(ID_ADD_CLASS, m_owner->m_lang->str_add_class, image_add);
 	m_rib_bbars[4][1]->AddButton(ID_ADD_CLASS_GROUP, m_owner->m_lang->str_add_class_group, image_add);
 	m_rib_bbars[4][2]->AddButton(ID_CHECK_ALL_CLASSES, m_owner->m_lang->str_check_all, image_check);
@@ -383,15 +382,9 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			break;
 		}
 		case ID_VIEW_CLASSES:{
-			title = m_owner->m_lang->str_list_classes;
+			title = m_owner->m_lang->str_list_classes_and_their_groups;
 			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new ListClassesPane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case ID_VIEW_CLASS_GROUPS:{
-			title = m_owner->m_lang->str_list_of_class_groups;
-			detail = m_owner->m_lang->str_lorem;
-			pane_to_open = new ListClassGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_CHECK_ALL_CLASSES:{

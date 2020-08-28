@@ -55,8 +55,8 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	}
 	m_free_periods_checkbox->SetFont(*m_owner->m_small_font);
 
+	m_periods->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	m_periods->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
-	m_periods->AddState(m_owner->m_lang->str_class_unavailable, wxColor(200,200,255));
 
 	m_periods->m_basic_col_name = m_owner->m_lang->str_day;
 	m_periods->m_basic_row_name = m_owner->m_lang->str_period;
@@ -113,7 +113,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.size = m_size_text->GetValue();
 		c.period_scores = (int *) calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
-			c.period_scores[i] = (m_periods->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day) == 0)? 1:0;
+			c.period_scores[i] = m_periods->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
 		}
 		c.period_scores[school->n_periods] = -1;
 		c.room_scores = nullptr;

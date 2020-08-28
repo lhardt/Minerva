@@ -245,6 +245,9 @@ const Language LANG_POR = {
 	.str_list_teachers_and_their_groups=L"Listar Professores e seus Grupos",
 	.str_group=L"Grupo",
 	.str_dependency=L"Dependência",
+	.str_list_of_classes_and_their_groups=L"Listar Turmas e seus Grupos",
+	.str_list_classes_and_their_groups=L"Lista de Turmas e seus Grupos",
+	.str_is_superclass=L"É turma composta",
 };
 
 const Language LANG_ENG = {
@@ -478,6 +481,9 @@ const Language LANG_ENG = {
 	.str_list_teachers_and_their_groups=L"List Teachers and their Groups",
 	.str_group=L"Group",
 	.str_dependency=L"Dependency",
+	.str_list_of_classes_and_their_groups=L"List of Classes and their Groups",
+	.str_list_classes_and_their_groups=L"List Classes and their Groups",
+	.str_is_superclass=L"Is composite class",
 };
 
 const Language LANG_SPA = {
@@ -701,6 +707,9 @@ const Language LANG_SPA = {
 	.str_list_teachers_and_their_groups=L"",
 	.str_group=L"?",
 	.str_dependency=L"?",
+	.str_list_of_classes_and_their_groups=L"?",
+	.str_list_classes_and_their_groups=L"?",
+	.str_is_superclass=L"?",
 };
 
 const Language LANG_DEU = {
@@ -923,4 +932,7 @@ const Language LANG_DEU = {
 	.str_list_teachers_and_their_groups=L"?",
 	.str_group=L"?",
 	.str_dependency=L"?",
+	.str_list_of_classes_and_their_groups=L"?",
+	.str_list_classes_and_their_groups=L"?",
+	.str_is_superclass=L"?",
 };

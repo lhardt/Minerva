@@ -2138,19 +2138,17 @@ static bool select_teacher_room_scores(FILE * console_out, sqlite3* db, Teacher 
 	sqlite3_bind_int(stmt,1, teacher->id);
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(NULL);
-	teacher->planning_room_scores = calloc(11, sizeof(int));
-	teacher->lecture_room_scores = calloc(11, sizeof(int));
+	teacher->planning_room_scores = calloc(school->n_rooms+1, sizeof(int));
+	teacher->lecture_room_scores = calloc(school->n_rooms+1, sizeof(int));
 	while(errc == SQLITE_ROW){
-		i_room = get_room_index_by_id(school, sqlite3_column_int(stmt,1));
-		teacher->lecture_room_scores[i_room] = sqlite3_column_int(stmt,2);
-		teacher->planning_room_scores[i_room] = sqlite3_column_int(stmt,3);
+		i_room = get_room_index_by_id(school, sqlite3_column_int(stmt,2));
+		teacher->lecture_room_scores[i_room] = sqlite3_column_int(stmt,3);
+		teacher->planning_room_scores[i_room] = sqlite3_column_int(stmt,4);
 		errc = sqlite3_step(stmt);
 		++i;
-		if(i % 10 == 0){
-			teacher->planning_room_scores = realloc(teacher->planning_room_scores, (i + 11)*sizeof(int));
-			teacher->lecture_room_scores = realloc(teacher->lecture_room_scores, (i + 11)*sizeof(int));
-		}
 	}
+	teacher->lecture_room_scores[school->n_rooms] = -1;
+	teacher->planning_room_scores[school->n_rooms] = -1;
 	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(false);
 	sqlite3_finalize(stmt);
 	return true;
@@ -2568,7 +2566,6 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 			classes[i].subordinates = NULL;
 			classes[i].max_per_day_subject_group = NULL;
 			classes[i].assignments = NULL;
-			printf("\n");
 			++i;
 			errc = sqlite3_step(stmt);
 			if(i % 10 == 0){
@@ -2837,15 +2834,15 @@ static void link_all_assignments(School * school){
 				++n;
 			}
 		}
-			school->classes[i].assignments = calloc(n+1, sizeof(Assignment*));
-			n = 0;
-			for(j = 0; j < school->n_assignments; ++j){
-				if(school->assignments[j].m_class->id == school->classes[i].id){
-					school->classes[i].assignments[n] = & school->assignments[j];
-					++n;
-				}
+		school->classes[i].assignments = calloc(n+1, sizeof(Assignment*));
+		n = 0;
+		for(j = 0; j < school->n_assignments; ++j){
+			if(school->assignments[j].m_class->id == school->classes[i].id){
+				school->classes[i].assignments[n] = & school->assignments[j];
+				++n;
 			}
-			school->classes[i].assignments[n] = NULL;
+		}
+		school->classes[i].assignments[n] = NULL;
 	}
 }
 

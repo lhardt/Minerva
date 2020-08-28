@@ -114,7 +114,11 @@ void ListSubjectGroupsPane::OnSelectionChanged(wxCommandEvent & evt){
 		ChoiceGrid * members_grid = m_members->GetGrid();
 		m_name_text->SetValue(wxString::FromUTF8(school->subject_group_names[i_select]));
 		for(i = 0; i < school->n_subjects; ++i){
-			members_grid->SetCellState(i, 0, school->subjects[i].in_groups[i_select] > 0 ? 1:0);
+			if(school->subjects[i].in_groups){
+				members_grid->SetCellState(i, 0, school->subjects[i].in_groups[i_select] > 0 ? 1:0);
+			} else {
+				members_grid->SetCellState(i, 0, 0);
+			}
 		}
 	}
 	Layout();
