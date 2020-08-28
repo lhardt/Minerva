@@ -14,6 +14,7 @@
 
 #define LMH_DEBUG
 
+#include <stdio.h>
 
 #ifdef  LMH_DEBUG
 #	define LMH_RAISE( m ) do{ printf("Assertion Error (F: %s, L: %d, E: %s);\n", __FILE__, __LINE__, m); }while(0)

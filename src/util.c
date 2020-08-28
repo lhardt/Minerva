@@ -373,10 +373,12 @@ int get_per_index_by_id(School * school, int id){
 
 Assignment * find_assignment_by_class_subj_id(School * school, int id_class, int id_subj){
 	for(int i = 0; i < school->n_assignments; ++i){
+		printf("Assignment witf classid %d and subjid %d\n", school->assignments[i].m_class->id, school->assignments[i].subject->id);
 		if(school->assignments[i].m_class->id == id_class && school->assignments[i].subject->id == id_subj){
 			return &school->assignments[i];
 		}
 	}
+	printf("Did not find assignment with idcl %d and idsubj %d\n", id_class, id_subj);
 	return NULL;
 }
 

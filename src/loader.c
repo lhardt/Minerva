@@ -347,7 +347,7 @@ const char * const INSERT_TABLE_CLASS_SUBJECT =
 			("INSERT INTO ClassSubject(amount, max_per_per_day, id_class, id_subject) VALUES (?,?,?,?)");
 const char * const UPDATE_TABLE_CLASS_SUBJECT =
 			("UPDATE ClassSubject SET (amount, max_per_per_day, id_class, id_subject)=(?1,?2,?3,?4) WHERE id_class=?3 AND id_subject=?4");
-const char * const LASTID_CLASS_SUBJECT =
+const char * const LASTID_TABLE_CLASS_SUBJECT =
 			("SELECT id FROM ClassSubject where rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_SUBJECT_BY_CLASS_ID =
 			("SELECT * FROM ClassSubject WHERE id_class = ?");
@@ -1550,6 +1550,7 @@ static bool insert_or_update_class_assignment(FILE * console_out, sqlite3 * db, 
 	errc = sqlite3_step(stmt);
 	sqlite3_finalize(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(false);
+	sqlite3_exec(db, LASTID_TABLE_CLASS_SUBJECT, get_id_callback, &(assignment->id), NULL);
 	return true;
 }
 
@@ -1727,6 +1728,67 @@ int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * 
 	return subject->id;
 }
 
+bool insert_meetings_list(FILE * console_out, sqlite3 * db, Meeting * meetings, School * school){
+	int i, errc, j;
+	sqlite3_stmt * stmt;
+	fprintf(console_out, "Inserting all meetings.\n");
+
+	errc = sqlite3_prepare_v2(db, INSERT_TABLE_LECTURE, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(-1);
+	for(i = 0; meetings[i].type != meet_NULL; ++i){
+		if(meetings[i].type == meet_LECTURE){
+			Assignment * asg = find_assignment_by_class_subj_id(school,meetings[i].m_class->id,meetings[i].subject->id);
+			for(j = 0; j < asg->amount; j++){
+				sqlite3_bind_int(stmt,1, asg->id);
+				sqlite3_bind_int(stmt,2, school->id);
+				errc = sqlite3_step(stmt);
+				sqlite3_reset(stmt);
+				CERTIFY_ERRC_SQLITE_DONE(false);
+				errc = sqlite3_exec(db, LASTID_TABLE_LECTURE, get_id_callback, &meetings[i].id, NULL);
+				CERTIFY_ERRC_SQLITE_OK(false);
+			}
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	errc = sqlite3_prepare_v2(db, INSERT_TABLE_PLANNING, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(-1);
+	for(i = 0; meetings[i].type != meet_NULL; ++i){
+		if(meetings[i].type == meet_PLANNING){
+			sqlite3_bind_int(stmt,1, meetings[i].teacher->id);
+			errc = sqlite3_step(stmt);
+			sqlite3_reset(stmt);
+			CERTIFY_ERRC_SQLITE_DONE(false);
+
+			errc = sqlite3_exec(db, LASTID_TABLE_PLANNING, get_id_callback, &meetings[i].id, NULL);
+			CERTIFY_ERRC_SQLITE_OK(false);
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	for(i = 0; meetings[i].type != meet_NULL; ++i){
+		if(meetings[i].type == meet_LECTURE){
+			if (meetings[i].possible_periods != NULL){
+				insert_or_update_period_scores(console_out, db, INSERT_TABLE_LECTURE_POSSIBLE_PERIOD, meetings[i].id, meetings[i].possible_periods, school);
+			}
+			if(meetings[i].possible_rooms != NULL){
+				insert_or_update_room_scores(console_out, db, INSERT_TABLE_LECTURE_POSSIBLE_ROOM, meetings[i].id, meetings[i].possible_rooms, school);
+			}
+			if(meetings[i].possible_teachers != NULL){
+				insert_or_update_teacher_scores(console_out, db, INSERT_TABLE_POSSIBLE_TEACHER, meetings[i].id, meetings[i].possible_teachers, school);
+			}
+		} else if(meetings[i].type == meet_PLANNING){
+			if (meetings[i].possible_periods != NULL){
+				insert_or_update_period_scores(console_out, db, INSERT_TABLE_PLANNING_PERIOD, meetings[i].id, meetings[i].possible_periods, school);
+			}
+			if(meetings[i].possible_rooms != NULL){
+				insert_or_update_room_scores(console_out, db, INSERT_TABLE_PLANNING_ROOM, meetings[i].id, meetings[i].possible_rooms, school);
+			}
+		}
+	}
+	return true;
+}
+
 /* TODO insert lectures TODO */
 static bool insert_all_meetings(FILE * console_out, sqlite3* db, School * school){
 	int i,errc;
@@ -1794,6 +1856,7 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 	sqlite3_stmt * stmt;
 	fprintf(console_out, "Inserting solution.\n");
 
+	LMH_ASSERT(db != NULL && sol != NULL && school != NULL);
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_SOLUTION, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
 	if(errc == SQLITE_OK){
@@ -1812,16 +1875,9 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 
 	errc = sqlite3_prepare(db, INSERT_TABLE_LECTURE_SOLUTION, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
-	printf("Nmeetings %d\n", sol->n_meetings);
 	for(i = 0; i < sol->n_meetings; ++i){
 		if(sol->meetings[i].type == meet_LECTURE){
-			printf("Null checks: ");
-			printf(", %d", school->meetings);
-			printf(", %d,", sol);
-			printf(", %d", school->period_ids);
-			printf(", %d", sol->meetings[i]);
-			printf(", %d", sol->meetings[i].teacher);
-			printf(", %d\n", sol->meetings[i].room);
+			LMH_ASSERT(school->meetings != NULL && school->period_ids != NULL && sol->meetings[i].teacher != NULL && sol->meetings[i].room != NULL);
 			sqlite3_bind_int(stmt, 1, school->meetings[i].id);
 			sqlite3_bind_int(stmt, 2, sol->id);
 			sqlite3_bind_int(stmt, 3, school->period_ids[ sol->meetings[i].period ]);
@@ -2828,8 +2884,10 @@ static void link_all_teaches(School * school){
 static void link_all_assignments(School * school){
 	int i, j, n;
 	for(i = 0; i < school->n_classes; ++i){
+		printf("Infloop1");
 		n = 0;
 		for(j = 0; j < school->n_assignments; ++j){
+			printf("Infloop2");
 			if(school->assignments[j].m_class->id == school->classes[i].id){
 				++n;
 			}
@@ -2837,6 +2895,7 @@ static void link_all_assignments(School * school){
 		school->classes[i].assignments = calloc(n+1, sizeof(Assignment*));
 		n = 0;
 		for(j = 0; j < school->n_assignments; ++j){
+			printf("Infloop3");
 			if(school->assignments[j].m_class->id == school->classes[i].id){
 				school->classes[i].assignments[n] = & school->assignments[j];
 				++n;
@@ -2903,14 +2962,16 @@ School * select_school_by_id(FILE * console_out, sqlite3* db, int id){
 		school->name = copy_sqlite_string(stmt,1);
 		school->n_periods_per_day = sqlite3_column_int(stmt,2);
 		school->n_days = sqlite3_column_int(stmt,3);
-
+		school->n_assignments = 0;
 		select_all_days_by_school_id(stdout, db, id, &(school->n_days), school);
 		select_all_daily_periods_by_school_id(stdout, db, id, &(school->n_periods_per_day), school);
 		select_all_periods_by_school_id(stdout, db, id, &(school->n_periods), school);
 		select_all_subject_groups_by_school_id(stdout, db, id, &(school->n_subject_groups), school);
 		select_all_subjects_by_school_id(stdout,db,id,&(school->n_subjects), school);
 		school->rooms = select_all_rooms_by_school_id(stdout, db, id, &(school->n_rooms), school);
+		printf("Infloop01");
 		school->classes = select_all_classes_by_school_id(stdout, db, id, &(school->n_classes), school);
+		printf("Infloop02");
 		school->teachers = select_all_teachers_by_school_id(stdout, db, id, &(school->n_teachers), school);
 		school->teaches = select_all_teaches_by_school_id(stdout, db, id, &(school->n_teaches), school);
 		school->assignments = select_all_assignments_by_school_id(stdout, db, id, &(school->n_assignments), school);

@@ -152,9 +152,13 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		}
 		c.subordinates = nullptr;
 
-		int id = insert_class(stdout, m_owner->m_database, &c, school);
-		if(id != -1){
-			school_class_add(school, &c);
+
+		bool success = insert_class(stdout, m_owner->m_database, &c, school) >= 0;
+		if(success){
+			int i_class =  school_class_add(school, &c);
+			Meeting * meetings = create_meeting_list_for_class(school, &c);
+			insert_meetings_list(stdout, m_owner->m_database, meetings, school);
+			school_meeting_list_add_and_bind(school, i_class, meetings);
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 
 			ClearInsertedData();

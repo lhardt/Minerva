@@ -14,8 +14,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "assert.h"
+
 void school_subject_remove(School * school, int subj_i){
 	int i, j, k;
+	LMH_ASSERT(school != NULL && subj_i >= 0);
 	for(i = 0; i < school->n_teaches; ++i){
 		/* Push all behind to the front if this is about the deleted. */
 		if(school->teaches[i].subject->id == school->subjects[subj_i].id){
@@ -59,35 +62,102 @@ void school_subject_remove(School * school, int subj_i){
 	--school->n_subjects;
 }
 
-void school_class_add(School * school, const Class * const c){
-	int i, j, n;
+Meeting * create_meeting_list_for_class(School * school, Class * c){
+	int i,j,n;
+	LMH_ASSERT(school != NULL && c != NULL);
+	Meeting * meetings = NULL;
+	if(c->assignments != NULL){
+		for(n = 0; c->assignments[n] != NULL; ++n){
+			/* Blank on purpouse */
+		}
+		if( n != 0 ){
+			meetings = calloc( n+1, sizeof(Meeting));
+			for(i = 0; i < n; ++i){
+				for(j = 0; j < c->assignments[i]->amount; ++j){
+					meetings[j] = (Meeting){
+						.id = 0,
+						.type = meet_LECTURE,
+						.m_class = c,
+						.subject = c->assignments[i]->subject,
+						.teacher = NULL,
+						.room = NULL,
+						.period = 0,
+						.possible_periods = NULL,
+						.possible_rooms = NULL,
+						.possible_teachers = NULL
+					};
+					++school->n_meetings;
+				}
+			}
+		}
+	}
+	return meetings;
+}
+
+void school_meeting_list_add_and_bind(School * school, int class_i, Meeting * meetings){
+	int i_meet = 0, n = 0;
+	LMH_ASSERT(school != NULL && meetings != NULL && class_i >= 0 && class_i < school->n_classes);
+
+	for(n = 0; meetings[n].m_class != NULL; ++n){
+		/* Blank */
+	}
+	LMH_ASSERT(n > 0);
+
+	if(school->n_meetings == 0){
+		school->meetings = calloc(n + 1, sizeof(Meeting));
+	} else {
+		school->meetings = realloc(school->meetings, (school->n_meetings + n + 1)*sizeof(Meeting));
+	}
+
+	for(i_meet = 0; i_meet < n; ++i_meet){
+		school->meetings[school->n_meetings] = (Meeting){
+			.id = meetings[i_meet].id,
+			.type = meet_LECTURE,
+			.m_class = &school->classes[class_i],
+			.subject = meetings[i_meet].subject,
+			.teacher = meetings[i_meet].teacher,
+			.room = meetings[i_meet].room,
+			.period = meetings[i_meet].period,
+			.possible_periods = meetings[i_meet].possible_periods,
+			.possible_rooms = meetings[i_meet].possible_rooms,
+			.possible_teachers = meetings[i_meet].possible_teachers,
+		};
+
+		++school->n_meetings;
+	}
+}
+
+int school_class_add(School * school, const Class * const c){
 	if(school->classes == NULL || school->n_classes == 0){
 		school->classes = calloc(11, sizeof(Class));
 	} else if(school->n_classes % 10 == 0) {
 		school->classes = realloc(school->classes,(school->n_classes + 11) * sizeof(Class));
 	}
 	school->classes[ school->n_classes ] = *c;
+	school_class_assignments_add(school, c);
+	return school->n_classes++;
+}
 
-	if(c->assignments != NULL){
-		for(n = 0; c->assignments[n] != NULL; ++n){
-			/* Blank on purpouse */
-		}
-		if( n != 0 ){
-			if(school->meetings == NULL || school->n_meetings == 0){
-				school->meetings = calloc( (n - n%10) + 11, sizeof(Meeting));
-			} else if(school->n_meetings % 10 == 0){
-				school->meetings = realloc(school->meetings, (n + 11)*sizeof(Meeting));
-			}
-			for(i = 0; i < n; ++i){
-				for(j = 0; j < c->assignments[i]->amount; ++j){
-					/* c points to a temporary variable */
-					school->meetings[school->n_meetings].m_class = &school->classes[ school->n_classes ];
-					school->meetings[school->n_meetings].subject = c->assignments[i]->subject;
-				}
-			}
-		}
+int school_class_assignments_add(School * school, Class * c){
+	int i, n;
+	LMH_ASSERT(school != NULL && c != NULL && c->assignments != NULL);
+
+	for(n = 0; c->assignments[n] != NULL; ++n){
+		/* Blank */
 	}
-	++school->n_classes;
+	printf("School nassignments was %d\n", school->n_assignments);
+	if(school->n_assignments == 0){
+		school->assignments = calloc(n + 1, sizeof(Assignment));
+	} else {
+		school->assignments = realloc(school->assignments, (school->n_assignments + n+1)*sizeof(Assignment));
+	}
+
+	for(i = 0; i < n; ++i){
+		school->assignments[school->n_assignments + i] = * c->assignments[i];
+	}
+
+	school->n_assignments += n;
+	return school->n_assignments;
 }
 
 void school_teacher_add(School * school, const Teacher * const t){
@@ -187,44 +257,6 @@ void school_class_remove(School * school, int class_i){
 		school->classes[i] = school->classes[i+1];
 	}
 }
-
-// void school_feature_remove(School * school, int feature_i){
-// 	int i, j;
-//
-// 	if(school->n_features > feature_i && feature_i >= 0){
-// 		free(school->feature_names[feature_i]);
-// 		for(i = feature_i; i < school->n_features && school->feature_ids[i] >= 0; ++i){
-// 			school->feature_names[i] = school->feature_names[i+1];
-// 			school->feature_ids[i] = school->feature_ids[i+1];
-// 		}
-//
-// 		/* If there are features right of the deleted, push them back, in all structures. */
-// 		if(school->feature_ids[feature_i+1] != -1){
-// 			if(school->rooms != NULL && school->n_rooms > 0){
-// 				for(i = 0;  i < school->n_rooms; ++i ){
-// 					for(j = feature_i + 1;  school->rooms[i].room_features && school->rooms[i].room_features[j] >= 0; ++j){
-// 						/* copies the -1 terminator too. */
-// 						school->rooms[i].room_features[j] = school->rooms[i].room_features[j+1];
-// 					}
-// 				}
-// 			}
-//
-// 			if(school->teaches != NULL && school->n_teaches > 0){
-// 				for(i = 0; i < school->n_teaches; ++i){
-// 					for(j = feature_i + 1; school->teaches[i].features[j] >= 0; ++j){
-// 						/* copies the -1 terminator too. */
-// 						school->teaches[i].features[j] = school->teaches[i].features[j+1];
-// 					}
-// 					/* May have a different terminator. */
-// 					for(j = feature_i + 1; school->teaches[i].features[j] >= 0; ++j){
-// 						school->teaches[i].min_features[j] = school->teaches[i].min_features[j+1];
-// 					}
-// 				}
-// 			}
-// 		}
-// 		--school->n_features;
-// 	}
-// }
 
 void school_room_add(School * school, const Room * const room){
 	if(school->n_rooms == 0){

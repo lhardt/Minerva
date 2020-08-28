@@ -390,7 +390,7 @@ const Language LANG_ENG = {
 	.str_class_availibility=L"Class' availibility",
 	.str_class_subjects=L"Class' subjects",
 	.str_class_can_have_free_periods=L"This class can have free periods",
-	.str_class_available=L"available",
+	.str_class_available=L"Available",
 	.str_class_unavailable=L"Unavailable",
 	.str_room_size_in_students=L"Room size, in students",
 	.str_room_availibility=L"Room availibility",
@@ -399,7 +399,7 @@ const Language LANG_ENG = {
 
 	.str_add_teachers_to_the_group=L"Add teachers to the group",
 	.str_teacher_availibility=L"Teacher Availibility",
-	.str_teacher_available=L"available",
+	.str_teacher_available=L"Available",
 	.str_teacher_unavailable=L"Unavailable",
 	.str_teacher_teaches=L"The teacher teaches",
 
@@ -436,7 +436,7 @@ const Language LANG_ENG = {
 	.str_number_of_planning_periods=L"Number of planning periods",
 	.str_teachers_teach=L"The teachers teach",
 
-	.str_group_available=L"available",
+	.str_group_available=L"Available",
 	.str_group_unavailable=L"Unavailable",
 	.str_group_availibility=L"Availibility",
 	.str_group_members=L"Group members",

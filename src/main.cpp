@@ -118,13 +118,6 @@ bool Application::OnInit(){
 	int errc;
 	bool loaded;
 
-	printf("Sizeof School: %d\n", sizeof(School));
-	printf("Sizeof Teacher: %d\n", sizeof(Teacher));
-	printf("Sizeof Class: %d\n", sizeof(Class));
-	printf("Sizeof Room: %d\n", sizeof(Room));
-	printf("Sizeof Meeting: %d\n", sizeof(Meeting));
-	printf("Sizeof Solution: %d\n", sizeof(Solution));
-
 	errc = sqlite3_open(":memory:",&m_database);
 	loaded = load_backup(m_database, "./Database.db");
 
