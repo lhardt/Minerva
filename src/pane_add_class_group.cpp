@@ -3,6 +3,8 @@
 #include <wx/spinctrl.h>
 extern "C" {
 	#include "loader.h"
+	#include "util.h"
+	#include "preprocess.h"
 };
 
 AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
@@ -148,7 +150,12 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		/* TODO  populate * rooms; */
 		bool success = insert_class(stdout, m_owner->m_database, &c, school);
 		if(success){
-			school->classes[school->n_classes] = c;
+			int i_class = school_class_add(school, &c);
+			if(c.assignments){
+				Meeting * meetings = create_meeting_list_for_class(school, &c);
+				insert_meetings_list(stdout, m_owner->m_database, meetings, school);
+				school_meeting_list_add_and_bind(school, i_class, meetings);
+			}
 			m_classes_grid->InsertRows(school->n_classes+1);
 			m_classes_grid->SetRowName(school->n_classes, wxString::FromUTF8(c.name));
 			++school->n_classes;

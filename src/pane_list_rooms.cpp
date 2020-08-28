@@ -59,8 +59,8 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	fields_sz->AddStretchSpacer();
 	fields_sz->AddStretchSpacer();
 	fields_sz->AddStretchSpacer();
-	fields_sz->Add(m_cancel_btn, 0, wxEXPAND);
-	fields_sz->Add(m_edit_btn, 0, wxEXPAND);
+	fields_sz->Add(m_cancel_btn, 1, wxEXPAND);
+	fields_sz->Add(m_edit_btn, 1, wxEXPAND);
 
 	fields_wrap->Add(fields_sz, 0, wxALL | wxEXPAND, 10);
 	desc_sz->Add(fields_wrap, 0, wxBOTTOM, 5);
@@ -83,7 +83,6 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	delete_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnDeleteButtonClicked, this);
 	m_rooms_list->Bind(wxEVT_LISTBOX, &ListRoomsPane::OnSelectionChanged, this);
 
-	m_cancel_btn->Hide();
 	m_cancel_btn->Hide();
 	m_name_text->Disable();
 	m_size_text->Disable();

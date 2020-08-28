@@ -932,7 +932,7 @@ const char * const CREATE_TABLE_PLANNING =
 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id)"
 			")");
 const char * const INSERT_TABLE_PLANNING =
-			("INSERT INTO Planning VALUES (?)");
+			("INSERT INTO Planning (id_teacher) VALUES (?)");
 const char * const LASTID_TABLE_PLANNING =
 			("SELECT id FROM Planning WHERE rowid = last_insert_rowid()");
 /* NOTE: there is no reason to update this table. Only delete and add accordingly */
@@ -1731,8 +1731,7 @@ int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * 
 bool insert_meetings_list(FILE * console_out, sqlite3 * db, Meeting * meetings, School * school){
 	int i, errc, j;
 	sqlite3_stmt * stmt;
-	fprintf(console_out, "Inserting all meetings.\n");
-
+	LMH_ASSERT(db != NULL && meetings != NULL && school != NULL);
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_LECTURE, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
 	for(i = 0; meetings[i].type != meet_NULL; ++i){
@@ -2283,7 +2282,6 @@ static int select_all_solutions(FILE * console_out, sqlite3* db, School * school
 static bool select_all_meetings(FILE * console_out, sqlite3* db, School * school){
 	int errc, i = 0;
 	sqlite3_stmt * stmt;
-
 	errc = sqlite3_prepare_v2(db, SELECT_LECTURE_BY_SCHOOL_ID, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	sqlite3_bind_int(stmt, 1, school->id);
@@ -2296,7 +2294,6 @@ static bool select_all_meetings(FILE * console_out, sqlite3* db, School * school
 			school->meetings[i].m_class = find_class_by_id(school, sqlite3_column_int(stmt,1));
 			school->meetings[i].subject = find_subject_by_id(school, sqlite3_column_int(stmt,2));
 			errc = sqlite3_step(stmt);
-			sqlite3_reset(stmt);
 			++i;
 			if(i % 10 == 0){
 				school->meetings = realloc(school->meetings, (i + 11)*sizeof(Meeting));
@@ -2607,7 +2604,6 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 		errc = sqlite3_step(stmt);
 
 		classes = calloc(11, sizeof(Class));
-
 		while(errc == SQLITE_ROW){
 			classes[i].id = sqlite3_column_int(stmt,0);
 			classes[i].name = copy_sqlite_string(stmt,1);
@@ -2884,10 +2880,8 @@ static void link_all_teaches(School * school){
 static void link_all_assignments(School * school){
 	int i, j, n;
 	for(i = 0; i < school->n_classes; ++i){
-		printf("Infloop1");
 		n = 0;
 		for(j = 0; j < school->n_assignments; ++j){
-			printf("Infloop2");
 			if(school->assignments[j].m_class->id == school->classes[i].id){
 				++n;
 			}
@@ -2895,7 +2889,6 @@ static void link_all_assignments(School * school){
 		school->classes[i].assignments = calloc(n+1, sizeof(Assignment*));
 		n = 0;
 		for(j = 0; j < school->n_assignments; ++j){
-			printf("Infloop3");
 			if(school->assignments[j].m_class->id == school->classes[i].id){
 				school->classes[i].assignments[n] = & school->assignments[j];
 				++n;
@@ -2969,9 +2962,7 @@ School * select_school_by_id(FILE * console_out, sqlite3* db, int id){
 		select_all_subject_groups_by_school_id(stdout, db, id, &(school->n_subject_groups), school);
 		select_all_subjects_by_school_id(stdout,db,id,&(school->n_subjects), school);
 		school->rooms = select_all_rooms_by_school_id(stdout, db, id, &(school->n_rooms), school);
-		printf("Infloop01");
 		school->classes = select_all_classes_by_school_id(stdout, db, id, &(school->n_classes), school);
-		printf("Infloop02");
 		school->teachers = select_all_teachers_by_school_id(stdout, db, id, &(school->n_teachers), school);
 		school->teaches = select_all_teaches_by_school_id(stdout, db, id, &(school->n_teaches), school);
 		school->assignments = select_all_assignments_by_school_id(stdout, db, id, &(school->n_assignments), school);

@@ -89,6 +89,7 @@ Meeting * create_meeting_list_for_class(School * school, Class * c){
 					++school->n_meetings;
 				}
 			}
+			meetings[n].type = meet_NULL;
 		}
 	}
 	return meetings;
@@ -98,7 +99,7 @@ void school_meeting_list_add_and_bind(School * school, int class_i, Meeting * me
 	int i_meet = 0, n = 0;
 	LMH_ASSERT(school != NULL && meetings != NULL && class_i >= 0 && class_i < school->n_classes);
 
-	for(n = 0; meetings[n].m_class != NULL; ++n){
+	for(n = 0; meetings[n].type == meet_LECTURE; ++n){
 		/* Blank */
 	}
 	LMH_ASSERT(n > 0);
@@ -127,17 +128,6 @@ void school_meeting_list_add_and_bind(School * school, int class_i, Meeting * me
 	}
 }
 
-int school_class_add(School * school, const Class * const c){
-	if(school->classes == NULL || school->n_classes == 0){
-		school->classes = calloc(11, sizeof(Class));
-	} else if(school->n_classes % 10 == 0) {
-		school->classes = realloc(school->classes,(school->n_classes + 11) * sizeof(Class));
-	}
-	school->classes[ school->n_classes ] = *c;
-	school_class_assignments_add(school, c);
-	return school->n_classes++;
-}
-
 int school_class_assignments_add(School * school, Class * c){
 	int i, n;
 	LMH_ASSERT(school != NULL && c != NULL && c->assignments != NULL);
@@ -154,10 +144,24 @@ int school_class_assignments_add(School * school, Class * c){
 
 	for(i = 0; i < n; ++i){
 		school->assignments[school->n_assignments + i] = * c->assignments[i];
+		c->assignments[i] = &school->assignments[school->n_assignments + i];
 	}
 
 	school->n_assignments += n;
 	return school->n_assignments;
+}
+
+int school_class_add(School * school, const Class * const c){
+	if(school->classes == NULL || school->n_classes == 0){
+		school->classes = calloc(11, sizeof(Class));
+	} else if(school->n_classes % 10 == 0) {
+		school->classes = realloc(school->classes,(school->n_classes + 11) * sizeof(Class));
+	}
+	school->classes[ school->n_classes ] = *c;
+	if(c->assignments){
+		school_class_assignments_add(school, c);
+	}
+	return school->n_classes++;
 }
 
 void school_teacher_add(School * school, const Teacher * const t){

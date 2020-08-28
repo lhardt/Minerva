@@ -156,9 +156,11 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		bool success = insert_class(stdout, m_owner->m_database, &c, school) >= 0;
 		if(success){
 			int i_class =  school_class_add(school, &c);
-			Meeting * meetings = create_meeting_list_for_class(school, &c);
-			insert_meetings_list(stdout, m_owner->m_database, meetings, school);
-			school_meeting_list_add_and_bind(school, i_class, meetings);
+			if(c.assignments){
+				Meeting * meetings = create_meeting_list_for_class(school, &c);
+				insert_meetings_list(stdout, m_owner->m_database, meetings, school);
+				school_meeting_list_add_and_bind(school, i_class, meetings);
+			}
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 
 			ClearInsertedData();
@@ -180,11 +182,10 @@ void AddClassPane::ClearInsertedData(){
 	School * school = m_owner->m_school;
 	int i = 0;
 	m_name_text->Clear();
+	m_periods->SetAllCellsState(0);
 	for(i = 0; i < school->n_periods; ++i){
 		if(school->periods[i] == false){
 			m_periods->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
-		} else {
-			m_periods->SetCellState(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), 0);
 		}
 	}
 	m_size_text->SetValue(0);
