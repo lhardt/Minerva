@@ -22,6 +22,7 @@
 #include <wx/hyperlink.h>
 
 #include "gui_language.hpp"
+#include "school_manager.hpp"
 
 extern "C" {
 	#include "types.h"
@@ -277,6 +278,7 @@ class MainMenuForm : public wxFrame{
 	~MainMenuForm();
 
 	void NotifyNewUnsavedData();
+	void NotifyNewAction(Action * act);
 	void AddNotification(Notification* n);
 	void OnNotificationAction(wxHyperlinkEvent & ev);
 	void OnNotificationTimer(wxTimerEvent & ev);
@@ -441,10 +443,12 @@ class DescSchoolPane : public wxScrolledWindow {
 
  private:
 	Application * m_owner;
-	wxButton * m_cancel_button;
-	wxButton * m_edit_button;
-	wxTextCtrl * m_name_text;
-	wxNotebook * m_notebook;
+	wxButton 	* m_cancel_button;
+	wxButton 	* m_edit_button;
+	wxTextCtrl 	* m_name_text;
+	wxNotebook 	* m_notebook;
+
+	SchoolNameUpdateAction * m_name_action;
 
 	void OnRemoveButtonClicked(wxCommandEvent & );
 	void OnCancelButtonClicked(wxCommandEvent & );
@@ -677,12 +681,13 @@ class ManualWindow : public wxFrame {
 
 /* Application */
 
+class ActionManager;
 class Application : public wxApp {
  private:
-	WelcomeForm * 		m_form_welcome = nullptr;
-	CreateSchoolForm * 	m_form_create_school = nullptr;
-	MainMenuForm * 		m_form_main_menu = nullptr;
-	SettingsForm * 	m_form_settings = nullptr;
+	WelcomeForm 		* m_form_welcome = nullptr;
+	CreateSchoolForm 	* m_form_create_school = nullptr;
+	MainMenuForm 		* m_form_main_menu = nullptr;
+	SettingsForm 		* m_form_settings = nullptr;
  public:
 	virtual bool OnInit();
 	virtual int  OnExit();
@@ -695,6 +700,8 @@ class Application : public wxApp {
 	void UpdateFonts();
 	bool SaveDatabase();
 	void NotifyNewUnsavedData();
+	void Do(Action * action);
+	void Undo();
 
 	const Language * m_lang;
 	int m_font_sz;
@@ -707,10 +714,11 @@ class Application : public wxApp {
 	wxFont * 		m_user_text_font = nullptr;
 	wxFont * 		m_text_font = nullptr;
 
-	wxImage *		m_island_image = nullptr;
+	wxImage 	  * m_island_image = nullptr;
 
-	sqlite3 *		m_database = nullptr;
-	School *		m_school = nullptr;
+	ActionManager   m_actions;
+	sqlite3 	  *	m_database = nullptr;
+	School 		  * m_school = nullptr;
 };
 
 

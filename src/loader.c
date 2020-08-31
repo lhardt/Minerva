@@ -32,6 +32,8 @@ const char * const INSERT_TABLE_SCHOOL =
 			("INSERT INTO School(name, num_per_per_day, num_days) values(?,?,?)");
 const char * const UPDATE_TABLE_SCHOOL =
 			("UPDATE School SET (name, num_per_per_day, num_days) = (?,?,?) WHERE id=?");
+const char * const UPDATE_SCHOOL_NAME =
+			("UPDATE School SET name = ? WHERE id=?");
 const char * const LASTID_TABLE_SCHOOL =
 			("SELECT id FROM School where rowid = last_insert_rowid()");
 const char * const SELECT_SCHOOL_NAMES =
@@ -3153,3 +3155,13 @@ bool remove_school(FILE * console_out, sqlite3 * db, int id){
 /*********************************************************/
 /*                 EXTERNAL ABSTRACTIONS                 */
 /*********************************************************/
+
+bool update_school_name(FILE * console_out, sqlite3 * db, int id, char * name){
+	sqlite3_stmt * stmt;
+	int errc = sqlite3_prepare_v2(db, UPDATE_SCHOOL_NAME, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	sqlite3_bind_text(stmt, 1, name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt, 2, id);
+	errc = sqlite3_step(stmt);
+	return (errc == SQLITE_DONE);
+}

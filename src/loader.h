@@ -55,6 +55,8 @@ bool remove_subject(FILE * console_out, sqlite3* db, int id);
 bool remove_subject_group(FILE * console_out, sqlite3* db, int id);
 bool remove_school(FILE * console_out, sqlite3* db, int id);
 
+bool update_school_name(FILE * console_out, sqlite3 * db, int id, char * name);
+
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);
 

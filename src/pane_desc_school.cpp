@@ -24,6 +24,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	wxButton 	 * duplicate_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_duplicate);
 	m_notebook = new wxNotebook(this, wxID_ANY);
 
+	m_name_action = new SchoolNameUpdateAction(owner, copy_string(owner->m_school->name));
 	m_name_text->Disable();
 
 	wxVector<wxString> daily_period_row_names = wxVector<wxString>();
@@ -69,7 +70,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 		per_names_grid->SetCellValue(i,0, wxString::FromUTF8(school->period_names[i]));
 	}
 
-	ChoiceGrid * periods_grid = m_periods->GetGrid();//new ChoiceGrid(this, wxID_ANY, wxDefaultPosition, wxSize(500,200));
+	ChoiceGrid * periods_grid = m_periods->GetGrid();
 	periods_grid->SetCanUserClick(false);
 	periods_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
 	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
@@ -128,7 +129,6 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 wxScrolledWindow* DescSchoolPane::MakeStatisticsPane(){
 	School * school = m_owner->m_school;
 	wxScrolledWindow * wnd = new wxScrolledWindow(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	// TODO internationalize
 	wxString string = "";
 	string << m_owner->m_lang->str_number_of_classes << ": " << school->n_classes << "\n";
 	string << m_owner->m_lang->str_number_of_teachers << ": " << school->n_teachers << "\n";
@@ -150,6 +150,9 @@ void DescSchoolPane::OnEditButtonClicked(wxCommandEvent & ){
 		m_cancel_button->Hide();
 		m_name_text->Disable();
 		m_edit_button->SetLabel((m_owner->m_lang->str_edit));
+		free(m_name_action->m_name);
+		m_name_action->m_name = copy_wx_string(m_name_text->GetValue());
+		m_owner->Do(m_name_action);
 	} else {
 		m_cancel_button->Show();
 		m_name_text->Enable();
@@ -160,6 +163,9 @@ void DescSchoolPane::OnCancelButtonClicked(wxCommandEvent & ){
 	m_cancel_button->Hide();
 	m_name_text->Disable();
 	m_edit_button->SetLabel((m_owner->m_lang->str_edit));
+	m_name_text->SetValue(wxString::FromUTF8(m_name_action->m_name));
+	free(m_name_action->m_name);
+	m_name_action->m_name = copy_string(m_owner->m_school->name);
 }
 
 void DescSchoolPane::OnRemoveButtonClicked(wxCommandEvent & ){

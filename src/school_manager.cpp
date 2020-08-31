@@ -1,60 +1,73 @@
 #include "school_manager.hpp"
 
 #include <wx/string.h>
-#include "util.h"
+
+#include "gui.hpp"
+extern "C" {
+	#include "util.h"
+	#include "loader.h"
+};
+
+
+Action::Action(Application * owner) : m_owner(owner){
+
+}
 
 Action::~Action(){
 
 }
 
-SchoolChangeAction::SchoolChangeAction(DataManager * manager, School * new_school) :  m_school(new_school){
-	m_manager = manager;
+void Action::Do() {
+	printf("Unoverriden do\n");
+}
+void Action::Undo() {
+
 }
 
-void SchoolChangeAction::Do(){
-	/* Shallow. Preserves all memory and swaps. */
-	School tmp;
-	tmp = *(m_manager->m_school);
-	*(m_manager->m_school) = *m_school;
-	*m_school = tmp;
+wxString Action::Describe(){
+	return wxT("Action");
 }
 
-void SchoolChangeAction::Undo(){
-	/* Shallow. Preserves all memory and swaps. */
-	School tmp;
-	tmp = *(m_manager->m_school);
-	*(m_manager->m_school) = *m_school;
-	*m_school = tmp;
+
+SchoolNameUpdateAction::SchoolNameUpdateAction(Application * owner, char * name) : Action(owner), m_name(name) {
+
 }
 
-wxString SchoolChangeAction::Describe(){
-	return wxT("SchoolChangeAction");
+SchoolNameUpdateAction::~SchoolNameUpdateAction(){
+	free(m_name);
 }
 
-SchoolChangeAction::~SchoolChangeAction(){
-	/* TODO: should free one of them? */
+void SchoolNameUpdateAction::Do(){
+	printf("Updating name from %s to %s\n", m_owner->m_school->name, m_name);
+	update_school_name(stdout, m_owner->m_database, m_owner->m_school->id, m_name);
+	char * temp = m_owner->m_school->name;
+	m_owner->m_school->name = m_name;
+	m_name = temp;
 }
 
-void DataManager::ChangeSchool(School * school){
-	SchoolChangeAction *act = new SchoolChangeAction(this, m_school);
-	DoAndSave(act);
+void SchoolNameUpdateAction::Undo(){
+	printf("Undoing name update from %s to %s\n", m_owner->m_school->name, m_name);
+	update_school_name(stdout, m_owner->m_database, m_owner->m_school->id, m_name);
+	char * temp = m_owner->m_school->name;
+	m_owner->m_school->name = m_name;
+	m_name = temp;
 }
 
-void DataManager::DoAndSave(Action * act){
+wxString SchoolNameUpdateAction::Describe(){
+	return wxT("SchoolNameUpdateAction");
+}
+
+void ActionManager::Do(Action* act) {
 	act->Do();
-	undo_list.push_back(act);
-
-	for(auto& action_ptr : redo_list){
-		delete action_ptr;
+	m_undo_list.push_back(act);
+	if(m_redo_list.size() > 0){
+		for(Action * redo_act : m_redo_list){
+			delete redo_act;
+		}
 	}
-	redo_list.clear();
+	m_redo_list.clear();
 }
 
-void DataManager::RedoAndSave(){
-	if(!undo_list.empty()){
-		Action * to_redo = undo_list.back();
-		to_redo->Do();
-		redo_list.push_back(to_redo);
-		undo_list.pop_back();
-	}
+void ActionManager::Undo() {
+
 }

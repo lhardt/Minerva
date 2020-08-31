@@ -110,7 +110,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[3][2]->AddButton(ID_CHECK_ALL_TEACHERS, m_owner->m_lang->str_check_all, image_check);
 	m_rib_bbars[3][3]->AddButton(ID_OPEN_TEACHERS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 	/* TURMAS */
-	m_rib_bbars[4][0]->AddButton(ID_VIEW_CLASSES, m_owner->m_lang->str_list_classes, image_list);
+	m_rib_bbars[4][0]->AddButton(ID_VIEW_CLASSES, m_owner->m_lang->str_list_classes_and_their_groups, image_list);
 	m_rib_bbars[4][1]->AddButton(ID_ADD_CLASS, m_owner->m_lang->str_add_class, image_add);
 	m_rib_bbars[4][1]->AddButton(ID_ADD_CLASS_GROUP, m_owner->m_lang->str_add_class_group, image_add);
 	m_rib_bbars[4][2]->AddButton(ID_CHECK_ALL_CLASSES, m_owner->m_lang->str_check_all, image_check);
@@ -213,6 +213,16 @@ bool MainMenuForm::OnClose(){
 		return true;
 	}
 }
+
+void MainMenuForm::NotifyNewAction(Action * action){
+	Notification * notification = new Notification(m_owner, this, wxID_ANY, action->Describe(), m_owner->m_lang->str_undo, wxDefaultPosition, wxDefaultSize);
+	notification->GetTimer()->Bind(wxEVT_TIMER, &MainMenuForm::OnNotificationTimer, this);
+	notification->GetAction()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
+
+	AddNotification(notification);
+	m_toolbar->EnableTool(ID_SAVE, true);
+}
+
 
 void MainMenuForm::NotifyNewUnsavedData(){
 	Notification * notification = new Notification(m_owner, this, wxID_ANY, m_owner->m_lang->str_success, m_owner->m_lang->str_undo, wxDefaultPosition, wxDefaultSize);
