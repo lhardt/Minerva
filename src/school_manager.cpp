@@ -39,23 +39,57 @@ SchoolNameUpdateAction::~SchoolNameUpdateAction(){
 
 void SchoolNameUpdateAction::Do(){
 	printf("Updating name from %s to %s\n", m_owner->m_school->name, m_name);
-	update_school_name(stdout, m_owner->m_database, m_owner->m_school->id, m_name);
-	char * temp = m_owner->m_school->name;
-	m_owner->m_school->name = m_name;
-	m_name = temp;
+	if(update_school_name(stdout, m_owner->m_database, m_owner->m_school->id, m_name)){
+		char * temp = m_owner->m_school->name;
+		m_owner->m_school->name = m_name;
+		m_name = temp;
+	}
 }
 
 void SchoolNameUpdateAction::Undo(){
 	printf("Undoing name update from %s to %s\n", m_owner->m_school->name, m_name);
-	update_school_name(stdout, m_owner->m_database, m_owner->m_school->id, m_name);
-	char * temp = m_owner->m_school->name;
-	m_owner->m_school->name = m_name;
-	m_name = temp;
+	if(update_school_name(stdout, m_owner->m_database, m_owner->m_school->id, m_name)){
+		char * temp = m_owner->m_school->name;
+		m_owner->m_school->name = m_name;
+		m_name = temp;
+	}
 }
 
 wxString SchoolNameUpdateAction::Describe(){
 	return wxT("SchoolNameUpdateAction");
 }
+
+SchoolPeriodsUpdateAction::SchoolPeriodsUpdateAction(Application * owner, int * values) : Action(owner), m_values(values) {
+
+}
+
+SchoolPeriodsUpdateAction::~SchoolPeriodsUpdateAction(){
+	free(m_values);
+}
+
+void SchoolPeriodsUpdateAction::Do(){
+	printf("Updating School Periods\n");
+	if(update_school_period_scores(stdout, m_owner->m_database, m_owner->m_school->n_periods, m_owner->m_school->period_ids, m_values)){
+		int * temp = m_owner->m_school->periods;
+		m_owner->m_school->periods = m_values;
+		m_values = temp;
+	}
+}
+
+void SchoolPeriodsUpdateAction::Undo(){
+	printf("Undoing School Periods Update\n");
+	if(update_school_period_scores(stdout, m_owner->m_database, m_owner->m_school->n_periods, m_owner->m_school->period_ids, m_values)){
+		int * temp = m_owner->m_school->periods;
+		m_owner->m_school->periods = m_values;
+		m_values = temp;
+	}
+}
+
+
+wxString SchoolPeriodsUpdateAction::Describe(){
+	return wxT("SchoolPeriodsUpdateAction");
+}
+
 
 void ActionManager::Do(Action* act) {
 	act->Do();

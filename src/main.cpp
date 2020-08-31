@@ -19,7 +19,9 @@ extern "C" {
 
 void Application::Do(Action * action){
 	m_actions.Do(action);
-	this->NotifyNewUnsavedData();
+	if(m_form_main_menu){
+		m_form_main_menu->NotifyNewAction(action);
+	}
 }
 void Application::Undo(){
 	m_actions.Undo();

@@ -149,14 +149,17 @@ class ScoreGridPane : public wxScrolledWindow {
 
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);
+	void 		  OnSaveButtonClicked(wxCommandEvent &);
 	void		  OnCancelButtonClicked(wxCommandEvent &);
-	wxButton 	* GetCancelButton();
 	wxButton 	* GetEditButton();
+	wxButton 	* GetSaveButton();
+	wxButton 	* GetCancelButton();
 	ChoiceGrid  * GetGrid();
  private:
 	Application * m_owner;
 	ChoiceGrid  * m_grid;
 	wxButton 	* m_edit_btn;
+	wxButton 	* m_save_btn;
 	wxButton 	* m_cancel_btn;
 };
 
@@ -447,12 +450,17 @@ class DescSchoolPane : public wxScrolledWindow {
 	wxButton 	* m_edit_button;
 	wxTextCtrl 	* m_name_text;
 	wxNotebook 	* m_notebook;
-
-	SchoolNameUpdateAction * m_name_action;
+	StringGridPane * m_days;
+	StringGridPane * m_daily_periods;
+	StringGridPane * m_period_names;
+	ScoreGridPane * m_periods;
 
 	void OnRemoveButtonClicked(wxCommandEvent & );
 	void OnCancelButtonClicked(wxCommandEvent & );
 	void OnEditButtonClicked(wxCommandEvent & );
+	void OnPeriodsCancelButtonClicked(wxCommandEvent & );
+	void OnPeriodsEditButtonClicked(wxCommandEvent & );
+	void OnPeriodsSaveButtonClicked(wxCommandEvent & );
 	wxScrolledWindow * MakeStatisticsPane();
 };
 

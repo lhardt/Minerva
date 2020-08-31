@@ -24,7 +24,6 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	wxButton 	 * duplicate_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_duplicate);
 	m_notebook = new wxNotebook(this, wxID_ANY);
 
-	m_name_action = new SchoolNameUpdateAction(owner, copy_string(owner->m_school->name));
 	m_name_text->Disable();
 
 	wxVector<wxString> daily_period_row_names = wxVector<wxString>();
@@ -42,10 +41,10 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 		per_row_names.push_back(wxString::Format("%s %d", m_owner->m_lang->str_period, 1+i));
 	}
 
-	StringGridPane * m_days = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_name, day_row_names);
-	StringGridPane * m_daily_periods = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_name, daily_period_row_names);
-	StringGridPane * m_period_names = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_name, per_row_names);
-	ScoreGridPane * m_periods = new ScoreGridPane(m_owner, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	m_days = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_name, day_row_names);
+	m_daily_periods = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_name, daily_period_row_names);
+	m_period_names = new StringGridPane(m_owner,m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_owner->m_lang->str_name, per_row_names);
+	m_periods = new ScoreGridPane(m_owner, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	m_notebook->AddPage(m_periods, m_owner->m_lang->str_periods);
 	m_notebook->AddPage(m_days, m_owner->m_lang->str_day_names);
 	m_notebook->AddPage(m_daily_periods, m_owner->m_lang->str_daily_period_names);
@@ -124,6 +123,30 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	delete_button->Bind(wxEVT_BUTTON, &DescSchoolPane::OnRemoveButtonClicked, this);
 	m_edit_button->Bind(wxEVT_BUTTON, &DescSchoolPane::OnEditButtonClicked, this);
 	m_cancel_button->Bind(wxEVT_BUTTON, &DescSchoolPane::OnCancelButtonClicked, this);
+	m_periods->GetSaveButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodsSaveButtonClicked, this);
+	m_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodsCancelButtonClicked, this);
+}
+
+void DescSchoolPane::OnPeriodsCancelButtonClicked(wxCommandEvent & evt) {
+	School * school = m_owner->m_school;
+	ChoiceGrid * periods_grid = m_periods->GetGrid();
+	for(int i = 0; i < school->n_periods; ++i){
+		periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i]?1:0);
+	}
+	evt.Skip();
+}
+
+void DescSchoolPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt){
+	School * school = m_owner->m_school;
+	ChoiceGrid * grid = m_periods->GetGrid();
+	int * values = (int*) calloc(school->n_periods + 1, sizeof(int));
+	values[school->n_periods] = -1;
+	for(int i  = 0; i < school->n_periods; ++i){
+		values[i] = grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+	}
+	SchoolPeriodsUpdateAction * act = new SchoolPeriodsUpdateAction(m_owner, values);
+	m_owner->Do(act);
+	evt.Skip();
 }
 
 wxScrolledWindow* DescSchoolPane::MakeStatisticsPane(){
@@ -150,9 +173,8 @@ void DescSchoolPane::OnEditButtonClicked(wxCommandEvent & ){
 		m_cancel_button->Hide();
 		m_name_text->Disable();
 		m_edit_button->SetLabel((m_owner->m_lang->str_edit));
-		free(m_name_action->m_name);
-		m_name_action->m_name = copy_wx_string(m_name_text->GetValue());
-		m_owner->Do(m_name_action);
+		SchoolNameUpdateAction * name_action = new SchoolNameUpdateAction(m_owner, copy_wx_string(m_name_text->GetValue()));
+		m_owner->Do(name_action);
 	} else {
 		m_cancel_button->Show();
 		m_name_text->Enable();
@@ -163,9 +185,7 @@ void DescSchoolPane::OnCancelButtonClicked(wxCommandEvent & ){
 	m_cancel_button->Hide();
 	m_name_text->Disable();
 	m_edit_button->SetLabel((m_owner->m_lang->str_edit));
-	m_name_text->SetValue(wxString::FromUTF8(m_name_action->m_name));
-	free(m_name_action->m_name);
-	m_name_action->m_name = copy_string(m_owner->m_school->name);
+	m_name_text->SetValue(wxString::FromUTF8(m_owner->m_school->name));
 }
 
 void DescSchoolPane::OnRemoveButtonClicked(wxCommandEvent & ){

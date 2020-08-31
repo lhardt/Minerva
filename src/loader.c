@@ -97,7 +97,9 @@ const char * const CREATE_TABLE_PERIOD =
 const char * const INSERT_TABLE_PERIOD =
 			("INSERT INTO Period(name, school_operates_flag, day_id, daily_period_id, id_school) values(?,?,?,?,?)");
 const char * const UPDATE_TABLE_PERIOD =
-			("UPDATE Period SET (name, school_operates_flag, day_id, daily_period_id, id_school) WHERE id=?");
+			("UPDATE Period SET (name, school_operates_flag, day_id, daily_period_id, id_school) = (?,?,?,?,?) WHERE id=?");
+const char * const UPDATE_PERIOD_OPERATES =
+			("UPDATE Period SET (school_operates_flag) = ? WHERE id=?");
 const char * const LASTID_TABLE_PERIOD =
 			("SELECT id FROM Period where rowid = last_insert_rowid()");
 const char * const SELECT_PERIOD_BY_SCHOOL_ID =
@@ -3164,4 +3166,17 @@ bool update_school_name(FILE * console_out, sqlite3 * db, int id, char * name){
 	sqlite3_bind_int(stmt, 2, id);
 	errc = sqlite3_step(stmt);
 	return (errc == SQLITE_DONE);
+}
+
+bool update_school_period_scores(FILE * console_out, sqlite3 * db, int n_periods, int * period_ids, int * scores){
+	sqlite3_stmt * stmt;
+	int errc = sqlite3_prepare_v2(db, UPDATE_PERIOD_OPERATES, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < n_periods; ++i){
+		sqlite3_bind_int(stmt,1, scores[i]);
+		sqlite3_bind_int(stmt,2, period_ids[i]);
+		errc = sqlite3_step(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	return true;
 }

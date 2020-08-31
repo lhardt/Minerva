@@ -39,6 +39,16 @@ public:
 	char * m_name;
 };
 
+class SchoolPeriodsUpdateAction : public Action {
+public:
+	SchoolPeriodsUpdateAction(Application * m_owner, int * values);
+	~SchoolPeriodsUpdateAction();
+	void Do();
+	void Undo();
+	wxString Describe();
+	int * m_values;
+};
+
 class ActionManager{
 public:
 	Application * m_owner;

@@ -186,32 +186,33 @@ void MainMenuForm::OnCloseClose(wxCloseEvent &evt){
 }
 
 bool MainMenuForm::OnClose(){
-	if(m_toolbar->GetToolEnabled(ID_SAVE)){
+	bool needs_to_save = m_toolbar->GetToolEnabled(ID_SAVE);
+	bool to_close = false;
+	if(needs_to_save){
 		wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_confirm_close_without_saving, m_owner->m_lang->str_are_you_sure, wxCANCEL | wxYES_NO);
 		dialog->SetYesNoCancelLabels(m_owner->m_lang->str_close_and_save, m_owner->m_lang->str_close_without_saving, m_owner->m_lang->str_cancel);
 		int confirmation = dialog->ShowModal();
 		switch(confirmation){
 			case wxID_YES: {
 				m_owner->SaveDatabase();
-			} /* Fallthrough */
+				to_close = true;
+			}
 			case wxID_NO: {
-				free_school(m_owner->m_school);
-				m_owner->m_school = nullptr;
-				Destroy();
-				return true;
-				// break;
+				to_close = true;
 			}
 			case wxID_CANCEL: {
 				/* Empty on purpouse */
 				break;
 			}
 		}
-	} else {
+	}
+	if(to_close || !needs_to_save){
 		free_school(m_owner->m_school);
 		m_owner->m_school = nullptr;
 		Destroy();
 		return true;
 	}
+	return false;
 }
 
 void MainMenuForm::NotifyNewAction(Action * action){

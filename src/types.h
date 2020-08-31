@@ -163,7 +163,7 @@ typedef struct School {
 	int			 n_subject_groups;
 	int			 n_assignments;
 
-	bool 		 * periods;
+	int		   * periods;
 } School;
 
 #endif /* TYPES_H */
