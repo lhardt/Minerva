@@ -49,11 +49,42 @@ public:
 	int * m_values;
 };
 
+class DayNamesUpdateAction : public Action {
+public:
+	DayNamesUpdateAction(Application * m_owner, char ** names);
+	~DayNamesUpdateAction();
+	void Do();
+	void Undo();
+	wxString Describe();
+	char ** m_names;
+};
+
+class DailyPeriodNamesUpdateAction : public Action {
+public:
+	DailyPeriodNamesUpdateAction(Application * m_owner, char ** names);
+	~DailyPeriodNamesUpdateAction();
+	void Do();
+	void Undo();
+	wxString Describe();
+	char ** m_names;
+};
+
+class PeriodNameUpdateAction : public Action {
+public:
+	PeriodNameUpdateAction(Application * m_owner, char ** names);
+	~PeriodNameUpdateAction();
+	void Do();
+	void Undo();
+	wxString Describe();
+	char ** m_names;
+};
+
 class ActionManager{
 public:
 	Application * m_owner;
 	void Do(Action* act);
 	void Undo();
+	void Redo();
 
 	std::vector<Action*> m_undo_list;
 	std::vector<Action*> m_redo_list;

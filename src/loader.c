@@ -55,6 +55,8 @@ const char * const INSERT_TABLE_DAILY_PERIOD =
 			("INSERT INTO DailyPeriod(name, per_index, id_school) values(?,?,?)");
 const char * const UPDATE_TABLE_DAILY_PERIOD =
 			("UPDATE DailyPeriod SET (name, per_index, id_school) = (?,?,?) WHERE id=?");
+const char * const UPDATE_DAILY_PERIOD_NAME =
+			("UPDATE DailyPeriod SET name = ? WHERE id=?");
 const char * const LASTID_TABLE_DAILY_PERIOD =
 			("SELECT id FROM DailyPeriod where rowid = last_insert_rowid()");
 const char * const SELECT_DAILY_PERIOD_BY_SCHOOL_ID =
@@ -73,7 +75,9 @@ const char * const CREATE_TABLE_DAY =
 const char * const INSERT_TABLE_DAY =
 			("INSERT INTO Day(name, day_index, id_school) values(?,?,?)");
 const char * const UPDATE_TABLE_DAY =
-			("UPDATE DailyPeriod SET (name, day_index, id_school) = (?,?,?) WHERE id=?");
+			("UPDATE Day SET (name, day_index, id_school) = (?,?,?) WHERE id=?");
+const char * const UPDATE_DAY_NAME =
+			("UPDATE Day SET (name) = (?) WHERE id=?");
 const char * const LASTID_TABLE_DAY =
 			("SELECT id FROM Day where rowid = last_insert_rowid()");
 const char * const SELECT_DAY_BY_SCHOOL_ID =
@@ -98,8 +102,10 @@ const char * const INSERT_TABLE_PERIOD =
 			("INSERT INTO Period(name, school_operates_flag, day_id, daily_period_id, id_school) values(?,?,?,?,?)");
 const char * const UPDATE_TABLE_PERIOD =
 			("UPDATE Period SET (name, school_operates_flag, day_id, daily_period_id, id_school) = (?,?,?,?,?) WHERE id=?");
+const char * const UPDATE_PERIOD_NAME =
+			("UPDATE Period SET name = ? WHERE id=?");
 const char * const UPDATE_PERIOD_OPERATES =
-			("UPDATE Period SET (school_operates_flag) = ? WHERE id=?");
+			("UPDATE Period SET school_operates_flag = ? WHERE id=?");
 const char * const LASTID_TABLE_PERIOD =
 			("SELECT id FROM Period where rowid = last_insert_rowid()");
 const char * const SELECT_PERIOD_BY_SCHOOL_ID =
@@ -2750,7 +2756,7 @@ static bool select_all_subjects_by_school_id(FILE * console_out, sqlite3* db, in
 
 /* TODO test */
 static bool select_all_days_by_school_id(FILE * console_out, sqlite3 * db, int id, int * n_days, School * school){
-	int i = 0, errc;
+	int i = 0, errc, n_alloc, i_day;
 	sqlite3_stmt * stmt;
 
 	fprintf(console_out, "Selecting all days.\n");
@@ -2761,17 +2767,23 @@ static bool select_all_days_by_school_id(FILE * console_out, sqlite3 * db, int i
 		errc = sqlite3_step(stmt);
 		school->day_names = calloc(11, sizeof(char*));
 		school->day_ids = calloc(11, sizeof(int));
+		n_alloc = 11;
 		while(errc == SQLITE_ROW){
-			int i_day = sqlite3_column_int(stmt,2);
+			i_day = sqlite3_column_int(stmt,2);
+			if(i_day > n_alloc){
+				school->day_names = realloc(school->day_names, (i_day + 1)*sizeof(char*));
+				school->day_ids = realloc(school->day_ids, (i_day + 1)*sizeof(int));
+				n_alloc = i_day + 1;
+			}
 			school->day_ids[i_day] = sqlite3_column_int(stmt,0);
 			school->day_names[i_day] = copy_sqlite_string(stmt,1);
 			errc = sqlite3_step(stmt);
 			++i;
-			if(i % 10 == 0){
-				school->day_names = realloc(school->day_names, (i + 11)*sizeof(char*));
-				school->day_ids = realloc(school->day_ids, (i + 11)*sizeof(int));
-			}
 		}
+		LMH_ASSERT(i == i_day + 1);
+		school->day_names[i] = NULL;
+		school->day_ids[i] = -1;
+
 		if(n_days != NULL){
 			*n_days = i;
 		}
@@ -2835,8 +2847,8 @@ static bool select_all_periods_by_school_id(FILE * console_out, sqlite3 * db, in
 		school->period_ids = calloc(school->n_periods + 1, sizeof(int));
 		school->period_names[school->n_periods] = NULL;
 		school->period_ids[school->n_periods] = -1;
-		school->periods = calloc(school->n_periods, sizeof(bool));
-
+		school->periods = calloc(school->n_periods + 1, sizeof(int));
+		school->periods[school->n_periods] = -1;
 		sqlite3_bind_int(stmt,1, id);
 		errc = sqlite3_step(stmt);
 		while(errc == SQLITE_ROW){
@@ -2846,13 +2858,12 @@ static bool select_all_periods_by_school_id(FILE * console_out, sqlite3 * db, in
 				per_i = day_i * school->n_periods_per_day + day_per_i;
 				school->period_ids[per_i] = sqlite3_column_int(stmt,0);
 				school->period_names[per_i] = copy_sqlite_string(stmt,1);
-				school->periods[per_i] = sqlite3_column_int(stmt,2) > 0;
+				school->periods[per_i] = sqlite3_column_int(stmt,2);
 			} else {
 				fprintf(console_out, "Could not find periods' parents: %d %d \n", day_i, day_per_i);
 			}
 			errc = sqlite3_step(stmt);
 			++i;
-
 		}
 		sqlite3_finalize(stmt);
 		return true;
@@ -3175,7 +3186,51 @@ bool update_school_period_scores(FILE * console_out, sqlite3 * db, int n_periods
 	for(int i = 0; i < n_periods; ++i){
 		sqlite3_bind_int(stmt,1, scores[i]);
 		sqlite3_bind_int(stmt,2, period_ids[i]);
+		printf("Updating period_id %d with score %d\n", period_ids[i], scores[i]);
 		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	return true;
+}
+
+bool update_day_names(FILE * console_out, sqlite3 * db, int n_days, int * ids, char ** names) {
+	sqlite3_stmt * stmt;
+	int errc = sqlite3_prepare_v2(db, UPDATE_DAY_NAME, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < n_days; ++i){
+		sqlite3_bind_text(stmt, 1, names[i], -1, SQLITE_TRANSIENT);
+		sqlite3_bind_int(stmt, 2, ids[i]);
+		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	return true;
+}
+
+bool update_daily_period_names(FILE * console_out, sqlite3 * db, int n_periods, int * ids, char ** names) {
+	sqlite3_stmt * stmt;
+	int errc = sqlite3_prepare_v2(db, UPDATE_DAILY_PERIOD_NAME, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < n_periods; ++i){
+		sqlite3_bind_text(stmt, 1, names[i], -1, SQLITE_TRANSIENT);
+		sqlite3_bind_int(stmt, 2, ids[i]);
+		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	return true;
+}
+
+bool update_period_names(FILE * console_out, sqlite3 * db, int n_periods, int * ids, char ** names){
+	sqlite3_stmt * stmt;
+	int errc = sqlite3_prepare_v2(db, UPDATE_PERIOD_NAME, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < n_periods; ++i){
+		sqlite3_bind_text(stmt, 1, names[i], -1, SQLITE_TRANSIENT);
+		sqlite3_bind_int(stmt, 2, ids[i]);
+		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
 		CERTIFY_ERRC_SQLITE_DONE(false);
 	}
 	return true;

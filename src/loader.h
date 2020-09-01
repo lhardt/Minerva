@@ -57,6 +57,10 @@ bool remove_school(FILE * console_out, sqlite3* db, int id);
 
 bool update_school_name(FILE * console_out, sqlite3 * db, int id, char * name);
 bool update_school_period_scores(FILE * console_out, sqlite3 * db, int n_periods, int * period_ids, int * scores);
+bool update_day_names(FILE * console_out, sqlite3 * db, int n_days, int * day_ids, char ** names);
+bool update_daily_period_names(FILE * console_out, sqlite3 * db, int n_days, int * day_ids, char ** names);
+bool update_period_names(FILE * console_out, sqlite3 * db, int n_days, int * day_ids, char ** names);
+
 
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);

@@ -125,6 +125,59 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	m_cancel_button->Bind(wxEVT_BUTTON, &DescSchoolPane::OnCancelButtonClicked, this);
 	m_periods->GetSaveButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodsSaveButtonClicked, this);
 	m_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodsCancelButtonClicked, this);
+
+	m_days->GetSaveButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDayNamesSaveButtonClicked, this);
+	m_days->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDayNamesCancelButtonClicked, this);
+	m_daily_periods->GetSaveButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDailyPeriodNamesSaveButtonClicked, this);
+	m_daily_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDailyPeriodNamesCancelButtonClicked, this);
+}
+
+void DescSchoolPane::OnDayNamesSaveButtonClicked(wxCommandEvent & evt) {
+	int i;
+	School * school = m_owner->m_school;
+	wxGrid * grid = m_days->GetGrid();
+
+	char ** names = (char **) calloc(school->n_days, sizeof(char*));
+	for(i = 0; i < school->n_days; ++i){
+		names[i] = copy_wx_string(grid->GetCellValue(i,0));
+	}
+
+	DayNamesUpdateAction * action = new DayNamesUpdateAction(m_owner, names);
+	m_owner->Do(action);
+	evt.Skip();
+}
+
+void DescSchoolPane::OnDayNamesCancelButtonClicked(wxCommandEvent & evt) {
+	wxGrid * day_names_grid = m_days->GetGrid();
+	School * school = m_owner->m_school;
+	for(int i = 0; i < school->n_days; ++i){
+		day_names_grid->SetCellValue(i,0, wxString::FromUTF8(school->day_names[i]));
+	}
+	evt.Skip();
+}
+
+void DescSchoolPane::OnDailyPeriodNamesSaveButtonClicked(wxCommandEvent & evt) {
+	int i;
+	School * school = m_owner->m_school;
+	wxGrid * grid = m_daily_periods->GetGrid();
+
+	char ** names = (char**) calloc(school->n_periods_per_day, ++i);
+	for(i = 0; i < school->n_periods_per_day; ++i){
+		names[i] = copy_wx_string(grid->GetCellValue(i,0));
+	}
+
+	DailyPeriodNamesUpdateAction * action = new DailyPeriodNamesUpdateAction(m_owner, names);
+	m_owner->Do(action);
+	evt.Skip();
+}
+
+void DescSchoolPane::OnDailyPeriodNamesCancelButtonClicked(wxCommandEvent & evt) {
+	wxGrid * daily_period_names_grid = m_daily_periods->GetGrid();
+	School * school = m_owner->m_school;
+	for(int i = 0; i < school->n_periods_per_day; ++i){
+		daily_period_names_grid->SetCellValue(i,0, wxString::FromUTF8(school->daily_period_names[i]));
+	}
+	evt.Skip();
 }
 
 void DescSchoolPane::OnPeriodsCancelButtonClicked(wxCommandEvent & evt) {

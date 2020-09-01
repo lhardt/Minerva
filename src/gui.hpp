@@ -81,18 +81,20 @@ class PosIntGridTable : public wxGridTableBase{
 
 class Notification : public wxPanel {
  public:
+	Notification(Application * owner, wxWindow * parent, wxWindowID id, Action * action, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 	Notification(Application * owner, wxWindow * parent, wxWindowID id, wxString text, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 	Notification(Application * owner, wxWindow * parent, wxWindowID id, wxString text,  wxString action_str, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 
 	void Start(int ms = 5000);
-	wxHyperlinkCtrl * GetAction();
+	wxHyperlinkCtrl * GetButton();
 	wxTimer * GetTimer();
  private:
-	wxStaticText * m_text;
-	wxHyperlinkCtrl * m_action;
-	wxTimer * m_timer;
+	wxStaticText 	* m_text;
+	wxHyperlinkCtrl * m_button;
+	wxTimer 		* m_timer;
+	Action 			* m_associated_action = nullptr;
 	/* Just to prevent skipping of the event. */
-	void OnHyperlikAction(wxHyperlinkEvent &);
+	void OnHyperlinkAction(wxHyperlinkEvent &);
 	void OnCloseTimer(wxTimerEvent &);
 	void Close();
 };
@@ -175,9 +177,11 @@ class PosIntGridPane : public wxScrolledWindow {
 					 wxVector<wxString> row_names = wxVector<wxString>());
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);
+	void		  OnSaveButtonClicked(wxCommandEvent &);
 	void		  OnCancelButtonClicked(wxCommandEvent &);
 	wxButton 	* GetCancelButton();
 	wxButton 	* GetEditButton();
+	wxButton 	* GetSaveButton();
 	wxGrid 		* GetGrid();
 	int		 	* GetValues();
 	void	 	  SetValues(int * values);
@@ -186,6 +190,7 @@ class PosIntGridPane : public wxScrolledWindow {
 	wxGrid		* m_grid;
 	wxButton 	* m_edit_btn;
 	wxButton 	* m_cancel_btn;
+	wxButton 	* m_save_btn;
 };
 
 class StringGridPane : public wxScrolledWindow {
@@ -200,9 +205,11 @@ class StringGridPane : public wxScrolledWindow {
 					 wxVector<wxString> row_names = wxVector<wxString>());
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);
+	void		  OnSaveButtonClicked(wxCommandEvent &);
 	void		  OnCancelButtonClicked(wxCommandEvent &);
 	wxButton 	* GetCancelButton();
 	wxButton 	* GetEditButton();
+	wxButton 	* GetSaveButton();
 	wxGrid		* GetGrid();
 	wxVector<wxString> GetValues();
 	void 		  SetValues(wxVector<wxString> values);
@@ -210,6 +217,7 @@ class StringGridPane : public wxScrolledWindow {
 	Application * m_owner;
 	wxGrid		* m_grid;
 	wxButton 	* m_edit_btn;
+	wxButton 	* m_save_btn;
 	wxButton 	* m_cancel_btn;
 };
 
@@ -459,8 +467,11 @@ class DescSchoolPane : public wxScrolledWindow {
 	void OnCancelButtonClicked(wxCommandEvent & );
 	void OnEditButtonClicked(wxCommandEvent & );
 	void OnPeriodsCancelButtonClicked(wxCommandEvent & );
-	void OnPeriodsEditButtonClicked(wxCommandEvent & );
 	void OnPeriodsSaveButtonClicked(wxCommandEvent & );
+	void OnDayNamesCancelButtonClicked(wxCommandEvent & );
+	void OnDayNamesSaveButtonClicked(wxCommandEvent & );
+	void OnDailyPeriodNamesCancelButtonClicked(wxCommandEvent & );
+	void OnDailyPeriodNamesSaveButtonClicked(wxCommandEvent & );
 	wxScrolledWindow * MakeStatisticsPane();
 };
 

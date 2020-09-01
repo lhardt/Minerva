@@ -216,19 +216,20 @@ bool MainMenuForm::OnClose(){
 }
 
 void MainMenuForm::NotifyNewAction(Action * action){
-	Notification * notification = new Notification(m_owner, this, wxID_ANY, action->Describe(), m_owner->m_lang->str_undo, wxDefaultPosition, wxDefaultSize);
+	Notification * notification = new Notification(m_owner, this, wxID_ANY, action, wxDefaultPosition, wxDefaultSize);
 	notification->GetTimer()->Bind(wxEVT_TIMER, &MainMenuForm::OnNotificationTimer, this);
-	notification->GetAction()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
+	notification->GetButton()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
 
 	AddNotification(notification);
 	m_toolbar->EnableTool(ID_SAVE, true);
+	m_toolbar->EnableTool(ID_REDO, false);
+	m_toolbar->EnableTool(ID_UNDO, true);
 }
-
 
 void MainMenuForm::NotifyNewUnsavedData(){
 	Notification * notification = new Notification(m_owner, this, wxID_ANY, m_owner->m_lang->str_success, m_owner->m_lang->str_undo, wxDefaultPosition, wxDefaultSize);
 	notification->GetTimer()->Bind(wxEVT_TIMER, &MainMenuForm::OnNotificationTimer, this);
-	notification->GetAction()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
+	notification->GetButton()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
 
 	AddNotification(notification);
 	m_toolbar->EnableTool(ID_SAVE, true);
@@ -242,22 +243,44 @@ void MainMenuForm::OnSave(wxCommandEvent & evt){
 }
 
 void MainMenuForm::OnNotificationAction(wxHyperlinkEvent & ev){
-	Layout();
 	ev.Skip();
+	Layout();
+	if(!m_owner->m_actions.m_undo_list.empty()){
+		m_toolbar->EnableTool(ID_UNDO, true);
+	}
+	if(!m_owner->m_actions.m_redo_list.empty()){
+		m_toolbar->EnableTool(ID_REDO, true);
+	}
+	m_toolbar->EnableTool(ID_SAVE, true);
 }
 
 void MainMenuForm::OnNotificationTimer(wxTimerEvent & ev){
-	Layout();
 	ev.Skip();
+	Layout();
 }
 
-
 void MainMenuForm::OnUndo(wxCommandEvent &){
-	printf("Undo!\n");
+	if(!m_owner->m_actions.m_undo_list.empty()){
+		printf("Undo!\n");
+		m_owner->m_actions.Undo();
+		m_toolbar->EnableTool(ID_REDO, true);
+		if(m_owner->m_actions.m_undo_list.empty()){
+			m_toolbar->EnableTool(ID_UNDO, false);
+		}
+		m_toolbar->EnableTool(ID_SAVE, true);
+	}
 }
 
 void MainMenuForm::OnRedo(wxCommandEvent &){
-	printf("Redo!\n");
+	if(!m_owner->m_actions.m_redo_list.empty()){
+		printf("Redo!\n");
+		m_owner->m_actions.Redo();
+		m_toolbar->EnableTool(ID_UNDO, true);
+		if(m_owner->m_actions.m_redo_list.empty()){
+			m_toolbar->EnableTool(ID_REDO, false);
+		}
+		m_toolbar->EnableTool(ID_SAVE, true);
+	}
 }
 
 void MainMenuForm::OnToolbarEvent(wxCommandEvent & evt){

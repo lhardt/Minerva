@@ -22,7 +22,6 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 	wxBoxSizer * sz = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer * btsz = new wxBoxSizer(wxHORIZONTAL);
 
-	btsz->AddStretchSpacer();
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
 	btsz->Add(m_save_btn, 0, wxLEFT, 10);
@@ -95,6 +94,7 @@ PosIntGridPane::PosIntGridPane(Application * owner,
  	SetFont(*m_owner->m_text_font);
 
  	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
+	m_save_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_save);
  	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
 	m_grid = new wxGrid(this, wxID_ANY);
 	PosIntGridTable * grid_table = new PosIntGridTable(row_names.size(),1);
@@ -109,15 +109,16 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 	wxBoxSizer * sz = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer * btsz = new wxBoxSizer(wxHORIZONTAL);
 
-	btsz->AddStretchSpacer();
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
+	btsz->Add(m_save_btn, 0, wxLEFT, 10);
 	sz->Add(m_grid, 0, wxALL, 10);
 	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
 	SetSizerAndFit(sz);
 	m_grid->EnableEditing(false);
 	m_cancel_btn->Show(false);
+	m_save_btn->Show(false);
 
 	m_edit_btn->Bind(wxEVT_BUTTON, &PosIntGridPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &PosIntGridPane::OnCancelButtonClicked, this);
@@ -125,6 +126,14 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 
 wxGrid * PosIntGridPane::GetGrid(){
 	return m_grid;
+}
+
+wxButton * PosIntGridPane::GetSaveButton(){
+	return m_save_btn;
+}
+
+wxButton * PosIntGridPane::GetCancelButton(){
+	return m_cancel_btn;
 }
 
 void 	   PosIntGridPane::SetValues(int * values){
@@ -140,23 +149,28 @@ void 	   PosIntGridPane::SetValues(int * values){
 	}
 }
 
+void 	PosIntGridPane::OnSaveButtonClicked(wxCommandEvent &){
+	m_cancel_btn->Show(false);
+	m_save_btn->Show(false);
+	m_edit_btn->Show(true);
+	m_grid->EnableEditing(false);
+	FitInside();
+}
+
 void 	PosIntGridPane::OnEditButtonClicked(wxCommandEvent &evt){
-	if(m_grid->IsEditable()){
-		m_cancel_btn->Show(false);
-		m_grid->EnableEditing(false);
-		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
-	} else {
-		m_cancel_btn->Show(true);
-		m_grid->EnableEditing(true);
-		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
-	}
+	m_cancel_btn->Show(true);
+	m_save_btn->Show(true);
+	m_edit_btn->Show(false);
+	m_grid->EnableEditing(true);
 	FitInside();
 }
 
 void	PosIntGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
 	m_cancel_btn->Show(false);
+	m_save_btn->Show(false);
+	m_edit_btn->Show(true);
 	m_grid->EnableEditing(false);
-	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+	FitInside();
 }
 
 PosIntGridPane::~PosIntGridPane(){
@@ -176,6 +190,7 @@ StringGridPane::StringGridPane(Application * owner,
  	SetFont(*m_owner->m_text_font);
 
  	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
+	m_save_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_save);
  	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
 	m_grid = new wxGrid(this, wxID_ANY);
 	m_grid->CreateGrid(row_names.size(),1);
@@ -192,14 +207,17 @@ StringGridPane::StringGridPane(Application * owner,
 	btsz->AddStretchSpacer();
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
+	btsz->Add(m_save_btn, 0, wxLEFT, 10);
 	sz->Add(m_grid, 0, wxALL, 10);
 	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
 	SetSizerAndFit(sz);
 	m_grid->EnableEditing(false);
 	m_cancel_btn->Show(false);
+	m_save_btn->Show(false);
 
 	m_edit_btn->Bind(wxEVT_BUTTON, &StringGridPane::OnEditButtonClicked, this);
+	m_save_btn->Bind(wxEVT_BUTTON, &StringGridPane::OnSaveButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &StringGridPane::OnCancelButtonClicked, this);
 }
 
@@ -207,23 +225,36 @@ wxGrid  * StringGridPane::GetGrid(){
 	return m_grid;
 }
 
+wxButton * StringGridPane::GetSaveButton(){
+	return m_save_btn;
+}
+
+wxButton * StringGridPane::GetCancelButton(){
+	return m_cancel_btn;
+}
+
+void 	StringGridPane::OnSaveButtonClicked(wxCommandEvent &evt){
+	m_cancel_btn->Show(false);
+	m_save_btn->Show(false);
+	m_edit_btn->Show(true);
+	m_grid->EnableEditing(false);
+	FitInside();
+}
+
 void 	StringGridPane::OnEditButtonClicked(wxCommandEvent &evt){
-	if(m_grid->IsEditable()){
-		m_cancel_btn->Show(false);
-		m_grid->EnableEditing(false);
-		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
-	} else {
-		m_cancel_btn->Show(true);
-		m_grid->EnableEditing(true);
-		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
-	}
+	m_cancel_btn->Show(true);
+	m_save_btn->Show(true);
+	m_edit_btn->Show(false);
+	m_grid->EnableEditing(true);
 	FitInside();
 }
 
 void	StringGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
 	m_cancel_btn->Show(false);
+	m_save_btn->Show(false);
+	m_edit_btn->Show(true);
 	m_grid->EnableEditing(false);
-	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+	FitInside();
 }
 
 StringGridPane::~StringGridPane(){

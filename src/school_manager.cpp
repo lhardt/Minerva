@@ -21,7 +21,7 @@ void Action::Do() {
 	printf("Unoverriden do\n");
 }
 void Action::Undo() {
-
+	printf("Unoverriden undo\n");
 }
 
 wxString Action::Describe(){
@@ -68,11 +68,12 @@ SchoolPeriodsUpdateAction::~SchoolPeriodsUpdateAction(){
 }
 
 void SchoolPeriodsUpdateAction::Do(){
-	printf("Updating School Periods\n");
 	if(update_school_period_scores(stdout, m_owner->m_database, m_owner->m_school->n_periods, m_owner->m_school->period_ids, m_values)){
 		int * temp = m_owner->m_school->periods;
 		m_owner->m_school->periods = m_values;
 		m_values = temp;
+	} else {
+		printf("Couldn't do it.\n");
 	}
 }
 
@@ -82,13 +83,78 @@ void SchoolPeriodsUpdateAction::Undo(){
 		int * temp = m_owner->m_school->periods;
 		m_owner->m_school->periods = m_values;
 		m_values = temp;
+	} else {
+		printf("Couldn't do it.\n");
+
 	}
 }
-
 
 wxString SchoolPeriodsUpdateAction::Describe(){
 	return wxT("SchoolPeriodsUpdateAction");
 }
+
+DailyPeriodNamesUpdateAction::DailyPeriodNamesUpdateAction(Application * owner, char ** names) : Action(owner), m_names(names){
+
+}
+
+DailyPeriodNamesUpdateAction::~DailyPeriodNamesUpdateAction() {
+	for(int i = 0; i < m_owner->m_school->n_periods_per_day; ++i){
+		free(m_names[i]);
+	}
+	free(m_names);
+}
+
+void DailyPeriodNamesUpdateAction::Do(){
+	if(update_daily_period_names(stdout, m_owner->m_database, m_owner->m_school->n_periods_per_day, m_owner->m_school->daily_period_ids, m_names)){
+		char ** temp = m_owner->m_school->daily_period_names;
+		m_owner->m_school->daily_period_names = m_names;
+		m_names = temp;
+	}
+}
+
+void DailyPeriodNamesUpdateAction::Undo(){
+	if(update_daily_period_names(stdout, m_owner->m_database, m_owner->m_school->n_periods_per_day, m_owner->m_school->daily_period_ids, m_names)){
+		char ** temp = m_owner->m_school->daily_period_names;
+		m_owner->m_school->daily_period_names = m_names;
+		m_names = temp;
+	}
+}
+
+wxString DailyPeriodNamesUpdateAction::Describe() {
+	return wxT("DailyPeriodNamesUpdateAction");
+}
+
+DayNamesUpdateAction::DayNamesUpdateAction(Application * owner, char ** names) : Action(owner), m_names(names){
+
+}
+
+DayNamesUpdateAction::~DayNamesUpdateAction() {
+	for(int i = 0; i < m_owner->m_school->n_days; ++i){
+		free(m_names[i]);
+	}
+	free(m_names);
+}
+
+void DayNamesUpdateAction::Do(){
+	if(update_day_names(stdout, m_owner->m_database, m_owner->m_school->n_days, m_owner->m_school->day_ids, m_names)){
+		char ** temp = m_owner->m_school->day_names;
+		m_owner->m_school->day_names = m_names;
+		m_names = temp;
+	}
+}
+
+void DayNamesUpdateAction::Undo(){
+	if(update_day_names(stdout, m_owner->m_database, m_owner->m_school->n_days, m_owner->m_school->day_ids, m_names)){
+		char ** temp = m_owner->m_school->day_names;
+		m_owner->m_school->day_names = m_names;
+		m_names = temp;
+	}
+}
+
+wxString DayNamesUpdateAction::Describe() {
+	return wxT("DayNamesUpdateAction");
+}
+
 
 
 void ActionManager::Do(Action* act) {
@@ -103,5 +169,18 @@ void ActionManager::Do(Action* act) {
 }
 
 void ActionManager::Undo() {
-
+	if(!m_undo_list.empty()){
+		Action * last_action = m_undo_list.back();
+		last_action->Undo();
+		m_redo_list.push_back(last_action);
+		m_undo_list.pop_back();
+	}
+}
+void ActionManager::Redo() {
+	if(!m_redo_list.empty()){
+		Action * last_action = m_redo_list.back();
+		last_action->Do();
+		m_undo_list.push_back(last_action);
+		m_redo_list.pop_back();
+	}
 }
