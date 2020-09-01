@@ -149,7 +149,7 @@ const char * const CREATE_TABLE_ROOM_AVAILABILITY =
 			")");
 const char * const INSERT_TABLE_ROOM_AVAILABILITY =
 			("INSERT INTO RoomAvailAbility(id_room, id_period, score) values(?,?,?)");
-const char * const UPDATE_TABLE_ROOM_AVAILABLITY =
+const char * const UPDATE_TABLE_ROOM_AVAILABILITY =
 			("UPDATE RoomAvailability SET (id_room, id_period, score) = (?1,?2,?3) WHERE id_room=?1 AND id_period=?2");
 const char * const LASTID_TABLE_ROOM_AVAILABILITY =
 			("SELECT id FROM RoomAvailability where rowid = last_insert_rowid()");
@@ -3234,4 +3234,23 @@ bool update_period_names(FILE * console_out, sqlite3 * db, int n_periods, int * 
 		CERTIFY_ERRC_SQLITE_DONE(false);
 	}
 	return true;
+}
+
+bool update_room_basic_data(FILE * console_out, sqlite3* db, int room_id, Room * room, School * school){
+	sqlite3_stmt * stmt;
+	int errc = sqlite3_prepare_v2(db, UPDATE_TABLE_ROOM, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	sqlite3_bind_text(stmt,1, room->name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt,2, room->short_name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt,3, room->size);
+	sqlite3_bind_int(stmt,4, room->active);
+	sqlite3_bind_int(stmt,5, school->id);
+	sqlite3_bind_int(stmt,6, room_id);
+	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_DONE(stmt);
+	return true;
+}
+
+bool update_room_availability(FILE * console_out, sqlite3* db, int room_id, int * availability, School * school){
+	return insert_or_update_period_scores(console_out, db, UPDATE_TABLE_ROOM_AVAILABILITY, room_id, availability, school);
 }

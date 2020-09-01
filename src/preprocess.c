@@ -273,7 +273,25 @@ void school_room_add(School * school, const Room * const room){
 }
 
 void school_room_remove(School * school, int room_i){
-
+	int i,j;
+	LMH_ASSERT(school != NULL && room_i < school->n_rooms);
+	free(school->rooms[room_i].name);
+	free(school->rooms[room_i].short_name);
+	free(school->rooms[room_i].availability);
+	if(school->solutions != NULL){
+		for(i = 0; i < school->n_solutions; ++i){
+			Meeting * m_list = school->solutions[i].meetings;
+			for(j = 0; m_list[j].m_class != NULL; ++j){
+				if(m_list[j].room->id == school->rooms[room_i].id){
+					m_list[j].room = NULL;
+				}
+			}
+		}
+	}
+	for(i = room_i; i < school->n_rooms; ++i){
+		school->rooms[i] = school->rooms[i+ 1];
+	}
+	--(school->n_rooms);
 }
 
 void school_subject_add(School * school, const Subject * const subject){

@@ -17,15 +17,21 @@ extern "C" {
 	#include "util.h"
 };
 
-void Application::Do(Action * action){
-	m_actions.Do(action);
-	if(m_form_main_menu){
-		m_form_main_menu->NotifyNewAction(action);
+bool Application::Do(Action * action){
+	if(m_actions.Do(action)){
+		if(m_form_main_menu){
+			m_form_main_menu->NotifyNewAction(action);
+		}
+		return true;
 	}
+	return false;
 }
-void Application::Undo(){
-	m_actions.Undo();
-	this->NotifyNewUnsavedData();
+bool Application::Undo(){
+	if(m_actions.Undo()){
+		this->NotifyNewUnsavedData();
+		return true;
+	}
+	return false;
 }
 
 

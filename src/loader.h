@@ -60,6 +60,8 @@ bool update_school_period_scores(FILE * console_out, sqlite3 * db, int n_periods
 bool update_day_names(FILE * console_out, sqlite3 * db, int n_days, int * day_ids, char ** names);
 bool update_daily_period_names(FILE * console_out, sqlite3 * db, int n_days, int * day_ids, char ** names);
 bool update_period_names(FILE * console_out, sqlite3 * db, int n_days, int * day_ids, char ** names);
+bool update_room_basic_data(FILE * console_out, sqlite3* db, int room_id, Room * room, School * school);
+bool update_room_availability(FILE * console_out, sqlite3* db, int room_id, int * availability, School * school);
 
 
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);

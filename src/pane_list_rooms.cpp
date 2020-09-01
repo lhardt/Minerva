@@ -2,6 +2,8 @@
 
 extern "C" {
 	#include "loader.h"
+	#include "preprocess.h"
+	#include "assert.h"
 };
 #include <wx/spinctrl.h>
 
@@ -30,8 +32,8 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	notebook->AddPage(m_periods, m_owner->m_lang->str_periods);
 
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
-	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
 	periods_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
+	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
 	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
@@ -46,7 +48,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * fields_sz = new wxFlexGridSizer(4,5,5);
-	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_active);
+	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 
 	fields_sz->Add(name_label, 0, wxRIGHT | wxEXPAND, 10);
@@ -82,63 +84,99 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnDeleteButtonClicked, this);
 	m_rooms_list->Bind(wxEVT_LISTBOX, &ListRoomsPane::OnSelectionChanged, this);
+	m_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &ListRoomsPane::OnPeriodsCancelButtonClicked, this);
+	m_periods->GetSaveButton()->Bind(wxEVT_BUTTON, &ListRoomsPane::OnPeriodsSaveButtonClicked, this);
 
 	m_cancel_btn->Hide();
 	m_name_text->Disable();
 	m_size_text->Disable();
 	m_active_text->Disable();
-	m_size_text->Enable();
 }
 
-void ListRoomsPane::OnEditButtonClicked(wxCommandEvent &){
-	if(m_name_text->IsEnabled()){
-		m_cancel_btn->Hide();
-		m_name_text->Disable();
-		m_size_text->Disable();
-		m_active_text->Disable();
-		m_size_text->Enable();
-		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
-	} else {
-		m_cancel_btn->Show();
-		m_name_text->Enable();
-		m_size_text->Enable();
-		m_active_text->Enable();
-		m_size_text->Enable();
-		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
+void ListRoomsPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt) {
+	int i_select = m_rooms_list->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		School * school = m_owner->m_school;
+		ChoiceGrid * grid = m_periods->GetGrid();
+
+		int * values = (int*) calloc(school->n_periods+1 , sizeof(int));
+		for(int i = 0; i < school->n_periods; ++i){
+			values[i] = grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+		}
+		values[school->n_periods] = -1;
+
+		RoomAvailabilityUpdateAction * act = new RoomAvailabilityUpdateAction(m_owner, values, school->rooms[i_select].id);
+		m_owner->Do(act);
+		evt.Skip();
 	}
 }
 
+void ListRoomsPane::OnPeriodsCancelButtonClicked(wxCommandEvent & evt) {
+	School * school = m_owner->m_school;
+	int i_select = m_rooms_list->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		LMH_ASSERT(m_rooms_list->GetSelection() < school->n_rooms);
+		Room * room = &school->rooms[i_select];
+		ChoiceGrid * periods_grid = m_periods->GetGrid();
+		for(int i = 0; i < school->n_periods; ++i){
+			if(school->periods[i]){
+				periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, room->availability[i]?1:0);
+			}
+		}
+	}
+	evt.Skip();
+}
+
+void ListRoomsPane::OnEditButtonClicked(wxCommandEvent &){
+	int i_select = m_rooms_list->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		if(m_name_text->IsEnabled()){
+			m_cancel_btn->Hide();
+			m_name_text->Disable();
+			m_active_text->Disable();
+			m_size_text->Disable();
+			m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+			Room room = (Room){
+				.name = copy_wx_string(m_name_text->GetValue()),
+				.short_name = copy_wx_string(m_name_text->GetValue()),
+				.size = m_size_text->GetValue(),
+				.active = m_active_text->GetValue()
+			};
+			RoomBasicDataUpdateAction * act = new RoomBasicDataUpdateAction(m_owner, room, m_owner->m_school->rooms[i_select].id);
+			m_owner->Do(act);
+		} else {
+			m_cancel_btn->Show();
+			m_name_text->Enable();
+			m_active_text->Enable();
+			m_size_text->Enable();
+			m_edit_btn->SetLabel(m_owner->m_lang->str_save);
+		}
+	}
+}
 
 void ListRoomsPane::OnCancelButtonClicked(wxCommandEvent &){
-	m_cancel_btn->Hide();
-	m_name_text->Disable();
-	m_size_text->Disable();
-	m_active_text->Disable();
-	m_size_text->Enable();
-	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+	int i_select = m_rooms_list->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		Room * sel_room = & m_owner->m_school->rooms[i_select];
+		m_cancel_btn->Hide();
+		m_name_text->Disable();
+		m_active_text->Disable();
+		m_size_text->Disable();
+		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+
+		m_name_text->SetValue(wxString::FromUTF8(sel_room->name));
+		m_size_text->SetValue(sel_room->size);
+		m_active_text->SetValue(sel_room->active);
+	}
 }
 
 void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 	School * school = m_owner->m_school;
-	int i,j;
 	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
 		int del_i = m_rooms_list->GetSelection();
 		bool success = remove_room(stdout, m_owner->m_database, school->rooms[del_i].id);
-
 		if(success){
-			if(school->solutions != nullptr){
-				for(i = 0; i < school->n_solutions; ++i){
-					Meeting * m_list = school->solutions[i].meetings;
-					for(j = 0; m_list[j].m_class != nullptr; ++j){
-						if(m_list[j].room->id == school->rooms[del_i].id){
-							m_list[j].room = nullptr;
-						}
-					}
-				}
-			}
-			for(i = del_i; i < school->n_rooms; ++i){
-				school->rooms[i] = school->rooms[i+ 1];
-			}
+			school_room_remove(school, del_i);
 			m_rooms_list->Delete(m_selected_index);
 			m_owner->NotifyNewUnsavedData();
 		} else {
@@ -163,10 +201,7 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 			if(school->periods[i] == false){
 				periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
 			} else {
-				periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						wxString::Format("%s" , (room->availability[i] > 0?m_owner->m_lang->str_adj__open:m_owner->m_lang->str_adj__closed) ));
-				periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-						(room->availability[i] > 0?wxColor(200,200,255):wxColor(255,200,200)));
+				periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, room->availability[i] > 0? 1:0);
 			}
 			periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
 		}

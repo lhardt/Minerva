@@ -130,6 +130,8 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	m_days->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDayNamesCancelButtonClicked, this);
 	m_daily_periods->GetSaveButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDailyPeriodNamesSaveButtonClicked, this);
 	m_daily_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDailyPeriodNamesCancelButtonClicked, this);
+	m_period_names->GetSaveButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodNamesSaveButtonClicked, this);
+	m_period_names->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodNamesCancelButtonClicked, this);
 }
 
 void DescSchoolPane::OnDayNamesSaveButtonClicked(wxCommandEvent & evt) {
@@ -161,7 +163,7 @@ void DescSchoolPane::OnDailyPeriodNamesSaveButtonClicked(wxCommandEvent & evt) {
 	School * school = m_owner->m_school;
 	wxGrid * grid = m_daily_periods->GetGrid();
 
-	char ** names = (char**) calloc(school->n_periods_per_day, ++i);
+	char ** names = (char**) calloc(school->n_periods_per_day, sizeof(char*));
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		names[i] = copy_wx_string(grid->GetCellValue(i,0));
 	}
@@ -255,6 +257,29 @@ void DescSchoolPane::OnRemoveButtonClicked(wxCommandEvent & ){
 			Destroy();
 		}
 	}
+}
+
+void DescSchoolPane::OnPeriodNamesCancelButtonClicked(wxCommandEvent & evt){
+	School * school = m_owner->m_school;
+	wxGrid * per_names_grid = m_period_names->GetGrid();
+	per_names_grid->SetColSize(0, 200);
+	for(int i = 0; i < school->n_periods; ++i){
+		per_names_grid->SetCellValue(i,0, wxString::FromUTF8(school->period_names[i]));
+	}
+	evt.Skip();
+}
+
+void DescSchoolPane::OnPeriodNamesSaveButtonClicked(wxCommandEvent & evt){
+	School * school = m_owner->m_school;
+	wxGrid * per_names_grid = m_period_names->GetGrid();
+	int i;
+	char ** names = (char**) calloc(school->n_periods, sizeof(char*));
+	for(i = 0; i < school->n_periods; ++i){
+		names[i] = copy_wx_string(per_names_grid->GetCellValue(i,0));
+	}
+	PeriodNameUpdateAction * act = new PeriodNameUpdateAction(m_owner, names);
+	m_owner->Do(act);
+	evt.Skip();
 }
 
 DescSchoolPane::~DescSchoolPane(){

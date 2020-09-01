@@ -98,13 +98,9 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 			room.availability[i] = m_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
 		}
 		room.availability[school->n_periods] = -1;
-		int id = insert_room(stdout, m_owner->m_database, &room, school);
-		if(id != -1){
-			room.id = id;
-			school_room_add(m_owner->m_school, &room);
-			m_err_msg->SetLabel(m_owner->m_lang->str_success);
+		RoomInsertAction * act = new RoomInsertAction(m_owner, room);
+		if(m_owner->Do(act)){
 			ClearInsertedData();
-			m_owner->NotifyNewUnsavedData();
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}

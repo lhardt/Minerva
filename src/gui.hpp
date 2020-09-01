@@ -472,6 +472,8 @@ class DescSchoolPane : public wxScrolledWindow {
 	void OnDayNamesSaveButtonClicked(wxCommandEvent & );
 	void OnDailyPeriodNamesCancelButtonClicked(wxCommandEvent & );
 	void OnDailyPeriodNamesSaveButtonClicked(wxCommandEvent & );
+	void OnPeriodNamesCancelButtonClicked(wxCommandEvent & );
+	void OnPeriodNamesSaveButtonClicked(wxCommandEvent & );
 	wxScrolledWindow * MakeStatisticsPane();
 };
 
@@ -492,6 +494,8 @@ class ListRoomsPane : public wxScrolledWindow {
 
 	int m_selected_index;
 
+	void OnPeriodsCancelButtonClicked(wxCommandEvent &);
+	void OnPeriodsSaveButtonClicked(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnDeleteButtonClicked(wxCommandEvent &);
@@ -719,8 +723,8 @@ class Application : public wxApp {
 	void UpdateFonts();
 	bool SaveDatabase();
 	void NotifyNewUnsavedData();
-	void Do(Action * action);
-	void Undo();
+	bool Do(Action * action);
+	bool Undo();
 
 	const Language * m_lang;
 	int m_font_sz;

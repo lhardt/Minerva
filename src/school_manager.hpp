@@ -19,72 +19,110 @@
 class ActionManager;
 class Application;
 
+enum ActionState {
+	state_DONE,
+	state_UNDONE
+};
+
 class Action {
 public:
 	Action(Application * owner);
 	~Action();
-	virtual void Do();
-	virtual void Undo();
+	virtual bool Do();
+	virtual bool Undo();
 	virtual wxString Describe();
 	Application * m_owner;
 };
 
 class SchoolNameUpdateAction : public Action {
 public:
-	SchoolNameUpdateAction(Application * m_owner, char * name);
+	SchoolNameUpdateAction(Application * owner, char * name);
 	~SchoolNameUpdateAction();
-	void Do();
-	void Undo();
+	bool Do();
+	bool Undo();
 	wxString Describe();
 	char * m_name;
 };
 
 class SchoolPeriodsUpdateAction : public Action {
 public:
-	SchoolPeriodsUpdateAction(Application * m_owner, int * values);
+	SchoolPeriodsUpdateAction(Application * owner, int * values);
 	~SchoolPeriodsUpdateAction();
-	void Do();
-	void Undo();
+	bool Do();
+	bool Undo();
 	wxString Describe();
 	int * m_values;
 };
 
 class DayNamesUpdateAction : public Action {
 public:
-	DayNamesUpdateAction(Application * m_owner, char ** names);
+	DayNamesUpdateAction(Application * owner, char ** names);
 	~DayNamesUpdateAction();
-	void Do();
-	void Undo();
+	bool Do();
+	bool Undo();
 	wxString Describe();
 	char ** m_names;
 };
 
 class DailyPeriodNamesUpdateAction : public Action {
 public:
-	DailyPeriodNamesUpdateAction(Application * m_owner, char ** names);
+	DailyPeriodNamesUpdateAction(Application * owner, char ** names);
 	~DailyPeriodNamesUpdateAction();
-	void Do();
-	void Undo();
+	bool Do();
+	bool Undo();
 	wxString Describe();
 	char ** m_names;
 };
 
 class PeriodNameUpdateAction : public Action {
 public:
-	PeriodNameUpdateAction(Application * m_owner, char ** names);
+	PeriodNameUpdateAction(Application * owner, char ** names);
 	~PeriodNameUpdateAction();
-	void Do();
-	void Undo();
+	bool Do();
+	bool Undo();
 	wxString Describe();
 	char ** m_names;
+};
+
+class RoomBasicDataUpdateAction : public Action {
+public:
+	RoomBasicDataUpdateAction(Application * owner, Room room, int room_id);
+	~RoomBasicDataUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+	Room m_room;
+	int m_room_id;
+};
+
+class RoomAvailabilityUpdateAction : public Action {
+public:
+	RoomAvailabilityUpdateAction(Application * owner, int * period_scores, int room_id);
+	~RoomAvailabilityUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+	int * m_period_scores;
+	int m_room_id;
+};
+
+class RoomInsertAction : public Action {
+public:
+	RoomInsertAction(Application * owner, Room room);
+	~RoomInsertAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+	Room m_room;
+	ActionState m_state;
 };
 
 class ActionManager{
 public:
 	Application * m_owner;
-	void Do(Action* act);
-	void Undo();
-	void Redo();
+	bool Do(Action* act);
+	bool Undo();
+	bool Redo();
 
 	std::vector<Action*> m_undo_list;
 	std::vector<Action*> m_redo_list;
