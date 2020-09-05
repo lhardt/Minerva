@@ -256,8 +256,9 @@ bool RoomBasicDataUpdateAction::Do(){
 		m_room.active = tmp.active;
 		m_room.short_name = tmp.short_name;
 		m_room.size = tmp.size;
+		return true;
 	}
-	return true;
+	return false;
 }
 bool RoomBasicDataUpdateAction::Undo(){
 	if(update_room_basic_data(stdout, m_owner->m_database, m_room_id, &m_room, m_owner->m_school)){
@@ -278,6 +279,7 @@ bool RoomBasicDataUpdateAction::Undo(){
 		m_room.active = tmp.active;
 		m_room.short_name = tmp.short_name;
 		m_room.size = tmp.size;
+		return true;
 	}
 	return false;
 }

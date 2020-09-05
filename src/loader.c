@@ -26,7 +26,7 @@ const char * const CREATE_TABLE_SCHOOL =
 				"name					text,"
 				"num_per_per_day		integer,"
 				"num_days				integer,"
-				"UNIQUE(name)"
+				"UNIQUE (name)"
 			")");
 const char * const INSERT_TABLE_SCHOOL =
 			("INSERT INTO School(name, num_per_per_day, num_days) values(?,?,?)");
@@ -49,12 +49,12 @@ const char * const CREATE_TABLE_DAILY_PERIOD =
 				"name					text,"
 				"per_index				integer,"
 				"id_school				integer,"
-				"FOREIGN KEY (id_school) REFERENCES School(id)"
+				"FOREIGN KEY (id_school) REFERENCES School(id),"
+				"UNIQUE (per_index, id_school)"
 			")");
-const char * const INSERT_TABLE_DAILY_PERIOD =
-			("INSERT INTO DailyPeriod(name, per_index, id_school) values(?,?,?)");
-const char * const UPDATE_TABLE_DAILY_PERIOD =
-			("UPDATE DailyPeriod SET (name, per_index, id_school) = (?,?,?) WHERE id=?");
+const char * const UPSERT_TABLE_DAILY_PERIOD =
+			("INSERT INTO DailyPeriod(name, per_index, id_school) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (per_index, id_school) DO UPDATE SET name =?1");
 const char * const UPDATE_DAILY_PERIOD_NAME =
 			("UPDATE DailyPeriod SET name = ? WHERE id=?");
 const char * const LASTID_TABLE_DAILY_PERIOD =
@@ -70,12 +70,12 @@ const char * const CREATE_TABLE_DAY =
 				"name					text,"
 				"day_index				integer,"
 				"id_school				integer,"
-				"FOREIGN KEY (id_school) REFERENCES School(id)"
+				"FOREIGN KEY (id_school) REFERENCES School(id),"
+				"UNIQUE (day_index, id_school)"
 			")");
-const char * const INSERT_TABLE_DAY =
-			("INSERT INTO Day(name, day_index, id_school) values(?,?,?)");
-const char * const UPDATE_TABLE_DAY =
-			("UPDATE Day SET (name, day_index, id_school) = (?,?,?) WHERE id=?");
+const char * const UPSERT_TABLE_DAY =
+			("INSERT INTO Day(name, day_index, id_school) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (day_index, id_school) DO UPDATE SET name=?1");
 const char * const UPDATE_DAY_NAME =
 			("UPDATE Day SET (name) = (?) WHERE id=?");
 const char * const LASTID_TABLE_DAY =
@@ -98,10 +98,9 @@ const char * const CREATE_TABLE_PERIOD =
 				"FOREIGN KEY (id_school) REFERENCES School(id),"
 				"UNIQUE (day_id, daily_period_id)"
 			")");
-const char * const INSERT_TABLE_PERIOD =
-			("INSERT INTO Period(name, school_operates_flag, day_id, daily_period_id, id_school) values(?,?,?,?,?)");
-const char * const UPDATE_TABLE_PERIOD =
-			("UPDATE Period SET (name, school_operates_flag, day_id, daily_period_id, id_school) = (?,?,?,?,?) WHERE id=?");
+const char * const UPSERT_TABLE_PERIOD =
+			("INSERT INTO Period(name, school_operates_flag, day_id, daily_period_id, id_school) VALUES (?1,?2,?3,?4,?5) "
+			 "ON CONFLICT (day_id, daily_period_id) DO UPDATE SET (name, school_operates_flag, day_id, daily_period_id, id_school)=(?1,?2,?3,?4,?5)");
 const char * const UPDATE_PERIOD_NAME =
 			("UPDATE Period SET name = ? WHERE id=?");
 const char * const UPDATE_PERIOD_OPERATES =
@@ -122,7 +121,7 @@ const char * const CREATE_TABLE_ROOM =
 				"active 				integer,"
 				"id_school 				integer,"
 				"FOREIGN KEY (id_school) REFERENCES School(id),"
-				"UNIQUE (name)"
+				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_ROOM =
 			("INSERT INTO Room(name, short_name, size, active, id_school) VALUES(?,?,?,?,?)");
@@ -147,10 +146,9 @@ const char * const CREATE_TABLE_ROOM_AVAILABILITY =
 				"FOREIGN KEY (id_period) REFERENCES Period(id),"
 				"UNIQUE (id_room, id_period)"
 			")");
-const char * const INSERT_TABLE_ROOM_AVAILABILITY =
-			("INSERT INTO RoomAvailAbility(id_room, id_period, score) values(?,?,?)");
-const char * const UPDATE_TABLE_ROOM_AVAILABILITY =
-			("UPDATE RoomAvailability SET (id_room, id_period, score) = (?1,?2,?3) WHERE id_room=?1 AND id_period=?2");
+const char * const UPSERT_TABLE_ROOM_AVAILABILITY =
+			("INSERT INTO RoomAvailability(id_room, id_period, score) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_room, id_period) DO UPDATE SET score = ?3");
 const char * const LASTID_TABLE_ROOM_AVAILABILITY =
 			("SELECT id FROM RoomAvailability where rowid = last_insert_rowid()");
 const char * const SELECT_ROOM_AVAILABILITY_BY_ROOM_ID =
@@ -177,7 +175,7 @@ const char * const CREATE_TABLE_CLASS =
 				"FOREIGN KEY (id_school) REFERENCES School(id),"
 				"FOREIGN KEY (fixed_entry_per_id) REFERENCES Period(id),"
 				"FOREIGN KEY (fixed_exit_per_id) REFERENCES Period(id),"
-				"UNIQUE (name)"
+				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_CLASS =
 			("INSERT INTO Class(name, short_name, size, free_periods_flag, fixed_entry_per_id, fixed_exit_per_id, active, id_school) VALUES (?,?,?,?,?,?,?,?)");
@@ -202,10 +200,9 @@ const char * const CREATE_TABLE_CLASS_ATTENDANCE =
 				"FOREIGN KEY (id_period) REFERENCES Period(id),"
 				"UNIQUE (id_class, id_period)"
 			")");
-const char * const INSERT_TABLE_CLASS_ATTENDANCE =
-			("INSERT INTO ClassAttendance(id_class, id_period, score) VALUES (?,?,?)");
-const char * const UPDATE_TABLE_CLASS_ATTENDANCE =
-			("UPDATE ClassAttendance SET (id_class, id_period, score) = (?1,?2,?3) WHERE id_class=?1 AND id_period=?2");
+const char * const UPSERT_TABLE_CLASS_ATTENDANCE =
+			("INSERT INTO ClassAttendance(id_class, id_period, score) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_class, id_period) DO UPDATE SET (score) = (?3)");
 const char * const LASTID_TABLE_CLASS_ATTENDANCE =
 			("SELECT id FROM ClassAttendance where rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_ATTENDANCE_BY_CLASS_ID =
@@ -255,10 +252,9 @@ const char * const CREATE_TABLE_CLASS_ROOM =
 				"FOREIGN KEY (id_room) REFERENCES Room(id),"
 				"UNIQUE (id_class, id_room)"
 			")");
-const char * const INSERT_TABLE_CLASS_ROOM =
-			("INSERT INTO ClassRoom(id_class, id_room, score) VALUES (?,?,?)");
-const char * const UPDATE_TABLE_CLASS_ROOM =
-			("UPDATE ClassRoom SET (id_class, id_room, score) = (?1,?2,?3) WHERE id_class=?1 AND id_room=?2");
+const char * const UPSERT_TABLE_CLASS_ROOM =
+			("INSERT INTO ClassRoom(id_class, id_room, score) VALUES (?1,?2,?3) "
+			 " ON CONFLICT (id_class, id_room) DO UPDATE SET score=?3");
 const char * const LASTID_TABLE_CLASS_ROOM =
 			("SELECT id FROM ClassRoom WHERE rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_ROOM_BY_CLASS_ID =
@@ -280,7 +276,7 @@ const char * const CREATE_TABLE_SUBJECT =
 				"short_name				text,"
 				"id_school				integer,"
 				"FOREIGN KEY (id_school) REFERENCES School(id),"
-				"UNIQUE (name)"
+				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_SUBJECT =
 			("INSERT INTO Subject(name, short_name, id_school) VALUES (?,?,?)");
@@ -301,7 +297,7 @@ const char * const CREATE_TABLE_SUBJECT_GROUP =
 				"name					text,"
 				"id_school				integer,"
 				"FOREIGN KEY (id_school) REFERENCES School(id),"
-				"UNIQUE (name)"
+				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_SUBJECT_GROUP =
  			("INSERT INTO SubjectGroup(name,id_school) VALUES (?,?)");
@@ -353,10 +349,9 @@ const char * const CREATE_TABLE_CLASS_SUBJECT =
 				"FOREIGN KEY (id_subject) REFERENCES Subject(id),"
 				"UNIQUE (id_class, id_subject)"
 			")");
-const char * const INSERT_TABLE_CLASS_SUBJECT =
-			("INSERT INTO ClassSubject(amount, max_per_per_day, id_class, id_subject) VALUES (?,?,?,?)");
-const char * const UPDATE_TABLE_CLASS_SUBJECT =
-			("UPDATE ClassSubject SET (amount, max_per_per_day, id_class, id_subject)=(?1,?2,?3,?4) WHERE id_class=?3 AND id_subject=?4");
+const char * const UPSERT_TABLE_CLASS_SUBJECT =
+			("INSERT INTO ClassSubject(amount, max_per_per_day, id_class, id_subject) VALUES (?1,?2,?3,?4) "
+			 "ON CONFLICT (id_class, id_subject) DO UPDATE SET (amount, max_per_per_day, id_class, id_subject) = (?1,?2,?3,?4)");
 const char * const LASTID_TABLE_CLASS_SUBJECT =
 			("SELECT id FROM ClassSubject where rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_SUBJECT_BY_CLASS_ID =
@@ -385,10 +380,9 @@ const char * const CREATE_TABLE_CLASS_SUBJECT_GROUP =
 				"FOREIGN KEY (id_group) REFERENCES SubjectGroup(id),"
 				"UNIQUE (id_class, id_group)"
 			")");
-const char * const INSERT_TABLE_CLASS_SUBJECT_GROUP =
-			("INSERT INTO ClassSubjectGroup(id_class, id_group, max_per_day) VALUES (?,?,?)");
-const char * const UPDATE_TABLE_CLASS_SUBJECT_GROUP =
-			("UPDATE ClassSubjectGroup SET (id_class, id_group, max_per_day) = (?1,?2,?3) WHERE id_class=?1 AND id_group=?2");
+const char * const UPSERT_TABLE_CLASS_SUBJECT_GROUP =
+			("INSERT INTO ClassSubjectGroup(id_class, id_group, max_per_day) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_class, id_group) DO UPDATE SET max_per_day=?3");
 const char * const LASTID_CLASS_SUBJECT_GROUP =
 			("SELECT id FROM ClassSubjectGroup WHERE rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_SUBJECT_GROUP_BY_CLASS_ID =
@@ -419,7 +413,7 @@ const char * const CREATE_TABLE_TEACHER =
 				"active					integer,"
 				"id_school				integer,"
 				"FOREIGN KEY (id_school) REFERENCES School(id),"
-				"UNIQUE (name)"
+				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_TEACHER =
 			("INSERT INTO Teacher (name, short_name, max_days, max_per_day, max_per_class_per_day, max_per, planning_needs_room, num_per_planning, active, id_school) VALUES (?,?,?,?,?,?,?,?,?,?)");
@@ -445,6 +439,9 @@ const char * const CREATE_TABLE_TEACHER_DAY =
 				"FOREIGN KEY (id_day) references Day(id),"
 				"UNIQUE (id_teacher, id_day)"
 			")");
+const char * const UPSERT_TABLE_TEACHER_DAY =
+			("INSERT INTO TeacherDay(id_teacher, id_day, max_periods, score) VALUES (?1, ?2, ?3, ?4) "
+			 "ON CONFLICT (id_teacher, id_day) DO UPDATE SET (max_periods, score) = (?3,?4)");
 const char * const INSERT_TABLE_TEACHER_DAY =
 			("INSERT INTO TeacherDay(id_teacher, id_day, max_periods, score) VALUES (?,?,?,?)");
 const char * const UPDATE_TABLE_TEACHER_DAY =
@@ -473,10 +470,9 @@ const char * const CREATE_TABLE_TEACHES =
 				"FOREIGN KEY (id_subject) REFERENCES Subject(id),"
 				"UNIQUE (id_subject, id_teacher)"
 			")");
-const char * const INSERT_TABLE_TEACHES =
-			("INSERT INTO Teaches(score, max_per_day, max_per_class_per_day, id_teacher, id_subject) VALUES (?,?,?,?,?)");
-const char * const UPDATE_TABLE_TEACHES =
-			("UPDATE Teaches SET (score, max_per_day, max_per_class_per_day, id_teacher, id_subject) = (?1,?2,?3,?4,?5) WHERE id_teacher=?4 AND id_subject=?5 ");
+const char * const UPSERT_TABLE_TEACHES =
+			("INSERT INTO Teaches(score, max_per_day, max_per_class_per_day, id_teacher, id_subject) VALUES (?1,?2,?3,?4,?5) "
+			 "ON CONFLICT (id_subject, id_teacher) SET (score, max_per_day, max_per_class_per_day, id_teacher, id_subject)=(?1,?2,?3,?4,?5)");
 const char * const LASTID_TABLE_TEACHES =
 			("SELECT id FROM Teaches where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHES_BY_SCHOOL_ID =
@@ -532,10 +528,9 @@ const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
 				"FOREIGN KEY (id_period) REFERENCES Period(id),"
 				"UNIQUE (id_teacher, id_period)"
 			")");
-const char * const INSERT_TABLE_TEACHER_ATTENDANCE =
-			("INSERT INTO TeacherAttendance(id_teacher, id_period, score_lecture, score_planning) VALUES (?,?,?,?)");
-const char * const UPDATE_TABLE_TEACHER_ATTENDANCE =
-			("UPDATE TeacherAttendance SET (id_teacher, id_period, score_lecture, score_planning)=(?1,?2,?3,?4) WHERE id_teacher=?1 AND id_period=?2");
+const char * const UPSERT_TABLE_TEACHER_ATTENDANCE =
+			("INSERT INTO TeacherAttendance(id_teacher, id_period, score_lecture, score_planning) VALUES (?1,?2,?3,?4) "
+			 "ON CONFLICT (id_teacher, id_period) DO UPDATE SET (score_lecture, score_planning) = (?3,?4)");
 const char * const LASTID_TEACHER_ATTENDANCE =
 			("SELECT id FROM TeacherAttendance where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_ATTENDANCE_BY_TEACHER_ID =
@@ -557,10 +552,9 @@ const char * const CREATE_TABLE_TEACHER_TWIN_PREFERENCE =
 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
 				"UNIQUE (id_teacher, twin_val)"
 			")");
-const char * const INSERT_TABLE_TEACHER_TWIN_PREFERENCE =
-			("INSERT INTO TeacherTwinPreference(twin_val, score_planning, id_teacher) VALUES (?,?,?)");
-const char * const UPDATE_TABLE_TEACHER_TWIN_PREFERENCE =
-			("UPDATE TeacherTwinPreference SET (twin_val, score_planning, id_teacher) = (?1,?2,?3) WHERE twin_val=?1 AND id_teacher=?3");
+const char * const UPSERT_TABLE_TEACHER_TWIN_PREFERENCE =
+			("INSERT INTO TeaherTwinPreference(twin_val, score_planning, id_teacher) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_teacher, twin_val) DO UPDATE SET score_planning=?2");
 const char * const LASTID_TEACHER_TWIN_PREFERENCE =
 			("SELECT id FROM TeacherTwinPreference WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_TWIN_PREFERENCE_BY_TEACHER_ID =
@@ -584,10 +578,9 @@ const char * const CREATE_TABLE_TEACHER_ROOM =
 				"FOREIGN KEY (id_room) REFERENCES Room(id),"
 				"UNIQUE (id_teacher, id_room)"
 			")");
-const char * const INSERT_TABLE_TEACHER_ROOM =
-			("INSERT INTO TeacherRoom(id_teacher, id_room, score_lecture, score_planning) VALUES (?,?,?,?)");
-const char * const UPDATE_TABLE_TEACHER_ROOM =
-			("UPDATE TeacherRoom SET (id_teacher, id_room, score_lecture, score_planning)=(?1,?2,?3,?4) WHERE id_teacher=?1 AND id_room=?2 ");
+const char * const UPSERT_TABLE_TEACHER_ROOM =
+			("INSERT INTO TeacherRoom(id_teacher, id_room, score_lecture, score_planning) VALUES (?1,?2,?3,?4) "
+			 "ON CONFLICT DO UPDATE SET (score_lecture, score_planning)=(?3,?4)");
 const char * const LASTID_TABLE_TEACHER_ROOM =
 			("SELECT id FROM TeacherRoom WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TABLE_TEACHER_ROOM_BY_TEACHER_ID =
@@ -612,6 +605,9 @@ const char * const CREATE_TABLE_TEACHES_ROOM =
 				"FOREIGN KEY (id_room) REFERENCES Room(id),"
 				"UNIQUE (id_teaches, id_room)"
 			")");
+const char * const UPSERT_TABLE_TEACHES_ROOM =
+			("INSERT INTO TeachesRoom(id_teaches, id_room, score) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_teaches, id_room) DO UPDATE SET score = ?3");
 const char * const INSERT_TABLE_TEACHES_ROOM =
 			("INSERT INTO TeachesRoom(id_teaches, id_room, score) VALUES (?,?,?)");
 const char * const UPDATE_TABLE_TEACHES_ROOM =
@@ -650,10 +646,9 @@ const char * const CREATE_TABLE_TEACHES_PERIOD =
 				"FOREIGN KEY (id_period)  REFERENCES Period(id),"
 				"UNIQUE (id_teaches, id_period)"
 			")");
-const char * const INSERT_TABLE_TEACHES_PERIOD =
-			("INSERT INTO TeachesPeriod VALUES (?,?,?,?)");
-const char * const UPDATE_TABLE_TEACHES_PERIOD =
-			("UPDATE TeachesPeriod SET (id_teaches, id_period, score) = (?1,?2,?3) WHERE id_teaches=?1 AND id_period=?2");
+const char * const UPSERT_TABLE_TEACHES_PERIOD =
+			("INSERT INTO TeachesPeriod(id, id_teaches, id_period, score) VALUES (?1,?2,?3,?4) "
+			 "ON CONFLICT (id_teaches, id_period) SET (score) = (?4)");
 const char * const LASTID_TEACHES_PERIOD =
 			("SELECT id FROM TeachesPeriod where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHES_PERIOD_BY_TEACHES_ID =
@@ -683,10 +678,9 @@ const char * const CREATE_TABLE_TEACHES_TWIN_PREFERENCE =
 				"FOREIGN KEY (id_teaches) REFERENCES Teaches(id),"
 				"UNIQUE (id_teaches, twin_val)"
 			")");
-const char * const INSERT_TABLE_TEACHES_TWIN_PREFERENCE =
-			("INSERT INTO TeachesTwinPreference (twin_val, score, id_teaches) values (?,?,?)");
-const char * const UPDATE_TABLE_TEACHES_TWIN_PREFERENCE =
-			("UPDATE TeachesTwinPreference SET (twin_val, score, id_teaches) = (?1,?2,?3) WHERE twin_val=?1 AND id_teaches=?3");
+const char * const UPSERT_TABLE_TEACHES_TWIN_PREFERENCE =
+			("INSERT INTO TeachesTwinPreference (twin_val, score, id_teaches) values (?1,?2,?3) "
+			 "ON CONFLICT (id_teaches, twin_val) DO UPDATE SET score=?2");
 const char * const LASTID_TEACHES_TWIN_PREFERENCE =
 			("SELECT id FROM TeachesTwinPreference where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHES_TWIN_PREFERENCE_BY_TEACHES_ID =
@@ -768,10 +762,9 @@ const char * const CREATE_TABLE_POSSIBLE_TEACHER =
 				"FOREIGN KEY (id_teacher) REFERENCES Teacher(id),"
 				"UNIQUE (id_classsubject, id_teacher)"
 			")");
-const char * const INSERT_TABLE_POSSIBLE_TEACHER =
-			("INSERT INTO PossibleTeacher(id_classsubject, id_teacher, score) VALUES (?,?,?)");
-const char * const UPDATE_TABLE_POSSIBLE_TEACHER =
-			("UPDATE PossibleTeacher SET (id_classsubject, id_teacher, score) VALUES (?1,?2,?3) WHERE id_classsubject =?1 AND id_teacher=?2");
+const char * const UPSERT_TABLE_POSSIBLE_TEACHER =
+			("INSERT INTO PossibleTeacher(id_classsubject, id_teacher, score) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_classsubject, id_teacher) DO UPDATE SET score=?3");
 const char * const LASTID_TABLE_POSSIBLE_TEACHER =
 			("SELECT id FROM PossibleTeacher WHERE rowid=last_insert_rowid()");
 const char * const SELECT_TABLE_POSSIBLE_TEACHER_BY_CLASS_SUBJECT_ID =
@@ -804,10 +797,9 @@ const char * const CREATE_TABLE_LECTURE_POSSIBLE_ROOM =
 				"FOREIGN KEY (id_room) REFERENCES Room(id),"
 				"UNIQUE (id_lecture, id_room)"
 			")");
-const char * const INSERT_TABLE_LECTURE_POSSIBLE_ROOM =
-			("INSERT INTO LecturePossibleRoom(id_lecture, id_room, score) VALUES (?,?,?)");
-const char * const UPDATE_TABLE_LECTURE_POSSIBLE_ROOM =
-			("UPDATE LecturePossibleRoom SET (id_lecture, id_room, score) = (?1,?2,?3) WHERE id_lecture=?1 AND id_room=?2");
+const char * const UPSERT_TABLE_LECTURE_POSSIBLE_ROOM =
+			("INSERT INTO LecturePossibleRoom(id_lecture, id_room, score) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_lecture, id_room) DO UPDATE SET score=?3");
 const char * const LASTID_TABLE_LECTURE_POSSIBLE_ROOM =
 			("SELECT id FROM LecturePossibleRoom WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TABLE_LECTURE_POSSIBLE_ROOM_BY_LECTURE_ID =
@@ -848,10 +840,9 @@ const char * const CREATE_TABLE_LECTURE_POSSIBLE_PERIOD =
 				"FOREIGN KEY (id_period)  REFERENCES Period(id),"
 				"UNIQUE (id_lecture, id_period)"
 			")");
-const char * const INSERT_TABLE_LECTURE_POSSIBLE_PERIOD =
-			("INSERT INTO LecturePossiblePeriod(id_lecture, id_period, score) VALUES (?,?,?)");
-const char * const UPDATE_TABLE_LECTURE_POSSIBLE_PERIOD =
-			("UPDATE LecturePossiblePeriod SET (id_lecture, id_period, score) = (?1,?2,?3) WHERE id_lecture=?1 AND id_period=?2");
+const char * const UPSERT_TABLE_LECTURE_POSSIBLE_PERIOD =
+			("INSERT INTO LecturePossiblePeriod(id_lecture, id_period, score) VALUES (?1,?2,?3) "
+		     "ON CONFLICT (id_lecture, id_period) DO UPDATE SET score=?3");
 const char * const LASTID_TABLE_LECTURE_POSSIBLE_PERIOD =
 			("SELECT id FROM LecturePossiblePeriod WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TABLE_LECTURE_POSSIBLE_PERIOD_BY_LECTURE_ID =
@@ -899,10 +890,9 @@ const char * const CREATE_TABLE_LECTURE_SOLUTION =
 				"FOREIGN KEY (id_subject)	REFERENCES Subject(id),"
 				"UNIQUE (id_lecture, id_solution)"
 			")");
-const char * const INSERT_TABLE_LECTURE_SOLUTION =
-			("INSERT INTO LectureSolution(id_lecture, id_solution, id_period, id_teacher, id_room) VALUES (?,?,?,?,?)");
-const char * const UPDATE_TABLE_LECTURE_SOLUTION =
-			("UPDATE LectureSolution SET (id_lecture, id_solution, id_period, id_teacher, id_room) = (?1,?2,?3,?4,?5) WHERE id_lecture=?1 AND id_solution=?2");
+const char * const UPSERT_TABLE_LECTURE_SOLUTION = /* And are we really going to use the update part? */
+			("INSERT INTO LectureSolution(id_lecture, id_solution, id_period, id_teacher, id_room) VALUES (?1,?2,?3,?4,?5) "
+			 "ON CONFLICT (id_lecture, id_solution) SET (id_period, id_teacher, id_room) = (?3,?4,?5)");
 const char * const LASTID_TABLE_LECTURE_SOLUTION =
 			("SELECT id FROM LectureSolution where rowid = last_insert_rowid()");
 const char * const SELECT_LECTURE_SOLUTION_BY_SOLUTION_ID =
@@ -966,10 +956,9 @@ const char * const CREATE_TABLE_PLANNING_PERIOD =
 				"FOREIGN KEY (id_period) REFERENCES Period(id),"
 				"UNIQUE (id_planning, id_period)"
 			")");
-const char * const INSERT_TABLE_PLANNING_PERIOD =
-			("INSERT INTO PlanningPeriod(id_planning, id_period, score) VALUES (?,?,?)");
-const char * const UPDATE_TABLE_PLANNING_PERIOD =
-			("UPDATE PlanningPeriod SET (id_planning, id_period, score) = (?1,?2,?3) WHERE id_planning=?1 AND id_period=?2");
+const char * const UPSERT_TABLE_PLANNING_PERIOD =
+			("INSERT INTO PlanningPeriod(id_planning, id_period, score) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_planning, id_period) DO UPDATE SET score=?3");
 const char * const LASTID_TABLE_PLANNING_PERIOD =
 			("SELECT id FROM PlanningPeriod WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TABLE_PLANNING_PERIOD =
@@ -997,10 +986,9 @@ const char * const CREATE_TABLE_PLANNING_ROOM =
 				"FOREIGN KEY (id_room) REFERENCES Room(id),"
 				"UNIQUE (id_planning, id_room)"
 			")");
-const char * const INSERT_TABLE_PLANNING_ROOM =
-			("INSERT INTO PlanningRoom(id_planning,id_room, score) VALUES (?,?,?)");
-const char * const UPDATE_TABLE_PLANNING_ROOM =
-			("UPDATE PlanningRoom SET (id_planning, id_room, score) = (?1,?2,?3) WHERE id_planning=?1 AND id_room=?2");
+const char * const UPSERT_TABLE_PLANNING_ROOM =
+			("INSERT INTO PlanningRoom(id_planning, id_room, score) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_planning, id_room) DO UPDATE SET score=?3");
 const char * const LASTID_TABLE_PLANNING_ROOM =
 			("SELECT id FROM PlanningRoom WHERE rowid = last_insert_rowid()");
 const char * const SELECT_PLANNING_ROOM_BY_PLANNING_ID =
@@ -1033,10 +1021,9 @@ const char * const CREATE_TABLE_PLANNING_SOLUTION =
 				"FOREIGN KEY (id_room) REFERENCES Room(id),"
 				"UNIQUE (id_planning, id_solution)"
 			")");
-const char * const INSERT_TABLE_PLANNING_SOLUTION =
-			("INSERT INTO PlanningSolution(id_planning, id_solution, id_period, id_room) VALUES (?,?,?,?)");
-const char * const UPDATE_TABLE_PLANNING_SOLUTION =
-			("UPDATE PlanningSolution SET (id_planning, id_solution, id_period, id_room) = (?1, ?2, ?3, ?4) WHERE id_planning=?1 AND id_solution=?2");
+const char * const UPSERT_TABLE_PLANNING_SOLUTION =
+			("INSERT INTO PlanningSolution(id_planning, id_solution, id_period, id_room) VALUES (?1,?2,?3,?4) "
+			 "ON CONFLICT (id_planning, id_solution) DO UPDATE SET (id_period, id_room) = (?3,?4)");
 const char * const LASTID_TABLE_PLANNING_SOLUTION =
 			("SELECT id FROM PlanningSolution WHERE rowid = last_insert_rowid()");
 const char * const SELECT_PLANNING_SOLUTION_BY_SOLUTION_ID =
@@ -1304,7 +1291,7 @@ static bool insert_or_update_teacher_room_scores(FILE * console_out, sqlite3 * d
 
 	LMH_ASSERT(teacher != NULL && db != NULL);
 
-	errc = sqlite3_prepare_v2(db, is_update?UPDATE_TABLE_TEACHER_ROOM:INSERT_TABLE_TEACHER_ROOM,-1,&stmt, NULL);
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_TEACHER_ROOM,-1,&stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	while(i < school->n_rooms){
 		sqlite3_bind_int(stmt,1, teacher->id);
@@ -1380,7 +1367,7 @@ static bool insert_or_update_teacher_period_scores(FILE * console_out, sqlite3 *
 	int i, errc;
 	sqlite3_stmt * stmt;
 
-	errc = sqlite3_prepare_v2(db, is_update?UPDATE_TABLE_TEACHER_ATTENDANCE:INSERT_TABLE_TEACHER_ATTENDANCE, -1, &stmt, NULL);
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_TEACHER_ATTENDANCE, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	for(i = 0; i < school->n_periods; ++i){
 		sqlite3_bind_int(stmt,1, teacher->id);
@@ -1420,7 +1407,7 @@ int insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, Schoo
 	int errc = 0;
 	sqlite3_stmt * stmt;
 
-	errc = sqlite3_prepare_v2(db, is_update?UPDATE_TABLE_TEACHES:INSERT_TABLE_TEACHES, -1, &stmt, NULL);
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_TEACHES, -1, &stmt, NULL);
 
 	CERTIFY_ERRC_SQLITE_OK(-1);
 	sqlite3_bind_int(stmt,1,t->score);
@@ -1438,10 +1425,10 @@ int insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, Schoo
 		insert_or_update_room_scores(console_out, db, is_update?(UPDATE_TABLE_TEACHES_ROOM):(INSERT_TABLE_TEACHES_ROOM), t->id, t->room_scores, school);
 	}
 	if(t->period_scores != NULL){
-		insert_or_update_period_scores(console_out, db, is_update?(UPDATE_TABLE_TEACHES_PERIOD):(INSERT_TABLE_TEACHES_PERIOD), t->id, t->period_scores, school);
+		insert_or_update_period_scores(console_out, db, UPSERT_TABLE_TEACHES_PERIOD, t->id, t->period_scores, school);
 	}
 	if(t->twin_scores != NULL){
-		insert_or_update_twin_scores(console_out, db, is_update?UPDATE_TABLE_TEACHES_TWIN_PREFERENCE:INSERT_TABLE_TEACHES_TWIN_PREFERENCE, t->id, t->twin_scores, school);
+		insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHES_TWIN_PREFERENCE, t->id, t->twin_scores, school);
 	}
 	return t->id;
 }
@@ -1453,9 +1440,8 @@ static bool insert_or_update_teacher_day_scores(FILE * console_out, sqlite3 * db
 	int i, errc;
 	sqlite3_stmt * stmt;
 
-	errc = sqlite3_prepare_v2(db, is_update?UPDATE_TABLE_TEACHER_DAY:INSERT_TABLE_TEACHER_DAY, -1, &stmt, NULL);
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_TEACHER_DAY, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
-	// ("(id_teacher, id_day, max_periods, score) VALUES (?,?,?,?)");
 	for(i = 0; i < school->n_days; ++i){
 		sqlite3_bind_int(stmt,1, t->id);
 		sqlite3_bind_int(stmt,2, school->day_ids[i]);
@@ -1542,7 +1528,7 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 		insert_or_update_teacher_period_scores(console_out, db, teacher, school, false);
 	}
 	if(teacher->planning_twin_scores != NULL){
-		insert_or_update_twin_scores(console_out, db, INSERT_TABLE_TEACHER_TWIN_PREFERENCE, teacher->id, teacher->planning_twin_scores, school);
+		insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHER_TWIN_PREFERENCE, teacher->id, teacher->planning_twin_scores, school);
 	}
 	return teacher->id;
 }
@@ -1551,7 +1537,7 @@ static bool insert_or_update_class_assignment(FILE * console_out, sqlite3 * db, 
 	int errc;
 	sqlite3_stmt * stmt;
 
-	errc = sqlite3_prepare_v2(db, is_update?UPDATE_TABLE_CLASS_SUBJECT:INSERT_TABLE_CLASS_SUBJECT, -1, &stmt, NULL);
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_CLASS_SUBJECT, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	sqlite3_bind_int(stmt,1, assignment->amount);
 	sqlite3_bind_int(stmt,2, assignment->max_per_day);
@@ -1570,7 +1556,7 @@ bool insert_or_update_class_subject_group(FILE * console_out, sqlite3 * db, Clas
 
 	LMH_ASSERT(db != NULL && class != NULL && school != NULL);
 
-	errc = sqlite3_prepare_v2(db, is_update?UPDATE_TABLE_CLASS_SUBJECT_GROUP:INSERT_TABLE_CLASS_SUBJECT_GROUP, -1, &stmt, NULL);
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_CLASS_SUBJECT_GROUP, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	//exec_and_check(db,DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID, id);
 	for(i = 0; i < school->n_subject_groups && class->max_per_day_subject_group[i] >= 0; ++i){
@@ -1604,7 +1590,7 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 	sqlite3_exec(db, LASTID_TABLE_CLASS, get_id_callback, &(class->id), NULL);
 	sqlite3_finalize(stmt);
 
-	insert_or_update_period_scores(console_out, db, INSERT_TABLE_CLASS_ATTENDANCE, class->id, class->period_scores, school);
+	insert_or_update_period_scores(console_out, db, UPSERT_TABLE_CLASS_ATTENDANCE, class->id, class->period_scores, school);
 	if(class->assignments != NULL){
 		for(i = 0;class->assignments[i] != NULL; ++i){
 			insert_or_update_class_assignment(console_out, db, class->assignments[i], school, false);
@@ -1618,7 +1604,7 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 		}
 	}
 	if(class->room_scores != NULL){
-		insert_or_update_room_scores(console_out, db, INSERT_TABLE_CLASS_ROOM, class->id, class->room_scores, school);
+		insert_or_update_room_scores(console_out, db, UPSERT_TABLE_CLASS_ROOM, class->id, class->room_scores, school);
 	}
 	if(class->max_per_day_subject_group != NULL){
 		insert_or_update_class_subject_group(console_out, db, class, school, true);
@@ -1675,7 +1661,7 @@ int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 
 	sqlite3_finalize(stmt);
 
-	insert_or_update_period_scores(console_out, db, INSERT_TABLE_ROOM_AVAILABILITY, room->id, room->availability, school);
+	insert_or_update_period_scores(console_out, db, UPSERT_TABLE_ROOM_AVAILABILITY, room->id, room->availability, school);
 
 	return room->id;
 }
@@ -1739,7 +1725,7 @@ int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * 
 }
 
 bool insert_meetings_list(FILE * console_out, sqlite3 * db, Meeting * meetings, School * school){
-	int i, errc, j;
+	int i, errc;
 	sqlite3_stmt * stmt;
 	LMH_ASSERT(db != NULL && meetings != NULL && school != NULL);
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_LECTURE, -1, &stmt, NULL);
@@ -1776,20 +1762,20 @@ bool insert_meetings_list(FILE * console_out, sqlite3 * db, Meeting * meetings, 
 	for(i = 0; meetings[i].type != meet_NULL; ++i){
 		if(meetings[i].type == meet_LECTURE){
 			if (meetings[i].possible_periods != NULL){
-				insert_or_update_period_scores(console_out, db, INSERT_TABLE_LECTURE_POSSIBLE_PERIOD, meetings[i].id, meetings[i].possible_periods, school);
+				insert_or_update_period_scores(console_out, db, UPSERT_TABLE_LECTURE_POSSIBLE_PERIOD, meetings[i].id, meetings[i].possible_periods, school);
 			}
 			if(meetings[i].possible_rooms != NULL){
-				insert_or_update_room_scores(console_out, db, INSERT_TABLE_LECTURE_POSSIBLE_ROOM, meetings[i].id, meetings[i].possible_rooms, school);
+				insert_or_update_room_scores(console_out, db, UPSERT_TABLE_LECTURE_POSSIBLE_ROOM, meetings[i].id, meetings[i].possible_rooms, school);
 			}
 			if(meetings[i].possible_teachers != NULL){
-				insert_or_update_teacher_scores(console_out, db, INSERT_TABLE_POSSIBLE_TEACHER, meetings[i].id, meetings[i].possible_teachers, school);
+				insert_or_update_teacher_scores(console_out, db, UPSERT_TABLE_POSSIBLE_TEACHER, meetings[i].id, meetings[i].possible_teachers, school);
 			}
 		} else if(meetings[i].type == meet_PLANNING){
 			if (meetings[i].possible_periods != NULL){
-				insert_or_update_period_scores(console_out, db, INSERT_TABLE_PLANNING_PERIOD, meetings[i].id, meetings[i].possible_periods, school);
+				insert_or_update_period_scores(console_out, db, UPSERT_TABLE_PLANNING_PERIOD, meetings[i].id, meetings[i].possible_periods, school);
 			}
 			if(meetings[i].possible_rooms != NULL){
-				insert_or_update_room_scores(console_out, db, INSERT_TABLE_PLANNING_ROOM, meetings[i].id, meetings[i].possible_rooms, school);
+				insert_or_update_room_scores(console_out, db, UPSERT_TABLE_PLANNING_ROOM, meetings[i].id, meetings[i].possible_rooms, school);
 			}
 		}
 	}
@@ -1837,20 +1823,20 @@ static bool insert_all_meetings(FILE * console_out, sqlite3* db, School * school
 	for(i = 0; i < school->n_meetings; ++i){
 		if(school->meetings[i].type == meet_LECTURE){
 			if (school->meetings[i].possible_periods != NULL){
-				insert_or_update_period_scores(console_out, db, INSERT_TABLE_LECTURE_POSSIBLE_PERIOD, school->meetings[i].id, school->meetings[i].possible_periods, school);
+				insert_or_update_period_scores(console_out, db, UPSERT_TABLE_LECTURE_POSSIBLE_PERIOD, school->meetings[i].id, school->meetings[i].possible_periods, school);
 			}
 			if(school->meetings[i].possible_rooms != NULL){
-				insert_or_update_room_scores(console_out, db, INSERT_TABLE_LECTURE_POSSIBLE_ROOM, school->meetings[i].id, school->meetings[i].possible_rooms, school);
+				insert_or_update_room_scores(console_out, db, UPSERT_TABLE_LECTURE_POSSIBLE_ROOM, school->meetings[i].id, school->meetings[i].possible_rooms, school);
 			}
 			if(school->meetings[i].possible_teachers != NULL){
-				insert_or_update_teacher_scores(console_out, db, INSERT_TABLE_POSSIBLE_TEACHER, school->meetings[i].id, school->meetings[i].possible_teachers, school);
+				insert_or_update_teacher_scores(console_out, db, UPSERT_TABLE_POSSIBLE_TEACHER, school->meetings[i].id, school->meetings[i].possible_teachers, school);
 			}
 		} else if(school->meetings[i].type == meet_PLANNING){
 			if (school->meetings[i].possible_periods != NULL){
-				insert_or_update_period_scores(console_out, db, INSERT_TABLE_PLANNING_PERIOD, school->meetings[i].id, school->meetings[i].possible_periods, school);
+				insert_or_update_period_scores(console_out, db, UPSERT_TABLE_PLANNING_PERIOD, school->meetings[i].id, school->meetings[i].possible_periods, school);
 			}
 			if(school->meetings[i].possible_rooms != NULL){
-				insert_or_update_room_scores(console_out, db, INSERT_TABLE_PLANNING_ROOM, school->meetings[i].id, school->meetings[i].possible_rooms, school);
+				insert_or_update_room_scores(console_out, db, UPSERT_TABLE_PLANNING_ROOM, school->meetings[i].id, school->meetings[i].possible_rooms, school);
 			}
 		}
 	}
@@ -1880,7 +1866,7 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 	}
 	sqlite3_finalize(stmt);
 
-	errc = sqlite3_prepare(db, INSERT_TABLE_LECTURE_SOLUTION, -1, &stmt, NULL);
+	errc = sqlite3_prepare(db, UPSERT_TABLE_LECTURE_SOLUTION, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
 	for(i = 0; i < sol->n_meetings; ++i){
 		if(sol->meetings[i].type == meet_LECTURE){
@@ -1955,7 +1941,7 @@ static bool insert_all_periods(FILE * console_out, sqlite3* db, School * school)
 	printf("Inserting all periods.");
 
 	school->period_ids = calloc(school->n_periods, sizeof((*school->period_ids)));
-	errc = sqlite3_prepare(db, INSERT_TABLE_PERIOD, -1, &stmt, NULL);
+	errc = sqlite3_prepare(db, UPSERT_TABLE_PERIOD, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 
 	for(i = 0; i < school->n_periods; ++i){
@@ -1985,7 +1971,7 @@ static bool insert_all_daily_periods(FILE * console_out, sqlite3* db, School * s
 
 	fprintf(console_out, "Inserting all daily periods.\n");
 	school->daily_period_ids = calloc(school->n_periods_per_day, sizeof((*school->daily_period_ids)));
-	sqlite3_prepare(db, INSERT_TABLE_DAILY_PERIOD, -1, &stmt, NULL);
+	sqlite3_prepare(db, UPSERT_TABLE_DAILY_PERIOD, -1, &stmt, NULL);
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		sqlite3_bind_text(stmt,1, school->daily_period_names[i], -1, SQLITE_TRANSIENT);
 		sqlite3_bind_int(stmt,2, i);
@@ -2008,7 +1994,7 @@ static bool insert_all_days(FILE * console_out, sqlite3* db, School * school){
 
 	printf("Inserting all days.\n");
 	school->day_ids = calloc(school->n_days, sizeof((*school->day_ids)));
-	errc = sqlite3_prepare(db, INSERT_TABLE_DAY, -1, &stmt, NULL);
+	errc = sqlite3_prepare(db, UPSERT_TABLE_DAY, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	for(i = 0; i < school->n_days; i++){
 		sqlite3_bind_text(stmt,1, school->day_names[i], -1, SQLITE_TRANSIENT);
@@ -3264,5 +3250,5 @@ bool update_room_basic_data(FILE * console_out, sqlite3* db, int room_id, Room *
 }
 
 bool update_room_availability(FILE * console_out, sqlite3* db, int room_id, int * availability, School * school){
-	return insert_or_update_period_scores(console_out, db, UPDATE_TABLE_ROOM_AVAILABILITY, room_id, availability, school);
+	return insert_or_update_period_scores(console_out, db, UPSERT_TABLE_ROOM_AVAILABILITY, room_id, availability, school);
 }
