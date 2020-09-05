@@ -117,6 +117,89 @@ public:
 	ActionState m_state;
 };
 
+class RoomDeleteAction : public Action {
+public:
+	RoomDeleteAction(Application * owner, int i_room);
+	~RoomDeleteAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+	Room  m_room;
+	int   m_i_room;
+	int * m_teaches_scores;
+	int * m_class_scores;
+	int * m_teacher_planning_scores;
+	int * m_teacher_lecture_scores;
+	int * m_meeting_scores;
+	bool * m_meetings;
+	ActionState m_state;
+};
+
+class SubjectInsertAction : public Action {
+public:
+	SubjectInsertAction(Application * owner, char * subj_name);
+	~SubjectInsertAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+	char * m_subj_name;
+};
+
+class SubjectDeleteAction : public Action{
+public:
+	SubjectDeleteAction(Application * owner);
+	~SubjectDeleteAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
+class SubjectNameUpdateAction : public Action {
+public:
+	SubjectNameUpdateAction(Application * owner);
+	SubjectNameUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
+class SubjectGroupInsertAction : public Action {
+public:
+	SubjectGroupInsertAction(Application * owner);
+	~SubjectGroupInsertAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
+class SubjectGroupDeleteAction : public Action{
+public:
+	SubjectGroupDeleteAction(Application * owner);
+	~SubjectGroupDeleteAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+
+};
+
+class SubjectGroupNameUpdateAction : public Action {
+public:
+	SubjectGroupNameUpdateAction(Application * owner);
+	~SubjectGroupNameUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
+class SubjectGroupMembersUpdateAction : public Action {
+public:
+	SubjectGroupMembersUpdateAction(Application * owner);
+	~SubjectGroupMembersUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
 class ActionManager{
 public:
 	Application * m_owner;

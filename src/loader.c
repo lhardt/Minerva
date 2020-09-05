@@ -1747,15 +1747,13 @@ bool insert_meetings_list(FILE * console_out, sqlite3 * db, Meeting * meetings, 
 	for(i = 0; meetings[i].type != meet_NULL; ++i){
 		if(meetings[i].type == meet_LECTURE){
 			Assignment * asg = find_assignment_by_class_subj_id(school,meetings[i].m_class->id,meetings[i].subject->id);
-			for(j = 0; j < asg->amount; j++){
-				sqlite3_bind_int(stmt,1, asg->id);
-				sqlite3_bind_int(stmt,2, school->id);
-				errc = sqlite3_step(stmt);
-				sqlite3_reset(stmt);
-				CERTIFY_ERRC_SQLITE_DONE(false);
-				errc = sqlite3_exec(db, LASTID_TABLE_LECTURE, get_id_callback, &meetings[i].id, NULL);
-				CERTIFY_ERRC_SQLITE_OK(false);
-			}
+			sqlite3_bind_int(stmt,1, asg->id);
+			sqlite3_bind_int(stmt,2, school->id);
+			errc = sqlite3_step(stmt);
+			sqlite3_reset(stmt);
+			CERTIFY_ERRC_SQLITE_DONE(false);
+			errc = sqlite3_exec(db, LASTID_TABLE_LECTURE, get_id_callback, &meetings[i].id, NULL);
+			CERTIFY_ERRC_SQLITE_OK(false);
 		}
 	}
 	sqlite3_finalize(stmt);
@@ -2175,15 +2173,13 @@ static int * select_room_scores(FILE * console_out, sqlite3* db, const char * co
 	sqlite3_bind_int(stmt,1, id);
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(NULL);
-	scores = calloc(11, sizeof(int));
+	scores = calloc(school->n_rooms + 1, sizeof(int));
+	scores[school->n_rooms] = -1;
 	while(errc == SQLITE_ROW){
 		i_room = get_room_index_by_id(school, sqlite3_column_int(stmt,1));
 		scores[i_room] = sqlite3_column_int(stmt,2);
 		errc = sqlite3_step(stmt);
 		++i;
-		if(i % 10 == 0){
-			scores = realloc(scores, (i + 11)*sizeof(int));
-		}
 	}
 	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(NULL);
 	sqlite3_finalize(stmt);
@@ -2301,8 +2297,19 @@ static bool select_all_meetings(FILE * console_out, sqlite3* db, School * school
 		school->meetings = calloc(11, sizeof(Meeting));
 		while(errc == SQLITE_ROW){
 			school->meetings[i].type = meet_LECTURE;
-			school->meetings[i].m_class = find_class_by_id(school, sqlite3_column_int(stmt,1));
-			school->meetings[i].subject = find_subject_by_id(school, sqlite3_column_int(stmt,2));
+			school->meetings[i].id = sqlite3_column_int(stmt,0);
+			Assignment * asg = find_assignment_by_id(school, sqlite3_column_int(stmt,1));
+			if(asg != NULL){
+				school->meetings[i].m_class = asg->m_class;
+				school->meetings[i].subject = asg->subject;
+				if(asg->possible_teachers){
+					school->meetings[i].possible_teachers = int_list_copy(asg->possible_teachers);
+				}
+			} else {
+				printf("Did not found assignment by id in select_all_meetings.\n");
+				school->meetings[i].m_class = NULL;
+				school->meetings[i].subject = NULL;
+			}
 			errc = sqlite3_step(stmt);
 			++i;
 			if(i % 10 == 0){
@@ -2312,6 +2319,11 @@ static bool select_all_meetings(FILE * console_out, sqlite3* db, School * school
 	}
 	sqlite3_finalize(stmt);
 	school->n_meetings = i;
+
+	for(i = 0; i < school->n_meetings; ++i){
+		school->meetings[i].possible_rooms = select_room_scores(console_out, db, SELECT_TABLE_LECTURE_POSSIBLE_ROOM_BY_LECTURE_ID, school->meetings[i].id, school);
+		school->meetings[i].possible_periods = select_period_scores(console_out, db, SELECT_TABLE_LECTURE_POSSIBLE_PERIOD_BY_LECTURE_ID, school->meetings[i].id, school);
+	}
 	return true;
 }
 

@@ -174,11 +174,10 @@ void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 	School * school = m_owner->m_school;
 	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
 		int del_i = m_rooms_list->GetSelection();
-		bool success = remove_room(stdout, m_owner->m_database, school->rooms[del_i].id);
+		RoomDeleteAction * act = new RoomDeleteAction(m_owner, del_i);
+		bool success = act->Do();
 		if(success){
-			school_room_remove(school, del_i);
 			m_rooms_list->Delete(m_selected_index);
-			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Não foi possível apagar.");
 		}

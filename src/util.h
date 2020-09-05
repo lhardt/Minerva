@@ -24,6 +24,11 @@ int * int_list_copy(const int * const list);
 
 int * int_list_n_copy(const int * const list, int n);
 
+/* if *list_ptr == NULL, calloc. Else realloc */
+void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new);
+
+void remove_from_int_list(int * list, int i_remove);
+
 Meeting * copy_meetings_list(const Meeting * const meetings);
 
 School * copy_school(const School * const school);
@@ -59,6 +64,7 @@ Meeting * find_meeting_by_id(School * school, int id);
 Subject * find_subject_by_id(School * school, int id);
 int get_subject_index_by_id(School * school, int id);
 Assignment * find_assignment_by_class_subj_id(School * school, int id_class, int id_subj);
+Assignment * find_assignment_by_id(School * school, int id);
 int get_per_index_by_id(School * school, int id);
 int get_day_index_by_id(School * school, int id);
 int get_daily_period_index_by_id(School * school, int id);

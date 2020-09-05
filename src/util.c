@@ -44,6 +44,31 @@ void print_int_list(FILE * out, const int * const list){
 	}
 }
 
+/* if *list_ptr == NULL, calloc. Else realloc*/
+void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new){
+	LMH_ASSERT(list_ptr != NULL && n_old >= 0 && n_old < n_new);
+	int i;
+
+	if(*list_ptr == NULL){
+		*list_ptr = calloc(n_new + 1, sizeof(int));
+	} else {
+		LMH_ASSERT(*list_ptr != NULL);
+		*list_ptr  = realloc(*list_ptr, (n_new + 1) * sizeof(int));
+		for(i = n_old; i < n_new; ++i){
+			(*list_ptr)[i] = 0;
+		}
+	}
+	(*list_ptr)[n_new] = -1;
+}
+
+void remove_from_int_list(int * list, int i_remove){
+	int i;
+	LMH_ASSERT(list != NULL && i_remove > 0);
+	for(i = i_remove; list[i] != -1; ++i){
+		list[i] = list[i+1];
+	}
+}
+
 void print_sized_int_list(FILE * out, const int * const list, const int size){
 	int i = 0;
 
@@ -275,12 +300,12 @@ int get_room_index_by_id(School * school, int id){
 
 Class * find_class_by_id(School * school, int id) {
 	int i;
-
 	for(i = 0; i < school->n_classes; ++i){
 		if(school->classes[i].id == id){
 			return &(school->classes[i]);
 		}
 	}
+	printf("Did not find class.\n");
 	return NULL;
 }
 
@@ -378,6 +403,15 @@ Assignment * find_assignment_by_class_subj_id(School * school, int id_class, int
 		}
 	}
 	printf("Did not find assignment with idcl %d and idsubj %d\n", id_class, id_subj);
+	return NULL;
+}
+
+Assignment * find_assignment_by_id(School * school, int id){
+	for(int i = 0; i < school->n_assignments; ++i){
+		if(school->assignments[i].id == id){
+			return &school->assignments[i];
+		}
+	}
 	return NULL;
 }
 

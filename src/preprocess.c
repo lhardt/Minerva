@@ -263,12 +263,27 @@ void school_class_remove(School * school, int class_i){
 }
 
 void school_room_add(School * school, const Room * const room){
+	int i;
 	if(school->n_rooms == 0){
 		school->rooms = (Room*) calloc(11, sizeof(Room));
 	} else if(school->n_rooms % 10 == 0) {
 		school->rooms = (Room *) realloc(school->rooms, (school->n_rooms + 11 - (school->n_rooms % 10))*sizeof(Room));
 	}
 	school->rooms[school->n_rooms] = *room;
+
+	for(i = 0; i < school->n_teachers; ++i){
+		add_zeroes_to_score_list(&school->teachers[i].lecture_room_scores, school->n_rooms, school->n_rooms + 1);
+		add_zeroes_to_score_list(&school->teachers[i].planning_room_scores, school->n_rooms, school->n_rooms + 1);
+	}
+	for(i = 0; i < school->n_classes; ++i){
+		add_zeroes_to_score_list(&school->classes[i].room_scores, school->n_rooms, school->n_rooms + 1);
+	}
+	for(i = 0; i < school->n_teaches; ++i){
+		add_zeroes_to_score_list(&school->teaches[i].room_scores, school->n_rooms, school->n_rooms + 1);
+	}
+	for(i = 0; i < school->n_meetings; ++i){
+		add_zeroes_to_score_list(&school->meetings[i].possible_rooms, school->n_rooms, school->n_rooms + 1);
+	}
 	school->n_rooms++;
 }
 
@@ -290,6 +305,35 @@ void school_room_remove(School * school, int room_i){
 	}
 	for(i = room_i; i < school->n_rooms; ++i){
 		school->rooms[i] = school->rooms[i+ 1];
+	}
+
+	for(i = 0; i < school->n_teachers; ++i){
+		if(school->teachers[i].lecture_room_scores){
+			printf("A - 1\n");
+			remove_from_int_list(school->teachers[i].lecture_room_scores, room_i);
+		}
+		if(school->teachers[i].planning_room_scores){
+			printf("A - 2\n");
+			remove_from_int_list(school->teachers[i].planning_room_scores, room_i);
+		}
+	}
+	for(i = 0; i < school->n_classes; ++i){
+		if(school->classes[i].room_scores){
+			printf("A - 3\n");
+			remove_from_int_list(school->classes[i].room_scores, room_i);
+		}
+	}
+	for(i = 0; i < school->n_teaches; ++i){
+		if(school->teaches[i].room_scores){
+			printf("A - 4\n");
+			remove_from_int_list(school->teaches[i].room_scores, room_i);
+		}
+	}
+	for(i = 0; i < school->n_meetings; ++i){
+		if(school->meetings[i].possible_rooms){
+			printf("A - 5\n");
+			remove_from_int_list(school->meetings[i].possible_rooms, room_i);
+		}
 	}
 	--(school->n_rooms);
 }

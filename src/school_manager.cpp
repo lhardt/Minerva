@@ -130,7 +130,7 @@ bool DailyPeriodNamesUpdateAction::Do(){
 		char ** temp = m_owner->m_school->daily_period_names;
 		m_owner->m_school->daily_period_names = m_names;
 		m_names = temp;
-		return false;
+		return true;
 	}
 	return false;
 }
@@ -335,6 +335,7 @@ RoomInsertAction::~RoomInsertAction(){
 	}
 }
 bool RoomInsertAction::Do(){
+	LMH_ASSERT(m_state == state_UNDONE);
 	m_state = state_DONE;
 	int id = insert_room(stdout, m_owner->m_database, &m_room, m_owner->m_school);
 	if(id != -1){
@@ -342,13 +343,14 @@ bool RoomInsertAction::Do(){
 		school_room_add(m_owner->m_school, &m_room);
 		return true;
 	}
-	return true;
+	return false;
 }
 bool RoomInsertAction::Undo(){
+	LMH_ASSERT(m_state == state_DONE);
 	m_state = state_UNDONE;
 	if(remove_room(stdout, m_owner->m_database, m_room.id)){
-		m_room.id = 0;
 		school_room_remove(m_owner->m_school, get_room_index_by_id(m_owner->m_school, m_room.id));
+		m_room.id = 0;
 		return true;
 	}
 	return false;
@@ -357,6 +359,107 @@ wxString RoomInsertAction::Describe(){
 	return wxT("RoomInsertAction");
 }
 
+
+/*********************************************************/
+/*                    RoomDeleteAction                   */
+/*********************************************************/
+RoomDeleteAction::RoomDeleteAction(Application * owner, int i_room)  : Action(owner), m_i_room(i_room) {
+	m_state = state_UNDONE;
+
+}
+RoomDeleteAction::~RoomDeleteAction(){
+	/* If the state is done, then the data is in elsewhere. */
+	if(m_state == state_DONE){
+		free(m_room.name);
+		free(m_room.short_name);
+		free(m_room.availability);
+		free(m_teaches_scores);
+		free(m_class_scores);
+		free(m_teacher_planning_scores);
+		free(m_teacher_lecture_scores);
+		free(m_meeting_scores);
+		free(m_meetings);
+	}
+}
+bool RoomDeleteAction::Do(){
+	int i;
+	LMH_ASSERT(m_state == state_UNDONE);
+	School * school = m_owner->m_school;
+	m_room = school->rooms[m_i_room];
+	m_state = state_DONE;
+	m_teaches_scores = (int *) calloc(school->n_teaches, sizeof(int));
+	m_class_scores = (int *) calloc(school->n_classes, sizeof(int));
+	m_teacher_planning_scores = (int *) calloc(school->n_teachers, sizeof(int));
+	m_teacher_lecture_scores = (int *) calloc(school->n_teachers, sizeof(int));
+	m_meeting_scores = (int *) calloc(school->n_meetings, sizeof(int));
+	m_meetings = (bool *) calloc(school->n_meetings, sizeof(bool));
+
+	for(i = 0; i < school->n_teachers; ++i){
+		m_teacher_planning_scores[i] = school->teachers[i].planning_room_scores[m_i_room];
+		m_teacher_lecture_scores[i] = school->teachers[i].lecture_room_scores[m_i_room];
+	}
+	for(i = 0; i < school->n_classes; ++i){
+		m_class_scores[i] = school->classes[i].room_scores[m_i_room];
+	}
+	for(i = 0; i < school->n_teaches; ++i){
+		m_teaches_scores[i] = school->teaches[i].room_scores[m_i_room];
+	}
+	printf("School n_meetings: %d\n", school->n_meetings);
+	for(i = 0; i < school->n_meetings; ++i){
+		if(school->meetings[i].room != NULL && school->meetings[i].room->id == m_room.id){
+			m_meetings[i] = true;
+		}
+		if(school->meetings[i].possible_rooms){
+			m_meeting_scores[i] = school->meetings[i].possible_rooms[m_i_room];
+		} /* No need for else because of calloc. */
+	}
+	if(remove_room(stdout, m_owner->m_database, m_room.id)){
+		school_room_remove(m_owner->m_school, get_room_index_by_id(m_owner->m_school, m_room.id));
+		m_room.id = 0;
+		return true;
+	}
+	return false;
+}
+bool RoomDeleteAction::Undo(){
+	int i;
+	m_state = state_UNDONE;
+	School * school = m_owner->m_school;
+	int id = insert_room(stdout, m_owner->m_database, &m_room, m_owner->m_school);
+	if(id != -1){
+		m_room.id = id;
+		school_room_add(m_owner->m_school, &m_room);
+
+		LMH_ASSERT(m_owner->m_school->rooms[m_i_room].id == id && (m_i_room == school->n_rooms -1));
+		/* These are surely allocated because of school_room_add. */
+		for(i = 0; i < school->n_teachers; ++i){
+			school->teachers[i].lecture_room_scores[m_i_room] = m_teacher_lecture_scores[i];
+			school->teachers[i].planning_room_scores[m_i_room] = m_teacher_planning_scores[i];
+		}
+		for(i = 0; i < school->n_classes; ++i){
+			school->classes[i].room_scores[m_i_room] = m_class_scores[i];
+		}
+		for(i = 0; i < school->n_teaches; ++i){
+			school->teaches[i].room_scores[m_i_room] = m_teaches_scores[i];
+		}
+		for(i = 0; i < school->n_meetings; ++i){
+			school->meetings[i].possible_rooms[m_i_room] = m_meeting_scores[i];
+			if(m_meetings[i]){
+				school->meetings[i].room = &school->rooms[m_i_room];
+			}
+		}
+		free(m_teaches_scores);
+		free(m_class_scores);
+		free(m_teacher_planning_scores);
+		free(m_teacher_lecture_scores);
+		free(m_meeting_scores);
+		free(m_meetings);
+		return true;
+	}
+	return false;
+}
+wxString RoomDeleteAction::Describe(){
+	return wxT("RoomDeleteAction");
+}
 
 /*********************************************************/
 /*                     ActionManager                     */
