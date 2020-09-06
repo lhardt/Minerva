@@ -121,19 +121,17 @@ class ChoiceGrid : public wxGrid {
 
 	bool m_can_user_click = true;
 
-	wxVector<int> GetValues(int i_day);
-	wxVector<int> GetValues();
-
 	void GridRemake(int n_cols, int n_rows);
-	void SetPossibleValues(wxVector<wxString> values);
 	void SetColName(int i_col, wxString name);
 	void SetRowName(int i_row, wxString name);
-	void SetBackgroundColors(wxVector<wxColor> values);
 	void SetCellImmutable(int i_col, int i_row);
 	void SetCellState(int i_row, int i_col, int state);
 	void SetAllCellsState(int state);
+	void SetAllActiveCellsState(int state);
+	void SetColActiveCellsState(int i_col, int state);
+	void SetRowActiveCellsState(int i_row, int state);
 	int  GetCellState(int i_row, int i_col);
-	int  AddState(wxString state_name, wxColor state_value);
+	int  AddState(wxString state_name, wxColor state_color);
 	void SetCanUserClick(bool can_user_click);
  private:
 	void OnLeftClick(wxGridEvent &);

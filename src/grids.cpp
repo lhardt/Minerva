@@ -184,12 +184,22 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 	Refresh();
 }
 
-void ChoiceGrid::SetPossibleValues(wxVector<wxString> values){
-	m_value_names = values;
+void ChoiceGrid::SetColActiveCellsState(int i_col, int state) {
+	int i_row = 0;
+	for(i_row = 0; i_row < GetNumberRows()-1; ++i_row){
+		if(GetCellState(i_row, i_col) != -1){
+			SetCellState(i_row, i_col, state);
+		}
+	}
 }
 
-void ChoiceGrid::SetBackgroundColors(wxVector<wxColour> values){
-	m_background_colors = values;
+void ChoiceGrid::SetRowActiveCellsState(int i_row, int state) {
+	int i_col = 0;
+	for(i_col = 0; i_col < GetNumberCols()-1; ++i_col){
+		if(GetCellState(i_row, i_col) != -1){
+			SetCellState(i_row, i_col, state);
+		}
+	}
 }
 
 void ChoiceGrid::SetCanUserClick(bool can){
@@ -198,25 +208,43 @@ void ChoiceGrid::SetCanUserClick(bool can){
 
 void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
 	int i = 0;
+	int evt_col = evt.GetCol(), evt_row = evt.GetRow();
 
-	if(m_can_user_click && m_value_names.size() > 0){
-		if(evt.GetCol() > 0 && evt.GetRow() > 0){
-			wxString evt_str = GetCellValue(evt.GetRow(), evt.GetCol());
-			for( i = 0; i < m_value_names.size(); ++i){
-				if(evt_str.IsSameAs(m_value_names.at(i))){
-					break;
+	if(GetNumberRows() > 0 && GetNumberCols() > 0 &&  m_can_user_click && m_value_names.size() > 0){
+		if(evt_col == 0 && evt_row == 0){
+			/* Loop until it finds one active cell with a state */
+			int last_state = -1;
+			for(int i_row = 0; last_state == -1 && i_row < GetNumberRows()-1; ++i_row){
+				for(int i_col = 0; last_state == -1 && i_col < GetNumberCols()-1; ++i_col){
+					last_state = GetCellState(i_row, i_col);
 				}
 			}
-			if(i != m_value_names.size()){
-				// Loop to zero if necessary -- goes to zero if not found
-				i = (i + 1)%(m_value_names.size());
-				if(m_background_colors.size() > i){
-					SetCellBackgroundColour(evt.GetRow(), evt.GetCol(), m_background_colors.at(i));
-				} else {
-					SetCellBackgroundColour(evt.GetRow(), evt.GetCol(), wxColor(255,255,255));
-				}
-				SetCellValue(evt.GetRow(), evt.GetCol(), m_value_names.at(i));
-					evt.Skip();
+			if(last_state >= 0){
+				SetAllActiveCellsState((last_state + 1) % m_value_names.size());
+			} /* Otherwise all cells are disabled */
+		} else if(evt_col == 0){
+			/* Loop until it finds one active cell with a state */
+			int last_state = -1;
+			for(int i_col = 0; last_state == -1 && i_col < GetNumberCols()-1; ++i_col){
+				last_state = GetCellState(evt_row-1,i_col);
+			}
+			if(last_state != -1){
+				SetRowActiveCellsState(evt_row-1, (last_state + 1) % m_value_names.size());
+			}
+		} else if(evt_row == 0){
+			/* Loop until it finds one active cell with a state */
+			int last_state = -1;
+			for(int i_row = 0; last_state == -1 && i_row < GetNumberRows()-1; ++i_row){
+				last_state = GetCellState(i_row,evt_col-1);
+			}
+			if(last_state != -1){
+				SetColActiveCellsState(evt_col-1,(last_state + 1) % m_value_names.size());
+			}
+		} else {
+			i = GetCellState(evt_row-1, evt_col-1);
+			if(i >= 0){
+				SetCellState(evt_row-1, evt_col-1, (i +1)%m_value_names.size());
+				evt.Skip();
 				Refresh();
 			}
 		}
@@ -250,8 +278,20 @@ void ChoiceGrid::SetAllCellsState(int state){
 	}
 }
 
+void ChoiceGrid::SetAllActiveCellsState(int state){
+	/* Inneficiently elegant. Refactor before production*/
+	for(int i = 0; i < GetNumberRows() -1; ++i){
+		for(int j = 0; j < GetNumberCols() -1; ++j){
+			if(GetCellState(i,j) != -1){
+				SetCellState(i,j,state);
+			}
+		}
+	}
+}
+
 int ChoiceGrid::GetCellState(int i_row, int i_col){
-	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
+	/* TODO: Use a PosIntGridPane backend. It would speed up to not compare strings*/
+	if(i_col < GetNumberCols()-1 && i_row < GetNumberRows()-1){
 		wxColor bgcolor = GetCellBackgroundColour(i_row + 1, i_col + 1);
 		for(int i = 0; i < m_background_colors.size(); ++i){
 			if(bgcolor == m_background_colors[i]){
@@ -262,9 +302,9 @@ int ChoiceGrid::GetCellState(int i_row, int i_col){
 		if(bgcolor == m_immutable_cell_color){
 			return -1;
 		}
-		printf("Something is wrong. GetCellState with invalid/blank cell");
+		printf("Something is wrong. GetCellState with invalid/blank cell\n");
 	}
-	return -1;
+	return -2;
 }
 
 int  ChoiceGrid::AddState(wxString state_name, wxColor state_value){
