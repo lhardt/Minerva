@@ -95,7 +95,8 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		room.active = true;
 		room.availability = (int*)calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
-			room.availability[i] = m_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+			int state = m_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+			room.availability[i] = state >= 0? state:0; /* State -1 is for blocked cells */
 		}
 		room.availability[school->n_periods] = -1;
 		RoomInsertAction * act = new RoomInsertAction(m_owner, room);

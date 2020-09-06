@@ -88,7 +88,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
 
 	for(i_subject = 0; i_subject < school->n_subjects; ++i_subject){
-		if(m_subjects_grid->GetCellState(i_subject,0)){
+		if(m_subjects_grid->GetCellState(i_subject,0) > 0){
 			++n_subjects;
 		}
 	}
@@ -116,11 +116,12 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 			teaches_vals = (Teaches*)calloc(n_subjects + 1, sizeof(Teaches));
 			int i_teaches = 0;
 			for(i_subject = 0; i_subject < school->n_subjects; ++i_subject){
-				if(m_subjects_grid->GetCellState(i_subject,0)){
+				if(m_subjects_grid->GetCellState(i_subject,0) > 0){
 					t.teaches[i_teaches] = &(teaches_vals[i_teaches]);
 					t.teaches[i_teaches]->teacher = &t;
 					t.teaches[i_teaches]->subject = &(school->subjects[i_subject]);
-					t.teaches[i_teaches]->score = m_subjects_grid->GetCellState(i_subject,0);
+					int state = m_subjects_grid->GetCellState(i_subject,0);
+					t.teaches[i_teaches]->score = state >= 0? state:0;
 					++i_teaches;
 				}
 			}
@@ -131,7 +132,8 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.lecture_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
 		t.planning_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
 		for(int i = 0; i < school->n_periods; ++i){
-			t.lecture_period_scores[i] = m_periods_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+			int state = m_periods_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+			t.lecture_period_scores[i] = state >= 0? state:0;
 			t.planning_period_scores[i] = t.lecture_period_scores[i];
 		}
 		t.lecture_period_scores[school->n_periods] = -1;

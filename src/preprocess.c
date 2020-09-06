@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include "assert.h"
+#include "util.h"
 
 void school_subject_remove(School * school, int subj_i){
 	int i, j, k;
@@ -309,23 +310,19 @@ void school_room_remove(School * school, int room_i){
 
 	for(i = 0; i < school->n_teachers; ++i){
 		if(school->teachers[i].lecture_room_scores){
-			printf("A - 1\n");
 			remove_from_int_list(school->teachers[i].lecture_room_scores, room_i);
 		}
 		if(school->teachers[i].planning_room_scores){
-			printf("A - 2\n");
 			remove_from_int_list(school->teachers[i].planning_room_scores, room_i);
 		}
 	}
 	for(i = 0; i < school->n_classes; ++i){
 		if(school->classes[i].room_scores){
-			printf("A - 3\n");
 			remove_from_int_list(school->classes[i].room_scores, room_i);
 		}
 	}
 	for(i = 0; i < school->n_teaches; ++i){
 		if(school->teaches[i].room_scores){
-			printf("A - 4\n");
 			remove_from_int_list(school->teaches[i].room_scores, room_i);
 		}
 	}

@@ -101,7 +101,8 @@ void ListRoomsPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt) {
 
 		int * values = (int*) calloc(school->n_periods+1 , sizeof(int));
 		for(int i = 0; i < school->n_periods; ++i){
-			values[i] = grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+			int state = grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+			values[i] = state >= 0 ? state:0; /* State -1 is used for blocked cells */
 		}
 		values[school->n_periods] = -1;
 
@@ -171,11 +172,10 @@ void ListRoomsPane::OnCancelButtonClicked(wxCommandEvent &){
 }
 
 void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
-	School * school = m_owner->m_school;
 	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
 		int del_i = m_rooms_list->GetSelection();
 		RoomDeleteAction * act = new RoomDeleteAction(m_owner, del_i);
-		bool success = act->Do();
+		bool success = m_owner->Do(act);
 		if(success){
 			m_rooms_list->Delete(m_selected_index);
 		} else {

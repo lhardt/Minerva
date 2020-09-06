@@ -154,7 +154,7 @@ const char * const LASTID_TABLE_ROOM_AVAILABILITY =
 const char * const SELECT_ROOM_AVAILABILITY_BY_ROOM_ID =
 			("SELECT * FROM RoomAvailability WHERE id_room=?");
 const char * const DELETE_ROOM_AVAILABILITY_BY_ROOM_ID =
-			("DELETE FROM RoomAvailability WHERE id_room=?");
+			("DELETE FROM RoomAvailability WHERE id_room = ?");
 const char * const DELETE_ROOM_AVAILABILITY_BY_SCHOOL_ID =
 			("DELETE FROM RoomAvailability WHERE EXISTS("
 				"SELECT id FROM Room WHERE Room.id = RoomAvailability.id_room "
@@ -1241,7 +1241,7 @@ static bool insert_or_update_period_scores(FILE * console_out, sqlite3 * db, con
 
 	errc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
-	while(scores[i] >= 0 && i < school->n_periods){
+	while(i < school->n_periods && scores[i] >= 0){
 		sqlite3_bind_int(stmt,1, obj_id);
 		sqlite3_bind_int(stmt,2, school->period_ids[i]);
 		sqlite3_bind_int(stmt,3, scores[i]);
@@ -2284,6 +2284,9 @@ static bool select_all_meetings(FILE * console_out, sqlite3* db, School * school
 		while(errc == SQLITE_ROW){
 			school->meetings[i].type = meet_LECTURE;
 			school->meetings[i].id = sqlite3_column_int(stmt,0);
+			school->meetings[i].possible_teachers = NULL;
+			school->meetings[i].possible_rooms = NULL;
+			school->meetings[i].possible_periods = NULL;
 			Assignment * asg = find_assignment_by_id(school, sqlite3_column_int(stmt,1));
 			if(asg != NULL){
 				school->meetings[i].m_class = asg->m_class;

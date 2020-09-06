@@ -63,7 +63,7 @@ void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new){
 
 void remove_from_int_list(int * list, int i_remove){
 	int i;
-	LMH_ASSERT(list != NULL && i_remove > 0);
+	LMH_ASSERT(list != NULL && i_remove >= 0);
 	for(i = i_remove; list[i] != -1; ++i){
 		list[i] = list[i+1];
 	}
