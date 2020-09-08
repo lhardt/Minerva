@@ -1,6 +1,7 @@
 #include "gui.hpp"
 
 extern "C" {
+	#include "util.h"
 	#include "loader.h"
 };
 
@@ -11,12 +12,7 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxArrayString group_names;
-	for(i = 0; i < school->n_subject_groups; ++i){
-		group_names.push_back(wxString::FromUTF8(school->subject_group_names[i]));
-	}
-
-	m_groups_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300), group_names);
+	m_groups_list = new SearchableListPane(m_owner, this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 	wxNotebook * notebook = new wxNotebook(this, wxID_ANY);
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
@@ -24,6 +20,10 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove);
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
 	m_members = new ScoreGridPane(m_owner, notebook, wxID_ANY);
+
+	for(i = 0; i < school->n_subject_groups; ++i){
+		m_groups_list->AddItem(school->subject_group_ids[i], wxString::FromUTF8(school->subject_group_names[i]));
+	}
 
 	notebook->AddPage(m_members, wxT("Membro"));
 
@@ -70,7 +70,7 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnDeleteButtonClicked, this);
-	m_groups_list->Bind(wxEVT_LISTBOX, &ListSubjectGroupsPane::OnSelectionChanged, this);
+	m_groups_list->GetList()->Bind(wxEVT_LISTBOX, &ListSubjectGroupsPane::OnSelectionChanged, this);
 
 	m_cancel_btn->Hide();
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
@@ -96,10 +96,11 @@ void ListSubjectGroupsPane::OnCancelButtonClicked(wxCommandEvent & evt){
 }
 
 void ListSubjectGroupsPane::OnDeleteButtonClicked(wxCommandEvent & evt){
-	int sel = m_groups_list->GetSelection();
+	int sel = m_groups_list->GetList()->GetSelection();
 	if(sel != wxNOT_FOUND){
-		if(remove_subject_group(stdout, m_owner->m_database, m_owner->m_school->subject_group_ids[sel])){
-			m_groups_list->Delete(sel);
+		int group_id = ((IntClientData*)m_groups_list->GetList()->GetClientObject(sel))->m_value;
+		if(remove_subject_group(stdout, m_owner->m_database, m_owner->m_school->subject_group_ids[group_id])){
+			m_groups_list->RemoveItem(group_id);
 			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Error! Could not delete\n");
@@ -108,14 +109,16 @@ void ListSubjectGroupsPane::OnDeleteButtonClicked(wxCommandEvent & evt){
 }
 
 void ListSubjectGroupsPane::OnSelectionChanged(wxCommandEvent & evt){
-	int i = 0, i_select = m_groups_list->GetSelection();
+	int i = 0, i_select = m_groups_list->GetList()->GetSelection();
 	School * school = m_owner->m_school;
 	if(i_select != wxNOT_FOUND){
+		int group_id = ((IntClientData*)m_groups_list->GetList()->GetClientObject(i_select))->m_value;
+		int group_i = get_subject_group_index_by_id(school, group_id);
 		ChoiceGrid * members_grid = m_members->GetGrid();
-		m_name_text->SetValue(wxString::FromUTF8(school->subject_group_names[i_select]));
+		m_name_text->SetValue(wxString::FromUTF8(school->subject_group_names[group_i]));
 		for(i = 0; i < school->n_subjects; ++i){
 			if(school->subjects[i].in_groups){
-				members_grid->SetCellState(i, 0, school->subjects[i].in_groups[i_select] > 0 ? 1:0);
+				members_grid->SetCellState(i, 0, school->subjects[i].in_groups[group_i] > 0 ? 1:0);
 			} else {
 				members_grid->SetCellState(i, 0, 0);
 			}

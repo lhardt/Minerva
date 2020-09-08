@@ -1,7 +1,7 @@
 #include "gui.hpp"
 
 extern "C" {
-	#include "loader.h"
+	#include "util.h"
 	#include "preprocess.h"
 	#include "assert.h"
 };
@@ -14,7 +14,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	m_rooms_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
+	m_rooms_list = new SearchableListPane(m_owner, this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_size);
@@ -38,11 +38,9 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
 	if(school->n_rooms > 0){
-		wxArrayString list;
 		for(i = 0; i < school->n_rooms; ++i){
-			list.Add(wxString::FromUTF8(school->rooms[i].name));
+			m_rooms_list->AddItem(school->rooms[i].id, wxString::FromUTF8(school->rooms[i].name));
 		}
-		m_rooms_list->InsertItems(list,0);
 	}
 	periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 
@@ -83,7 +81,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListRoomsPane::OnDeleteButtonClicked, this);
-	m_rooms_list->Bind(wxEVT_LISTBOX, &ListRoomsPane::OnSelectionChanged, this);
+	m_rooms_list->GetList()->Bind(wxEVT_LISTBOX, &ListRoomsPane::OnSelectionChanged, this);
 	m_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &ListRoomsPane::OnPeriodsCancelButtonClicked, this);
 	m_periods->GetSaveButton()->Bind(wxEVT_BUTTON, &ListRoomsPane::OnPeriodsSaveButtonClicked, this);
 
@@ -94,8 +92,9 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 }
 
 void ListRoomsPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt) {
-	int i_select = m_rooms_list->GetSelection();
+	int i_select = m_rooms_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
+		int room_id = ((IntClientData*)m_rooms_list->GetList()->GetClientObject())->m_value;
 		School * school = m_owner->m_school;
 		ChoiceGrid * grid = m_periods->GetGrid();
 
@@ -106,7 +105,7 @@ void ListRoomsPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt) {
 		}
 		values[school->n_periods] = -1;
 
-		RoomAvailabilityUpdateAction * act = new RoomAvailabilityUpdateAction(m_owner, values, school->rooms[i_select].id);
+		RoomAvailabilityUpdateAction * act = new RoomAvailabilityUpdateAction(m_owner, values, room_id);
 		m_owner->Do(act);
 		evt.Skip();
 	}
@@ -114,10 +113,10 @@ void ListRoomsPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt) {
 
 void ListRoomsPane::OnPeriodsCancelButtonClicked(wxCommandEvent & evt) {
 	School * school = m_owner->m_school;
-	int i_select = m_rooms_list->GetSelection();
+	int i_select = m_rooms_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
-		LMH_ASSERT(m_rooms_list->GetSelection() < school->n_rooms);
-		Room * room = &school->rooms[i_select];
+		int id_room = ((IntClientData*)m_rooms_list->GetList()->GetClientObject(i_select))->m_value;
+		Room * room = find_room_by_id(school, id_room);
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		for(int i = 0; i < school->n_periods; ++i){
 			if(school->periods[i]){
@@ -129,8 +128,9 @@ void ListRoomsPane::OnPeriodsCancelButtonClicked(wxCommandEvent & evt) {
 }
 
 void ListRoomsPane::OnEditButtonClicked(wxCommandEvent &){
-	int i_select = m_rooms_list->GetSelection();
+	int i_select = m_rooms_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
+		int id_room = ((IntClientData*)m_rooms_list->GetList()->GetClientObject(i_select))->m_value;
 		if(m_name_text->IsEnabled()){
 			m_cancel_btn->Hide();
 			m_name_text->Disable();
@@ -143,7 +143,7 @@ void ListRoomsPane::OnEditButtonClicked(wxCommandEvent &){
 				.size = m_size_text->GetValue(),
 				.active = m_active_text->GetValue()
 			};
-			RoomBasicDataUpdateAction * act = new RoomBasicDataUpdateAction(m_owner, room, m_owner->m_school->rooms[i_select].id);
+			RoomBasicDataUpdateAction * act = new RoomBasicDataUpdateAction(m_owner, room, id_room);
 			m_owner->Do(act);
 		} else {
 			m_cancel_btn->Show();
@@ -156,9 +156,11 @@ void ListRoomsPane::OnEditButtonClicked(wxCommandEvent &){
 }
 
 void ListRoomsPane::OnCancelButtonClicked(wxCommandEvent &){
-	int i_select = m_rooms_list->GetSelection();
+	School * school = m_owner->m_school;
+	int i_select = m_rooms_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
-		Room * sel_room = & m_owner->m_school->rooms[i_select];
+		int id_room = ((IntClientData*)m_rooms_list->GetList()->GetClientObject(i_select))->m_value;
+		Room * sel_room = find_room_by_id(school, id_room);
 		m_cancel_btn->Hide();
 		m_name_text->Disable();
 		m_active_text->Disable();
@@ -172,12 +174,15 @@ void ListRoomsPane::OnCancelButtonClicked(wxCommandEvent &){
 }
 
 void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
-	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
-		int del_i = m_rooms_list->GetSelection();
-		RoomDeleteAction * act = new RoomDeleteAction(m_owner, del_i);
+	School * school = m_owner->m_school;
+	int i_select = m_rooms_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int id_room = ((IntClientData*)m_rooms_list->GetList()->GetClientObject(i_select))->m_value;
+		Room * sel_room = find_room_by_id(school, id_room);
+		RoomDeleteAction * act = new RoomDeleteAction(m_owner, sel_room->id);
 		bool success = m_owner->Do(act);
 		if(success){
-			m_rooms_list->Delete(m_selected_index);
+			m_rooms_list->RemoveItem(sel_room->id);
 		} else {
 			printf("Não foi possível apagar.");
 		}
@@ -185,11 +190,12 @@ void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 }
 
 void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
-	int i;
 	School * school = m_owner->m_school;
-	if(m_rooms_list->GetSelection() != wxNOT_FOUND){
-		Room * room = & school->rooms[m_rooms_list->GetSelection()];
-		m_selected_index = m_rooms_list->GetSelection();
+	int i;
+	int i_select = m_rooms_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int id_room = ((IntClientData*)m_rooms_list->GetList()->GetClientObject(i_select))->m_value;
+		Room * room = find_room_by_id(school, id_room);
 		m_name_text->SetValue(wxString::FromUTF8( room->name ));
 		m_size_text->SetValue(room->size);
 		m_active_text->SetValue(room->active);

@@ -43,7 +43,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	notebook->InsertPage(4, m_lecture_rooms, m_owner->m_lang->str_lecture_rooms);
 	notebook->InsertPage(5, m_planning_rooms, m_owner->m_lang->str_planning_rooms);
 	notebook->InsertPage(6, m_groups, m_owner->m_lang->str_teacher_groups);
-	m_teachers_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
+	m_teachers_list = new SearchableListPane(m_owner, this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
 	m_max_days_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 	m_max_periods_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
@@ -149,7 +149,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
 
-	m_teachers_list->Bind(wxEVT_LISTBOX, &ListTeachersPane::OnSelectionChanged, this);
+	m_teachers_list->GetList()->Bind(wxEVT_LISTBOX, &ListTeachersPane::OnSelectionChanged, this);
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnDeleteButtonClicked, this);
@@ -157,9 +157,9 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	for(i = 0; i < school->n_teachers; ++i){
 		if(school->teachers[i].subordinates && (find_first_positive(school->teachers[i].subordinates) >= 0)){
-			m_teachers_list->Insert(wxString::Format("(%s) %s", m_owner->m_lang->str_group, wxString::FromUTF8(school->teachers[i].name)), i, new IntClientData(i));
+			m_teachers_list->AddItem(school->teachers[i].id, wxString::Format("(%s) %s", m_owner->m_lang->str_group, wxString::FromUTF8(school->teachers[i].name)));
 		} else {
-			m_teachers_list->Insert(wxString::FromUTF8(school->teachers[i].name), i, new IntClientData(i));
+			m_teachers_list->AddItem(school->teachers[i].id, wxString::FromUTF8(school->teachers[i].name));
 		}
 	}
 
@@ -220,13 +220,14 @@ void ListTeachersPane::OnCancelButtonClicked(wxCommandEvent &){
 }
 
 void ListTeachersPane::OnDeleteButtonClicked(wxCommandEvent &) {
-	int i_select = m_teachers_list->GetSelection();
+	int i_select = m_teachers_list->GetList()->GetSelection();
 	School * school = m_owner->m_school;
 	bool success = false;
 	if(i_select != wxNOT_FOUND){
-		success = remove_teacher(stdout, m_owner->m_database, school->teachers[i_select].id);
+		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		success = remove_teacher(stdout, m_owner->m_database, teacher_id);
 		if(success){
-			school_teacher_remove(school, i_select);
+			school_teacher_remove(school, get_teacher_index_by_id(school, teacher_id));
 			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Couldn't delete teacher\n");
@@ -234,12 +235,13 @@ void ListTeachersPane::OnDeleteButtonClicked(wxCommandEvent &) {
 	}
 }
 void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
-	int i_select = m_teachers_list->GetSelection();
+	int i_select = m_teachers_list->GetList()->GetSelection();
 	School * school = m_owner->m_school;
 	if(school != NULL && school->teachers != NULL && i_select != wxNOT_FOUND){
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		ChoiceGrid * teaches_grid = m_teaches->GetGrid();
-		Teacher * t = & school->teachers[i_select];
+		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		Teacher * t = find_teacher_by_id(school, teacher_id);
 		teaches_grid->SetAllCellsState(0);
 
 		m_name_text->SetValue(wxString::FromUTF8(t->name));

@@ -27,7 +27,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
 	wxStaticText * composite_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_is_superclass);
 	wxStaticText * m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
-	m_classes_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
+	m_classes_list = new SearchableListPane(m_owner, this, wxID_ANY, wxDefaultPosition, wxSize(230,250));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,30));
 	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
 	m_size_text = new wxSpinCtrl(this, wxID_ANY);
@@ -109,7 +109,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_basic_edit_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnEditButtonClicked, this);
 	m_basic_cancel_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnRemoveButtonClicked, this);
-	m_classes_list->Bind(wxEVT_LISTBOX, &ListClassesPane::OnSelectionChanged, this);
+	m_classes_list->GetList()->Bind(wxEVT_LISTBOX, &ListClassesPane::OnSelectionChanged, this);
 
 
 	// AVAILABILITY PANE CODE
@@ -139,58 +139,48 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	}
 	rooms_grid->GridRemake(1, school->n_rooms);
 
-
 	if(school->n_classes > 0){
-		wxArrayString list;
 		for(i = 0; i < school->n_classes; ++i){
-			list.Add(wxString::FromUTF8(school->classes[i].name));
+			m_classes_list->AddItem(school->classes[i].id,wxString::FromUTF8(school->classes[i].name));
 		}
-		m_classes_list->InsertItems(list,0);
 	}
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		m_entry_period_text->Insert(wxString::FromUTF8(school->daily_period_names[i]), i, new IntClientData(i));
 		m_exit_period_text->Insert(wxString::FromUTF8(school->daily_period_names[i]), i, new IntClientData(i));
 	}
 
-	m_classes_list->Disable();
 	m_name_text->Disable();
 	m_active_text->Disable();
 	m_size_text->Disable();
 	m_entry_period_text->Disable();
 	m_exit_period_text->Disable();
 	m_free_periods_text->Disable();
-	m_classes_list->Enable();
 	m_basic_cancel_btn->Hide();
 
 }
 
 void ListClassesPane::OnCancelButtonClicked(wxCommandEvent & ev){
-	m_classes_list->Disable();
 	m_name_text->Disable();
 	m_active_text->Disable();
 	m_size_text->Disable();
 	m_entry_period_text->Disable();
 	m_exit_period_text->Disable();
 	m_free_periods_text->Disable();
-	m_classes_list->Enable();
 	m_basic_cancel_btn->Hide();
 	m_basic_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 }
 
 void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
 	if(m_basic_cancel_btn->IsShown()){
-		m_classes_list->Disable();
 		m_name_text->Disable();
 		m_active_text->Disable();
 		m_size_text->Disable();
 		m_entry_period_text->Disable();
 		m_exit_period_text->Disable();
 		m_free_periods_text->Disable();
-		m_classes_list->Enable();
 		m_basic_cancel_btn->Hide();
 		m_basic_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	} else {
-		m_classes_list->Enable();
 		m_name_text->Enable();
 		m_active_text->Enable();
 		m_size_text->Enable();
@@ -205,8 +195,10 @@ void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
 void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 	int i;
 	School * school = m_owner->m_school;
-	if(m_classes_list->GetSelection() != wxNOT_FOUND){
-		Class * c = &school->classes[m_classes_list->GetSelection()];
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id); // &school->classes[m_classes_list->GetSelection()];
 		m_name_text->SetValue(wxString::FromUTF8(c->name));
 		m_size_text->SetValue(c->size);
 		m_free_periods_text->SetValue(c->can_have_free_periods_flag);
@@ -236,18 +228,18 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 }
 
 void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
-	int del_i;
 	bool success = false;
 	School * school = m_owner->m_school;
 	Class * c;
 
-	del_i = m_classes_list->GetSelection();
-	if(del_i != wxNOT_FOUND){
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int del_i = get_class_index_by_id(school, ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value);
 		c = &school->classes[del_i];
 		success = remove_class(stdout, m_owner->m_database, c->id);
 		if(success) {
 			school_class_remove(school, del_i);
-			m_classes_list->Delete(del_i);
+			m_classes_list->RemoveItem(c->id);
 
 			m_name_text->SetLabel(wxT(""));
 			m_size_text->SetLabel(wxT(""));

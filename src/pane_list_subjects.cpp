@@ -1,6 +1,7 @@
 #include "gui.hpp"
 
 extern "C" {
+	#include "util.h"
 	#include "loader.h"
 	#include "preprocess.h"
 };
@@ -12,11 +13,11 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	m_subjects_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
+	m_subjects_list = new SearchableListPane(m_owner, this /*, wxID_ANY, wxDefaultPosition, wxSize(230,300) */);
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
 	for(i = 0; i < school->n_subjects; ++i){
-		m_subjects_list->Insert(wxString::FromUTF8(school->subjects[i].name), i, new IntClientData(i));
+		m_subjects_list->AddItem(school->subjects[i].id, wxString::FromUTF8(school->subjects[i].name));
 	}
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_cancel_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_cancel);
@@ -54,7 +55,7 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnEditButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnDeleteButtonClicked, this);
-	m_subjects_list->Bind(wxEVT_LISTBOX, &ListSubjectsPane::OnSelectionChanged, this);
+	m_subjects_list->GetList()->Bind(wxEVT_LISTBOX, &ListSubjectsPane::OnSelectionChanged, this);
 }
 
 ListSubjectsPane::~ListSubjectsPane(){
@@ -83,13 +84,13 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
 	int del_i;
 	bool success;
-	if(m_subjects_list->GetSelection() != wxNOT_FOUND){
-		del_i = m_subjects_list->GetSelection();
-
-		success = remove_subject(stdout, m_owner->m_database, school->subjects[del_i].id);
+	int i_select = m_subjects_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int subject_id = ((IntClientData*) m_subjects_list->GetList()->GetClientObject(i_select))->m_value;
+		success = remove_subject(stdout, m_owner->m_database, subject_id);
 		if(success){
-			school_subject_remove(school, del_i);
-			m_subjects_list->Delete(del_i);
+			school_subject_remove(school, get_subject_index_by_id(school, subject_id));
+			m_subjects_list->RemoveItem(subject_id);
 			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Não foi possível.\n");
@@ -98,9 +99,13 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 }
 
 void ListSubjectsPane::OnSelectionChanged(wxCommandEvent & ev){
+	School * school = m_owner->m_school;
 	Subject * subject = nullptr;
-	if(m_subjects_list->GetSelection() != wxNOT_FOUND){
-		subject = &(m_owner->m_school->subjects[m_subjects_list->GetSelection()]);
+	int i_select = m_subjects_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int subject_id = ((IntClientData*) m_subjects_list->GetList()->GetClientObject(i_select))->m_value;
+		subject = find_subject_by_id(school, subject_id);
+		// subject = &(m_owner->m_school->subjects[m_subjects_list->GetSelection()]);
 		m_name_text->SetValue(wxString::FromUTF8(subject->name));
 	} else {
 		m_name_text->SetLabel(wxT(""));

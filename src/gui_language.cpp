@@ -248,6 +248,10 @@ const Language LANG_POR = {
 	.str_list_of_classes_and_their_groups=L"Listar Turmas e seus Grupos",
 	.str_list_classes_and_their_groups=L"Lista de Turmas e seus Grupos",
 	.str_is_superclass=L"É turma composta",
+	.str_search=L"Busca",
+	.str_selection=L"Seleção",
+	.str_clear=L"Limpar",
+	.str_selection_and_search=L"Seleção e Busca",
 };
 
 const Language LANG_ENG = {
@@ -484,6 +488,10 @@ const Language LANG_ENG = {
 	.str_list_of_classes_and_their_groups=L"List of Classes and their Groups",
 	.str_list_classes_and_their_groups=L"List Classes and their Groups",
 	.str_is_superclass=L"Is composite class",
+	.str_search=L"Search",
+	.str_selection=L"Selection",
+	.str_clear=L"Clear",
+	.str_selection_and_search=L"Selection and Search",
 };
 
 const Language LANG_SPA = {
@@ -710,6 +718,10 @@ const Language LANG_SPA = {
 	.str_list_of_classes_and_their_groups=L"?",
 	.str_list_classes_and_their_groups=L"?",
 	.str_is_superclass=L"?",
+	.str_search=L"",
+	.str_selection=L"",
+	.str_clear=L"",
+	.str_selection_and_search=L"",
 };
 
 const Language LANG_DEU = {
@@ -935,4 +947,8 @@ const Language LANG_DEU = {
 	.str_list_of_classes_and_their_groups=L"?",
 	.str_list_classes_and_their_groups=L"?",
 	.str_is_superclass=L"?",
+	.str_search=L"Suchen",
+	.str_selection=L"",
+	.str_clear=L"",
+	.str_selection_and_search=L"",
 };

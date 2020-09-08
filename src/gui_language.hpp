@@ -246,6 +246,10 @@ typedef struct Language {
 	const wchar_t * const str_list_of_classes_and_their_groups;
 	const wchar_t * const str_list_classes_and_their_groups;
 	const wchar_t * const str_is_superclass;
+	const wchar_t * const str_search;
+	const wchar_t * const str_selection;
+	const wchar_t * const str_clear;
+	const wchar_t * const str_selection_and_search;
 } Language;
 
 const extern Language LANG_POR;
