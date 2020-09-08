@@ -35,16 +35,17 @@ bool init_all_tables(FILE* console_out, sqlite3* db);
  **/
 int insert_school(FILE * console_out, sqlite3* db, School * school);
 
-int insert_class(FILE * console_out, sqlite3* db, Class * c, School * school);
-int insert_teacher(FILE * console_out, sqlite3* db, Teacher * t, School * school);
-int insert_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school);
-int insert_room(FILE * console_out, sqlite3* db, Room * room, School * school);
-int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * school);
+/* Use -1 as an id in case you don't have one yet */
+int insert_class(FILE * console_out, sqlite3* db, Class * c, School * school, int optional_id);
+int insert_teacher(FILE * console_out, sqlite3* db, Teacher * t, School * school, int optional_id);
+// int insert_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school, int optional_id);
+int insert_room(FILE * console_out, sqlite3* db, Room * room, School * school, int optional_id);
+// int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * school, int optional_id);
 bool insert_meetings_list(FILE * console_out, sqlite3* db, Meeting * meetings, School * school);
-int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * school);
+int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * school, int optional_id);
 int insert_subject_in_group(FILE * console_out,sqlite3 * db, int subj_id, int group_id);
-int insert_subject_group(FILE * console_out,sqlite3 * db, School * school, char * group_name);
-int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution * sol);
+int insert_subject_group(FILE * console_out,sqlite3 * db, School * school, char * group_name, int optional_id);
+int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution * sol, int optional_id);
 
 bool remove_class(FILE * console_out, sqlite3* db, int id);
 bool remove_teacher(FILE * console_out, sqlite3* db, int id);

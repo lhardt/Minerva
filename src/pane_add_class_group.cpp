@@ -148,7 +148,7 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 			}
 		}
 		/* TODO  populate * rooms; */
-		bool success = insert_class(stdout, m_owner->m_database, &c, school);
+		bool success = insert_class(stdout, m_owner->m_database, &c, school, -1);
 		if(success){
 			int i_class = school_class_add(school, &c);
 			if(c.assignments){

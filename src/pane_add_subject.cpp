@@ -44,7 +44,7 @@ void AddSubjectPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		subject.short_name = copy_wx_string(m_name_text->GetValue());
 		subject.in_groups = NULL;
 
-		int id = insert_subject(stdout, m_owner->m_database, &subject, m_owner->m_school);
+		int id = insert_subject(stdout, m_owner->m_database, &subject, m_owner->m_school, -1);
 		if(id != -1){
 			school_subject_add(m_owner->m_school, &subject);
 

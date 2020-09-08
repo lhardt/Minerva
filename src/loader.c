@@ -124,7 +124,7 @@ const char * const CREATE_TABLE_ROOM =
 				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_ROOM =
-			("INSERT INTO Room(name, short_name, size, active, id_school) VALUES(?,?,?,?,?)");
+			("INSERT INTO Room(id, name, short_name, size, active, id_school) VALUES(?,?,?,?,?,?)");
 const char * const UPDATE_TABLE_ROOM =
 			("UPDATE Room SET (name, short_name, size, active, id_school) = (?,?,?,?,?) WHERE id=?");
 const char * const LASTID_TABLE_ROOM =
@@ -178,7 +178,7 @@ const char * const CREATE_TABLE_CLASS =
 				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_CLASS =
-			("INSERT INTO Class(name, short_name, size, free_periods_flag, fixed_entry_per_id, fixed_exit_per_id, active, id_school) VALUES (?,?,?,?,?,?,?,?)");
+			("INSERT INTO Class(id, name, short_name, size, free_periods_flag, fixed_entry_per_id, fixed_exit_per_id, active, id_school) VALUES (?,?,?,?,?,?,?,?,?)");
 const char * const UPDATE_TABLE_CLASS =
 			("UPDATE Class SET (name, short_name, size, free_periods_flag, fixed_entry_per_id, fixed_exit_per_id, active, id_school) = (?,?,?,?,?,?,?,?) WHERE id=?");
 const char * const LASTID_TABLE_CLASS =
@@ -279,7 +279,7 @@ const char * const CREATE_TABLE_SUBJECT =
 				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_SUBJECT =
-			("INSERT INTO Subject(name, short_name, id_school) VALUES (?,?,?)");
+			("INSERT INTO Subject(id, name, short_name, id_school) VALUES (?,?,?,?)");
 const char * const UPDATE_TABLE_SUBJECT =
 			("UPDATE Subject SET (name, short_name, id_school) = (?,?,?) WHERE id=?");
 const char * const LASTID_TABLE_SUBJECT =
@@ -300,7 +300,7 @@ const char * const CREATE_TABLE_SUBJECT_GROUP =
 				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_SUBJECT_GROUP =
- 			("INSERT INTO SubjectGroup(name,id_school) VALUES (?,?)");
+ 			("INSERT INTO SubjectGroup(id, name,id_school) VALUES (?, ?,?)");
 const char * const UPDATE_TABLE_SUBJECT_GROUP =
 			("UPDATE SubjectGroup SET (name, id_school) = (?,?) WHERE id=?");
 const char * const LASTID_TABLE_SUBJECT_GROUP =
@@ -416,7 +416,7 @@ const char * const CREATE_TABLE_TEACHER =
 				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_TEACHER =
-			("INSERT INTO Teacher (name, short_name, max_days, max_per_day, max_per_class_per_day, max_per, planning_needs_room, num_per_planning, active, id_school) VALUES (?,?,?,?,?,?,?,?,?,?)");
+			("INSERT INTO Teacher (id, name, short_name, max_days, max_per_day, max_per_class_per_day, max_per, planning_needs_room, num_per_planning, active, id_school) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
 const char * const UPDATE_TABLE_TEACHER =
 			("UPDATE Teacher SET (name, short_name, max_days, max_per_day, max_per_class_per_day, max_per, planning_needs_room, num_per_planning, active, id_school) = (?,?,?,?,?,?,?,?,?,?)");
 const char * const LASTID_TABLE_TEACHER =
@@ -714,7 +714,7 @@ const char * const CREATE_TABLE_SOLUTION =
 				"FOREIGN KEY (id_school) REFERENCES School(id)"
 			")");
 const char * const INSERT_TABLE_SOLUTION =
-			("INSERT INTO Solution(gen_date, name, desc, id_school) VALUES (?,?,?,?)");
+			("INSERT INTO Solution(id, gen_date, name, desc, id_school) VALUES (?, ?,?,?,?)");
 const char * const UPDATE_TABLE_SOLUTION =
 			("UPDATE Solution SET (gen_date, name, desc, id_school) = (?,?,?,?) WHERE id = ?");
 const char * const LASTID_TABLE_SOLUTION =
@@ -1403,7 +1403,7 @@ static bool insert_or_update_twin_scores(FILE * console_out, sqlite3 * db, const
 }
 
 /* Deep insert/update. */
-int insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school, bool is_update){
+int insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school){
 	int errc = 0;
 	sqlite3_stmt * stmt;
 
@@ -1422,7 +1422,7 @@ int insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, Schoo
 	errc = sqlite3_exec(db, LASTID_TABLE_TEACHES, get_id_callback, &(t->id), NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
 	if(t->room_scores != NULL){
-		insert_or_update_room_scores(console_out, db, is_update?(UPDATE_TABLE_TEACHES_ROOM):(INSERT_TABLE_TEACHES_ROOM), t->id, t->room_scores, school);
+		insert_or_update_room_scores(console_out, db, UPSERT_TABLE_TEACHES_ROOM, t->id, t->room_scores, school);
 	}
 	if(t->period_scores != NULL){
 		insert_or_update_period_scores(console_out, db, UPSERT_TABLE_TEACHES_PERIOD, t->id, t->period_scores, school);
@@ -1482,22 +1482,25 @@ bool update_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School 
 }
 
 /* TODO test. */
-int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School * school){
+int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School * school, int optional_id){
 	int errc, i = 0;
 	sqlite3_stmt * stmt;
 	LMH_ASSERT(db != NULL && teacher != NULL && school != NULL);
 	errc = sqlite3_prepare(db, INSERT_TABLE_TEACHER, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
-	sqlite3_bind_text(stmt, 1, teacher->name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt, 2, teacher->short_name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_int(stmt, 3, teacher->max_days);
-	sqlite3_bind_int(stmt, 4, teacher->max_meetings_per_day);
-	sqlite3_bind_int(stmt, 5, teacher->max_meetings_per_class_per_day);
-	sqlite3_bind_int(stmt, 6, teacher->max_meetings);
-	sqlite3_bind_int(stmt, 7, teacher->planning_needs_room);
-	sqlite3_bind_int(stmt, 8, teacher->num_planning_periods);
-	sqlite3_bind_int(stmt, 9, teacher->active);
-	sqlite3_bind_int(stmt,10, school->id);
+	if(optional_id != -1){
+		sqlite3_bind_int(stmt,1, optional_id);
+	}
+	sqlite3_bind_text(stmt, 2, teacher->name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 3, teacher->short_name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt, 4, teacher->max_days);
+	sqlite3_bind_int(stmt, 5, teacher->max_meetings_per_day);
+	sqlite3_bind_int(stmt, 6, teacher->max_meetings_per_class_per_day);
+	sqlite3_bind_int(stmt, 7, teacher->max_meetings);
+	sqlite3_bind_int(stmt, 8, teacher->planning_needs_room);
+	sqlite3_bind_int(stmt, 9, teacher->num_planning_periods);
+	sqlite3_bind_int(stmt,10, teacher->active);
+	sqlite3_bind_int(stmt,11, school->id);
 
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(-1);
@@ -1506,7 +1509,7 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 	errc = sqlite3_exec(db, LASTID_TABLE_TEACHER, get_id_callback, &(teacher->id), NULL);
 	if(teacher->teaches != NULL){
 		for(i = 0;  (teacher->teaches[i] != NULL) && (teacher->teaches[i]->subject != NULL); ++i){
-			insert_or_update_teaches(console_out, db, teacher->teaches[i], school, false);
+			insert_or_update_teaches(console_out, db, teacher->teaches[i], school);
 		}
 	}
 	if(teacher->subordinates != NULL){
@@ -1567,7 +1570,7 @@ bool insert_or_update_class_subject_group(FILE * console_out, sqlite3 * db, Clas
 }
 
 /* TODO test. */
-int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * school){
+int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * school, int optional_id){
 	sqlite3_stmt * stmt;
 	int errc, i;
 
@@ -1575,14 +1578,17 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 
 	errc = sqlite3_prepare(db,INSERT_TABLE_CLASS, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
-	sqlite3_bind_text(stmt, 1, class->name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt, 2, class->short_name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_int(stmt, 3, class->size);
-	sqlite3_bind_int(stmt, 4, class->can_have_free_periods_flag);
-	sqlite3_bind_int(stmt, 5, class->maximal_entry_period>=0?school->daily_period_ids[class->maximal_entry_period]:0);
-	sqlite3_bind_int(stmt, 6, class->minimal_exit_period>=0?school->daily_period_ids[class->minimal_exit_period]:0);
-	sqlite3_bind_int(stmt, 7, class->active);
-	sqlite3_bind_int(stmt, 8, school->id);
+	if(optional_id != -1){
+		sqlite3_bind_int(stmt,1,optional_id);
+	}
+	sqlite3_bind_text(stmt, 2, class->name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 3, class->short_name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt, 4, class->size);
+	sqlite3_bind_int(stmt, 5, class->can_have_free_periods_flag);
+	sqlite3_bind_int(stmt, 6, class->maximal_entry_period>=0?school->daily_period_ids[class->maximal_entry_period]:0);
+	sqlite3_bind_int(stmt, 7, class->minimal_exit_period>=0?school->daily_period_ids[class->minimal_exit_period]:0);
+	sqlite3_bind_int(stmt, 8, class->active);
+	sqlite3_bind_int(stmt, 9, school->id);
 
 	errc = sqlite3_step(stmt);
 
@@ -1639,7 +1645,7 @@ int update_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 }
 
 /* TODO test. */
-int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
+int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school, int optional_id){
 	sqlite3_stmt * stmt;
 	int errc;
 
@@ -1647,11 +1653,14 @@ int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 	room->id = -1;
 
 	sqlite3_prepare(db, INSERT_TABLE_ROOM, -1, &stmt, NULL);
-	sqlite3_bind_text(stmt, 1, room->name, -1, SQLITE_TRANSIENT);
+	if(optional_id != -1){
+		sqlite3_bind_int(stmt,1, optional_id);
+	}
 	sqlite3_bind_text(stmt, 2, room->name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_int(stmt,  3, room->size);
-	sqlite3_bind_int(stmt,  4, room->active);
-	sqlite3_bind_int(stmt,  5, school->id);
+	sqlite3_bind_text(stmt, 3, room->name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt,  4, room->size);
+	sqlite3_bind_int(stmt,  5, room->active);
+	sqlite3_bind_int(stmt,  6, school->id);
 
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(-1);
@@ -1666,14 +1675,17 @@ int insert_room(FILE * console_out, sqlite3 * db, Room * room, School * school){
 	return room->id;
 }
 
-int insert_subject_group(FILE * console_out,sqlite3 * db, School * school, char * group_name){
+int insert_subject_group(FILE * console_out,sqlite3 * db, School * school, char * group_name, int optional_id){
 	int errc, id;
 	sqlite3_stmt * stmt;
 
 	errc = sqlite3_prepare(db, INSERT_TABLE_SUBJECT_GROUP, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
-	sqlite3_bind_text(stmt,1, group_name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_int(stmt,2, school->id);
+	if(optional_id != -1){
+		sqlite3_bind_int(stmt,1,optional_id);
+	}
+	sqlite3_bind_text(stmt,2, group_name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt,3, school->id);
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(-1);
 	sqlite3_finalize(stmt);
@@ -1699,16 +1711,19 @@ int insert_subject_in_group(FILE * console_out,sqlite3 * db, int subj_id, int gr
 }
 
 /* TODO test */
-int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * school){
+int insert_subject(FILE * console_out, sqlite3* db, Subject * subject, School * school, int optional_id){
 	int errc = 0, i = 0;
 	sqlite3_stmt * stmt = NULL;
 
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_SUBJECT, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
 
-	sqlite3_bind_text(stmt,1, subject->name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_text(stmt,2, subject->short_name, -1, SQLITE_TRANSIENT);
-	sqlite3_bind_int(stmt,3, school->id);
+	if(optional_id != -1){
+		sqlite3_bind_int(stmt,1,optional_id);
+	}
+	sqlite3_bind_text(stmt,2, subject->name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt,3, subject->short_name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt,4, school->id);
 
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(-1);
@@ -1844,7 +1859,7 @@ static bool insert_all_meetings(FILE * console_out, sqlite3* db, School * school
 }
 
 /* TODO test. */
-int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution * sol){
+int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution * sol, int optional_id){
 	int i, errc = 0;
 	sqlite3_stmt * stmt;
 	fprintf(console_out, "Inserting solution.\n");
@@ -1852,18 +1867,19 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 	LMH_ASSERT(db != NULL && sol != NULL && school != NULL);
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_SOLUTION, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
-	if(errc == SQLITE_OK){
-		sqlite3_bind_text(stmt,1, "?", -1, SQLITE_TRANSIENT);
-		sqlite3_bind_text(stmt,2,sol->name, -1, SQLITE_TRANSIENT);
-		sqlite3_bind_text(stmt,3,sol->desc, -1, SQLITE_TRANSIENT);
-		sqlite3_bind_int(stmt,4,school->id);
-
-		errc = sqlite3_step(stmt);
-		CERTIFY_ERRC_SQLITE_DONE(-1);
-
-		errc = sqlite3_exec(db, LASTID_TABLE_SOLUTION, get_id_callback, &(sol->id), NULL);
-		CERTIFY_ERRC_SQLITE_OK(-1);
+	if(optional_id != -1){
+		sqlite3_bind_int(stmt,1, optional_id);
 	}
+	sqlite3_bind_text(stmt,2, "?", -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt,3,sol->name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt,4,sol->desc, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt,5,school->id);
+
+	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_DONE(-1);
+
+	errc = sqlite3_exec(db, LASTID_TABLE_SOLUTION, get_id_callback, &(sol->id), NULL);
+	CERTIFY_ERRC_SQLITE_OK(-1);
 	sqlite3_finalize(stmt);
 
 	errc = sqlite3_prepare(db, UPSERT_TABLE_LECTURE_SOLUTION, -1, &stmt, NULL);
@@ -1895,7 +1911,7 @@ static bool insert_all_teaches(FILE * console_out, sqlite3 * db, School * school
 	bool err = false;
 	printf("Inserting all teaches.\n");
 	for(i = 0; i < school->n_teaches; ++i){
-		err |= insert_or_update_teaches(console_out, db, &school->teaches[i], school, false);
+		err |= insert_or_update_teaches(console_out, db, &school->teaches[i], school);
 	}
 	return !err;
 }
@@ -1905,7 +1921,7 @@ static bool insert_all_teachers(FILE * console_out, sqlite3 * db, School * schoo
 	int i;
 	fprintf(console_out, "Inserting all teachers.\n");
 	for(i = 0; i < school->n_teachers; ++i){
-		insert_teacher(console_out,db,&(school->teachers[i]), school);
+		insert_teacher(console_out,db,&(school->teachers[i]), school, -1);
 	}
 	return false;
 }
@@ -1916,7 +1932,7 @@ static bool insert_all_rooms(FILE * console_out, sqlite3 * db, School * school){
 	bool err = false;
 	fprintf(console_out,"Inserting all rooms");
 	for(i = 0; i < school->n_rooms; ++i){
-		err |= insert_room(console_out, db, &school->rooms[i], school);
+		err |= insert_room(console_out, db, &school->rooms[i], school, -1);
 	}
 	return !err;
 }
@@ -1927,7 +1943,7 @@ static bool insert_all_classes(FILE * console_out, sqlite3 * db, School * school
 	bool err = false;
 	fprintf(console_out, "Inserting all classes.\n");
 	for(i = 0; i < school->n_classes; i++){
-		err |= insert_class(console_out,db, &school->classes[i],school);
+		err |= insert_class(console_out,db, &school->classes[i],school, -1);
 	}
 	return !err;
 }
@@ -2057,7 +2073,7 @@ int insert_school(FILE * console_out, sqlite3* db, School * school){
 	}
 	if(school->solutions != NULL){
 		for(int i = 0; i < school->n_solutions; ++i){
-			insert_solution(console_out, db, school, &school->solutions[i]);
+			insert_solution(console_out, db, school, &school->solutions[i], -1);
 		}
 	}
 

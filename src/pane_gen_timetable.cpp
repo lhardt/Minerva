@@ -69,7 +69,7 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 
 			print_meeting_list(stdout,gen_solution.meetings);
 
-			bool success = insert_solution(stdout, m_owner->m_database, school, &gen_solution);
+			bool success = insert_solution(stdout, m_owner->m_database, school, &gen_solution, -1);
 			if(success){
 				if(school->solutions == NULL || school->n_solutions == 0){
 					school->solutions = (Solution*) calloc(2, sizeof(Solution));

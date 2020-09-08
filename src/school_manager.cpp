@@ -327,6 +327,7 @@ wxString RoomAvailabilityUpdateAction::Describe(){
 /*********************************************************/
 RoomInsertAction::RoomInsertAction(Application * owner, Room room)  : Action(owner), m_room(room) {
 	m_state = state_UNDONE;
+	m_insert_id = -1;
 }
 RoomInsertAction::~RoomInsertAction(){
 	/* If the state is done, then the data is in elsewhere. */
@@ -339,9 +340,9 @@ RoomInsertAction::~RoomInsertAction(){
 bool RoomInsertAction::Do(){
 	LMH_ASSERT(m_state == state_UNDONE);
 	m_state = state_DONE;
-	int id = insert_room(stdout, m_owner->m_database, &m_room, m_owner->m_school);
-	if(id != -1){
-		m_room.id = id;
+	m_insert_id = insert_room(stdout, m_owner->m_database, &m_room, m_owner->m_school, m_insert_id);
+	if(m_insert_id != -1){
+		m_room.id = m_insert_id;
 		school_room_add(m_owner->m_school, &m_room);
 		return true;
 	}
@@ -367,7 +368,6 @@ wxString RoomInsertAction::Describe(){
 /*********************************************************/
 RoomDeleteAction::RoomDeleteAction(Application * owner, int i_room)  : Action(owner), m_i_room(i_room) {
 	m_state = state_UNDONE;
-
 }
 RoomDeleteAction::~RoomDeleteAction(){
 	/* If the state is done, then the data is in elsewhere. */
@@ -426,7 +426,7 @@ bool RoomDeleteAction::Undo(){
 	int i;
 	m_state = state_UNDONE;
 	School * school = m_owner->m_school;
-	int id = insert_room(stdout, m_owner->m_database, &m_room, m_owner->m_school);
+	int id = insert_room(stdout, m_owner->m_database, &m_room, m_owner->m_school, m_room.id);
 	if(id != -1){
 		m_room.id = id;
 		school_room_add(m_owner->m_school, &m_room);

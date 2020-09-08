@@ -139,7 +139,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.lecture_period_scores[school->n_periods] = -1;
 		t.planning_period_scores[school->n_periods] = -1;
 
-		int result = insert_teacher(stdout, m_owner->m_database, &t, school);
+		int result = insert_teacher(stdout, m_owner->m_database, &t, school, -1);
 
 		if(result != -1){
 			school_teacher_add(school, &t);

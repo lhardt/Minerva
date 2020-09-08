@@ -60,7 +60,7 @@ void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
 
 	if(!m_name_text->IsEmpty() && n_subjects > 0){
 		char * name = copy_wx_string(m_name_text->GetValue());
-		id = insert_subject_group(stdout, m_owner->m_database, school, name);
+		id = insert_subject_group(stdout, m_owner->m_database, school, name, -1);
 		if(id != -1){
 			school_subjectgroup_add(school, name,id);
 			for(i = 0; i < school->n_subjects; ++i){

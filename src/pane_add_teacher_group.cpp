@@ -70,8 +70,8 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 
 void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
-	int n_members = 0;// m_selected_teachers_list->GetCount();
-	int n_subjects = 0; //m_selected_subjects_list->GetCount();
+	int n_members = 0;
+	int n_subjects = 0;
 	for(int i = 0; i < school->n_teachers; ++i){
 		if(m_teachers_grid->GetCellState(i,0) > 0){
 			++n_members;
@@ -177,7 +177,7 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 				++i_teaches;
 			}
 		}
-		bool success = insert_teacher(stdout, m_owner->m_database, &group, school);
+		bool success = insert_teacher(stdout, m_owner->m_database, &group, school, -1);
 		if(success){
 			school_teacher_add(school, &group);
 

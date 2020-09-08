@@ -113,8 +113,9 @@ public:
 	bool Do();
 	bool Undo();
 	wxString Describe();
-	Room m_room;
+	Room 		m_room;
 	ActionState m_state;
+	int 		m_insert_id;
 };
 
 class RoomDeleteAction : public Action {

@@ -72,7 +72,8 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	wxBitmap image_help("res/manual.png", wxBITMAP_TYPE_PNG);
 	wxBitmap image_close("res/cancel.png", wxBITMAP_TYPE_PNG);
 
-	m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT);
+	m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_TEXT);
+	m_toolbar->SetBackgroundColour(wxColor(0xB9, 0x29, 0x80));
 
 	m_toolbar->AddTool(ID_SAVE, m_owner->m_lang->str_save, image_save);
 	m_toolbar->AddTool(ID_UNDO, m_owner->m_lang->str_undo, image_undo);
@@ -88,6 +89,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_toolbar->EnableTool(ID_UNDO, false);
 	m_toolbar->EnableTool(ID_REDO, false);
 	m_toolbar->Realize();
+	m_toolbar->Refresh();
 	/* ESCOLA */
 	m_rib_bbars[0][0]->AddButton(ID_SCHOOL_DATA,m_owner->m_lang->str_school_details, image_config);
 	m_rib_bbars[0][1]->AddButton(ID_OPEN_SCHOOL_MANUAL,m_owner->m_lang->str_open_manual, image_help);

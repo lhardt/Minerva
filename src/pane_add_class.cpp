@@ -154,7 +154,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.subordinates = nullptr;
 
 
-		bool success = insert_class(stdout, m_owner->m_database, &c, school) >= 0;
+		bool success = insert_class(stdout, m_owner->m_database, &c, school, -1) >= 0;
 		if(success){
 			int i_class =  school_class_add(school, &c);
 			if(c.assignments){
