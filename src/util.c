@@ -799,7 +799,7 @@ void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at){
 	LMH_ASSERT(list_ptr != NULL && at <= n_old && at > 0 && n_old >= 0);
 	if(*list_ptr == NULL){
 		*list_ptr = calloc(n_old + 2, sizeof(int));
-		list_ptr[n_old+1] = -1;
+		(*list_ptr)[n_old+1] = -1;
 	} else {
 		*list_ptr = realloc(*list_ptr, (n_old + 2)*sizeof(int));
 		for(int i = n_old + 1; i > at; --i){
@@ -1089,16 +1089,16 @@ void school_subjectgroup_add(School * school, const char * const name, int id){
 /*********************************************************/
 
 Meeting * create_meeting_list_for_class(School * school, Class * c){
-	int i,j,n;
+	int i,j, n_per_total = 0;
 	LMH_ASSERT(school != NULL && c != NULL);
 	Meeting * meetings = NULL;
 	if(c->assignments != NULL){
-		for(n = 0; c->assignments[n] != NULL; ++n){
-			/* Blank on purpouse */
+		for(i = 0; c->assignments[i] != NULL; ++i){
+			n_per_total += c->assignments[i]->amount;
 		}
-		if( n != 0 ){
-			meetings = calloc( n+1, sizeof(Meeting));
-			for(i = 0; i < n; ++i){
+		if( n_per_total != 0 ){
+			meetings = calloc( n_per_total+1, sizeof(Meeting));
+			for(i = 0; c->assignments[i] != NULL; ++i){
 				for(j = 0; j < c->assignments[i]->amount; ++j){
 					meetings[j] = (Meeting){
 						.id = 0,
@@ -1115,7 +1115,7 @@ Meeting * create_meeting_list_for_class(School * school, Class * c){
 					++school->n_meetings;
 				}
 			}
-			meetings[n].type = meet_NULL;
+			meetings[n_per_total].type = meet_NULL;
 		}
 	}
 	return meetings;

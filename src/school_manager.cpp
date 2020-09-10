@@ -414,6 +414,7 @@ bool RoomDeleteAction::Do(){
 			m_meeting_scores[i] = school->meetings[i].possible_rooms[m_i_room];
 		} /* No need for else because of calloc. */
 	}
+	printf("m_i_room: %d\n", m_i_room);
 	if(remove_room(stdout, m_owner->m_database, m_room.id)){
 		school_room_remove(m_owner->m_school, get_room_index_by_id(m_owner->m_school, m_room.id), false);
 		m_room.id = 0;

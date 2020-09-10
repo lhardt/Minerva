@@ -472,7 +472,7 @@ const char * const CREATE_TABLE_TEACHES =
 			")");
 const char * const UPSERT_TABLE_TEACHES =
 			("INSERT INTO Teaches(score, max_per_day, max_per_class_per_day, id_teacher, id_subject) VALUES (?1,?2,?3,?4,?5) "
-			 "ON CONFLICT (id_subject, id_teacher) SET (score, max_per_day, max_per_class_per_day, id_teacher, id_subject)=(?1,?2,?3,?4,?5)");
+			 "ON CONFLICT (id_subject, id_teacher) DO UPDATE SET (score, max_per_day, max_per_class_per_day, id_teacher, id_subject)=(?1,?2,?3,?4,?5)");
 const char * const LASTID_TABLE_TEACHES =
 			("SELECT id FROM Teaches where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHES_BY_SCHOOL_ID =
@@ -648,7 +648,7 @@ const char * const CREATE_TABLE_TEACHES_PERIOD =
 			")");
 const char * const UPSERT_TABLE_TEACHES_PERIOD =
 			("INSERT INTO TeachesPeriod(id, id_teaches, id_period, score) VALUES (?1,?2,?3,?4) "
-			 "ON CONFLICT (id_teaches, id_period) SET (score) = (?4)");
+			 "ON CONFLICT (id_teaches, id_period) DO UPDATE SET (score) = (?4)");
 const char * const LASTID_TEACHES_PERIOD =
 			("SELECT id FROM TeachesPeriod where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHES_PERIOD_BY_TEACHES_ID =
@@ -891,8 +891,8 @@ const char * const CREATE_TABLE_LECTURE_SOLUTION =
 				"UNIQUE (id_lecture, id_solution)"
 			")");
 const char * const UPSERT_TABLE_LECTURE_SOLUTION = /* And are we really going to use the update part? */
-			("INSERT INTO LectureSolution(id_lecture, id_solution, id_period, id_teacher, id_room) VALUES (?1,?2,?3,?4,?5) "
-			 "ON CONFLICT (id_lecture, id_solution) SET (id_period, id_teacher, id_room) = (?3,?4,?5)");
+			("INSERT INTO LectureSolution(id_lecture, id_solution, id_period, id_teacher, id_room, id_class, id_subject) VALUES (?1,?2,?3,?4,?5,?6,?7) "
+			 "ON CONFLICT (id_lecture, id_solution) DO UPDATE SET (id_period, id_teacher, id_room) = (?3,?4,?5)");
 const char * const LASTID_TABLE_LECTURE_SOLUTION =
 			("SELECT id FROM LectureSolution where rowid = last_insert_rowid()");
 const char * const SELECT_LECTURE_SOLUTION_BY_SOLUTION_ID =
@@ -1892,6 +1892,8 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 			sqlite3_bind_int(stmt, 3, school->period_ids[ sol->meetings[i].period ]);
 			sqlite3_bind_int(stmt, 4, sol->meetings[i].teacher->id);
 			sqlite3_bind_int(stmt, 5, sol->meetings[i].room->id);
+			sqlite3_bind_int(stmt, 6, sol->meetings[i].m_class->id);
+			sqlite3_bind_int(stmt, 7, sol->meetings[i].subject->id);
 
 			errc = sqlite3_step(stmt);
 			CERTIFY_ERRC_SQLITE_DONE(-1);
@@ -2231,11 +2233,12 @@ static int select_all_meetings_by_solution_id(FILE * console_out, sqlite3* db, S
 		while(errc == SQLITE_ROW){
 			sol->meetings[i].id = sqlite3_column_int(stmt,0);
 			sol->meetings[i].type = meet_LECTURE;
-			sol->meetings[i].period = get_per_index_by_id(school, sqlite3_column_int(stmt,2));
-			sol->meetings[i].m_class = find_class_by_id(school, sqlite3_column_int(stmt,3));
+			sol->meetings[i].period = get_per_index_by_id(school, sqlite3_column_int(stmt,3));
 			sol->meetings[i].teacher = find_teacher_by_id(school, sqlite3_column_int(stmt,4));
-			sol->meetings[i].subject = find_subject_by_id(school, sqlite3_column_int(stmt,5));
-			sol->meetings[i].room = find_room_by_id(school, sqlite3_column_int(stmt, 6));
+			sol->meetings[i].room = find_room_by_id(school, sqlite3_column_int(stmt, 5));
+			sol->meetings[i].m_class = find_class_by_id(school, sqlite3_column_int(stmt,6));
+			sol->meetings[i].subject = find_subject_by_id(school, sqlite3_column_int(stmt,7));
+
 			errc = sqlite3_step(stmt);
 			++i;
 			if(i % 10 == 0){

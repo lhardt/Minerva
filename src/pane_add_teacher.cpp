@@ -27,8 +27,8 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 
 	wxString col_name = m_owner->m_lang->str_teaches;
 	m_subjects_grid->SetColName(0, col_name);
-	m_subjects_grid->AddState(m_owner->m_lang->str_no, wxColor(200,200,255));
-	m_subjects_grid->AddState(m_owner->m_lang->str_yes, wxColor(255,200,200));
+	m_subjects_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
+	m_subjects_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 	for(i = 0; i < m_owner->m_school->n_subjects; ++i){
 		m_subjects_grid->SetRowName(i, wxString::FromUTF8(m_owner->m_school->subjects[i].name));
 	}
