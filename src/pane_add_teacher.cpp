@@ -2,7 +2,7 @@
 
 extern "C" {
 	#include "loader.h"
-	#include "preprocess.h"
+	#include "util.h"
 };
 AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	int i;

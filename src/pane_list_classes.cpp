@@ -4,7 +4,6 @@
 
 extern "C" {
 	#include "loader.h"
-	#include "preprocess.h"
 	#include "util.h"
 };
 
@@ -238,7 +237,8 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 		c = &school->classes[del_i];
 		success = remove_class(stdout, m_owner->m_database, c->id);
 		if(success) {
-			school_class_remove(school, del_i);
+			/* TODO: substitute for an Action*/
+			school_class_remove(school, del_i, true);
 			m_classes_list->RemoveItem(c->id);
 
 			m_name_text->SetLabel(wxT(""));

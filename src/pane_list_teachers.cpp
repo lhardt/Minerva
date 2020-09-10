@@ -2,7 +2,6 @@
 #include <wx/spinctrl.h>
 extern "C" {
 	#include "loader.h"
-	#include "preprocess.h"
 	#include "util.h"
 	#include "maths.h"
 };
@@ -227,7 +226,8 @@ void ListTeachersPane::OnDeleteButtonClicked(wxCommandEvent &) {
 		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
 		success = remove_teacher(stdout, m_owner->m_database, teacher_id);
 		if(success){
-			school_teacher_remove(school, get_teacher_index_by_id(school, teacher_id));
+			/* TODO: substitute for an action */
+			school_teacher_remove(school, get_teacher_index_by_id(school, teacher_id), true);
 			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Couldn't delete teacher\n");

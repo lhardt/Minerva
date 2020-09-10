@@ -7,7 +7,6 @@ extern "C" {
 	#include "assert.h"
 	#include "util.h"
 	#include "loader.h"
-	#include "preprocess.h"
 };
 
 /*********************************************************/
@@ -352,7 +351,7 @@ bool RoomInsertAction::Undo(){
 	LMH_ASSERT(m_state == state_DONE);
 	m_state = state_UNDONE;
 	if(remove_room(stdout, m_owner->m_database, m_room.id)){
-		school_room_remove(m_owner->m_school, get_room_index_by_id(m_owner->m_school, m_room.id));
+		school_room_remove(m_owner->m_school, get_room_index_by_id(m_owner->m_school, m_room.id), false);
 		m_room.id = 0;
 		return true;
 	}
@@ -416,7 +415,7 @@ bool RoomDeleteAction::Do(){
 		} /* No need for else because of calloc. */
 	}
 	if(remove_room(stdout, m_owner->m_database, m_room.id)){
-		school_room_remove(m_owner->m_school, get_room_index_by_id(m_owner->m_school, m_room.id));
+		school_room_remove(m_owner->m_school, get_room_index_by_id(m_owner->m_school, m_room.id), false);
 		m_room.id = 0;
 		return true;
 	}

@@ -13,6 +13,118 @@
 #include "types.h"
 #include "school_examples.h"
 
+#define FREE_IF_NOT_NULL(x) do{ \
+			if((x) != NULL){free(x);} \
+		} while(0)
+
+
+/*********************************************************/
+/*                     FREE Functions                    */
+/*********************************************************/
+
+void free_room(Room * room){
+	LMH_ASSERT(room != NULL);
+	FREE_IF_NOT_NULL(room->name);
+	FREE_IF_NOT_NULL(room->short_name);
+	FREE_IF_NOT_NULL(room->availability);
+}
+
+void free_subject(Subject * subject){
+	LMH_ASSERT(subject != NULL);
+	FREE_IF_NOT_NULL(subject->name);
+	FREE_IF_NOT_NULL(subject->short_name);
+	FREE_IF_NOT_NULL(subject->in_groups);
+}
+
+void free_teacher(Teacher * teacher){
+	LMH_ASSERT(teacher != NULL);
+	FREE_IF_NOT_NULL(teacher->name);
+	FREE_IF_NOT_NULL(teacher->short_name);
+	FREE_IF_NOT_NULL(teacher->teaches);
+	FREE_IF_NOT_NULL(teacher->subordinates);
+	FREE_IF_NOT_NULL(teacher->planning_room_scores);
+	FREE_IF_NOT_NULL(teacher->lecture_room_scores);
+	FREE_IF_NOT_NULL(teacher->day_max_meetings);
+	FREE_IF_NOT_NULL(teacher->day_scores);
+	FREE_IF_NOT_NULL(teacher->lecture_period_scores);
+	FREE_IF_NOT_NULL(teacher->planning_period_scores);
+	FREE_IF_NOT_NULL(teacher->planning_twin_scores);
+}
+
+void free_teaches(Teaches * teaches){
+	LMH_ASSERT(teaches != NULL);
+	FREE_IF_NOT_NULL(teaches->room_scores);
+	FREE_IF_NOT_NULL(teaches->period_scores);
+	FREE_IF_NOT_NULL(teaches->twin_scores);
+}
+
+void free_class(Class * class){
+	LMH_ASSERT(class != NULL);
+	FREE_IF_NOT_NULL(class->name);
+	FREE_IF_NOT_NULL(class->short_name);
+	FREE_IF_NOT_NULL(class->room_scores);
+	FREE_IF_NOT_NULL(class->period_scores);
+	FREE_IF_NOT_NULL(class->subordinates);
+	FREE_IF_NOT_NULL(class->assignments);
+}
+
+void free_assignment(Assignment * assignment){
+	LMH_ASSERT(assignment != NULL);
+	FREE_IF_NOT_NULL(assignment->possible_teachers);
+}
+
+void free_meeting(Meeting * meeting){
+	LMH_ASSERT(meeting != NULL);
+	FREE_IF_NOT_NULL(meeting->possible_periods);
+	FREE_IF_NOT_NULL(meeting->possible_rooms);
+	FREE_IF_NOT_NULL(meeting->possible_teachers);
+}
+
+void free_meetings_list(Meeting * list){
+	LMH_ASSERT(list != NULL);
+	for(int i_met = 0; list[i_met].m_class != NULL; ++i_met){
+		free_meeting(&list[i_met]);
+	}
+	free(list);
+}
+
+void free_node(DecisionNode * node){
+	LMH_ASSERT(node != NULL);
+	for(int i = 0; i < node->n_children; ++i){
+		free_node(&node->children[i]);
+	}
+	FREE_IF_NOT_NULL(node->children);
+	FREE_IF_NOT_NULL(node->children_score);
+	FREE_IF_NOT_NULL(node->children_score_order);
+	if(node->conclusion != NULL){
+		free_meetings_list(node->conclusion);
+	}
+}
+
+void free_school(School * s){
+	int i;
+	if(s != NULL){
+		if(s->teachers != NULL){
+			for(i = 0; i < s->n_teachers; ++i){
+				free(s->teachers[i].planning_period_scores);
+				free(s->teachers[i].lecture_period_scores);
+			}
+			free(s->teachers);
+		}
+		if(s->classes != NULL){
+			for(i = 0; i < s->n_classes; ++i){
+				free(s->classes[i].assignments);
+			}
+			free(s->classes);
+		}
+
+		free(s);
+	}
+}
+
+/*********************************************************/
+/*                     COPY Functions                    */
+/*********************************************************/
 /* Can't assume that strdup exists. */
 char* copy_string(const char * const str){
 	int len;
@@ -24,131 +136,6 @@ char* copy_string(const char * const str){
 		copy[len] = '\0';
 	}
 	return copy;
-}
-
-void print_int_list(FILE * out, const int * const list){
-	int i = 0;
-
-	if(list == NULL){
-		fprintf(out, "(nul)");
-		return;
-	}
-	if(list[0] != -1){
-		fprintf(out, "[%d", list[0]);
-		for(i = 1; list[i] != -1; i++){
-			fprintf(out, ", %d", list[i]);
-		}
-		fprintf(out,"]");
-	} else {
-		fprintf(out, "[]");
-	}
-}
-
-/* if *list_ptr == NULL, calloc. Else realloc*/
-void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new){
-	LMH_ASSERT(list_ptr != NULL && n_old >= 0 && n_old < n_new);
-	int i;
-
-	if(*list_ptr == NULL){
-		*list_ptr = calloc(n_new + 1, sizeof(int));
-	} else {
-		LMH_ASSERT(*list_ptr != NULL);
-		*list_ptr  = realloc(*list_ptr, (n_new + 1) * sizeof(int));
-		for(i = n_old; i < n_new; ++i){
-			(*list_ptr)[i] = 0;
-		}
-	}
-	(*list_ptr)[n_new] = -1;
-}
-
-void remove_from_int_list(int * list, int i_remove){
-	int i;
-	LMH_ASSERT(list != NULL && i_remove >= 0);
-	for(i = i_remove; list[i] != -1; ++i){
-		list[i] = list[i+1];
-	}
-}
-
-void print_sized_int_list(FILE * out, const int * const list, const int size){
-	int i = 0;
-
-	if(list == NULL){
-		fprintf(out, "(nul)");
-		return;
-	}
-	if(size > 0){
-		fprintf(out, "[%d", list[0]);
-		for(i = 1; i < size; i++){
-			fprintf(out, ", %d", list[i]);
-		}
-		fprintf(out,"]");
-	} else {
-		fprintf(out, "[]");
-	}
-}
-
-void print_bool_list(FILE * out, const bool * const list, const int size){
-	int i = 0;
-	if(list == NULL){
-		fprintf(out, "(nul)");
-		return;
-	}
-	if(size == 0){
-		fprintf(out, "[]");
-	}
-	if(size > 0){
-		fprintf(out,"[%c", list[i]?'t':'f');
-		for(i = 1; i < size; i++){
-			printf(", %c", list[i]?'t':'f');
-		}
-		fprintf(out,"]");
-	}
-}
-
-void print_meeting_list(FILE * out, const Meeting * const meetings){
-	int i = 0;
-
-	if(meetings == NULL){
-		printf("Returning on null");
-		return;
-	}
-
-	if(meetings[0].m_class == NULL){
-		printf("No meetings\n");
-	} else {
-		for(i = 0; meetings[i].m_class != NULL; i++){
-			fprintf(out, "Meeting %2d %s: T(%s) ",
-					i,
-					meetings[i].m_class->name,
-					(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
-			print_int_list(out,meetings[i].possible_teachers);
-			fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
-			print_int_list(out,meetings[i].possible_rooms);
-			fprintf(out, "; P(%d) ", meetings[i].period);
-			print_int_list(out,meetings[i].possible_periods);
-			fprintf(out, "; S(%s)", meetings[i].subject->name);
-			fprintf(out,"\n");
-		}
-	}
-}
-
-void print_short_meeting_list(FILE * out, const Meeting * const meetings){
-	int i = 0;
-
-	if(meetings == NULL){
-		printf("Returning on null");
-		return;
-	}
-
-	for(i = 0; meetings[i].m_class != NULL; i++){
-		fprintf(out, "Meeting %2d %s: T(%s) ",
-					i,
-					meetings[i].m_class->name,
-					(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
-		fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
-		fprintf(out, "; P(%d) ", meetings[i].period);
-		fprintf(out,"\n");
-	}
 }
 
 Meeting * copy_meetings_list(const Meeting * const list){
@@ -196,266 +183,6 @@ int * int_list_n_copy(const int * const list, int n){
 	}
 	copy[n] = -1;
 	return copy;
-}
-
-void free_meetings_list(Meeting * list){
-	int i_met;
-	if(list != NULL){
-		for(i_met = 0; list[i_met].m_class != NULL; ++i_met){
-			free(list[i_met].possible_teachers);
-			free(list[i_met].possible_periods);
-			free(list[i_met].possible_rooms);
-		}
-	}
-	free(list);
-}
-
-void free_node(DecisionNode * node){
-	int i = 0;
-
-	for(i = 0; i < node->n_children; ++i){
-		free_node(&node->children[i]);
-	}
-	// if(node->children != NULL){
-		free(node->children);
-		free(node->children_score);
-		free(node->children_score_order);
-		free_meetings_list(node->conclusion);
-	// }/
-}
-
-void print_teacher(FILE * out, const Teacher * const t){
-	if(t && out){
-		fprintf(out, "Teacher: \n\tid: %d", t->id);
-		fprintf(out, "\n\tname: %s", t->name);
-		fprintf(out, "\n\tsname: %s", t->short_name);
-		fprintf(out, "\n\tmaxdays: %d", t->max_days);
-		fprintf(out, "\n\tmax_meet: %d", t->max_meetings);
-		fprintf(out, "\n\tmax_pd: %d", t->max_meetings_per_day);
-		fprintf(out, "\n\tmax_pcpd: %d", t->max_meetings_per_class_per_day);
-		fprintf(out, "\n\tnum_plan: %d", t->num_planning_periods);
-		fprintf(out, "\n\tday_max_meet: ");
-		print_int_list(out, t->day_max_meetings);
-		fprintf(out,"\n\tday_scores: ");
-		print_int_list(out, t->day_scores);
-		fprintf(out,"\n\tlecture_period_scores: ");
-		print_int_list(out, t->lecture_period_scores);
-		fprintf(out,"\n\tplanning_period_scores: ");
-		print_int_list(out, t->planning_period_scores);
-		fprintf(out,"\n\tplanning_twin_scores: ");
-		print_int_list(out, t->planning_twin_scores);
-		fprintf(out,"\n\tlecture_room_scores: ");
-		print_int_list(out, t->lecture_room_scores);
-		fprintf(out,"\n\tplanning_room_scores: ");
-		print_int_list(out, t->planning_room_scores);
-		fprintf(out,"\n\tsubordinates: ");
-		print_int_list(out, t->subordinates);
-		fprintf(out, "\n\tteaches: ");
-		for(int i = 0; t->teaches != NULL && t->teaches[i] != NULL && t->teaches[i]->subject != NULL; ++i){
-			printf("(%s, %d), ", t->teaches[i]->subject->name, t->teaches[i]->score);
-		}
-		printf("\n");
-	}
-}
-
-void print_school(FILE * out, const School * const s){
-	if(s && out){
-		fprintf(out, "School:\n\tname:	 %s\n", s->name);
-		fprintf(out, "\tn_periods: 		 %d\n", s->n_periods);
-		fprintf(out, "\tn_periods_per_day: %d\n", s->n_periods_per_day);
-		fprintf(out, "\tn_days: 			 %d\n", s->n_days);
-		fprintf(out, "\tn_per: 			 %d\n", s->n_periods);
-		fprintf(out, "\tn_classes: 		 %d\n", s->n_classes);
-		fprintf(out, "\tn_teachers: 	 	 %d\n", s->n_teachers);
-		fprintf(out, "\tn_subjects: 	 	 %d\n", s->n_subjects);
-		fprintf(out, "\tn_rooms:	 	 	 %d\n", s->n_rooms);
-		fprintf(out, "\tn_teaches: 	 	 %d\n", s->n_teaches);
-		fprintf(out, "\tn_subj_groups: 	 %d\n", s->n_subject_groups);
-
-		// printf("\t\t")
-	}
-}
-
-Room * find_room_by_id(School * school, int id){
-	int i;
-
-	for(i = 0; i < school->n_rooms; ++i){
-		if(school->rooms[i].id == id){
-			return &(school->rooms[i]);
-		}
-	}
-	return NULL;
-}
-
-int get_room_index_by_id(School * school, int id){
-	int i;
-
-	for(i = 0; i < school->n_rooms; ++i){
-		if(school->rooms[i].id == id){
-			return i;
-		}
-	}
-	return -1;
-}
-
-Class * find_class_by_id(School * school, int id) {
-	int i;
-	for(i = 0; i < school->n_classes; ++i){
-		if(school->classes[i].id == id){
-			return &(school->classes[i]);
-		}
-	}
-	printf("Did not find class.\n");
-	return NULL;
-}
-
-int get_class_index_by_id(School * school, int id){
-	int i;
-
-	for(i = 0; i < school->n_classes; ++i){
-		if(school->classes[i].id == id){
-			return i;
-		}
-	}
-	return -1;
-}
-
-
-Teacher * find_teacher_by_id(School * school, int id){
-	int i;
-
-	for(i = 0; i < school->n_teachers; ++i){
-		if(school->teachers[i].id == id){
-			return &(school->teachers[i]);
-		}
-	}
-	return NULL;
-}
-
-int get_teacher_index_by_id(School * school, int id){
-	int i;
-
-	for(i = 0; i < school->n_teachers; ++i){
-		if(school->teachers[i].id == id){
-			return i;
-		}
-	}
-	return -1;
-}
-
-Meeting * find_meeting_by_id(School * school, int id){
-	int i;
-
-	for(i = 0; i < school->n_meetings; ++i){
-		if(school->meetings[i].id == id){
-			return &(school->meetings[i]);
-		}
-	}
-	return NULL;
-}
-
-Subject * find_subject_by_id(School * school, int id){
-	int i;
-
-	for(i = 0; i < school->n_subjects; ++i){
-		if(school->subjects[i].id == id){
-			return &(school->subjects[i]);
-		}
-	}
-	return NULL;
-}
-
-int get_subject_index_by_id(School * school, int id){
-	int i;
-
-	for(i = 0; i < school->n_subjects; ++i){
-		if(school->subjects[i].id == id){
-			return i;
-		}
-	}
-	return -1;
-}
-
-int get_day_index_by_id(School * school, int id){
-	int i;
-	for(i = 0; i < school->n_days; ++i){
-		if(school->day_ids[i] == id){
-			return i;
-		}
-	}
-	return -1;
-}
-
-int get_per_index_by_id(School * school, int id){
-	int i;
-	for(i = 0; i < school->n_periods; ++i){
-		if(school->period_ids[i] == id){
-			return i;
-		}
-	}
-	return -1;
-}
-
-Assignment * find_assignment_by_class_subj_id(School * school, int id_class, int id_subj){
-	for(int i = 0; i < school->n_assignments; ++i){
-		if(school->assignments[i].m_class->id == id_class && school->assignments[i].subject->id == id_subj){
-			return &school->assignments[i];
-		}
-	}
-	printf("Did not find assignment with idcl %d and idsubj %d\n", id_class, id_subj);
-	return NULL;
-}
-
-Assignment * find_assignment_by_id(School * school, int id){
-	for(int i = 0; i < school->n_assignments; ++i){
-		if(school->assignments[i].id == id){
-			return &school->assignments[i];
-		}
-	}
-	return NULL;
-}
-
-
-int get_daily_period_index_by_id(School * school, int id){
-	int i;
-	for(i = 0; i < school->n_periods_per_day; ++i){
-		if(school->daily_period_ids[i] == id){
-			return i;
-		}
-	}
-	return -1;
-}
-
-int get_subject_group_index_by_id(School * school, int id){
-	int i;
-	for(i = 0; i < school->n_subject_groups; ++i){
-		if(school->subject_group_ids[i] == id){
-			return i;
-		}
-	}
-	return -1;
-}
-
-
-void free_school(School * s){
-	int i;
-	if(s != NULL){
-		if(s->teachers != NULL){
-			for(i = 0; i < s->n_teachers; ++i){
-				free(s->teachers[i].planning_period_scores);
-				free(s->teachers[i].lecture_period_scores);
-			}
-			free(s->teachers);
-		}
-		if(s->classes != NULL){
-			for(i = 0; i < s->n_classes; ++i){
-				free(s->classes[i].assignments);
-			}
-			free(s->classes);
-		}
-
-		free(s);
-	}
 }
 
 School * copy_school(const School * const s){
@@ -747,4 +474,682 @@ SchoolExample * copy_example(const SchoolExample * const ex){
 		}
 	}
 	return copy;
+}
+
+/*********************************************************/
+/*                    PRINT Functions                    */
+/*********************************************************/
+
+void print_int_list(FILE * out, const int * const list){
+	int i = 0;
+
+	if(list == NULL){
+		fprintf(out, "(nul)");
+		return;
+	}
+	if(list[0] != -1){
+		fprintf(out, "[%d", list[0]);
+		for(i = 1; list[i] != -1; i++){
+			fprintf(out, ", %d", list[i]);
+		}
+		fprintf(out,"]");
+	} else {
+		fprintf(out, "[]");
+	}
+}
+void print_sized_int_list(FILE * out, const int * const list, const int size){
+	int i = 0;
+
+	if(list == NULL){
+		fprintf(out, "(nul)");
+		return;
+	}
+	if(size > 0){
+		fprintf(out, "[%d", list[0]);
+		for(i = 1; i < size; i++){
+			fprintf(out, ", %d", list[i]);
+		}
+		fprintf(out,"]");
+	} else {
+		fprintf(out, "[]");
+	}
+}
+void print_bool_list(FILE * out, const bool * const list, const int size){
+	int i = 0;
+	if(list == NULL){
+		fprintf(out, "(nul)");
+		return;
+	}
+	if(size == 0){
+		fprintf(out, "[]");
+	}
+	if(size > 0){
+		fprintf(out,"[%c", list[i]?'t':'f');
+		for(i = 1; i < size; i++){
+			printf(", %c", list[i]?'t':'f');
+		}
+		fprintf(out,"]");
+	}
+}
+void print_meeting_list(FILE * out, const Meeting * const meetings){
+	int i = 0;
+
+	if(meetings == NULL){
+		printf("Returning on null");
+		return;
+	}
+
+	if(meetings[0].m_class == NULL){
+		printf("No meetings\n");
+	} else {
+		for(i = 0; meetings[i].m_class != NULL; i++){
+			fprintf(out, "Meeting %2d %s: T(%s) ",
+					i,
+					meetings[i].m_class->name,
+					(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
+			print_int_list(out,meetings[i].possible_teachers);
+			fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
+			print_int_list(out,meetings[i].possible_rooms);
+			fprintf(out, "; P(%d) ", meetings[i].period);
+			print_int_list(out,meetings[i].possible_periods);
+			fprintf(out, "; S(%s)", meetings[i].subject->name);
+			fprintf(out,"\n");
+		}
+	}
+}
+void print_short_meeting_list(FILE * out, const Meeting * const meetings){
+	int i = 0;
+
+	if(meetings == NULL){
+		printf("Returning on null");
+		return;
+	}
+
+	for(i = 0; meetings[i].m_class != NULL; i++){
+		fprintf(out, "Meeting %2d %s: T(%s) ",
+					i,
+					meetings[i].m_class->name,
+					(meetings[i].teacher == NULL? "":meetings[i].teacher->name));
+		fprintf(out, "; R(%s) ", meetings[i].room ==NULL? "":meetings[i].room->name);
+		fprintf(out, "; P(%d) ", meetings[i].period);
+		fprintf(out,"\n");
+	}
+}
+void print_teacher(FILE * out, const Teacher * const t){
+	if(t && out){
+		fprintf(out, "Teacher: \n\tid: %d", t->id);
+		fprintf(out, "\n\tname: %s", t->name);
+		fprintf(out, "\n\tsname: %s", t->short_name);
+		fprintf(out, "\n\tmaxdays: %d", t->max_days);
+		fprintf(out, "\n\tmax_meet: %d", t->max_meetings);
+		fprintf(out, "\n\tmax_pd: %d", t->max_meetings_per_day);
+		fprintf(out, "\n\tmax_pcpd: %d", t->max_meetings_per_class_per_day);
+		fprintf(out, "\n\tnum_plan: %d", t->num_planning_periods);
+		fprintf(out, "\n\tday_max_meet: ");
+		print_int_list(out, t->day_max_meetings);
+		fprintf(out,"\n\tday_scores: ");
+		print_int_list(out, t->day_scores);
+		fprintf(out,"\n\tlecture_period_scores: ");
+		print_int_list(out, t->lecture_period_scores);
+		fprintf(out,"\n\tplanning_period_scores: ");
+		print_int_list(out, t->planning_period_scores);
+		fprintf(out,"\n\tplanning_twin_scores: ");
+		print_int_list(out, t->planning_twin_scores);
+		fprintf(out,"\n\tlecture_room_scores: ");
+		print_int_list(out, t->lecture_room_scores);
+		fprintf(out,"\n\tplanning_room_scores: ");
+		print_int_list(out, t->planning_room_scores);
+		fprintf(out,"\n\tsubordinates: ");
+		print_int_list(out, t->subordinates);
+		fprintf(out, "\n\tteaches: ");
+		for(int i = 0; t->teaches != NULL && t->teaches[i] != NULL && t->teaches[i]->subject != NULL; ++i){
+			printf("(%s, %d), ", t->teaches[i]->subject->name, t->teaches[i]->score);
+		}
+		printf("\n");
+	}
+}
+void print_school(FILE * out, const School * const s){
+	if(s && out){
+		fprintf(out, "School:\n\tname:	 %s\n", s->name);
+		fprintf(out, "\tn_periods: 		 %d\n", s->n_periods);
+		fprintf(out, "\tn_periods_per_day: %d\n", s->n_periods_per_day);
+		fprintf(out, "\tn_days: 			 %d\n", s->n_days);
+		fprintf(out, "\tn_per: 			 %d\n", s->n_periods);
+		fprintf(out, "\tn_classes: 		 %d\n", s->n_classes);
+		fprintf(out, "\tn_teachers: 	 	 %d\n", s->n_teachers);
+		fprintf(out, "\tn_subjects: 	 	 %d\n", s->n_subjects);
+		fprintf(out, "\tn_rooms:	 	 	 %d\n", s->n_rooms);
+		fprintf(out, "\tn_teaches: 	 	 %d\n", s->n_teaches);
+		fprintf(out, "\tn_subj_groups: 	 %d\n", s->n_subject_groups);
+
+		// printf("\t\t")
+	}
+}
+
+/*********************************************************/
+/*                 FIND AND GET Functions                */
+/*********************************************************/
+
+Room * find_room_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_rooms; ++i){
+		if(school->rooms[i].id == id){
+			return &(school->rooms[i]);
+		}
+	}
+	return NULL;
+}
+int get_room_index_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_rooms; ++i){
+		if(school->rooms[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
+Class * find_class_by_id(School * school, int id) {
+	int i;
+	for(i = 0; i < school->n_classes; ++i){
+		if(school->classes[i].id == id){
+			return &(school->classes[i]);
+		}
+	}
+	printf("Did not find class.\n");
+	return NULL;
+}
+int get_class_index_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_classes; ++i){
+		if(school->classes[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
+Teacher * find_teacher_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_teachers; ++i){
+		if(school->teachers[i].id == id){
+			return &(school->teachers[i]);
+		}
+	}
+	return NULL;
+}
+int get_teacher_index_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_teachers; ++i){
+		if(school->teachers[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
+Meeting * find_meeting_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_meetings; ++i){
+		if(school->meetings[i].id == id){
+			return &(school->meetings[i]);
+		}
+	}
+	return NULL;
+}
+Subject * find_subject_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_subjects; ++i){
+		if(school->subjects[i].id == id){
+			return &(school->subjects[i]);
+		}
+	}
+	return NULL;
+}
+int get_subject_index_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_subjects; ++i){
+		if(school->subjects[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
+int get_day_index_by_id(School * school, int id){
+	int i;
+	for(i = 0; i < school->n_days; ++i){
+		if(school->day_ids[i] == id){
+			return i;
+		}
+	}
+	return -1;
+}
+int get_per_index_by_id(School * school, int id){
+	int i;
+	for(i = 0; i < school->n_periods; ++i){
+		if(school->period_ids[i] == id){
+			return i;
+		}
+	}
+	return -1;
+}
+Assignment * find_assignment_by_class_subj_id(School * school, int id_class, int id_subj){
+	for(int i = 0; i < school->n_assignments; ++i){
+		if(school->assignments[i].m_class->id == id_class && school->assignments[i].subject->id == id_subj){
+			return &school->assignments[i];
+		}
+	}
+	printf("Did not find assignment with idcl %d and idsubj %d\n", id_class, id_subj);
+	return NULL;
+}
+Assignment * find_assignment_by_id(School * school, int id){
+	for(int i = 0; i < school->n_assignments; ++i){
+		if(school->assignments[i].id == id){
+			return &school->assignments[i];
+		}
+	}
+	return NULL;
+}
+int get_daily_period_index_by_id(School * school, int id){
+	int i;
+	for(i = 0; i < school->n_periods_per_day; ++i){
+		if(school->daily_period_ids[i] == id){
+			return i;
+		}
+	}
+	return -1;
+}
+int get_subject_group_index_by_id(School * school, int id){
+	int i;
+	for(i = 0; i < school->n_subject_groups; ++i){
+		if(school->subject_group_ids[i] == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
+
+/*********************************************************/
+/*                 ADD AND REMOVE Functions              */
+/*********************************************************/
+
+/* if *list_ptr == NULL, calloc. Else realloc*/
+void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new){
+	LMH_ASSERT(list_ptr != NULL && n_old >= 0 && n_old < n_new);
+	int i;
+
+	if(*list_ptr == NULL){
+		*list_ptr = calloc(n_new + 1, sizeof(int));
+	} else {
+		LMH_ASSERT(*list_ptr != NULL);
+		*list_ptr  = realloc(*list_ptr, (n_new + 1) * sizeof(int));
+		for(i = n_old; i < n_new; ++i){
+			(*list_ptr)[i] = 0;
+		}
+	}
+	(*list_ptr)[n_new] = -1;
+}
+void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at){
+	LMH_ASSERT(list_ptr != NULL && at <= n_old && at > 0 && n_old >= 0);
+	if(*list_ptr == NULL){
+		*list_ptr = calloc(n_old + 2, sizeof(int));
+		list_ptr[n_old+1] = -1;
+	} else {
+		*list_ptr = realloc(*list_ptr, (n_old + 2)*sizeof(int));
+		for(int i = n_old + 1; i > at; --i){
+			(*list_ptr)[i] = (*list_ptr)[i-1];
+		}
+	}
+}
+void remove_from_int_list(int * list, int i_remove){
+	int i;
+	LMH_ASSERT(list != NULL && i_remove >= 0);
+	for(i = i_remove; list[i] != -1; ++i){
+		list[i] = list[i+1];
+	}
+}
+void school_subject_remove(School * school, int subj_i, bool must_delete){
+	int i, j, k;
+	LMH_ASSERT(school != NULL && subj_i >= 0);
+	for(i = 0; i < school->n_teaches; ++i){
+		/* Push all behind to the front if this is about the deleted. */
+		if(school->teaches[i].subject->id == school->subjects[subj_i].id){
+			if(must_delete){
+				free_teaches(&school->teaches[i]);
+			}
+			for(j = i; j < school->n_teaches; ++j){
+				school->teaches[j] = school->teaches[j+1];
+			}
+			--school->n_teaches;
+			--i;
+		}
+	}
+	if(school->meetings != NULL){
+		for(i = 0; i < school->n_meetings; ++i){
+			if(school->meetings[i].subject->id == school->subjects[subj_i].id){
+				free_meeting(&school->meetings[i]);
+				for(j = i; j < school->n_meetings; ++j){
+					school->meetings[j] = school->meetings[j+1];
+				}
+				--i;
+				school->n_meetings--;
+			}
+		}
+	}
+	if(school->solutions != NULL){
+		for(i = 0; i < school->n_solutions; ++i){
+			Meeting * m_list = school->solutions[i].meetings;
+			for(j = 0; m_list[j].m_class != NULL; ++j){
+				Meeting * meet = & m_list[j];
+				if(m_list[j].subject->id == school->subjects[subj_i].id){
+					free_meeting(& m_list[j]);
+					for(k = j; m_list[k].type != meet_NULL; ++k){
+						m_list[k] = m_list[k+1];
+					}
+					--j;
+				}
+			}
+		}
+	}
+	if(must_delete){
+		free_subject(&school->subjects[subj_i]);
+	}
+	for(i = subj_i; i < school->n_subjects; ++i){
+		school->subjects[i] = school->subjects[i + 1];
+	}
+	--school->n_subjects;
+}
+int school_class_assignments_add(School * school, Class * c){
+	int i, n;
+	LMH_ASSERT(school != NULL && c != NULL && c->assignments != NULL);
+
+	for(n = 0; c->assignments[n] != NULL; ++n){
+		/* Blank */
+	}
+	printf("School nassignments was %d\n", school->n_assignments);
+	if(school->n_assignments == 0){
+		school->assignments = calloc(n + 1, sizeof(Assignment));
+	} else {
+		school->assignments = realloc(school->assignments, (school->n_assignments + n+1)*sizeof(Assignment));
+	}
+
+	for(i = 0; i < n; ++i){
+		school->assignments[school->n_assignments + i] = * c->assignments[i];
+		c->assignments[i] = &school->assignments[school->n_assignments + i];
+	}
+
+	school->n_assignments += n;
+	return school->n_assignments;
+}
+int school_class_add(School * school, const Class * const c){
+	if(school->classes == NULL || school->n_classes == 0){
+		school->classes = calloc(11, sizeof(Class));
+	} else if(school->n_classes % 10 == 0) {
+		school->classes = realloc(school->classes,(school->n_classes + 11) * sizeof(Class));
+	}
+	school->classes[ school->n_classes ] = *c;
+	if(c->assignments){
+		school_class_assignments_add(school, c);
+	}
+	return school->n_classes++;
+}
+void school_teacher_add(School * school, const Teacher * const t){
+	int n_teaches = 0, i_teaches = 0;
+
+	if(school->teachers == NULL || school->n_teachers == 0){
+		school->teachers = calloc(11, sizeof(Teacher));
+		school->n_teachers = 0;
+	} else if(school->n_teachers % 10 == 0){
+		school->teachers = realloc(school->teachers, (school->n_teachers + 11)*sizeof(Teacher));
+	}
+	school->teachers[ school->n_teachers ] = *t;
+
+	if(t->teaches){
+		for(n_teaches = 0; t->teaches[n_teaches] != NULL; ++n_teaches){
+			/* Blank on purpouse */
+		}
+		/* Correcting teacher addresses and mallocs. */
+		if(school->teaches == NULL || school->n_teaches == 0){
+			school->teaches = calloc(11 + (n_teaches - n_teaches % 10), sizeof(Teaches));
+			school->n_teaches = 0;
+		} else if(school->n_teaches %10 == 0){
+			school->teaches = realloc(school->teaches, (11 + (school->n_teaches + n_teaches - (school->n_teaches + n_teaches) % 10)) * sizeof(Teaches));
+		}
+
+		for(i_teaches = 0; i_teaches < n_teaches; ++i_teaches){
+			school->teaches[school->n_teaches] = * t->teaches[i_teaches];
+			t->teaches[i_teaches] = &school->teaches[school->n_teaches];
+			++ school->n_teaches;
+		}
+	}
+
+	++school->n_teachers;
+}
+void school_teacher_remove(School * school, int i_remove, bool must_delete){
+	int i,j;
+	/* TODO Check for subordinates too. */
+	for(i = 0; i < school->n_teaches; ++i){
+		if(school->teaches[i].teacher->id == school->teachers[i_remove].id){
+			if(must_delete){
+				/* Else it will be still referenced by the teacher */
+				free_teaches(&school->teaches[i]);
+			}
+			for(j = i; j < school->n_teaches; ++j){
+				school->teaches[j] = school->teaches[j+1];
+			}
+			--i;
+			--school->n_teaches;
+		}
+	}
+	if(school->solutions != NULL){
+		for(i = 0; i < school->n_solutions; ++i){
+			Meeting * m_list = school->solutions[i].meetings;
+			for(j = 0; m_list[j].m_class != NULL; ++j ){
+				if(m_list[j].teacher->id == school->teachers[i_remove].id){
+					m_list[j].teacher = NULL;
+				}
+			}
+		}
+	}
+	if(must_delete){
+		free_teacher(&school->teachers[i_remove]);
+	}
+	for(i = i_remove; i < school->n_teachers; ++i){
+		school->teachers[i] = school->teachers[i+1];
+	}
+
+	--school->n_teachers;
+}
+void school_class_remove(School * school, int class_i, bool must_delete){
+	int i,j;
+	/* TODO: Check for subordinates too. */
+	Meeting * m_list;
+	Class * class = &school->classes[class_i];
+	for(i = 0; i < school->n_solutions; ++i){
+		m_list=  school->solutions[i].meetings;
+		for(j = 0; m_list[j].type != meet_NULL; ++j){
+			if(m_list[j].type == meet_LECTURE && m_list[i].m_class->id == class->id){
+				if(must_delete){
+
+				}
+				for(j = i; m_list[j].m_class != NULL; ++j){
+					m_list[j] = m_list[j+1];
+				}
+			}
+		}
+	}
+
+	if(must_delete){
+		free_class(class);
+	}
+
+	for(i = class_i; i < school->n_classes-1; ++i){
+		school->classes[i] = school->classes[i+1];
+	}
+}
+void school_room_add(School * school, const Room * const room){
+	int i;
+	if(school->n_rooms == 0){
+		school->rooms = (Room*) calloc(11, sizeof(Room));
+	} else if(school->n_rooms % 10 == 0) {
+		school->rooms = (Room *) realloc(school->rooms, (school->n_rooms + 11 - (school->n_rooms % 10))*sizeof(Room));
+	}
+	school->rooms[school->n_rooms] = *room;
+
+	for(i = 0; i < school->n_teachers; ++i){
+		add_zeroes_to_score_list(&school->teachers[i].lecture_room_scores, school->n_rooms, school->n_rooms + 1);
+		add_zeroes_to_score_list(&school->teachers[i].planning_room_scores, school->n_rooms, school->n_rooms + 1);
+	}
+	for(i = 0; i < school->n_classes; ++i){
+		add_zeroes_to_score_list(&school->classes[i].room_scores, school->n_rooms, school->n_rooms + 1);
+	}
+	for(i = 0; i < school->n_teaches; ++i){
+		add_zeroes_to_score_list(&school->teaches[i].room_scores, school->n_rooms, school->n_rooms + 1);
+	}
+	for(i = 0; i < school->n_meetings; ++i){
+		add_zeroes_to_score_list(&school->meetings[i].possible_rooms, school->n_rooms, school->n_rooms + 1);
+	}
+	school->n_rooms++;
+}
+void school_room_remove(School * school, int room_i, bool must_delete){
+	int i,j;
+	LMH_ASSERT(school != NULL && room_i < school->n_rooms);
+	if(school->solutions != NULL){
+		for(i = 0; i < school->n_solutions; ++i){
+			Meeting * m_list = school->solutions[i].meetings;
+			for(j = 0; m_list[j].m_class != NULL; ++j){
+				if(m_list[j].room->id == school->rooms[room_i].id){
+					m_list[j].room = NULL;
+				}
+			}
+		}
+	}
+	for(i = room_i; i < school->n_rooms; ++i){
+		school->rooms[i] = school->rooms[i+ 1];
+	}
+
+	for(i = 0; i < school->n_teachers; ++i){
+		if(school->teachers[i].lecture_room_scores){
+			remove_from_int_list(school->teachers[i].lecture_room_scores, room_i);
+		}
+		if(school->teachers[i].planning_room_scores){
+			remove_from_int_list(school->teachers[i].planning_room_scores, room_i);
+		}
+	}
+	for(i = 0; i < school->n_classes; ++i){
+		if(school->classes[i].room_scores){
+			remove_from_int_list(school->classes[i].room_scores, room_i);
+		}
+	}
+	for(i = 0; i < school->n_teaches; ++i){
+		if(school->teaches[i].room_scores){
+			remove_from_int_list(school->teaches[i].room_scores, room_i);
+		}
+	}
+	for(i = 0; i < school->n_meetings; ++i){
+		if(school->meetings[i].possible_rooms){
+			remove_from_int_list(school->meetings[i].possible_rooms, room_i);
+		}
+	}
+	--(school->n_rooms);
+}
+void school_subject_add(School * school, const Subject * const subject){
+	if(school->subjects == NULL || school->n_subjects == 0){
+		school->subjects = (Subject*)calloc(10, sizeof(Subject));
+		school->n_subjects = 0;
+	} else if(school->n_subjects % 10 == 0) {
+		school->subjects = (Subject*)realloc(school->subjects,(school->n_subjects +11)*sizeof(Subject));
+	}
+	school->subjects[ school->n_subjects ] = *subject;
+	school->n_subjects++;
+}
+void school_subjectgroup_add(School * school, const char * const name, int id){
+	/* TODO realloc class->in_groups */
+	if(school->n_subject_groups == 0 || school->subject_group_names == NULL){
+		school->subject_group_names = (char **) calloc(11, sizeof(char *));
+		school->subject_group_ids = (int *) calloc(11, sizeof(int));
+		school->n_subject_groups = 0;
+	} else if(school->n_subject_groups % 10 == 0) {
+		school->subject_group_names = (char **) realloc(school->subject_group_names, (school->n_subject_groups + 11) * sizeof(char*));
+		school->subject_group_ids = (int *) realloc(school->subject_group_ids, (school->n_subject_groups + 11) * sizeof(int*));
+	}
+	school->subject_group_names[school->n_subject_groups] = name;
+	school->subject_group_ids[school->n_subject_groups] = id;
+	++school->n_subject_groups;
+}
+
+/*********************************************************/
+/*                     OTHER Functions                   */
+/*********************************************************/
+
+Meeting * create_meeting_list_for_class(School * school, Class * c){
+	int i,j,n;
+	LMH_ASSERT(school != NULL && c != NULL);
+	Meeting * meetings = NULL;
+	if(c->assignments != NULL){
+		for(n = 0; c->assignments[n] != NULL; ++n){
+			/* Blank on purpouse */
+		}
+		if( n != 0 ){
+			meetings = calloc( n+1, sizeof(Meeting));
+			for(i = 0; i < n; ++i){
+				for(j = 0; j < c->assignments[i]->amount; ++j){
+					meetings[j] = (Meeting){
+						.id = 0,
+						.type = meet_LECTURE,
+						.m_class = c,
+						.subject = c->assignments[i]->subject,
+						.teacher = NULL,
+						.room = NULL,
+						.period = 0,
+						.possible_periods = NULL,
+						.possible_rooms = NULL,
+						.possible_teachers = NULL
+					};
+					++school->n_meetings;
+				}
+			}
+			meetings[n].type = meet_NULL;
+		}
+	}
+	return meetings;
+}
+
+void school_meeting_list_add_and_bind(School * school, int class_i, Meeting * meetings){
+	int i_meet = 0, n = 0;
+	LMH_ASSERT(school != NULL && meetings != NULL && class_i >= 0 && class_i < school->n_classes);
+
+	for(n = 0; meetings[n].type == meet_LECTURE; ++n){
+		/* Blank */
+	}
+	LMH_ASSERT(n > 0);
+
+	if(school->n_meetings == 0){
+		school->meetings = calloc(n + 1, sizeof(Meeting));
+	} else {
+		school->meetings = realloc(school->meetings, (school->n_meetings + n + 1)*sizeof(Meeting));
+	}
+
+	for(i_meet = 0; i_meet < n; ++i_meet){
+		school->meetings[school->n_meetings] = (Meeting){
+			.id = meetings[i_meet].id,
+			.type = meet_LECTURE,
+			.m_class = &school->classes[class_i],
+			.subject = meetings[i_meet].subject,
+			.teacher = meetings[i_meet].teacher,
+			.room = meetings[i_meet].room,
+			.period = meetings[i_meet].period,
+			.possible_periods = meetings[i_meet].possible_periods,
+			.possible_rooms = meetings[i_meet].possible_rooms,
+			.possible_teachers = meetings[i_meet].possible_teachers,
+		};
+
+		++school->n_meetings;
+	}
 }

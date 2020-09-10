@@ -3,7 +3,6 @@
 extern "C" {
 	#include "util.h"
 	#include "loader.h"
-	#include "preprocess.h"
 };
 
 ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
@@ -89,7 +88,8 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 		int subject_id = ((IntClientData*) m_subjects_list->GetList()->GetClientObject(i_select))->m_value;
 		success = remove_subject(stdout, m_owner->m_database, subject_id);
 		if(success){
-			school_subject_remove(school, get_subject_index_by_id(school, subject_id));
+			/* TODO: substitute for Action */
+			school_subject_remove(school, get_subject_index_by_id(school, subject_id), true);
 			m_subjects_list->RemoveItem(subject_id);
 			m_owner->NotifyNewUnsavedData();
 		} else {

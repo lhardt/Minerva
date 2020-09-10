@@ -2,7 +2,6 @@
 
 extern "C" {
 	#include "util.h"
-	#include "preprocess.h"
 	#include "assert.h"
 };
 #include <wx/spinctrl.h>
@@ -94,7 +93,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 void ListRoomsPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt) {
 	int i_select = m_rooms_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
-		int room_id = ((IntClientData*)m_rooms_list->GetList()->GetClientObject())->m_value;
+		int room_id = ((IntClientData*)m_rooms_list->GetList()->GetClientObject(i_select))->m_value;
 		School * school = m_owner->m_school;
 		ChoiceGrid * grid = m_periods->GetGrid();
 

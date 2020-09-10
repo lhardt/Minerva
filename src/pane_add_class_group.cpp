@@ -4,7 +4,6 @@
 extern "C" {
 	#include "loader.h"
 	#include "util.h"
-	#include "preprocess.h"
 };
 
 AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
