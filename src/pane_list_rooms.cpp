@@ -36,11 +36,6 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
-	if(school->n_rooms > 0){
-		for(i = 0; i < school->n_rooms; ++i){
-			m_rooms_list->AddItem(school->rooms[i].id, wxString::FromUTF8(school->rooms[i].name));
-		}
-	}
 	periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -89,10 +84,33 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	m_name_text->Disable();
 	m_size_text->Disable();
 	m_active_text->Disable();
+
+	ShowData();
+}
+
+void ListRoomsPane::ShowData(){
+	int i;
+	School * school = m_owner->m_school;
+	m_cancel_btn->Hide();
+	m_name_text->SetValue(wxT(""));
+	m_size_text->SetValue(0);
+	m_active_text->SetValue(false);
+	m_name_text->Disable();
+	m_size_text->Disable();
+	m_active_text->Disable();
+	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+	m_edit_btn->Show();
+	m_rooms_list->Clear();
+	if(school->n_rooms > 0){
+		for(i = 0; i < school->n_rooms; ++i){
+			m_rooms_list->AddItem(school->rooms[i].id, wxString::FromUTF8(school->rooms[i].name));
+		}
+	}
+	m_periods->GetGrid()->SetAllActiveCellsState(1);
 }
 
 void ListRoomsPane::OnDataChange(wxNotifyEvent & evt) {
-	printf("Data change!\n");
+	ShowData();
 }
 
 void ListRoomsPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt) {
@@ -105,7 +123,7 @@ void ListRoomsPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt) {
 		int * values = (int*) calloc(school->n_periods+1 , sizeof(int));
 		for(int i = 0; i < school->n_periods; ++i){
 			int state = grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
-			values[i] = state >= 0 ? state:0; /* State -1 is used for blocked cells */
+			values[i] = state >= 0 ? 1:0; /* State -1 is used for blocked cells */
 		}
 		values[school->n_periods] = -1;
 
@@ -148,7 +166,10 @@ void ListRoomsPane::OnEditButtonClicked(wxCommandEvent &){
 				.active = m_active_text->GetValue()
 			};
 			RoomBasicDataUpdateAction * act = new RoomBasicDataUpdateAction(m_owner, room, id_room);
-			m_owner->Do(act);
+			bool success = m_owner->Do(act);
+			if(success){
+				m_rooms_list->EditItem(id_room, wxString::FromUTF8(find_room_by_id(m_owner->m_school, id_room)->name));
+			}
 		} else {
 			m_cancel_btn->Show();
 			m_name_text->Enable();
@@ -182,11 +203,10 @@ void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 	int i_select = m_rooms_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int id_room = ((IntClientData*)m_rooms_list->GetList()->GetClientObject(i_select))->m_value;
-		Room * sel_room = find_room_by_id(school, id_room);
-		RoomDeleteAction * act = new RoomDeleteAction(m_owner, get_room_index_by_id(m_owner->m_school, sel_room->id));
+		RoomDeleteAction * act = new RoomDeleteAction(m_owner, get_room_index_by_id(m_owner->m_school, id_room));
 		bool success = m_owner->Do(act);
 		if(success){
-			m_rooms_list->RemoveItem(i_select);
+			m_rooms_list->RemoveItem(id_room);
 		} else {
 			printf("Não foi possível apagar.");
 		}

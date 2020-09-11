@@ -2352,6 +2352,7 @@ static Room * select_all_rooms_by_school_id(FILE * console_out, sqlite3* db, int
 		rooms[i].name = copy_sqlite_string(stmt,1);
 		rooms[i].short_name = copy_sqlite_string(stmt,2);
 		rooms[i].size = sqlite3_column_int(stmt,3);
+		rooms[i].active = sqlite3_column_int(stmt,4) > 0;
 		errc = sqlite3_step(stmt);
 		rooms[i].availability = select_period_scores(console_out, db, SELECT_ROOM_AVAILABILITY_BY_ROOM_ID, rooms[i].id, school);
 		++i;

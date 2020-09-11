@@ -245,9 +245,11 @@ class SearchableListPane : public wxPanel {
 public:
 	SearchableListPane(Application * owner, wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize sz = wxDefaultSize);
 	void AddItem(int id, wxString name);
+	void EditItem(int id, wxString new_name);
 	void RemoveItem(int id);
 	wxListBox * GetList();
 	wxTextCtrl * GetSearchBox();
+	void Clear();
 private:
 	Application 	  * m_owner;
 	wxTextCtrl 		  * m_searchbox;
@@ -533,6 +535,7 @@ class ListRoomsPane : public wxScrolledWindow {
 	void OnDeleteButtonClicked(wxCommandEvent &);
 	void OnSelectionChanged(wxCommandEvent &);
 	void OnDataChange(wxNotifyEvent & );
+	void ShowData();
 };
 
 class ListSubjectsPane : public wxScrolledWindow {
@@ -551,6 +554,7 @@ class ListSubjectsPane : public wxScrolledWindow {
     void OnDeleteButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
 	void OnDataChange(wxNotifyEvent & );
+	void ShowData();
 };
 
 class ListSubjectGroupsPane : public wxScrolledWindow {

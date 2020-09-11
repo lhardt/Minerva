@@ -4,8 +4,8 @@ SearchableListPane::SearchableListPane(Application * owner, wxWindow * parent, w
 				: wxPanel(parent, id, pos, sz), m_owner(owner), m_item_ids(), m_item_names() {
 	SetBackgroundColour(wxColour(240,240,240));
 
-	wxStaticText * search_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_search, wxDefaultPosition, wxDefaultSize);
-	wxStaticText * selection_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_selection, wxDefaultPosition, wxDefaultSize);
+	wxStaticText * search_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_search);
+	wxStaticText * selection_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_selection);
 
 	search_label->SetFont(*m_owner->m_small_font);
 	selection_label->SetFont(*m_owner->m_small_font);
@@ -25,6 +25,23 @@ SearchableListPane::SearchableListPane(Application * owner, wxWindow * parent, w
 	sizer->Add(m_list, 1,  wxLEFT | wxRIGHT | wxBOTTOM, 10);
 	sizer->Add(clear_btn, 0,  wxLEFT | wxRIGHT | wxBOTTOM, 10);
 	SetSizer(sizer);
+}
+
+void SearchableListPane::Clear(){
+	m_searchbox->Clear();
+	m_item_ids.clear();
+	m_item_names.clear();
+}
+
+void SearchableListPane::EditItem(int id, wxString new_name){
+	int i;
+	for(i = 0; i < m_item_ids.size(); ++i){
+		if(m_item_ids[i] == id){
+			m_item_names[i] = new_name;
+			RefilterElements();
+			break;
+		}
+	}
 }
 
 void SearchableListPane::OnClearButtonClicked(wxCommandEvent &){

@@ -12,12 +12,9 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(240,240,240));
 
-	m_subjects_list = new SearchableListPane(m_owner, this /*, wxID_ANY, wxDefaultPosition, wxSize(230,300) */);
+	m_subjects_list = new SearchableListPane(m_owner, this);
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
-	for(i = 0; i < school->n_subjects; ++i){
-		m_subjects_list->AddItem(school->subjects[i].id, wxString::FromUTF8(school->subjects[i].name));
-	}
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_cancel_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_cancel);
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove);
@@ -56,10 +53,26 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	delete_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnDeleteButtonClicked, this);
 	m_subjects_list->GetList()->Bind(wxEVT_LISTBOX, &ListSubjectsPane::OnSelectionChanged, this);
 	Bind(DATA_CHANGE_EVENT, &ListSubjectsPane::OnDataChange, this);
+
+	ShowData();
+}
+
+void ListSubjectsPane::ShowData(){
+	int i;
+	School * school = m_owner->m_school;
+	m_subjects_list->Clear();
+	for(i = 0; i < school->n_subjects; ++i){
+		m_subjects_list->AddItem(school->subjects[i].id, wxString::FromUTF8(school->subjects[i].name));
+	}
+	m_name_text->SetValue(wxT(""));
+	m_name_text->Disable();
+	m_cancel_btn->Hide();
+	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+	m_edit_btn->Show();
 }
 
 void ListSubjectsPane::OnDataChange(wxNotifyEvent & evt) {
-	printf("Data change!\n");
+	ShowData();
 }
 
 ListSubjectsPane::~ListSubjectsPane(){
