@@ -109,7 +109,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_basic_cancel_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnRemoveButtonClicked, this);
 	m_classes_list->GetList()->Bind(wxEVT_LISTBOX, &ListClassesPane::OnSelectionChanged, this);
-
+	Bind(DATA_CHANGE_EVENT, &ListClassesPane::OnDataChange, this);
 
 	// AVAILABILITY PANE CODE
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
@@ -156,6 +156,10 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_free_periods_text->Disable();
 	m_basic_cancel_btn->Hide();
 
+}
+
+void ListClassesPane::OnDataChange(wxNotifyEvent &){
+	printf("Data change!\n");
 }
 
 void ListClassesPane::OnCancelButtonClicked(wxCommandEvent & ev){

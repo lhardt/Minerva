@@ -85,6 +85,7 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	subject_choice->Bind(wxEVT_CHOICE, &ListLecturesPane::OnSubjectSelectionChanged, this);
 	m_edit_btn->Bind(wxEVT_CHOICE, &ListLecturesPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_CHOICE, &ListLecturesPane::OnCancelButtonClicked, this);
+	Bind(DATA_CHANGE_EVENT, &ListLecturesPane::OnDataChange, this);
 
 	// m_periods code
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
@@ -95,6 +96,10 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
 
 	Layout();
+}
+
+void ListLecturesPane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void ListLecturesPane::OnCancelButtonClicked(wxCommandEvent&){

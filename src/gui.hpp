@@ -30,6 +30,8 @@ extern "C" {
 
 char * copy_wx_string(wxString str);
 
+wxDECLARE_EVENT(DATA_CHANGE_EVENT, wxNotifyEvent);
+
 class IntPairClientData : public wxClientData{
 public:
 	IntPairClientData(int v1, int v2);
@@ -366,6 +368,7 @@ class AddRoomPane : public wxScrolledWindow {
 
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class AddSubjectPane : public wxScrolledWindow {
@@ -380,6 +383,7 @@ class AddSubjectPane : public wxScrolledWindow {
 
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class AddSubjectGroupPane : public wxScrolledWindow	 {
@@ -394,6 +398,7 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 	Application 	* m_owner;
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class AddTeacherPane : public wxScrolledWindow {
@@ -410,6 +415,7 @@ class AddTeacherPane : public wxScrolledWindow {
 
 	void OnAddTeacherButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class AddTeacherGroupPane : public wxScrolledWindow {
@@ -424,6 +430,7 @@ class AddTeacherGroupPane : public wxScrolledWindow {
 	Application * m_owner;
 	void OnAddGroupButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class AddClassPane : public wxScrolledWindow {
@@ -445,6 +452,7 @@ class AddClassPane : public wxScrolledWindow {
 	void OnAddClassButtonClicked(wxCommandEvent &);
 	void OnPeriodChoice(wxCommandEvent &);
 	void ClearInsertedData();
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class AddClassGroupPane : public wxScrolledWindow {
@@ -461,6 +469,7 @@ class AddClassGroupPane : public wxScrolledWindow {
 
 	void OnAddGroupButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
+	void OnDataChange(wxNotifyEvent & );
 };
 
 /* LIST Panes. */
@@ -492,6 +501,7 @@ class DescSchoolPane : public wxScrolledWindow {
 	void OnDailyPeriodNamesSaveButtonClicked(wxCommandEvent & );
 	void OnPeriodNamesCancelButtonClicked(wxCommandEvent & );
 	void OnPeriodNamesSaveButtonClicked(wxCommandEvent & );
+	void OnDataChange(wxNotifyEvent & );
 	wxScrolledWindow * MakeStatisticsPane();
 };
 
@@ -518,6 +528,7 @@ class ListRoomsPane : public wxScrolledWindow {
 	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnDeleteButtonClicked(wxCommandEvent &);
 	void OnSelectionChanged(wxCommandEvent &);
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class ListSubjectsPane : public wxScrolledWindow {
@@ -535,6 +546,7 @@ class ListSubjectsPane : public wxScrolledWindow {
 	void OnCancelButtonClicked(wxCommandEvent &);
     void OnDeleteButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class ListSubjectGroupsPane : public wxScrolledWindow {
@@ -553,6 +565,7 @@ class ListSubjectGroupsPane : public wxScrolledWindow {
 	void OnEditButtonClicked(wxCommandEvent &);
     void OnDeleteButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class ListTeachersPane : public wxScrolledWindow {
@@ -585,6 +598,7 @@ class ListTeachersPane : public wxScrolledWindow {
     void OnDeleteButtonClicked(wxCommandEvent &);
 	void OnDependencyButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class ListClassesPane : public wxScrolledWindow {
@@ -614,6 +628,7 @@ class ListClassesPane : public wxScrolledWindow {
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnRemoveButtonClicked(wxCommandEvent &);
+	void OnDataChange(wxNotifyEvent &);
 };
 
 class ListLecturesPane : public wxScrolledWindow {
@@ -634,6 +649,7 @@ class ListLecturesPane : public wxScrolledWindow {
 	void OnSubjectSelectionChanged(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnCancelButtonClicked(wxCommandEvent &);
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class ListPlanningTimesPane : public wxScrolledWindow {
@@ -657,6 +673,7 @@ class ListPlanningTimesPane : public wxScrolledWindow {
 	void OnOccurenceSelectionChanged(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnCancelButtonClicked(wxCommandEvent &);
+	void OnDataChange(wxNotifyEvent & );
 };
 
 
@@ -671,6 +688,7 @@ class GenerateTimetablePane : public wxScrolledWindow {
 	wxStaticText * m_err_msg;
 	wxTextCtrl * m_tt_name_text;
 	void OnButtonClicked(wxCommandEvent &);
+	void OnDataChange(wxNotifyEvent & );
 };
 
 class DescTimetablePane : public wxScrolledWindow {
@@ -695,6 +713,7 @@ class DescTimetablePane : public wxScrolledWindow {
 
 	void OnRedrawGridRequest(wxCommandEvent &);
 	void OnGridSelection(wxGridEvent & evt);
+	void OnDataChange(wxNotifyEvent & );
 };
 
 /* Manual */

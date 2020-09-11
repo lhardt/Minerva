@@ -68,6 +68,11 @@ ListPlanningTimesPane::ListPlanningTimesPane(Application * owner, wxWindow * par
 	m_occurence_choice->Bind(wxEVT_CHOICE, &ListPlanningTimesPane::OnOccurenceSelectionChanged, this);
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListPlanningTimesPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListPlanningTimesPane::OnCancelButtonClicked, this);
+	Bind(DATA_CHANGE_EVENT, &ListPlanningTimesPane::OnDataChange, this);
+}
+
+void ListPlanningTimesPane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void ListPlanningTimesPane::OnTeacherSelectionChanged(wxCommandEvent &) {

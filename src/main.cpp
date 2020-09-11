@@ -17,6 +17,8 @@ extern "C" {
 	#include "util.h"
 };
 
+wxDEFINE_EVENT(DATA_CHANGE_EVENT, wxNotifyEvent);
+
 bool Application::Do(Action * action){
 	if(m_actions.Do(action)){
 		if(m_form_main_menu){

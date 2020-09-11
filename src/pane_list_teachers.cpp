@@ -153,6 +153,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnDeleteButtonClicked, this);
 	m_dependency_text->Bind(wxEVT_CHECKBOX, &ListTeachersPane::OnDependencyButtonClicked,this);
+	Bind(DATA_CHANGE_EVENT, &ListTeachersPane::OnDataChange, this);
 
 	for(i = 0; i < school->n_teachers; ++i){
 		if(school->teachers[i].subordinates && (find_first_positive(school->teachers[i].subordinates) >= 0)){
@@ -171,6 +172,10 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_active_text->Disable();
 	m_dependency_text->Disable();
 	m_groups->Hide();
+}
+
+void ListTeachersPane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void ListTeachersPane::OnDependencyButtonClicked(wxCommandEvent &){

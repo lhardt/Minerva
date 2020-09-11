@@ -41,8 +41,13 @@ GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * par
 	sizer->Add(m_err_msg, 0, wxLEFT | wxBOTTOM, 15 );
 
 	gen_button->Bind(wxEVT_BUTTON, &GenerateTimetablePane::OnButtonClicked, this);
+	Bind(DATA_CHANGE_EVENT, &GenerateTimetablePane::OnDataChange, this);
 
 	SetSizerAndFit(sizer);
+}
+
+void GenerateTimetablePane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){

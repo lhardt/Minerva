@@ -99,6 +99,11 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	m_entry_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
 	m_exit_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
 	add_class->Bind(wxEVT_BUTTON, &AddClassPane::OnAddClassButtonClicked, this);
+	Bind(DATA_CHANGE_EVENT, &AddClassPane::OnDataChange, this);
+}
+
+void AddClassPane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){

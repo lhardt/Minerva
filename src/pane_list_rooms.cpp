@@ -83,11 +83,16 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	m_rooms_list->GetList()->Bind(wxEVT_LISTBOX, &ListRoomsPane::OnSelectionChanged, this);
 	m_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &ListRoomsPane::OnPeriodsCancelButtonClicked, this);
 	m_periods->GetSaveButton()->Bind(wxEVT_BUTTON, &ListRoomsPane::OnPeriodsSaveButtonClicked, this);
+	Bind(DATA_CHANGE_EVENT, &ListRoomsPane::OnDataChange, this);
 
 	m_cancel_btn->Hide();
 	m_name_text->Disable();
 	m_size_text->Disable();
 	m_active_text->Disable();
+}
+
+void ListRoomsPane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void ListRoomsPane::OnPeriodsSaveButtonClicked(wxCommandEvent & evt) {

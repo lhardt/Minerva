@@ -25,13 +25,13 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 		m_groups_list->AddItem(school->subject_group_ids[i], wxString::FromUTF8(school->subject_group_names[i]));
 	}
 
-	notebook->AddPage(m_members, wxT("Membro"));
+	notebook->AddPage(m_members, m_owner->m_lang->str_member);
 
 	ChoiceGrid * members_grid = m_members->GetGrid();
 	members_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	members_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 
-	wxString col_name = wxT("Membro");
+	wxString col_name = m_owner->m_lang->str_member;
 	members_grid->SetColName(0,col_name);
 	for(i = 0; i < school->n_subjects; ++i){
 		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
@@ -71,10 +71,15 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnDeleteButtonClicked, this);
 	m_groups_list->GetList()->Bind(wxEVT_LISTBOX, &ListSubjectGroupsPane::OnSelectionChanged, this);
+	Bind(DATA_CHANGE_EVENT, &ListSubjectGroupsPane::OnDataChange, this);
 
 	m_cancel_btn->Hide();
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	m_name_text->Enable(false);
+}
+
+void ListSubjectGroupsPane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void ListSubjectGroupsPane::OnEditButtonClicked(wxCommandEvent & evt){

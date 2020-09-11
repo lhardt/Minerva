@@ -55,6 +55,11 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnEditButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnDeleteButtonClicked, this);
 	m_subjects_list->GetList()->Bind(wxEVT_LISTBOX, &ListSubjectsPane::OnSelectionChanged, this);
+	Bind(DATA_CHANGE_EVENT, &ListSubjectsPane::OnDataChange, this);
+}
+
+void ListSubjectsPane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 ListSubjectsPane::~ListSubjectsPane(){

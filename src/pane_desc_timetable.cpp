@@ -100,6 +100,7 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 	m_class_choice->Bind(wxEVT_CHOICE, &DescTimetablePane::OnRedrawGridRequest, this);
 	m_teacher_choice->Bind(wxEVT_CHOICE, &DescTimetablePane::OnRedrawGridRequest, this);
 	m_subject_choice->Bind(wxEVT_CHOICE, &DescTimetablePane::OnRedrawGridRequest, this);
+	Bind(DATA_CHANGE_EVENT, &DescTimetablePane::OnDataChange, this);
 
 	labels_sz->Add(class_choice_label, 1, wxLEFT|wxRIGHT, 5);
 	labels_sz->Add(teacher_choice_label, 1,wxLEFT|wxRIGHT, 5);
@@ -140,6 +141,10 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 	Layout();
 
 	m_grid->Bind(wxEVT_GRID_SELECT_CELL, &DescTimetablePane::OnGridSelection, this);
+}
+
+void DescTimetablePane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void DescTimetablePane::OnGridSelection(wxGridEvent & evt) {

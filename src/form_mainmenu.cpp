@@ -270,6 +270,11 @@ void MainMenuForm::OnUndo(wxCommandEvent &){
 			m_toolbar->EnableTool(ID_UNDO, false);
 		}
 		m_toolbar->EnableTool(ID_SAVE, true);
+		/* May affect the data in the windows. */
+		if(m_open_pane != nullptr){
+			wxNotifyEvent evt(DATA_CHANGE_EVENT);
+			wxPostEvent(m_open_pane, evt);
+		}
 	}
 }
 
@@ -282,6 +287,11 @@ void MainMenuForm::OnRedo(wxCommandEvent &){
 			m_toolbar->EnableTool(ID_REDO, false);
 		}
 		m_toolbar->EnableTool(ID_SAVE, true);
+
+		if(m_open_pane != nullptr){
+			wxNotifyEvent evt(DATA_CHANGE_EVENT);
+			wxPostEvent(m_open_pane, evt);
+		}
 	}
 }
 

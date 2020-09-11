@@ -60,6 +60,11 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	Layout();
 
 	add_group->Bind(wxEVT_BUTTON, &AddClassGroupPane::OnAddGroupButtonClicked, this);
+	Bind(DATA_CHANGE_EVENT, &AddClassGroupPane::OnDataChange, this);
+}
+
+void AddClassGroupPane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){

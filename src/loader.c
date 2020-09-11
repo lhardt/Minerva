@@ -647,8 +647,8 @@ const char * const CREATE_TABLE_TEACHES_PERIOD =
 				"UNIQUE (id_teaches, id_period)"
 			")");
 const char * const UPSERT_TABLE_TEACHES_PERIOD =
-			("INSERT INTO TeachesPeriod(id, id_teaches, id_period, score) VALUES (?1,?2,?3,?4) "
-			 "ON CONFLICT (id_teaches, id_period) DO UPDATE SET (score) = (?4)");
+			("INSERT INTO TeachesPeriod(id_teaches, id_period, score) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_teaches, id_period) DO UPDATE SET (score) = (?3)");
 const char * const LASTID_TEACHES_PERIOD =
 			("SELECT id FROM TeachesPeriod where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHES_PERIOD_BY_TEACHES_ID =

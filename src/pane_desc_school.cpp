@@ -125,6 +125,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	m_cancel_button->Bind(wxEVT_BUTTON, &DescSchoolPane::OnCancelButtonClicked, this);
 	m_periods->GetSaveButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodsSaveButtonClicked, this);
 	m_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodsCancelButtonClicked, this);
+	Bind(DATA_CHANGE_EVENT, &DescSchoolPane::OnDataChange, this);
 
 	m_days->GetSaveButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDayNamesSaveButtonClicked, this);
 	m_days->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDayNamesCancelButtonClicked, this);
@@ -132,6 +133,10 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	m_daily_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnDailyPeriodNamesCancelButtonClicked, this);
 	m_period_names->GetSaveButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodNamesSaveButtonClicked, this);
 	m_period_names->GetCancelButton()->Bind(wxEVT_BUTTON, &DescSchoolPane::OnPeriodNamesCancelButtonClicked, this);
+}
+
+void DescSchoolPane::OnDataChange(wxNotifyEvent & evt) {
+	printf("Data change!\n");
 }
 
 void DescSchoolPane::OnDayNamesSaveButtonClicked(wxCommandEvent & evt) {

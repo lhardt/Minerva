@@ -252,6 +252,7 @@ const Language LANG_POR = {
 	.str_selection=L"Seleção",
 	.str_clear=L"Limpar",
 	.str_selection_and_search=L"Seleção e Busca",
+	.str_member=L"Membro",
 };
 
 const Language LANG_ENG = {
@@ -492,6 +493,7 @@ const Language LANG_ENG = {
 	.str_selection=L"Selection",
 	.str_clear=L"Clear",
 	.str_selection_and_search=L"Selection and Search",
+	.str_member=L"Member",
 };
 
 const Language LANG_SPA = {
@@ -722,6 +724,7 @@ const Language LANG_SPA = {
 	.str_selection=L"",
 	.str_clear=L"",
 	.str_selection_and_search=L"",
+	.str_member=L"",
 };
 
 const Language LANG_DEU = {
@@ -951,4 +954,5 @@ const Language LANG_DEU = {
 	.str_selection=L"",
 	.str_clear=L"",
 	.str_selection_and_search=L"",
+	.str_member=L"",
 };

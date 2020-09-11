@@ -250,6 +250,7 @@ typedef struct Language {
 	const wchar_t * const str_selection;
 	const wchar_t * const str_clear;
 	const wchar_t * const str_selection_and_search;
+	const wchar_t * const str_member;
 } Language;
 
 const extern Language LANG_POR;
