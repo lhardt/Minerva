@@ -157,6 +157,7 @@ class ScoreGridPane : public wxScrolledWindow {
 	wxButton 	* GetSaveButton();
 	wxButton 	* GetCancelButton();
 	ChoiceGrid  * GetGrid();
+	void 		  SetEditing(bool editing = true);
  private:
 	Application * m_owner;
 	ChoiceGrid  * m_grid;
@@ -185,6 +186,7 @@ class PosIntGridPane : public wxScrolledWindow {
 	wxGrid 		* GetGrid();
 	int		 	* GetValues();
 	void	 	  SetValues(int * values);
+	void 		  SetEditing(bool editing = true);
  private:
 	Application * m_owner;
 	wxGrid		* m_grid;
@@ -213,6 +215,7 @@ class StringGridPane : public wxScrolledWindow {
 	wxGrid		* GetGrid();
 	wxVector<wxString> GetValues();
 	void 		  SetValues(wxVector<wxString> values);
+	void 		  SetEditing(bool editing = true);
  private:
 	Application * m_owner;
 	wxGrid		* m_grid;
@@ -502,6 +505,7 @@ class DescSchoolPane : public wxScrolledWindow {
 	void OnPeriodNamesCancelButtonClicked(wxCommandEvent & );
 	void OnPeriodNamesSaveButtonClicked(wxCommandEvent & );
 	void OnDataChange(wxNotifyEvent & );
+	void ShowData();
 	wxScrolledWindow * MakeStatisticsPane();
 };
 

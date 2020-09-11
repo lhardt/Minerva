@@ -37,32 +37,28 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ScoreGridPane::OnCancelButtonClicked, this);
 }
 
+void ScoreGridPane::SetEditing(bool editing){
+	m_cancel_btn->Show(editing);
+	m_save_btn->Show(editing);
+	m_edit_btn->Show(!editing);
+	m_grid->SetCanUserClick(editing);
+	FitInside();
+}
+
 ChoiceGrid * ScoreGridPane::GetGrid(){
 	return m_grid;
 }
 
 void 	ScoreGridPane::OnSaveButtonClicked(wxCommandEvent &evt){
-	m_cancel_btn->Show(false);
-	m_save_btn->Show(false);
-	m_edit_btn->Show();
-	m_grid->SetCanUserClick(false);
-	FitInside();
+	SetEditing(false);
 }
 
 void 	ScoreGridPane::OnEditButtonClicked(wxCommandEvent &evt){
-	m_cancel_btn->Show(true);
-	m_save_btn->Show(true);
-	m_edit_btn->Show(false);
-	m_grid->SetCanUserClick(true);
-	FitInside();
+	SetEditing(true);
 }
 
 void	ScoreGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
-	m_cancel_btn->Show(false);
-	m_save_btn->Show(false);
-	m_edit_btn->Show();
-	m_grid->SetCanUserClick(false);
-	FitInside();
+	SetEditing(false);
 }
 
 wxButton * ScoreGridPane::GetCancelButton(){
@@ -124,6 +120,14 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 	m_cancel_btn->Bind(wxEVT_BUTTON, &PosIntGridPane::OnCancelButtonClicked, this);
 }
 
+void PosIntGridPane::SetEditing(bool editing){
+	m_cancel_btn->Show(editing);
+	m_save_btn->Show(editing);
+	m_edit_btn->Show(!editing);
+	m_grid->EnableEditing(editing);
+	FitInside();
+}
+
 wxGrid * PosIntGridPane::GetGrid(){
 	return m_grid;
 }
@@ -150,27 +154,15 @@ void 	   PosIntGridPane::SetValues(int * values){
 }
 
 void 	PosIntGridPane::OnSaveButtonClicked(wxCommandEvent &){
-	m_cancel_btn->Show(false);
-	m_save_btn->Show(false);
-	m_edit_btn->Show(true);
-	m_grid->EnableEditing(false);
-	FitInside();
+	SetEditing(false);
 }
 
 void 	PosIntGridPane::OnEditButtonClicked(wxCommandEvent &evt){
-	m_cancel_btn->Show(true);
-	m_save_btn->Show(true);
-	m_edit_btn->Show(false);
-	m_grid->EnableEditing(true);
-	FitInside();
+	SetEditing(true);
 }
 
 void	PosIntGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
-	m_cancel_btn->Show(false);
-	m_save_btn->Show(false);
-	m_edit_btn->Show(true);
-	m_grid->EnableEditing(false);
-	FitInside();
+	SetEditing(false);
 }
 
 PosIntGridPane::~PosIntGridPane(){
@@ -221,6 +213,14 @@ StringGridPane::StringGridPane(Application * owner,
 	m_cancel_btn->Bind(wxEVT_BUTTON, &StringGridPane::OnCancelButtonClicked, this);
 }
 
+void StringGridPane::SetEditing(bool editing){
+	m_cancel_btn->Show(editing);
+	m_save_btn->Show(editing);
+	m_edit_btn->Show(!editing);
+	m_grid->EnableEditing(editing);
+	FitInside();
+}
+
 wxGrid  * StringGridPane::GetGrid(){
 	return m_grid;
 }
@@ -234,27 +234,15 @@ wxButton * StringGridPane::GetCancelButton(){
 }
 
 void 	StringGridPane::OnSaveButtonClicked(wxCommandEvent &evt){
-	m_cancel_btn->Show(false);
-	m_save_btn->Show(false);
-	m_edit_btn->Show(true);
-	m_grid->EnableEditing(false);
-	FitInside();
+	SetEditing(false);
 }
 
 void 	StringGridPane::OnEditButtonClicked(wxCommandEvent &evt){
-	m_cancel_btn->Show(true);
-	m_save_btn->Show(true);
-	m_edit_btn->Show(false);
-	m_grid->EnableEditing(true);
-	FitInside();
+	SetEditing(true);
 }
 
 void	StringGridPane::OnCancelButtonClicked(wxCommandEvent &evt){
-	m_cancel_btn->Show(false);
-	m_save_btn->Show(false);
-	m_edit_btn->Show(true);
-	m_grid->EnableEditing(false);
-	FitInside();
+	SetEditing(false);
 }
 
 StringGridPane::~StringGridPane(){
