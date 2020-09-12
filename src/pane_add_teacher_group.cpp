@@ -179,7 +179,7 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		}
 		bool success = insert_teacher(stdout, m_owner->m_database, &group, school, -1);
 		if(success){
-			school_teacher_add(school, &group);
+			school_teacher_add(school, &group, school->n_teachers);
 
 			AddTeacherGroupPane::ClearInsertedData();
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);

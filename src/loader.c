@@ -184,7 +184,7 @@ const char * const UPDATE_TABLE_CLASS =
 const char * const LASTID_TABLE_CLASS =
 			("SELECT id FROM Class where rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_BY_SCHOOL_ID =
-			("SELECT * FROM Class WHERE id_school=?");
+			("SELECT * FROM Class WHERE id_school=? ORDER BY id");
 const char * const DELETE_CLASS_BY_ID =
 			("DELETE FROM Class WHERE id=?");
 const char * const DELETE_CLASS_BY_SCHOOL_ID =
@@ -355,11 +355,10 @@ const char * const UPSERT_TABLE_CLASS_SUBJECT =
 const char * const LASTID_TABLE_CLASS_SUBJECT =
 			("SELECT id FROM ClassSubject where rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_SUBJECT_BY_CLASS_ID =
-			("SELECT * FROM ClassSubject WHERE id_class = ?");
+			("SELECT * FROM ClassSubject WHERE id_class = ? ORDER BY id_class");
 const char * const SELECT_CLASS_SUBJECT_BY_SCHOOL_ID =
-			("SELECT * FROM ClassSubject WHERE EXISTS ("
-				"SELECT id FROM Class WHERE ClassSubject.id_class = Class.id "
-					"AND id_school = ?)");
+			("SELECT * FROM ClassSubject INNER JOIN Class ON Class.id = ClassSubject.id_class "
+				"AND Class.id_school = ? ORDER BY id_class");
 const char * const DELETE_CLASS_SUBJECT_BY_CLASS_ID =
 			("DELETE FROM ClassSubject WHERE id_class = ?");
 const char * const DELETE_CLASS_SUBJECT_BY_SUBJECT_ID =
@@ -422,7 +421,7 @@ const char * const UPDATE_TABLE_TEACHER =
 const char * const LASTID_TABLE_TEACHER =
 			("SELECT id FROM Teacher where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_BY_SCHOOL_ID =
-			("SELECT * FROM Teacher WHERE id_school = ?");
+			("SELECT * FROM Teacher WHERE id_school = ? ORDER BY id");
 const char * const DELETE_TEACHER_BY_ID =
 			("DELETE FROM Teacher WHERE id=?");
 const char * const DELETE_TEACHER_BY_SCHOOL_ID =
@@ -478,7 +477,7 @@ const char * const LASTID_TABLE_TEACHES =
 const char * const SELECT_TEACHES_BY_SCHOOL_ID =
 			("SELECT * FROM Teaches INNER JOIN"
 			 	" Teacher ON Teacher.id = Teaches.id_teacher"
-				" WHERE Teacher.id_school=?"
+				" WHERE Teacher.id_school=? ORDER BY id_teacher"
 			);
 const char * const DELETE_TEACHES_BY_SUBJECT_ID =
 			("DELETE FROM Teaches WHERE id_subject = ?");
@@ -580,7 +579,7 @@ const char * const CREATE_TABLE_TEACHER_ROOM =
 			")");
 const char * const UPSERT_TABLE_TEACHER_ROOM =
 			("INSERT INTO TeacherRoom(id_teacher, id_room, score_lecture, score_planning) VALUES (?1,?2,?3,?4) "
-			 "ON CONFLICT DO UPDATE SET (score_lecture, score_planning)=(?3,?4)");
+			 "ON CONFLICT (id_teacher, id_room) DO UPDATE SET (score_lecture, score_planning)=(?3,?4)");
 const char * const LASTID_TABLE_TEACHER_ROOM =
 			("SELECT id FROM TeacherRoom WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TABLE_TEACHER_ROOM_BY_TEACHER_ID =
@@ -1430,6 +1429,7 @@ int insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, Schoo
 	if(t->twin_scores != NULL){
 		insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHES_TWIN_PREFERENCE, t->id, t->twin_scores, school);
 	}
+	/* TODO must insert at all assignments that this is a possible teacher? */
 	return t->id;
 }
 

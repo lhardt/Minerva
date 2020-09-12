@@ -154,15 +154,15 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		/* TODO  populate * rooms; */
 		bool success = insert_class(stdout, m_owner->m_database, &c, school, -1);
 		if(success){
-			int i_class = school_class_add(school, &c);
+			int i_class = school->n_classes;
+			school_class_add(school, &c, school->n_classes);
 			if(c.assignments){
 				Meeting * meetings = create_meeting_list_for_class(school, &c);
 				insert_meetings_list(stdout, m_owner->m_database, meetings, school);
 				school_meeting_list_add_and_bind(school, i_class, meetings);
 			}
-			m_classes_grid->InsertRows(school->n_classes+1);
-			m_classes_grid->SetRowName(school->n_classes, wxString::FromUTF8(c.name));
-			++school->n_classes;
+			m_classes_grid->InsertRows(school->n_classes);
+			m_classes_grid->SetRowName(school->n_classes-1, wxString::FromUTF8(c.name));
 			ClearInsertedData();
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			m_owner->NotifyNewUnsavedData();

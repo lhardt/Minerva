@@ -574,6 +574,7 @@ class ListSubjectGroupsPane : public wxScrolledWindow {
     void OnDeleteButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
 	void OnDataChange(wxNotifyEvent & );
+	void ShowData();
 };
 
 class ListTeachersPane : public wxScrolledWindow {

@@ -158,10 +158,10 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		}
 		c.subordinates = nullptr;
 
-
 		bool success = insert_class(stdout, m_owner->m_database, &c, school, -1) >= 0;
 		if(success){
-			int i_class =  school_class_add(school, &c);
+			int i_class = school->n_classes;
+			school_class_add(school, &c, school->n_classes);
 			if(c.assignments){
 				Meeting * meetings = create_meeting_list_for_class(school, &c);
 				insert_meetings_list(stdout, m_owner->m_database, meetings, school);

@@ -88,11 +88,10 @@ void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new);
 void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at);
 void remove_from_int_list(int * list, int i_remove);
 
-void school_teacher_add(School * school, const Teacher * const teacher);
+void school_teacher_add(School * school, const Teacher * const teacher, int pos);
 void school_teacher_remove(School * school, int teacher_i, bool must_delete);
 
-/* Returns the index of the added class */
-int school_class_add(School * school, const Class * const c);
+void school_class_add(School * school, Class * c, int pos);
 /* XXX: using must_delete = false and not storing the meetings associated will result in memory leakage */
 void school_class_remove(School * school, int class_i, bool must_delete);
 

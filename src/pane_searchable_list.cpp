@@ -31,6 +31,7 @@ void SearchableListPane::Clear(){
 	m_searchbox->Clear();
 	m_item_ids.clear();
 	m_item_names.clear();
+	m_list->Clear();
 }
 
 void SearchableListPane::EditItem(int id, wxString new_name){

@@ -99,17 +99,18 @@ void ListSubjectsPane::OnCancelButtonClicked(wxCommandEvent & ev){
 
 void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
-	int del_i;
-	bool success;
 	int i_select = m_subjects_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int subject_id = ((IntClientData*) m_subjects_list->GetList()->GetClientObject(i_select))->m_value;
-		success = remove_subject(stdout, m_owner->m_database, subject_id);
+		bool success = remove_subject(stdout, m_owner->m_database, subject_id);
 		if(success){
 			/* TODO: substitute for Action */
 			school_subject_remove(school, get_subject_index_by_id(school, subject_id), true);
 			m_subjects_list->RemoveItem(subject_id);
 			m_owner->NotifyNewUnsavedData();
+			m_name_text->SetValue("");
+			m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+			m_cancel_btn->Hide();
 		} else {
 			printf("Não foi possível.\n");
 		}

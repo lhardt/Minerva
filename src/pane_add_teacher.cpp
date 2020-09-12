@@ -142,7 +142,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		int result = insert_teacher(stdout, m_owner->m_database, &t, school, -1);
 
 		if(result != -1){
-			school_teacher_add(school, &t);
+			school_teacher_add(school, &t, school->n_teachers);
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			ClearInsertedData();
 			m_owner->NotifyNewUnsavedData();

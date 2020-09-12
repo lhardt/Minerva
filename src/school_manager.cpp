@@ -463,6 +463,40 @@ wxString RoomDeleteAction::Describe(){
 	return wxT("RoomDeleteAction");
 }
 
+SubjectInsertAction::SubjectInsertAction(Application * owner, Subject subject) : Action(owner), m_subject(subject){
+	m_state = state_UNDONE;
+	m_subject.id = -1;
+}
+
+SubjectInsertAction::~SubjectInsertAction(){
+	if(m_state == state_UNDONE){
+		free(m_subject.name);
+		free(m_subject.short_name);
+	}
+}
+
+bool SubjectInsertAction::Do(){
+	insert_subject(stdout, m_owner->m_database, &m_subject, m_owner->m_school, m_subject.id);
+	if(m_subject.id != -1){
+		school_subject_add(m_owner->m_school, &m_subject);
+		return true;
+	}
+	return false;
+}
+
+bool SubjectInsertAction::Undo(){
+	bool success = remove_subject(stdout, m_owner->m_database, m_subject.id);
+	if(success){
+		school_subject_remove(m_owner->m_school, get_subject_index_by_id(m_owner->m_school, m_subject.id), false);
+		return true;
+	}
+	return false;
+}
+
+wxString SubjectInsertAction::Describe(){
+	return wxT("SubjectInsertAction");
+}
+
 /*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/

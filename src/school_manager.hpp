@@ -138,12 +138,13 @@ public:
 
 class SubjectInsertAction : public Action {
 public:
-	SubjectInsertAction(Application * owner, char * subj_name);
+	SubjectInsertAction(Application * owner, Subject s);
 	~SubjectInsertAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
-	char * m_subj_name;
+	Subject m_subject;
+	ActionState m_state;
 };
 
 class SubjectDeleteAction : public Action{

@@ -33,11 +33,6 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 
 	wxString col_name = m_owner->m_lang->str_member;
 	members_grid->SetColName(0,col_name);
-	for(i = 0; i < school->n_subjects; ++i){
-		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
-		members_grid->SetRowName(i, row_name);
-	}
-	members_grid->GridRemake(1, school->n_subjects);
 
 	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 	wxSizer * fields_sz = new wxGridSizer(4,5,5);
@@ -73,13 +68,31 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	m_groups_list->GetList()->Bind(wxEVT_LISTBOX, &ListSubjectGroupsPane::OnSelectionChanged, this);
 	Bind(DATA_CHANGE_EVENT, &ListSubjectGroupsPane::OnDataChange, this);
 
+	ShowData();
+}
+
+void ListSubjectGroupsPane::ShowData(){
 	m_cancel_btn->Hide();
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	m_name_text->Enable(false);
+	m_name_text->SetValue("");
+	m_members->SetEditing(false);
+
+	ChoiceGrid * members_grid = m_members->GetGrid();
+	School * school = m_owner->m_school;
+	for(int i = 0; i < school->n_subjects; ++i){
+		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
+		members_grid->SetRowName(i, row_name);
+	}
+	members_grid->GridRemake(1, school->n_subjects);
+	members_grid->SetAllActiveCellsState(0);
+	members_grid->Fit();
+	m_members->Fit();
+
 }
 
 void ListSubjectGroupsPane::OnDataChange(wxNotifyEvent & evt) {
-	printf("Data change!\n");
+	ShowData();
 }
 
 void ListSubjectGroupsPane::OnEditButtonClicked(wxCommandEvent & evt){
