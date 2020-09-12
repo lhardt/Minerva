@@ -149,20 +149,29 @@ public:
 
 class SubjectDeleteAction : public Action{
 public:
-	SubjectDeleteAction(Application * owner);
+	SubjectDeleteAction(Application * owner, int id);
 	~SubjectDeleteAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	Subject subject;
+	Assignment * assignments;
+	Teaches * teaches;
+	Meeting * meetings;
+	Solution * solutions;
 };
 
-class SubjectNameUpdateAction : public Action {
+class SubjectBasicDataUpdateAction : public Action {
 public:
-	SubjectNameUpdateAction(Application * owner);
-	SubjectNameUpdateAction();
+	SubjectBasicDataUpdateAction(Application * owner, Subject data);
+	~SubjectBasicDataUpdateAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+
+	Subject m_subject;
+	ActionState m_state;
 };
 
 class SubjectGroupInsertAction : public Action {

@@ -233,29 +233,34 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 	bool success = false;
 	School * school = m_owner->m_school;
-	Class * c;
 
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
-		int del_i = get_class_index_by_id(school, ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value);
-		c = &school->classes[del_i];
-		success = remove_class(stdout, m_owner->m_database, c->id);
-		if(success) {
-			/* TODO: substitute for an Action*/
-			school_class_remove(school, del_i, true);
-			m_classes_list->RemoveItem(c->id);
+		int del_id =  ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		int del_i = get_class_index_by_id(school, del_id);
+		bool can_delete = can_remove_class(school, del_id);
+		if(can_delete){
+			success = remove_class(stdout, m_owner->m_database, del_id);
+			if(success) {
+				/* TODO: substitute for an Action*/
+				school_class_remove(school, del_i, true);
+				m_classes_list->RemoveItem(del_id);
 
-			m_name_text->SetLabel(wxT(""));
-			m_size_text->SetLabel(wxT(""));
-			m_free_periods_text->SetLabel(wxT(""));
-			m_entry_period_text->SetLabel(wxT(""));
-			m_exit_period_text->SetLabel(wxT(""));
-			m_subjects_text->SetLabel(wxT(""));
-			m_periods->GetGrid()->SetAllCellsState(0);
+				m_name_text->SetLabel(wxT(""));
+				m_size_text->SetLabel(wxT(""));
+				m_free_periods_text->SetLabel(wxT(""));
+				m_entry_period_text->SetLabel(wxT(""));
+				m_exit_period_text->SetLabel(wxT(""));
+				m_subjects_text->SetLabel(wxT(""));
+				m_periods->GetGrid()->SetAllCellsState(0);
 
-			m_owner->NotifyNewUnsavedData();
+				m_owner->NotifyNewUnsavedData();
+			} else {
+				printf("Não foi possível deletar.\n");
+			}
 		} else {
-			printf("Não foi possível deletar.\n");
+		   wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("(TODO lang) Error! Could not remove, because it is in a timetable already"), m_owner->m_lang->str_error, wxOK);
+		   dialog->ShowModal();
 		}
 	}
 }

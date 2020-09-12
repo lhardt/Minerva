@@ -63,6 +63,7 @@ bool update_daily_period_names(FILE * console_out, sqlite3 * db, int n_days, int
 bool update_period_names(FILE * console_out, sqlite3 * db, int n_days, int * day_ids, char ** names);
 bool update_room_basic_data(FILE * console_out, sqlite3* db, int room_id, Room * room, School * school);
 bool update_room_availability(FILE * console_out, sqlite3* db, int room_id, int * availability, School * school);
+bool update_subject_basic_data(FILE * console_out, sqlite3 * db, int subj_id, Subject * subject, School * school);
 
 
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);

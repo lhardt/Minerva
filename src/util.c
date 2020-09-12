@@ -779,6 +779,59 @@ int get_subject_group_index_by_id(School * school, int id){
 /*                 ADD AND REMOVE Functions              */
 /*********************************************************/
 
+bool can_remove_class(School * school, int id){
+	for(int i = 0; i < school->n_solutions; ++i){
+		Meeting * m_list = school->solutions[i].meetings;
+		if(m_list != NULL){
+			for(int j = 0; m_list[j].type != meet_NULL; ++j){
+				if(m_list[j].type == meet_LECTURE && m_list[j].m_class && m_list[j].m_class->id == id){
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+bool can_remove_room(School * school, int id){
+	for(int i = 0; i < school->n_solutions; ++i){
+		Meeting * m_list = school->solutions[i].meetings;
+		if(m_list != NULL){
+			for(int j = 0; m_list[j].type != meet_NULL; ++j){
+				if(m_list[j].type != meet_NULL && m_list[j].room && m_list[j].room->id == id){
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+bool can_remove_teacher(School * school, int id){
+	for(int i = 0; i < school->n_solutions; ++i){
+		Meeting * m_list = school->solutions[i].meetings;
+		if(m_list != NULL){
+			for(int j = 0; m_list[j].type != meet_NULL; ++j){
+				if(m_list[j].type != meet_NULL && m_list[j].teacher && m_list[j].teacher->id == id){
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+bool can_remove_subject(School * school, int id){
+	for(int i = 0; i < school->n_solutions; ++i){
+		Meeting * m_list = school->solutions[i].meetings;
+		if(m_list != NULL){
+			for(int j = 0; m_list[j].type != meet_NULL; ++j){
+				if(m_list[j].type != meet_NULL && m_list[j].subject && m_list[j].subject->id == id){
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+
 /* if *list_ptr == NULL, calloc. Else realloc */
 void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new){
 	LMH_ASSERT(list_ptr != NULL && n_old >= 0 && n_old < n_new);
@@ -816,10 +869,11 @@ void remove_from_int_list(int * list, int i_remove){
 }
 void school_subject_remove(School * school, int subj_i, bool must_delete){
 	int i, j, k;
+	int removed_subj_id = school->subjects[subj_i].id;
 	LMH_ASSERT(school != NULL && subj_i >= 0);
 	for(i = 0; i < school->n_teaches; ++i){
 		/* Push all behind to the front if this is about the deleted. */
-		if(school->teaches[i].subject->id == school->subjects[subj_i].id){
+		if(school->teaches[i].subject->id == removed_subj_id){
 			if(must_delete){
 				free_teaches(&school->teaches[i]);
 			}
@@ -830,9 +884,19 @@ void school_subject_remove(School * school, int subj_i, bool must_delete){
 			--i;
 		}
 	}
+	for(i = 0; i < school->n_assignments; ++i){
+		if(school->assignments[i].subject->id == removed_subj_id){
+			if(must_delete){
+				free_assignment(&school->assignments[j]);
+			}
+			for(j = i; j < school->n_assignments; ++j){
+				school->assignments[j] = school->assignments[j+1];
+			}
+		}
+	}
 	if(school->meetings != NULL){
 		for(i = 0; i < school->n_meetings; ++i){
-			if(school->meetings[i].subject->id == school->subjects[subj_i].id){
+			if(school->meetings[i].subject->id == removed_subj_id){
 				free_meeting(&school->meetings[i]);
 				for(j = i; j < school->n_meetings; ++j){
 					school->meetings[j] = school->meetings[j+1];
@@ -847,7 +911,7 @@ void school_subject_remove(School * school, int subj_i, bool must_delete){
 			Meeting * m_list = school->solutions[i].meetings;
 			if(m_list != NULL){
 				for(j = 0; m_list[j].type != meet_NULL; ++j){
-					if(m_list[j].type == meet_LECTURE && m_list[j].subject->id == school->subjects[subj_i].id){
+					if(m_list[j].type == meet_LECTURE && m_list[j].subject->id == removed_subj_id){
 						free_meeting(& m_list[j]);
 						for(k = j; m_list[k].type != meet_NULL; ++k){
 							m_list[k] = m_list[k+1];
@@ -953,6 +1017,7 @@ void school_teacher_add(School * school, const Teacher * const t, int pos){
 }
 void school_teacher_remove(School * school, int i_remove, bool must_delete){
 	int i,j;
+	LMH_ASSERT(school != NULL && i_remove < school->n_teachers && i_remove >= 0);
 	/* TODO Check for subordinates too. */
 	for(i = 0; i < school->n_teaches; ++i){
 		if(school->teaches[i].teacher->id == school->teachers[i_remove].id){
@@ -970,10 +1035,12 @@ void school_teacher_remove(School * school, int i_remove, bool must_delete){
 	if(school->solutions != NULL){
 		for(i = 0; i < school->n_solutions; ++i){
 			Meeting * m_list = school->solutions[i].meetings;
-			for(j = 0; m_list[j].m_class != NULL; ++j ){
+			if(m_list != NULL){
+				for(j = 0; m_list[j].m_class != NULL; ++j ){
 				if(m_list[j].teacher->id == school->teachers[i_remove].id){
 					m_list[j].teacher = NULL;
 				}
+			}
 			}
 		}
 	}
@@ -992,14 +1059,16 @@ void school_class_remove(School * school, int class_i, bool must_delete){
 	Meeting * m_list;
 	Class * class = &school->classes[class_i];
 	for(i = 0; i < school->n_solutions; ++i){
-		m_list=  school->solutions[i].meetings;
-		for(j = 0; m_list[j].type != meet_NULL; ++j){
-			if(m_list[j].type == meet_LECTURE && m_list[i].m_class->id == class->id){
-				if(must_delete){
+		m_list =  school->solutions[i].meetings;
+		if(m_list != NULL){
+			for(j = 0; m_list[j].type != meet_NULL; ++j){
+				if(m_list[j].type == meet_LECTURE && m_list[i].m_class->id == class->id){
+					if(must_delete){
 
-				}
-				for(j = i; m_list[j].m_class != NULL; ++j){
-					m_list[j] = m_list[j+1];
+					}
+					for(j = i; m_list[j].m_class != NULL; ++j){
+						m_list[j] = m_list[j+1];
+					}
 				}
 			}
 		}
@@ -1012,6 +1081,7 @@ void school_class_remove(School * school, int class_i, bool must_delete){
 	for(i = class_i; i < school->n_classes-1; ++i){
 		school->classes[i] = school->classes[i+1];
 	}
+	--school->n_classes;
 }
 void school_room_add(School * school, const Room * const room){
 	int i;

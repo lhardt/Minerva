@@ -361,10 +361,10 @@ wxString RoomInsertAction::Describe(){
 	return wxT("RoomInsertAction");
 }
 
-
 /*********************************************************/
 /*                    RoomDeleteAction                   */
 /*********************************************************/
+
 RoomDeleteAction::RoomDeleteAction(Application * owner, int i_room)  : Action(owner), m_i_room(i_room) {
 	m_state = state_UNDONE;
 }
@@ -463,18 +463,20 @@ wxString RoomDeleteAction::Describe(){
 	return wxT("RoomDeleteAction");
 }
 
+/*********************************************************/
+/*                  SubjectInsertAction                  */
+/*********************************************************/
+
 SubjectInsertAction::SubjectInsertAction(Application * owner, Subject subject) : Action(owner), m_subject(subject){
 	m_state = state_UNDONE;
 	m_subject.id = -1;
 }
-
 SubjectInsertAction::~SubjectInsertAction(){
 	if(m_state == state_UNDONE){
 		free(m_subject.name);
 		free(m_subject.short_name);
 	}
 }
-
 bool SubjectInsertAction::Do(){
 	insert_subject(stdout, m_owner->m_database, &m_subject, m_owner->m_school, m_subject.id);
 	if(m_subject.id != -1){
@@ -483,7 +485,6 @@ bool SubjectInsertAction::Do(){
 	}
 	return false;
 }
-
 bool SubjectInsertAction::Undo(){
 	bool success = remove_subject(stdout, m_owner->m_database, m_subject.id);
 	if(success){
@@ -492,9 +493,78 @@ bool SubjectInsertAction::Undo(){
 	}
 	return false;
 }
-
 wxString SubjectInsertAction::Describe(){
 	return wxT("SubjectInsertAction");
+}
+
+/*********************************************************/
+/*                  SubjectDeleteAction                  */
+/*********************************************************/
+
+SubjectDeleteAction::SubjectDeleteAction(Application * owner, int subj_id) : Action(owner){
+
+}
+SubjectDeleteAction::~SubjectDeleteAction(){
+
+}
+bool SubjectDeleteAction::Do(){
+
+}
+bool SubjectDeleteAction::Undo(){
+
+}
+wxString SubjectDeleteAction::Describe(){
+	return wxT("SubjectDeleteAction");
+}
+
+/*********************************************************/
+/*                SubjectNameUpdateAction                */
+/*********************************************************/
+
+SubjectBasicDataUpdateAction::SubjectBasicDataUpdateAction(Application * owner, Subject subject) :
+			Action(owner), m_subject(subject){
+	m_state = state_UNDONE;
+}
+SubjectBasicDataUpdateAction::~SubjectBasicDataUpdateAction(){
+	free(m_subject.name);
+	free(m_subject.short_name);
+}
+bool SubjectBasicDataUpdateAction::Do(){
+	bool success = update_subject_basic_data(stdout, m_owner->m_database, m_subject.id, &m_subject, m_owner->m_school);
+	if(success){
+		Subject * to_update = find_subject_by_id(m_owner->m_school, m_subject.id);
+		Subject tmp = (Subject){
+			.name = to_update->name,
+			.short_name = to_update->short_name,
+		};
+		to_update->name = m_subject.name;
+		to_update->short_name = m_subject.short_name;
+
+		m_subject.name = tmp.name;
+		m_subject.short_name = tmp.short_name;
+		return true;
+	}
+	return false;
+}
+bool SubjectBasicDataUpdateAction::Undo(){
+	bool success = update_subject_basic_data(stdout, m_owner->m_database, m_subject.id, &m_subject, m_owner->m_school);
+	if(success){
+		Subject * to_update = find_subject_by_id(m_owner->m_school, m_subject.id);
+		Subject tmp = (Subject){
+			.name = to_update->name,
+			.short_name = to_update->short_name,
+		};
+		to_update->name = m_subject.name;
+		to_update->short_name = m_subject.short_name;
+
+		m_subject.name = tmp.name;
+		m_subject.short_name = tmp.short_name;
+		return true;
+	}
+	return false;
+}
+wxString SubjectBasicDataUpdateAction::Describe(){
+	return wxT("SubjectBasicDataUpdateAction");
 }
 
 /*********************************************************/

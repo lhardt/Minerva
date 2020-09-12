@@ -80,14 +80,29 @@ ListSubjectsPane::~ListSubjectsPane(){
 }
 
 void ListSubjectsPane::OnEditButtonClicked(wxCommandEvent & ev){
-	if(m_cancel_btn->IsShown()){
-		m_name_text->Disable();
-		m_cancel_btn->Hide();
-		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
-	} else {
-		m_name_text->Enable();
-		m_cancel_btn->Show();
-		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
+	int i_select = m_subjects_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		if(m_cancel_btn->IsShown()){
+			int subj_id = ((IntClientData*)m_subjects_list->GetList()->GetClientObject(i_select))->m_value;
+
+			Subject update = (Subject){
+				.id = subj_id,
+				.name = copy_wx_string(m_name_text->GetValue()),
+				.short_name = copy_wx_string(m_name_text->GetValue()),
+			};
+			SubjectBasicDataUpdateAction * act = new SubjectBasicDataUpdateAction(m_owner, update);
+			if(m_owner->Do(act)){
+				m_name_text->Disable();
+				m_cancel_btn->Hide();
+				m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+			} else {
+				printf("No Success");
+			}
+		} else {
+			m_name_text->Enable();
+			m_cancel_btn->Show();
+			m_edit_btn->SetLabel(m_owner->m_lang->str_save);
+		}
 	}
 }
 
@@ -102,17 +117,22 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 	int i_select = m_subjects_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int subject_id = ((IntClientData*) m_subjects_list->GetList()->GetClientObject(i_select))->m_value;
-		bool success = remove_subject(stdout, m_owner->m_database, subject_id);
-		if(success){
-			/* TODO: substitute for Action */
-			school_subject_remove(school, get_subject_index_by_id(school, subject_id), true);
-			m_subjects_list->RemoveItem(subject_id);
-			m_owner->NotifyNewUnsavedData();
-			m_name_text->SetValue("");
-			m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
-			m_cancel_btn->Hide();
+		if(can_remove_subject(school, subject_id)){
+			bool success = remove_subject(stdout, m_owner->m_database, subject_id);
+			if(success){
+				/* TODO: substitute for Action */
+				school_subject_remove(school, get_subject_index_by_id(school, subject_id), true);
+				m_subjects_list->RemoveItem(subject_id);
+				m_owner->NotifyNewUnsavedData();
+				m_name_text->SetValue("");
+				m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+				m_cancel_btn->Hide();
+			} else {
+				printf("Não foi possível.\n");
+			}
 		} else {
-			printf("Não foi possível.\n");
+			wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("(TODO lang) Error! Could not remove, because it is in a timetable already"), m_owner->m_lang->str_error, wxOK);
+			dialog->ShowModal();
 		}
 	}
 }

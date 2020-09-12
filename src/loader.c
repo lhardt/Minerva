@@ -3269,9 +3269,25 @@ bool update_room_basic_data(FILE * console_out, sqlite3* db, int room_id, Room *
 	sqlite3_bind_int(stmt,6, room_id);
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(stmt);
+	sqlite3_finalize(stmt);
 	return true;
 }
 
 bool update_room_availability(FILE * console_out, sqlite3* db, int room_id, int * availability, School * school){
 	return insert_or_update_period_scores(console_out, db, UPSERT_TABLE_ROOM_AVAILABILITY, room_id, availability, school);
+}
+
+bool update_subject_basic_data(FILE * console_out, sqlite3 * db, int subj_id, Subject * subject, School * school){
+	sqlite3_stmt * stmt;
+	int errc = sqlite3_prepare_v2(db, UPDATE_TABLE_SUBJECT, -1, &stmt, NULL);
+	// ("UPDATE Subject SET (name, short_name, id_school) = (?,?,?) WHERE id=?");
+	CERTIFY_ERRC_SQLITE_OK(false);
+	sqlite3_bind_text(stmt, 1, subject->name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt, 2, subject->short_name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt, 3, school->id);
+	sqlite3_bind_int(stmt, 4, subj_id);
+	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_DONE(false);
+	sqlite3_finalize(stmt);
+	return true;
 }

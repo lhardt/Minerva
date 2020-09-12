@@ -83,6 +83,11 @@ Assignment * 	find_assignment_by_id(School * school, int id);
 /*                 ADD AND REMOVE Functions              */
 /*********************************************************/
 
+bool can_remove_class(School * school, int id);
+bool can_remove_room(School * school, int id);
+bool can_remove_teacher(School * school, int id);
+bool can_remove_subject(School * school, int id);
+
 /* if *list_ptr == NULL, calloc. Else realloc */
 void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new);
 void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at);

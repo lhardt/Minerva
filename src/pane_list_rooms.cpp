@@ -203,12 +203,17 @@ void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 	int i_select = m_rooms_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int id_room = ((IntClientData*)m_rooms_list->GetList()->GetClientObject(i_select))->m_value;
-		RoomDeleteAction * act = new RoomDeleteAction(m_owner, get_room_index_by_id(m_owner->m_school, id_room));
-		bool success = m_owner->Do(act);
-		if(success){
-			m_rooms_list->RemoveItem(id_room);
+		if(can_remove_room(school, id_room)){
+			RoomDeleteAction * act = new RoomDeleteAction(m_owner, get_room_index_by_id(m_owner->m_school, id_room));
+			bool success = m_owner->Do(act);
+			if(success){
+				m_rooms_list->RemoveItem(id_room);
+			} else {
+				printf("Não foi possível apagar.");
+			}
 		} else {
-			printf("Não foi possível apagar.");
+			wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("(TODO lang) Error! Could not remove, because it is in a timetable already"), m_owner->m_lang->str_error, wxOK);
+			dialog->ShowModal();
 		}
 	}
 }
