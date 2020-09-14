@@ -76,16 +76,10 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 
 			bool success = insert_solution(stdout, m_owner->m_database, school, &gen_solution, -1);
 			if(success){
-				if(school->solutions == NULL || school->n_solutions == 0){
-					school->solutions = (Solution*) calloc(2, sizeof(Solution));
-					school->n_solutions = 0;
-				} else {
-					school->solutions = (Solution*) realloc(school->solutions, (school->n_solutions + 1) * sizeof(Solution));
-				}
-				school->solutions[school->n_solutions] = gen_solution;
-				++ school->n_solutions;
+				school_solution_add(school, &gen_solution);
 				m_err_msg->SetLabel(m_owner->m_lang->str_success);
 				m_owner->NotifyNewUnsavedData();
+				m_tt_name_text->SetValue(wxT(""));
 			} else {
 				free_meetings_list(gen_solution.meetings);
 				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);

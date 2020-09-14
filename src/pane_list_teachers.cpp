@@ -116,19 +116,19 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	wxSizer * fields_sz = new wxFlexGridSizer(4,5,5);
 	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 
-	fields_sz->Add(name_label);
+	fields_sz->Add(name_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_name_text);
-	fields_sz->Add(max_days_label);
+	fields_sz->Add(max_days_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_max_days_text);
-	fields_sz->Add(max_periods_label);
+	fields_sz->Add(max_periods_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_max_periods_text);
-	fields_sz->Add(max_ppd_label);
+	fields_sz->Add(max_ppd_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_max_ppd_text);
-	fields_sz->Add(planning_periods_label);
+	fields_sz->Add(planning_periods_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_planning_periods_text);
-	fields_sz->Add(active_label);
+	fields_sz->Add(active_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_active_text);
-	fields_sz->Add(dependency_label);
+	fields_sz->Add(dependency_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_dependency_text);
 	fields_sz->Add(m_cancel_btn);
 	fields_sz->Add(m_edit_btn);

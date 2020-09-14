@@ -125,9 +125,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	/* HORÁRIO */
 	m_rib_bbars[6][0]->AddButton(ID_VIEW_TIMETABLE, m_owner->m_lang->str_see_timetable, image_list);
 	m_rib_bbars[6][0]->AddButton(ID_LIST_TIMETABLES, m_owner->m_lang->str_generated_timetables, image_list);
-	m_rib_bbars[6][0]->AddButton(ID_EXPORT_TIMETABLE, m_owner->m_lang->str_export_timetable, image_export);
 	m_rib_bbars[6][1]->AddButton(ID_GENERATE_TIMETABLE, m_owner->m_lang->str_generate_timetable, image_build);
-	m_rib_bbars[6][1]->AddButton(ID_CREATE_TIMETABLE, m_owner->m_lang->str_create_timetable_manually, image_build);
 	m_rib_bbars[6][2]->AddButton(ID_OPEN_TIMETABLE_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 
 	m_ribbon->AddPageHighlight(m_ribbon->GetPageCount() - 1); /* TODO is it working?*/
@@ -466,11 +464,6 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 			title = m_owner->m_lang->str_generate_timetable;
 			detail = m_owner->m_lang->str_lorem;
 			pane_to_open = new GenerateTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
-			break;
-		}
-		case ID_VIEW_TIMETABLE:{
-			title = m_owner->m_lang->str_see_timetable;
-			pane_to_open = new DescTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		/* Manual */

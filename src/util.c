@@ -100,7 +100,14 @@ void free_node(DecisionNode * node){
 		free_meetings_list(node->conclusion);
 	}
 }
-
+void free_solution(Solution * s){
+	FREE_IF_NOT_NULL(s->name);
+	FREE_IF_NOT_NULL(s->desc);
+	for(int i = 0; i < s->n_meetings; ++i){
+		free_meeting(&s->meetings[i]);
+	}
+	FREE_IF_NOT_NULL(s->meetings);
+}
 void free_school(School * s){
 	int i;
 	if(s != NULL){
@@ -783,7 +790,15 @@ int get_subject_group_index_by_id(School * school, int id){
 	}
 	return -1;
 }
-
+int get_solution_index_by_id(School * school, int id){
+	int i;
+	for(i = 0; i < school->n_solutions; ++i){
+		if(school->solutions[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
 
 /*********************************************************/
 /*                 ADD AND REMOVE Functions              */
@@ -1185,6 +1200,38 @@ void school_subjectgroup_add(School * school, const char * const name, int id){
 	school->subject_group_ids[school->n_subject_groups] = id;
 	++school->n_subject_groups;
 }
+
+
+void school_solution_add(School * school, const Solution * const sol){
+	LMH_ASSERT(school != NULL && sol != NULL);
+	int i, i_insert;
+	if(school->solutions == NULL || school->n_solutions == 0){
+		school->solutions = (Solution*) calloc(2, sizeof(Solution));
+		school->n_solutions = 0;
+	} else {
+		school->solutions = (Solution*) realloc(school->solutions, (school->n_solutions + 1) * sizeof(Solution));
+	}
+	for(i = 0; school->solutions[i].id < sol->id && i < school->n_solutions; ++i){
+		/* Blank */
+	}
+	i_insert = i;
+	for(i = school->n_solutions; i > i_insert; --i){
+		school->solutions[i] = school->solutions[i-1];
+	}
+	school->solutions[i_insert] = *sol;
+	++ school->n_solutions;
+}
+void school_solution_remove(School * school, int i_solution, bool must_delete){
+	LMH_ASSERT(school != NULL && i_solution >= 0 && i_solution < school->n_solutions);
+	if(must_delete){
+		free_solution(&school->solutions[i_solution]);
+	}
+	for(int i = i_solution; i < school->n_solutions; ++i){
+		school->solutions[i] = school->solutions[i+1];
+	}
+	--school->n_solutions;
+}
+
 
 /*********************************************************/
 /*                     OTHER Functions                   */

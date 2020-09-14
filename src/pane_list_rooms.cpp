@@ -7,7 +7,6 @@ extern "C" {
 #include <wx/spinctrl.h>
 
 ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
-	int i = 0;
 	School * school = NULL;
 	this->m_owner = owner;
 	school = m_owner->m_school;
@@ -24,7 +23,6 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove);
 	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_periods 	= new ScoreGridPane(m_owner, notebook, wxID_ANY);
-	m_err_msg 	= new wxStaticText(this, wxID_ANY, wxT(""));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
 	m_size_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 
@@ -43,11 +41,11 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 
-	fields_sz->Add(name_label, 0, wxRIGHT | wxEXPAND, 10);
+	fields_sz->Add(name_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_name_text, 0, wxEXPAND);
-	fields_sz->Add(size_label, 0, wxRIGHT |wxLEFT |wxEXPAND, 10);
+	fields_sz->Add(size_label, 0, wxALIGN_BOTTOM | wxRIGHT | wxLEFT, 10);
 	fields_sz->Add(m_size_text, 0, wxEXPAND);
-	fields_sz->Add(active_label, 0, wxRIGHT | wxEXPAND, 10);
+	fields_sz->Add(active_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_active_text, 0, wxEXPAND);
 	fields_sz->AddStretchSpacer();
 	fields_sz->AddStretchSpacer();
@@ -61,7 +59,6 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	desc_sz->Add(notebook, 0, wxEXPAND | wxBOTTOM, 5);
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(delete_btn, 0, wxEXPAND |wxBOTTOM, 5);
-	desc_sz->Add(m_err_msg, 0, 0);
 
 	sizer->Add(m_rooms_list, 0, wxEXPAND|wxALL, 15);
 	sizer->Add(desc_sz, 0, wxEXPAND|wxALL, 15);

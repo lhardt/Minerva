@@ -720,6 +720,8 @@ const char * const LASTID_TABLE_SOLUTION =
 			("SELECT id FROM Solution WHERE rowid = last_insert_rowid()");
 const char * const SELECT_SOLUTION_BY_SCHOOL_ID =
 			("SELECT * FROM SOLUTION WHERE id_school=?");
+const char * const DELETE_SOLUTION_BY_ID =
+			("DELETE FROM SOLUTION WHERE id=?");
 const char * const DELETE_SOLUTION_BY_SCHOOL_ID =
 			("DELETE FROM SOLUTION WHERE id_school=?");
 
@@ -3080,6 +3082,13 @@ bool load_backup(sqlite3* memory_db, const char * const filename){
 /*                   REMOVE  FUNCTIONS                   */
 /*********************************************************/
 /* NOTE for logical deletes, try updates; 				 */
+
+bool remove_solution(FILE * console_out, sqlite3* db, int id){
+	return  !exec_and_check(db, DELETE_PLANNING_SOLUTION_BY_SOLUTION_ID, id)? false:
+			!exec_and_check(db, DELETE_LECTURE_SOLUTION_BY_SOLUTION_ID, id)? false:
+			!exec_and_check(db, DELETE_SOLUTION_BY_ID, id)? false:
+			true;
+}
 
 bool remove_room(FILE * console_out, sqlite3* db, int id){
 	return	!exec_and_check(db, UNSET_LECTURE_SOLUTION_ROOM_BY_ROOM_ID, id)?false:

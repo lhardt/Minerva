@@ -26,7 +26,7 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * fields_sz= new wxGridSizer(4,5,5);
 	wxSizer * fields_wrap= new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
-	fields_sz->Add(name_label);
+	fields_sz->Add(name_label, 0, wxALIGN_BOTTOM);
 	fields_sz->Add(m_name_text, 1, wxEXPAND);
 	fields_sz->AddStretchSpacer();
 	fields_sz->AddStretchSpacer();

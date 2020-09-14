@@ -31,6 +31,7 @@ void free_subject(Subject * s);
 void free_teacher(Teacher * t);
 void free_teaches(Teaches * t);
 void free_meeting(Meeting * t);
+void free_solution(Solution * s);
 
 /*********************************************************/
 /*                     COPY Functions                    */
@@ -71,6 +72,7 @@ int 			get_per_index_by_id(School * school, int id);
 int 			get_day_index_by_id(School * school, int id);
 int 			get_daily_period_index_by_id(School * school, int id);
 int 			get_subject_group_index_by_id(School * school, int id);
+int 			get_solution_index_by_id(School * school, int id);
 Room * 			find_room_by_id(School * school, int id);
 Class * 		find_class_by_id(School * school, int id);
 Teacher * 		find_teacher_by_id(School * school, int id);
@@ -115,6 +117,9 @@ void school_meeting_remove(School * school, int meeting_i);
 
 void school_subjectgroup_add(School * school, const char * const name, int id);
 void school_subjectgroup_remove(School * school, int i);
+
+void school_solution_add(School * school, const Solution * const sol);
+void school_solution_remove(School * school, int solution_i, bool must_delete);
 
 void school_on_preference_changed(School * school);
 

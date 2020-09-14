@@ -36,7 +36,7 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 
 	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 	wxSizer * fields_sz = new wxGridSizer(4,5,5);
-	fields_sz->Add(name_label);
+	fields_sz->Add(name_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_name_text);
 	fields_sz->AddStretchSpacer();
 	fields_sz->AddStretchSpacer();

@@ -2,6 +2,7 @@
 
 extern "C" {
 	#include "util.h"
+	#include "loader.h"
 };
 
 ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
@@ -13,7 +14,7 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * date_label = new wxStaticText(this, wxID_ANY, wxT("Data de Geração"));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(180,30));
-	m_date_text = new wxStaticText(this, wxID_ANY, wxT(""));
+	m_date_text = new wxStaticText(this, wxID_ANY, wxT("-- / -- / --"));
 
 	wxButton * delete_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_delete);
 	wxButton * export_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_export_timetable);
@@ -65,11 +66,11 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 	actions_sizer->Add(export_btn, 0, wxALL, 5);
 	actions_sizer->Add(delete_btn, 0, wxALL, 5);
 
-	wxSizer * basic_sizer = new wxGridSizer(4,5,5);
-	basic_sizer->Add(name_label);
+	wxSizer * basic_sizer = new wxFlexGridSizer(4,5,5);
+	basic_sizer->Add(name_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	basic_sizer->Add(m_name_text);
-	basic_sizer->Add(date_label);
-	basic_sizer->Add(m_date_text);
+	basic_sizer->Add(date_label, 0, wxALIGN_BOTTOM | wxLEFT | wxRIGHT, 10);
+	basic_sizer->Add(m_date_text, 0, wxALIGN_BOTTOM);
 
 	wxSizer * basic_container = new wxStaticBoxSizer(wxHORIZONTAL, this, m_owner->m_lang->str_basic_data);
 	basic_container->Add(basic_sizer, 1, wxEXPAND | wxALL, 5);
@@ -106,7 +107,17 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 
 void ListTimetablesPane::OnDeleteButtonClicked(wxCommandEvent &){
 	//TODO make action
-	printf("Delete button clicked. To do!\n");
+	int i_select = m_timetables_list->GetList()->GetSelection() ;
+	if(i_select != wxNOT_FOUND){
+		int id_solution = ((IntClientData*)m_timetables_list->GetList()->GetClientObject(i_select))->m_value;
+		if(remove_solution(stdout, m_owner->m_database, id_solution)){
+			school_solution_remove(m_owner->m_school, get_solution_index_by_id(m_owner->m_school, id_solution), true);
+			ShowData();
+			m_owner->NotifyNewUnsavedData();
+		} else {
+			printf("Couldn't");
+		}
+	}
 }
 
 void ListTimetablesPane::OnExportButtonClicked(wxCommandEvent &){
@@ -114,40 +125,73 @@ void ListTimetablesPane::OnExportButtonClicked(wxCommandEvent &){
 }
 
 void ListTimetablesPane::OnClassSelectionChaged(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	if(m_class_picker->GetSelection() != wxNOT_FOUND){
+		int i_sol_select = m_timetables_list->GetList()->GetSelection();
+		int solution_id = ((IntClientData*)m_timetables_list->GetList()->GetClientObject(i_sol_select))->m_value;
+		int class_id = ((IntClientData*)m_class_picker->GetClientObject(m_class_picker->GetSelection()))->m_value;
+		Solution * sol = find_solution_by_id(m_owner->m_school, solution_id);
 
+		m_classes->SetAllCellsState(school->n_subjects);
+		for(int i = 0; i < sol->n_meetings; ++i){
+			if(class_id == sol->meetings[i].m_class->id && sol->meetings[i].type == meet_LECTURE){
+				int period = sol->meetings[i].period;
+				int teacher_i = get_teacher_index_by_id(school, sol->meetings[i].teacher->id);
+				m_classes->SetCellState(period % m_owner->m_school->n_periods_per_day, period / m_owner->m_school->n_periods_per_day, teacher_i);
+			}
+		}
+	}
 }
 
 void ListTimetablesPane::OnTeacherSelectionChaged(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	if(m_teacher_picker->GetSelection() != wxNOT_FOUND){
+		int i_sol_select = m_timetables_list->GetList()->GetSelection();
+		int solution_id = ((IntClientData*)m_timetables_list->GetList()->GetClientObject(i_sol_select))->m_value;
+		int teacher_id = ((IntClientData*)m_teacher_picker->GetClientObject(m_teacher_picker->GetSelection()))->m_value;
+		Solution * sol = find_solution_by_id(m_owner->m_school, solution_id);
 
+		m_teachers->SetAllCellsState(school->n_classes + 1);
+		for(int i = 0; i < sol->n_meetings; ++i){
+			int period = sol->meetings[i].period;
+			if(teacher_id == sol->meetings[i].teacher->id){
+				if(sol->meetings[i].type == meet_LECTURE){
+					int class_i = get_class_index_by_id(school, sol->meetings[i].m_class->id);
+					m_teachers->SetCellState(period % m_owner->m_school->n_periods_per_day, period / m_owner->m_school->n_periods_per_day, class_i);
+				} else if(sol->meetings[i].type == meet_PLANNING){
+					m_teachers->SetCellState(period % m_owner->m_school->n_periods_per_day, period / m_owner->m_school->n_periods_per_day, school->n_classes);
+				} else {
+					m_teachers->SetCellState(period % m_owner->m_school->n_periods_per_day, period / m_owner->m_school->n_periods_per_day, school->n_classes + 1);
+				}
+			}
+		}
+	}
 }
 
 void ListTimetablesPane::OnRoomSelectionChaged(wxCommandEvent &){
 	School * school = m_owner->m_school;
-	printf("Room selection changed\n");
 	if(m_room_picker->GetSelection() != wxNOT_FOUND){
 		int i_sol_select = m_timetables_list->GetList()->GetSelection();
 		int solution_id = ((IntClientData*)m_timetables_list->GetList()->GetClientObject(i_sol_select))->m_value;
 		int room_id = ((IntClientData*)m_room_picker->GetClientObject(m_room_picker->GetSelection()))->m_value;
 		Solution * sol = find_solution_by_id(m_owner->m_school, solution_id);
 
-
+		m_rooms->SetAllCellsState(school->n_classes + 1);
 		for(int i = 0; i < sol->n_meetings; ++i){
 			int period = sol->meetings[i].period;
 			if(room_id == sol->meetings[i].room->id){
 				if(sol->meetings[i].type == meet_LECTURE){
 					int class_i = get_class_index_by_id(school, sol->meetings[i].m_class->id);
-					m_rooms->SetCellState(period / m_owner->m_school->n_periods_per_day, period % m_owner->m_school->n_periods_per_day, class_i);
+					m_rooms->SetCellState(period % m_owner->m_school->n_periods_per_day, period / m_owner->m_school->n_periods_per_day, class_i);
 				} else if(sol->meetings[i].type == meet_PLANNING){
 					int teacher_i = get_teacher_index_by_id(school, sol->meetings[i].teacher->id);
-					m_teachers->SetCellState(period / m_owner->m_school->n_periods_per_day, period % m_owner->m_school->n_periods_per_day, school->n_classes + 1 + teacher_i);
+					m_rooms->SetCellState(period % m_owner->m_school->n_periods_per_day, period / m_owner->m_school->n_periods_per_day, school->n_classes + 1 + teacher_i);
 				} else {
-					m_teachers->SetCellState(period / m_owner->m_school->n_periods_per_day, period % m_owner->m_school->n_periods_per_day, school->n_classes);
+					m_rooms->SetCellState(period % m_owner->m_school->n_periods_per_day, period / m_owner->m_school->n_periods_per_day, school->n_classes);
 				}
 			}
 		}
-
 	}
-
 }
 
 void ListTimetablesPane::OnSelectionChanged(wxCommandEvent &){
@@ -157,7 +201,7 @@ void ListTimetablesPane::OnSelectionChanged(wxCommandEvent &){
 		int solution_id = ((IntClientData*)m_timetables_list->GetList()->GetClientObject(i_select))->m_value;
 		Solution * sol = find_solution_by_id(m_owner->m_school, solution_id);
 		m_name_text->SetValue(wxString::FromUTF8(sol->name));
-		m_date_text->SetLabel(wxT(""));
+		m_date_text->SetLabel(wxT("-- / -- / --"));
 
 		m_class_picker->Enable(true);
 		m_teacher_picker->Enable(true);
@@ -172,7 +216,7 @@ void ListTimetablesPane::OnSelectionChanged(wxCommandEvent &){
 void ListTimetablesPane::ShowData(){
 	School * school = m_owner->m_school;
 	m_name_text->SetValue(wxT(""));
-	m_date_text->SetLabel(wxT(""));
+	m_date_text->SetLabel(wxT("-- / -- / --"));
 	m_timetables_list->Clear();
 	for(int i = 0; i < school->n_solutions; ++i){
 		m_timetables_list->AddItem(school->solutions[i].id, wxString::FromUTF8(school->solutions[i].name));
@@ -189,11 +233,13 @@ void ListTimetablesPane::ShowData(){
 		m_rooms->AddState(wxString::FromUTF8(school->teachers[i].name), wxColor(255,255,255));
 	}
 	m_teachers->AddState(wxT("Planning"), wxColor(255,255,255));
+	m_teachers->AddState(wxT("Free"), wxColor(255,255,255));
 
 	/* Classes Code */
 	for(int i = 0; i < school->n_subjects; ++i){
 		m_classes->AddState(wxString::FromUTF8(school->subjects[i].name), wxColor(255,255,255));
 	}
+	m_classes->AddState(wxT("Free"), wxColor(255,255,255));
 
 	for(int i = 0; i < school->n_days; ++i){
 		m_classes->SetColName(i, wxString::FromUTF8(school->day_names[i]));
@@ -211,7 +257,7 @@ void ListTimetablesPane::ShowData(){
 	m_teachers->SetCanUserClick(false);
 	m_classes->SetCanUserClick(false);
 	m_rooms->SetCanUserClick(false);
-	m_rooms->SetAllCellsState(school->n_classes);
+	m_rooms->SetAllCellsState(school->n_classes + 1);
 	m_teachers->SetAllCellsState(school->n_classes);
 	m_classes->SetAllCellsState(school->n_subjects);
 

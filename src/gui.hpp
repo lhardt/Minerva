@@ -520,7 +520,6 @@ class ListRoomsPane : public wxScrolledWindow {
 	wxTextCtrl 			* m_name_text;
 	wxSpinCtrl 			* m_size_text;
 	wxCheckBox 			* m_active_text;
-	wxStaticText 		* m_err_msg;
 	Application 		* m_owner;
 	ScoreGridPane 		* m_periods;
 	wxButton 	 		* m_edit_btn;
@@ -724,33 +723,7 @@ class GenerateTimetablePane : public wxScrolledWindow {
 	void OnDataChange(wxNotifyEvent & );
 };
 
-class DescTimetablePane : public wxScrolledWindow {
- public:
-	DescTimetablePane(Application * owner, wxWindow * parent, wxPoint pos);
-	~DescTimetablePane();
- private:
-	Application * m_owner;
-
-	wxChoice * m_solution_choice;
-	wxChoice * m_class_choice;
-	wxChoice * m_teacher_choice;
-	wxChoice * m_subject_choice;
-	wxChoice * m_room_choice;
-	wxGrid   * m_grid;
-	wxStaticText * m_class_text;
-	wxStaticText * m_teacher_text;
-	wxStaticText * m_subject_text;
-	wxStaticText * m_room_text;
-	wxStaticText * m_day_text;
-	wxStaticText * m_period_text;
-
-	void OnRedrawGridRequest(wxCommandEvent &);
-	void OnGridSelection(wxGridEvent & evt);
-	void OnDataChange(wxNotifyEvent & );
-};
-
 /* Manual */
-
 class ManualWindow : public wxFrame {
  public:
 	ManualWindow(Application * owner);
@@ -862,7 +835,6 @@ enum MinervaWidgetId {
 	ID_LIST_TIMETABLES,
 	ID_EXPORT_TIMETABLE,
 	ID_GENERATE_TIMETABLE,
-	ID_CREATE_TIMETABLE,
 	ID_OPEN_TIMETABLE_MANUAL
 };
 
