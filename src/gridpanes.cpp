@@ -9,7 +9,7 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 							 wxPoint pos,
 							 wxSize size) :  wxScrolledWindow(parent, id, pos, size){
 	int i;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 	this->m_owner = owner;
 
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);

@@ -8,7 +8,7 @@ DescTimetablePane::DescTimetablePane(Application * owner, wxWindow * parent, wxP
 	int i;
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * labels_sz = new wxBoxSizer(wxHORIZONTAL);

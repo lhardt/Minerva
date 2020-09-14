@@ -9,7 +9,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	int i;
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 	SetFont(*m_owner->m_text_font);
 
 	wxStaticText * school_name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_school_name);

@@ -17,7 +17,7 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 		SetIcon(wxICON(aaaaaaaa));
 	#endif
 
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 
 	wxScrolledWindow * m_right_pane = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(350,-1));
 	m_right_pane->SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));

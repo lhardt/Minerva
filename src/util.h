@@ -76,6 +76,7 @@ Class * 		find_class_by_id(School * school, int id);
 Teacher * 		find_teacher_by_id(School * school, int id);
 Meeting * 		find_meeting_by_id(School * school, int id);
 Subject * 		find_subject_by_id(School * school, int id);
+Solution * 		find_solution_by_id(School * school, int id);
 Assignment * 	find_assignment_by_class_subj_id(School * school, int id_class, int id_subj);
 Assignment * 	find_assignment_by_id(School * school, int id);
 

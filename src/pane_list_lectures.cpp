@@ -8,7 +8,7 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	int i;
 	this->m_owner = owner;
 	School * school = m_owner->m_school;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * class_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class);
 	wxStaticText * subject_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_subject);

@@ -1536,7 +1536,7 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 	return teacher->id;
 }
 
-static bool insert_or_update_class_assignment(FILE * console_out, sqlite3 * db, Assignment * assignment, School * school, bool is_update){
+static bool insert_or_update_class_assignment(FILE * console_out, sqlite3 * db, Assignment * assignment, School * school){
 	int errc;
 	sqlite3_stmt * stmt;
 
@@ -1599,8 +1599,9 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 	insert_or_update_period_scores(console_out, db, UPSERT_TABLE_CLASS_ATTENDANCE, class->id, class->period_scores, school);
 	if(class->assignments != NULL){
 		for(i = 0;class->assignments[i] != NULL; ++i){
-			insert_or_update_class_assignment(console_out, db, class->assignments[i], school, false);
+			insert_or_update_class_assignment(console_out, db, class->assignments[i], school);
 		}
+		printf("Upserted %d assignments\n", i);
 	}
 	if(class->subordinates != NULL){
 		for(i = 0; i < school->n_classes; ++i){
@@ -1745,6 +1746,7 @@ bool insert_meetings_list(FILE * console_out, sqlite3 * db, Meeting * meetings, 
 	LMH_ASSERT(db != NULL && meetings != NULL && school != NULL);
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_LECTURE, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
+	int n_insert = 0;
 	for(i = 0; meetings[i].type != meet_NULL; ++i){
 		if(meetings[i].type == meet_LECTURE){
 			Assignment * asg = find_assignment_by_class_subj_id(school,meetings[i].m_class->id,meetings[i].subject->id);
@@ -1755,8 +1757,10 @@ bool insert_meetings_list(FILE * console_out, sqlite3 * db, Meeting * meetings, 
 			CERTIFY_ERRC_SQLITE_DONE(false);
 			errc = sqlite3_exec(db, LASTID_TABLE_LECTURE, get_id_callback, &meetings[i].id, NULL);
 			CERTIFY_ERRC_SQLITE_OK(false);
+			++n_insert;
 		}
 	}
+	printf("I is %d, n_insert %d\n", i, n_insert);
 	sqlite3_finalize(stmt);
 
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_PLANNING, -1, &stmt, NULL);
@@ -1884,6 +1888,7 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 
 	errc = sqlite3_prepare(db, UPSERT_TABLE_LECTURE_SOLUTION, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(-1);
+	int i_inserted = 0;
 	for(i = 0; i < sol->n_meetings; ++i){
 		if(sol->meetings[i].type == meet_LECTURE){
 			LMH_ASSERT(school->meetings != NULL && school->period_ids != NULL && sol->meetings[i].teacher != NULL && sol->meetings[i].room != NULL);
@@ -1901,8 +1906,10 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 			errc = sqlite3_exec(db, LASTID_TABLE_LECTURE, get_id_callback, &(sol->meetings[i].id), NULL);
 			CERTIFY_ERRC_SQLITE_OK(-1);
 			sqlite3_reset(stmt);
+			++i_inserted;
 		}
 	}
+	printf("From n_meetings %d, inserted %d.\n", sol->n_meetings, i_inserted);
 	sqlite3_finalize(stmt);
 	return sol->id;
 }

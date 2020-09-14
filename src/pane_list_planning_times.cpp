@@ -4,7 +4,7 @@ ListPlanningTimesPane::ListPlanningTimesPane(Application * owner, wxWindow * par
 	School * school = NULL;
 	this->m_owner = owner;
 	school = m_owner->m_school;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * teacher_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher);
 	wxStaticText * occurence_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_occurence);

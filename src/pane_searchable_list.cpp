@@ -2,7 +2,7 @@
 
 SearchableListPane::SearchableListPane(Application * owner, wxWindow * parent, wxWindowID id, wxPoint pos, wxSize sz)
 				: wxPanel(parent, id, pos, sz), m_owner(owner), m_item_ids(), m_item_names() {
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * search_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_search);
 	wxStaticText * selection_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_selection);

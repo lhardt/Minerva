@@ -11,7 +11,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	School * school = NULL;
 	this->m_owner = owner;
 	school = m_owner->m_school;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * max_days_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_days);
@@ -179,7 +179,6 @@ void ListTeachersPane::OnDataChange(wxNotifyEvent & evt) {
 }
 
 void ListTeachersPane::OnDependencyButtonClicked(wxCommandEvent &){
-	printf("OnDep\n");
 	if(m_dependency_text->GetValue()){
 		m_groups->Show();
 	} else {

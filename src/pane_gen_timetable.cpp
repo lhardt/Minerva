@@ -13,7 +13,7 @@ GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * par
 	School * school = NULL;
 	this->m_owner = owner;
 	school = m_owner->m_school;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * description = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_generate_timetable_text , wxDefaultPosition, wxSize(400,-1));
 	wxStaticText * last_gen_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_last_generated_timetables, wxDefaultPosition, wxSize(400,-1));
@@ -67,7 +67,7 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 		gen_solution.meetings = create_timetable(m_owner->m_school);
 
 		if(gen_solution.meetings != nullptr){
-			for(i = 0; gen_solution.meetings[i].m_class != NULL; ++i){
+			for(i = 0; gen_solution.meetings[i].type != meet_NULL; ++i){
 				/* Blank counter */
 			}
 			gen_solution.n_meetings = i;

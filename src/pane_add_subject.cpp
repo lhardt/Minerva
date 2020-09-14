@@ -7,7 +7,7 @@ extern "C" {
 
 AddSubjectPane::AddSubjectPane(Application * owner, wxWindow * parent, wxPoint pos)  : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	this->m_owner = owner;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * subject_name_label = new wxStaticText(this,wxID_ANY,m_owner->m_lang->str_name);
 	subject_name_label->SetFont(*m_owner->m_small_font);

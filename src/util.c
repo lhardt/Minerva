@@ -141,7 +141,7 @@ char* copy_string(const char * const str){
 Meeting * copy_meetings_list(const Meeting * const list){
 	Meeting * copy;
 	int i, n;
-	for(n = 0; list[n].m_class != NULL; ++n){ }
+	for(n = 0; list[n].type != meet_NULL; ++n){ }
 
 	copy = calloc(n+1, sizeof(Meeting));
 	for(i = 0; i < n; ++i){
@@ -710,6 +710,16 @@ Subject * find_subject_by_id(School * school, int id){
 	}
 	return NULL;
 }
+Solution * find_solution_by_id(School * school, int id){
+	int i;
+
+	for(i = 0; i < school->n_solutions; ++i){
+		if(school->solutions[i].id == id){
+			return &(school->solutions[i]);
+		}
+	}
+	return NULL;
+}
 int get_subject_index_by_id(School * school, int id){
 	int i;
 
@@ -1181,7 +1191,7 @@ void school_subjectgroup_add(School * school, const char * const name, int id){
 /*********************************************************/
 
 Meeting * create_meeting_list_for_class(School * school, Class * c){
-	int i,j, n_per_total = 0;
+	int i,j, n_per_total = 0, i_meeting = 0;
 	LMH_ASSERT(school != NULL && c != NULL);
 	Meeting * meetings = NULL;
 	if(c->assignments != NULL){
@@ -1192,7 +1202,7 @@ Meeting * create_meeting_list_for_class(School * school, Class * c){
 			meetings = calloc( n_per_total+1, sizeof(Meeting));
 			for(i = 0; c->assignments[i] != NULL; ++i){
 				for(j = 0; j < c->assignments[i]->amount; ++j){
-					meetings[j] = (Meeting){
+					meetings[i_meeting] = (Meeting){
 						.id = 0,
 						.type = meet_LECTURE,
 						.m_class = c,
@@ -1204,7 +1214,7 @@ Meeting * create_meeting_list_for_class(School * school, Class * c){
 						.possible_rooms = NULL,
 						.possible_teachers = NULL
 					};
-					++school->n_meetings;
+					++i_meeting;
 				}
 			}
 			meetings[n_per_total].type = meet_NULL;
@@ -1241,7 +1251,6 @@ void school_meeting_list_add_and_bind(School * school, int class_i, Meeting * me
 			.possible_rooms = meetings[i_meet].possible_rooms,
 			.possible_teachers = meetings[i_meet].possible_teachers,
 		};
-
 		++school->n_meetings;
 	}
 }

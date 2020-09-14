@@ -9,7 +9,7 @@ extern "C" {
 
 AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	this->m_owner = owner;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 	int i;
 	School * school = m_owner->m_school;
 
@@ -164,6 +164,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			school_class_add(school, &c, school->n_classes);
 			if(c.assignments){
 				Meeting * meetings = create_meeting_list_for_class(school, &c);
+				print_meeting_list(stdout, meetings);
 				insert_meetings_list(stdout, m_owner->m_database, meetings, school);
 				school_meeting_list_add_and_bind(school, i_class, meetings);
 			}

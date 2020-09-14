@@ -685,6 +685,30 @@ class ListPlanningTimesPane : public wxScrolledWindow {
 	void OnDataChange(wxNotifyEvent & );
 };
 
+class ListTimetablesPane : public wxScrolledWindow {
+ public:
+	ListTimetablesPane(Application * owner, wxWindow * parent, wxPoint pos);
+	~ListTimetablesPane();
+ private:
+	Application * m_owner;
+	wxTextCtrl *  m_name_text;
+	wxStaticText * m_date_text;
+	SearchableListPane * m_timetables_list;
+	ChoiceGrid * m_classes;
+	ChoiceGrid * m_teachers;
+	ChoiceGrid * m_rooms;
+	wxChoice * m_class_picker;
+	wxChoice * m_teacher_picker;
+	wxChoice * m_room_picker;
+	void OnDataChange(wxNotifyEvent & );
+	void OnSelectionChanged(wxCommandEvent &);
+	void OnDeleteButtonClicked(wxCommandEvent &);
+	void OnExportButtonClicked(wxCommandEvent &);
+	void OnClassSelectionChaged(wxCommandEvent &);
+	void OnTeacherSelectionChaged(wxCommandEvent &);
+	void OnRoomSelectionChaged(wxCommandEvent &);
+	void ShowData();
+};
 
 /* GENERATION Panes. */
 
@@ -835,6 +859,7 @@ enum MinervaWidgetId {
 	ID_OPEN_EVENTS_MANUAL,
 
 	ID_VIEW_TIMETABLE,
+	ID_LIST_TIMETABLES,
 	ID_EXPORT_TIMETABLE,
 	ID_GENERATE_TIMETABLE,
 	ID_CREATE_TIMETABLE,

@@ -10,7 +10,7 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	School * school = NULL;
 	this->m_owner = owner;
 	school = m_owner->m_school;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 
 	m_groups_list = new SearchableListPane(m_owner, this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
 	wxNotebook * notebook = new wxNotebook(this, wxID_ANY);

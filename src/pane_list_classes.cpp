@@ -11,7 +11,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	School * school = NULL;
 	this->m_owner = owner;
 	school = m_owner->m_school;
-	SetBackgroundColour(wxColour(240,240,240));
+	SetBackgroundColour(wxColour(250,250,250));
 	int i = 0;
 
 	/* Layout */
