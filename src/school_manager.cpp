@@ -431,7 +431,7 @@ bool RoomDeleteAction::Undo(){
 		m_room.id = id;
 		school_room_add(m_owner->m_school, &m_room);
 
-		LMH_ASSERT(m_owner->m_school->rooms[m_i_room].id == id && (m_i_room == school->n_rooms -1));
+		LMH_ASSERT(m_owner->m_school->rooms[m_i_room].id == id );
 		/* These are surely allocated because of school_room_add. */
 		for(i = 0; i < school->n_teachers; ++i){
 			school->teachers[i].lecture_room_scores[m_i_room] = m_teacher_lecture_scores[i];

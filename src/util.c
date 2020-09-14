@@ -892,6 +892,286 @@ void remove_from_int_list(int * list, int i_remove){
 		list[i] = list[i+1];
 	}
 }
+
+int school_class_assignments_add(School * school, Class * c){
+	int i, n;
+	LMH_ASSERT(school != NULL && c != NULL && c->assignments != NULL);
+
+	for(n = 0; c->assignments[n] != NULL; ++n){
+		/* Blank */
+	}
+	if(school->n_assignments == 0){
+		school->assignments = calloc(n + 1, sizeof(Assignment));
+	} else {
+		school->assignments = realloc(school->assignments, (school->n_assignments + n+1)*sizeof(Assignment));
+	}
+
+	for(i = 0; i < n; ++i){
+		school->assignments[school->n_assignments + i] = * c->assignments[i];
+		c->assignments[i] = &school->assignments[school->n_assignments + i];
+	}
+
+	school->n_assignments += n;
+	return school->n_assignments;
+}
+void school_teacher_add(School * school, const Teacher * const t){
+	int n_teaches = 0, i_teaches = 0, pos = 0;
+	LMH_ASSERT(school != NULL && t != NULL);
+	if(school->teachers == NULL || school->n_teachers == 0){
+		school->teachers = calloc(2, sizeof(Teacher));
+		school->n_teachers = 0;
+	} else {
+		school->teachers = realloc(school->teachers, (school->n_teachers + 2)*sizeof(Teacher));
+	}
+	/* Teachers are ordered by id. */
+	for(pos = 0; pos < school->n_teachers && t->id > school->teachers[pos].id; ++pos){
+
+	}
+
+	for(int i = school->n_teachers; i > pos; --i){
+		school->teachers[i] = school->teachers[i-1];
+	}
+	school->teachers[ pos ] = *t;
+	/* As the teachers after pos moved, we need to 'repoint' every reference to any of them. */
+	for(int i = 0; i < school->n_teaches; ++i){
+		int teacher_i = get_teacher_index_by_id(school, school->teaches[i].teacher->id);
+		if(teacher_i >= pos){
+			/* Jumped one index forward */
+			school->teaches[i].teacher = &(school->teachers[teacher_i + 1]);
+		}
+	}
+	for(int i = 0; i < school->n_meetings; ++i){
+		if(school->meetings[i].teacher != NULL){
+			int teacher_i = get_teacher_index_by_id(school, school->meetings[i].teacher->id);
+			if(teacher_i >= pos){
+				school->meetings[i].teacher = &(school->teachers[teacher_i + 1]);
+			}
+		}
+	}
+	for(int i = 0; i < school->n_assignments; ++i){
+		/* TODO predefine as zero seems inconvenient for the user. */
+		add_zero_to_score_list_at(&(school->assignments[i].possible_teachers), school->n_teachers, pos);
+	}
+	for(int i = 0; i < school->n_solutions; ++i){
+		Meeting * meetings = school->solutions[i].meetings;
+		if(meetings != NULL){
+			for(int j = 0; j < school->solutions[i].n_meetings; ++i){
+				if(meetings[j].teacher != NULL){
+					int i_teacher = get_teacher_index_by_id(school, meetings[j].teacher->id);
+					if(i_teacher >= pos){
+						meetings[j].teacher = &(school->teachers[i_teacher + 1]);
+					}
+				}
+			}
+		}
+	}
+
+	if(t->teaches){
+		for(n_teaches = 0; t->teaches[n_teaches] != NULL; ++n_teaches){
+			/* Blank on purpouse */
+		}
+		/* Teacheses are ordered by the id of the teacher. */
+		int i_start = 0;
+		if(school->teaches == NULL || school->n_teaches == 0){
+			school->teaches = calloc(n_teaches + 1, sizeof(Teaches));
+			school->n_teaches = 0;
+		} else if(school->n_teaches %10 == 0){
+			school->teaches = realloc(school->teaches, (school->n_teaches + n_teaches +1) * sizeof(Teaches));
+			for(i_start = 0; i_start < school->n_teaches && school->teaches[i_start].teacher->id < t->id; ++i_start){
+				/* Stops where we need to insert our list of teaches. */
+			}
+		}
+		for(i_teaches = 0; i_teaches < n_teaches; ++i_teaches){
+			school->teaches[i_start + i_teaches] = * t->teaches[i_teaches];
+			t->teaches[i_teaches] = &school->teaches[i_start + i_teaches];
+			++ school->n_teaches;
+		}
+	}
+
+	++school->n_teachers;
+}
+void school_class_add(School * school, Class * c){
+	int pos = 0;
+	LMH_ASSERT(school != NULL && c != NULL);
+	if(school->classes == NULL || school->n_classes == 0){
+		school->classes = calloc(2, sizeof(Class));
+		school->n_classes = 0;
+	} else {
+		school->classes = realloc(school->classes, (school->n_classes + 2) * sizeof(Class));
+		for(pos = 0; pos < school->n_classes && c->id > school->classes[pos].id; ++pos){
+			/* Blank */
+		}
+	}
+	for(int i = school->n_classes; i > pos; --i){
+		school->classes[i] = school->classes[i-1];
+	}
+	school->classes[ pos ] = *c;
+
+	/* As the classes after pos moved, we need to 'repoint' every reference to any of them. */
+	for(int i = 0; i < school->n_assignments; ++i){
+		int i_class = get_class_index_by_id(school, school->assignments[i].m_class->id);
+		if(i_class >= pos){
+			/* This class has moved one index over */
+			school->assignments[i].m_class = &(school->classes[i_class+1]);
+		}
+	}
+	for(int i = 0; i < school->n_meetings; ++i){
+		if(school->meetings[i].type == meet_LECTURE){
+			int i_class = get_class_index_by_id(school, school->meetings[i].m_class->id);
+			if(i_class >= pos){
+				school->meetings[i].m_class = &(school->classes[i_class + 1]);
+			}
+		}
+	}
+	for(int i = 0; i < school->n_solutions; ++i){
+		Meeting * meetings = school->solutions[i].meetings;
+		if(meetings != NULL){
+			for(int j = 0; j < school->solutions[i].n_meetings; ++i){
+				if(meetings[j].type == meet_LECTURE){
+					int i_class = get_class_index_by_id(school, meetings[j].m_class->id);
+					if(i_class >= pos){
+						meetings[j].m_class = &(school->classes[i_class + 1]);
+					}
+				}
+			}
+		}
+	}
+	if(c->assignments){
+		school_class_assignments_add(school, c);
+	}
+	++school->n_classes;
+}
+void school_subject_add(School * school, const Subject * const subject){
+	int pos = 0;
+	LMH_ASSERT(school != NULL && subject != NULL);
+	if(school->subjects == NULL || school->n_subjects == 0){
+		school->subjects = calloc(2, sizeof(Subject));
+		school->n_subjects = 0;
+	} else {
+		school->subjects = realloc(school->subjects,(school->n_subjects + 2)*sizeof(Subject));
+		for(pos = 0; pos < school->n_subjects && school->subjects[pos].id < subject->id; ++pos){
+			/* Blank */
+		}
+	}
+	for(int i = school->n_subjects; i > pos; --i){
+		school->subjects[i] = school->subjects[i-1];
+	}
+	school->subjects[ pos ] = *subject;
+
+	for(int i = 0; i < school->n_assignments; ++i){
+		int i_subject = get_subject_index_by_id(school, school->assignments[i].subject->id);
+		if(i_subject >= pos){
+			school->assignments[i].subject = &(school->subjects[i_subject + 1]);
+		}
+	}
+	for(int i = 0; i < school->n_solutions; ++i){
+		Meeting * meetings = school->solutions[i].meetings;
+		if(meetings != NULL){
+			for(int j = 0; j < school->solutions[i].n_meetings; ++i){
+				if(meetings[j].type == meet_LECTURE){
+					int i_subject = get_subject_index_by_id(school, meetings[j].subject->id);
+					if(i_subject >= pos){
+						meetings[j].subject = &(school->subjects[i_subject + 1]);
+					}
+				}
+			}
+		}
+	}
+	school->n_subjects++;
+}
+void school_room_add(School * school, const Room * const room){
+	int i, pos = 0;
+	LMH_ASSERT(school != NULL && room != NULL);
+	if(school->n_rooms == 0){
+		school->rooms = (Room*) calloc(2, sizeof(Room));
+	} else {
+		school->rooms = (Room *) realloc(school->rooms, (school->n_rooms + 2)*sizeof(Room));
+		for(pos = 0; pos < school->n_rooms && school->rooms[pos].id < room->id; ++pos){
+			/* Blank */
+		}
+	}
+
+	for(i = school->n_rooms; i > pos; --i){
+		school->rooms[i] = school->rooms[i-1];
+	}
+	school->rooms[pos] = *room;
+
+	for(i = 0; i < school->n_teachers; ++i){
+		add_zero_to_score_list_at(&school->teachers[i].lecture_room_scores, school->n_rooms, pos);
+		add_zero_to_score_list_at(&school->teachers[i].planning_room_scores, school->n_rooms, pos);
+	}
+	for(i = 0; i < school->n_classes; ++i){
+		add_zero_to_score_list_at(&school->classes[i].room_scores, school->n_rooms, pos);
+	}
+	for(i = 0; i < school->n_teaches; ++i){
+		add_zero_to_score_list_at(&school->teaches[i].room_scores, school->n_rooms, pos);
+	}
+	for(i = 0; i < school->n_meetings; ++i){
+		add_zero_to_score_list_at(&school->meetings[i].possible_rooms, school->n_rooms, pos);
+		if(school->meetings[i].room != NULL){
+			int i_room = get_room_index_by_id(school, school->meetings[i].room->id);
+			if(i_room >= pos){
+				school->meetings[i].room = &(school->rooms[i_room + 1]);
+			}
+		}
+	}
+	for(i = 0; i < school->n_solutions; ++i){
+		Meeting * meetings = school->solutions[i].meetings;
+		for(int j = 0; j < school->solutions[i].n_meetings; ++j){
+			if(meetings[j].room != NULL){
+				int i_room = get_room_index_by_id(school, meetings[j].room->id);
+				if(i_room >= pos){
+					meetings[j].room = &(school->rooms[j+1]);
+				}
+			}
+		}
+	}
+
+	school->n_rooms++;
+}
+void school_subjectgroup_add(School * school, const char * const name, int id){
+	/* TODO realloc class->in_groups */
+	int pos = 0;
+	LMH_ASSERT(school != NULL && name != NULL && id > 0);
+	if(school->n_subject_groups == 0 || school->subject_group_names == NULL){
+		school->subject_group_names = calloc(2, sizeof(char *));
+		school->subject_group_ids = calloc(2, sizeof(int));
+		school->n_subject_groups = 0;
+	} else {
+		school->subject_group_names = realloc(school->subject_group_names, (school->n_subject_groups + 2) * sizeof(char*));
+		school->subject_group_ids = realloc(school->subject_group_ids, (school->n_subject_groups + 2) * sizeof(int*));
+		for(pos = 0; pos < school->n_subject_groups && school->subject_group_ids[pos] < id; ++pos){
+			/* Blank */
+		}
+	}
+	for(int i = school->n_subject_groups; i > pos; --i){
+		school->subject_group_names[i] = school->subject_group_names[i-1];
+		school->subject_group_ids[i] = school->subject_group_ids[i-1];
+	}
+	school->subject_group_names[pos] = name;
+	school->subject_group_ids[pos] = id;
+	++school->n_subject_groups;
+}
+void school_solution_add(School * school, const Solution * const sol){
+	LMH_ASSERT(school != NULL && sol != NULL);
+	int i, i_insert = 0;
+	if(school->solutions == NULL || school->n_solutions == 0){
+		school->solutions = (Solution*) calloc(2, sizeof(Solution));
+		school->n_solutions = 0;
+	} else {
+		school->solutions = (Solution*) realloc(school->solutions, (school->n_solutions + 1) * sizeof(Solution));
+		for(i = 0; school->solutions[i].id < sol->id && i < school->n_solutions; ++i){
+			/* Blank */
+		}
+		i_insert = i;
+	}
+	for(i = school->n_solutions; i > i_insert; --i){
+		school->solutions[i] = school->solutions[i-1];
+	}
+	school->solutions[i_insert] = *sol;
+	++ school->n_solutions;
+}
+
 void school_subject_remove(School * school, int subj_i, bool must_delete){
 	int i, j, k;
 	int removed_subj_id = school->subjects[subj_i].id;
@@ -955,91 +1235,6 @@ void school_subject_remove(School * school, int subj_i, bool must_delete){
 	}
 	--school->n_subjects;
 }
-int school_class_assignments_add(School * school, Class * c){
-	int i, n;
-	LMH_ASSERT(school != NULL && c != NULL && c->assignments != NULL);
-
-	for(n = 0; c->assignments[n] != NULL; ++n){
-		/* Blank */
-	}
-	if(school->n_assignments == 0){
-		school->assignments = calloc(n + 1, sizeof(Assignment));
-	} else {
-		school->assignments = realloc(school->assignments, (school->n_assignments + n+1)*sizeof(Assignment));
-	}
-
-	for(i = 0; i < n; ++i){
-		school->assignments[school->n_assignments + i] = * c->assignments[i];
-		c->assignments[i] = &school->assignments[school->n_assignments + i];
-	}
-
-	school->n_assignments += n;
-	return school->n_assignments;
-}
-void school_class_add(School * school, Class * c, int pos){
-	LMH_ASSERT(school != NULL && c != NULL && pos >= 0 && pos <= school->n_classes);
-	if(school->classes == NULL || school->n_classes == 0){
-		school->classes = calloc(2, sizeof(Class));
-		school->n_classes = 0;
-	} else {
-		school->classes = realloc(school->classes, (school->n_classes + 2) * sizeof(Class));
-	}
-	for(int i = school->n_classes; i > pos; --i){
-		school->classes[i] = school->classes[i-1];
-	}
-	school->classes[ pos ] = *c;
-	school->classes[pos+1] = (Class) {
-		.id=0,
-		.name=NULL,
-		.short_name=NULL
-	};
-	if(c->assignments){
-		school_class_assignments_add(school, c);
-	}
-	++school->n_classes;
-}
-void school_teacher_add(School * school, const Teacher * const t, int pos){
-	int n_teaches = 0, i_teaches = 0;
-	LMH_ASSERT(school != NULL && t != NULL && pos >= 0 && pos <= school->n_teachers);
-	if(school->teachers == NULL || school->n_teachers == 0){
-		school->teachers = calloc(2, sizeof(Teacher));
-		school->n_teachers = 0;
-	} else {
-		school->teachers = realloc(school->teachers, (school->n_teachers + 2)*sizeof(Teacher));
-	}
-	for(int i = school->n_teachers; i > pos; --i){
-		school->teachers[i] = school->teachers[i-1];
-	}
-	school->teachers[ pos ] = *t;
-
-	if(t->teaches){
-		for(n_teaches = 0; t->teaches[n_teaches] != NULL; ++n_teaches){
-			/* Blank on purpouse */
-		}
-		/* Teacheses are ordered by the id of the teacher. */
-		int i_start = 0;
-		if(school->teaches == NULL || school->n_teaches == 0){
-			school->teaches = calloc(n_teaches + 1, sizeof(Teaches));
-			school->n_teaches = 0;
-		} else if(school->n_teaches %10 == 0){
-			school->teaches = realloc(school->teaches, (school->n_teaches + n_teaches +1) * sizeof(Teaches));
-			for(i_start = 0; i_start < school->n_teaches && school->teaches[i_start].teacher->id < t->id; ++i_start){
-				/* Stops where we need to insert our list of teaches. */
-			}
-		}
-		for(i_teaches = 0; i_teaches < n_teaches; ++i_teaches){
-			school->teaches[i_start + i_teaches] = * t->teaches[i_teaches];
-			t->teaches[i_teaches] = &school->teaches[i_start + i_teaches];
-			++ school->n_teaches;
-		}
-	}
-	for(int i = 0; i < school->n_assignments; ++i){
-		/* TODO predefine as zero seems inconvenient for the user. */
-		add_zero_to_score_list_at(&(school->assignments[i].possible_teachers), school->n_teachers, pos);
-	}
-
-	++school->n_teachers;
-}
 void school_teacher_remove(School * school, int i_remove, bool must_delete){
 	int i,j;
 	LMH_ASSERT(school != NULL && i_remove < school->n_teachers && i_remove >= 0);
@@ -1080,8 +1275,9 @@ void school_teacher_remove(School * school, int i_remove, bool must_delete){
 }
 void school_class_remove(School * school, int class_i, bool must_delete){
 	int i,j;
-	/* TODO: Check for subordinates too. */
 	Meeting * m_list;
+	/* TODO: Check for subordinates too. */
+	LMH_ASSERT(school != NULL && class_i < school->n_classes && class_i >= 0);
 	Class * class = &school->classes[class_i];
 	for(i = 0; i < school->n_solutions; ++i){
 		m_list =  school->solutions[i].meetings;
@@ -1108,33 +1304,9 @@ void school_class_remove(School * school, int class_i, bool must_delete){
 	}
 	--school->n_classes;
 }
-void school_room_add(School * school, const Room * const room){
-	int i;
-	if(school->n_rooms == 0){
-		school->rooms = (Room*) calloc(11, sizeof(Room));
-	} else if(school->n_rooms % 10 == 0) {
-		school->rooms = (Room *) realloc(school->rooms, (school->n_rooms + 11 - (school->n_rooms % 10))*sizeof(Room));
-	}
-	school->rooms[school->n_rooms] = *room;
-
-	for(i = 0; i < school->n_teachers; ++i){
-		add_zeroes_to_score_list(&school->teachers[i].lecture_room_scores, school->n_rooms, school->n_rooms + 1);
-		add_zeroes_to_score_list(&school->teachers[i].planning_room_scores, school->n_rooms, school->n_rooms + 1);
-	}
-	for(i = 0; i < school->n_classes; ++i){
-		add_zeroes_to_score_list(&school->classes[i].room_scores, school->n_rooms, school->n_rooms + 1);
-	}
-	for(i = 0; i < school->n_teaches; ++i){
-		add_zeroes_to_score_list(&school->teaches[i].room_scores, school->n_rooms, school->n_rooms + 1);
-	}
-	for(i = 0; i < school->n_meetings; ++i){
-		add_zeroes_to_score_list(&school->meetings[i].possible_rooms, school->n_rooms, school->n_rooms + 1);
-	}
-	school->n_rooms++;
-}
 void school_room_remove(School * school, int room_i, bool must_delete){
 	int i,j;
-	LMH_ASSERT(school != NULL && room_i < school->n_rooms);
+	LMH_ASSERT(school != NULL && room_i < school->n_rooms && room_i >= 0);
 	if(school->solutions != NULL){
 		for(i = 0; i < school->n_solutions; ++i){
 			Meeting * m_list = school->solutions[i].meetings;
@@ -1176,51 +1348,6 @@ void school_room_remove(School * school, int room_i, bool must_delete){
 	}
 	--(school->n_rooms);
 }
-void school_subject_add(School * school, const Subject * const subject){
-	if(school->subjects == NULL || school->n_subjects == 0){
-		school->subjects = (Subject*)calloc(10, sizeof(Subject));
-		school->n_subjects = 0;
-	} else if(school->n_subjects % 10 == 0) {
-		school->subjects = (Subject*)realloc(school->subjects,(school->n_subjects +11)*sizeof(Subject));
-	}
-	school->subjects[ school->n_subjects ] = *subject;
-	school->n_subjects++;
-}
-void school_subjectgroup_add(School * school, const char * const name, int id){
-	/* TODO realloc class->in_groups */
-	if(school->n_subject_groups == 0 || school->subject_group_names == NULL){
-		school->subject_group_names = (char **) calloc(11, sizeof(char *));
-		school->subject_group_ids = (int *) calloc(11, sizeof(int));
-		school->n_subject_groups = 0;
-	} else if(school->n_subject_groups % 10 == 0) {
-		school->subject_group_names = (char **) realloc(school->subject_group_names, (school->n_subject_groups + 11) * sizeof(char*));
-		school->subject_group_ids = (int *) realloc(school->subject_group_ids, (school->n_subject_groups + 11) * sizeof(int*));
-	}
-	school->subject_group_names[school->n_subject_groups] = name;
-	school->subject_group_ids[school->n_subject_groups] = id;
-	++school->n_subject_groups;
-}
-
-
-void school_solution_add(School * school, const Solution * const sol){
-	LMH_ASSERT(school != NULL && sol != NULL);
-	int i, i_insert;
-	if(school->solutions == NULL || school->n_solutions == 0){
-		school->solutions = (Solution*) calloc(2, sizeof(Solution));
-		school->n_solutions = 0;
-	} else {
-		school->solutions = (Solution*) realloc(school->solutions, (school->n_solutions + 1) * sizeof(Solution));
-	}
-	for(i = 0; school->solutions[i].id < sol->id && i < school->n_solutions; ++i){
-		/* Blank */
-	}
-	i_insert = i;
-	for(i = school->n_solutions; i > i_insert; --i){
-		school->solutions[i] = school->solutions[i-1];
-	}
-	school->solutions[i_insert] = *sol;
-	++ school->n_solutions;
-}
 void school_solution_remove(School * school, int i_solution, bool must_delete){
 	LMH_ASSERT(school != NULL && i_solution >= 0 && i_solution < school->n_solutions);
 	if(must_delete){
@@ -1231,7 +1358,6 @@ void school_solution_remove(School * school, int i_solution, bool must_delete){
 	}
 	--school->n_solutions;
 }
-
 
 /*********************************************************/
 /*                     OTHER Functions                   */

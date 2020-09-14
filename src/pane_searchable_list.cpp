@@ -60,8 +60,8 @@ void SearchableListPane::RemoveItem(int id) {
 	int i;
 	for(i = 0; i < m_item_ids.size(); ++i){
 		if(m_item_ids[i] == id){
-			m_item_ids.erase(i);
-			m_item_names.erase(i);
+			m_item_ids.erase(m_item_ids.begin() + i);
+			m_item_names.erase(m_item_names.begin() + i);
 			RefilterElements();
 			break;
 		}

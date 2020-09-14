@@ -96,30 +96,26 @@ void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new);
 void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at);
 void remove_from_int_list(int * list, int i_remove);
 
-void school_teacher_add(School * school, const Teacher * const teacher, int pos);
-void school_teacher_remove(School * school, int teacher_i, bool must_delete);
-
-void school_class_add(School * school, Class * c, int pos);
-/* XXX: using must_delete = false and not storing the meetings associated will result in memory leakage */
-void school_class_remove(School * school, int class_i, bool must_delete);
-
+void school_teacher_add(School * school, const Teacher * const teacher);
+void school_class_add(School * school, Class * c);
 void school_subject_add(School * school, const Subject * const subject);
-void school_subject_remove(School * school, int subject_i, bool must_delete);
-
 void school_room_add(School * school, const Room * const room);
+// TODO needed? void school_meeting_add(School * school, Meeting * meet);
+void school_subjectgroup_add(School * school, const char * const name, int id);
+void school_solution_add(School * school, const Solution * const sol);
+
+void school_class_remove(School * school, int class_i, bool must_delete);
+void school_teacher_remove(School * school, int teacher_i, bool must_delete);
+void school_subject_remove(School * school, int subject_i, bool must_delete);
 void school_room_remove(School * school, int room_i, bool must_delete);
+void school_meeting_remove(School * school, int meeting_i);
+void school_subjectgroup_remove(School * school, int i);
+void school_solution_remove(School * school, int solution_i, bool must_delete);
+/* XXX: using must_delete = false and not storing the meetings associated will result in memory leakage */
 
 void school_init_meeting_list(School * school);
 
-void school_meeting_add(School * school, Meeting * meet);
 void school_meeting_change(School * school, int meeting_i);
-void school_meeting_remove(School * school, int meeting_i);
-
-void school_subjectgroup_add(School * school, const char * const name, int id);
-void school_subjectgroup_remove(School * school, int i);
-
-void school_solution_add(School * school, const Solution * const sol);
-void school_solution_remove(School * school, int solution_i, bool must_delete);
 
 void school_on_preference_changed(School * school);
 

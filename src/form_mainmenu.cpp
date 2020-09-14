@@ -73,7 +73,6 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	wxBitmap image_close("res/cancel.png", wxBITMAP_TYPE_PNG);
 
 	m_toolbar = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_TEXT);
-	m_toolbar->SetBackgroundColour(wxColor(0xB9, 0x29, 0x80));
 
 	m_toolbar->AddTool(ID_SAVE, m_owner->m_lang->str_save, image_save);
 	m_toolbar->AddTool(ID_UNDO, m_owner->m_lang->str_undo, image_undo);
@@ -123,12 +122,9 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	m_rib_bbars[5][1]->AddButton(ID_CHECK_ALL_EVENTS, m_owner->m_lang->str_check_all, image_check);
 	m_rib_bbars[5][2]->AddButton(ID_OPEN_EVENTS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 	/* HORÁRIO */
-	m_rib_bbars[6][0]->AddButton(ID_VIEW_TIMETABLE, m_owner->m_lang->str_see_timetable, image_list);
 	m_rib_bbars[6][0]->AddButton(ID_LIST_TIMETABLES, m_owner->m_lang->str_generated_timetables, image_list);
 	m_rib_bbars[6][1]->AddButton(ID_GENERATE_TIMETABLE, m_owner->m_lang->str_generate_timetable, image_build);
 	m_rib_bbars[6][2]->AddButton(ID_OPEN_TIMETABLE_MANUAL, m_owner->m_lang->str_open_manual, image_help);
-
-	m_ribbon->AddPageHighlight(m_ribbon->GetPageCount() - 1); /* TODO is it working?*/
 	m_ribbon->Realize();
 
 	m_center_pane = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
