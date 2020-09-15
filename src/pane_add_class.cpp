@@ -161,7 +161,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		bool success = insert_class(stdout, m_owner->m_database, &c, school, -1) >= 0;
 		if(success){
 			int i_class = school->n_classes;
-			school_class_add(school, &c, school->n_classes);
+			school_class_add(school, &c);
 			if(c.assignments){
 				Meeting * meetings = create_meeting_list_for_class(school, &c);
 				print_meeting_list(stdout, meetings);
