@@ -6,10 +6,7 @@ extern "C" {
 };
 
 ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
-	int i = 0;
-	School * school = NULL;
 	this->m_owner = owner;
-	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(250,250,250));
 
 	m_subjects_list = new SearchableListPane(m_owner, this);
@@ -118,10 +115,10 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 	if(i_select != wxNOT_FOUND){
 		int subject_id = ((IntClientData*) m_subjects_list->GetList()->GetClientObject(i_select))->m_value;
 		if(can_remove_subject(school, subject_id)){
-			bool success = remove_subject(stdout, m_owner->m_database, subject_id);
+			SubjectDeleteAction * act = new SubjectDeleteAction(m_owner, subject_id);
+			bool success = m_owner->Do(act);
 			if(success){
 				/* TODO: substitute for Action */
-				school_subject_remove(school, get_subject_index_by_id(school, subject_id), true);
 				m_subjects_list->RemoveItem(subject_id);
 				m_owner->NotifyNewUnsavedData();
 				m_name_text->SetValue("");

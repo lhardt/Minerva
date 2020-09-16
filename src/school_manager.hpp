@@ -155,11 +155,10 @@ public:
 	bool Undo();
 	wxString Describe();
 private:
-	Subject subject;
-	Assignment * assignments;
-	Teaches * teaches;
-	Meeting * meetings;
-	Solution * solutions;
+	Subject m_subject;
+	Assignment * m_assignments;
+	Teaches * m_teaches;
+	Meeting * m_meetings;
 };
 
 class SubjectBasicDataUpdateAction : public Action {

@@ -502,16 +502,117 @@ wxString SubjectInsertAction::Describe(){
 /*********************************************************/
 
 SubjectDeleteAction::SubjectDeleteAction(Application * owner, int subj_id) : Action(owner){
-
+	m_subject = *(find_subject_by_id(m_owner->m_school,subj_id));
 }
 SubjectDeleteAction::~SubjectDeleteAction(){
-
+	/*TODO: if state == done, delete all the other variables*/
 }
 bool SubjectDeleteAction::Do(){
+	int n_assignments = 0, n_teaches = 0, n_meetings = 0;
+	if(remove_subject(stdout, m_owner->m_database, m_subject.id)){
+		School * school = m_owner->m_school;
+		/* TODO: is this 'update' needed? Will there be any information that will change? */
+		m_subject = *(find_subject_by_id(m_owner->m_school, m_subject.id));
+		for(int i = 0; i < school->n_assignments; ++i){
+			if(school->assignments[i].subject->id == m_subject.id){
+				++n_assignments;
+			}
+		}
+		for(int i = 0; i < school->n_teaches; ++i){
+			if(school->teaches[i].subject->id == m_subject.id){
+				++n_teaches;
+			}
+		}
+		for(int i = 0; i < school->n_meetings; ++i){
+			if(school->meetings[i].subject != NULL && school->meetings[i].subject->id == m_subject.id){
+				++n_meetings;
+			}
+		}
 
+		m_assignments = (Assignment*) calloc(n_assignments + 1, sizeof(Assignment));
+		m_teaches = (Teaches*) calloc(n_teaches + 1, sizeof(Teaches));
+		m_meetings = (Meeting*) calloc(n_meetings + 1, sizeof(Meeting));
+
+		int i_assignment = 0;
+		for(int i = 0; i < school->n_assignments; ++i){
+			if(school->assignments[i].subject->id == m_subject.id){
+				m_assignments[i_assignment] = school->assignments[i];
+				++i_assignment;
+			}
+		}
+		int i_teaches = 0;
+		for(int i = 0; i < school->n_teaches; ++i){
+			if(school->teaches[i].subject->id == m_subject.id){
+				m_teaches[i_teaches] = school->teaches[i];
+				++i_teaches;
+			}
+		}
+		int i_meeting = 0;
+		for(int i = 0; i < school->n_meetings; ++i){
+			if(school->meetings[i].subject != NULL && school->meetings[i].subject->id == m_subject.id){
+				m_meetings[i_meeting] = school->meetings[i];
+				++i_meeting;
+			}
+		}
+		school_subject_remove(school, get_subject_index_by_id(school,m_subject.id), false);
+		return true;
+	}
+	return false;
 }
 bool SubjectDeleteAction::Undo(){
+	School * school = m_owner->m_school;
+	int retval = insert_subject(stdout, m_owner->m_database, &m_subject, school, m_subject.id);
+	if(retval != -1){
+		m_subject.id = retval;
+		school_subject_add(school, &m_subject);
 
+		int n_teaches, n_assignments, n_meetings;
+		for(n_teaches = 0; m_teaches[n_teaches].teacher != NULL; ++n_teaches){ }
+		for(n_assignments = 0; m_assignments[n_assignments].m_class != NULL; ++n_assignments){ }
+		for(n_meetings = 0; m_meetings[n_meetings].type != meet_NULL; ++n_meetings){ }
+
+		if(n_teaches > 0){
+			if(school->teaches == NULL || school->n_teaches == 0){
+				school->teaches = (Teaches*) calloc(n_teaches + 1, sizeof(Teaches));
+				school->teaches = 0;
+			} else {
+				school->teaches = (Teaches*) realloc(school->teaches, (school->n_teaches + n_teaches + 1)*sizeof(Teaches));
+			}
+			for(int i = 0; i < n_teaches; ++i){
+				school->teaches[school->n_teaches + i] = m_teaches[i];
+			}
+			school->n_teaches += n_teaches;
+		}
+		if(n_assignments > 0){
+			if(school->assignments == NULL || school->n_assignments == 0){
+				school->assignments = (Assignment*) calloc(n_assignments +1, sizeof(Assignment));
+			} else {
+				school->assignments = (Assignment*) realloc(school->assignments, (school->n_assignments + n_assignments + 1) * sizeof(Assignment));
+			}
+			for(int i = 0; i < n_assignments; ++i){
+				school->assignments[school->n_assignments + i] = m_assignments[i];
+			}
+			school->n_assignments += n_assignments;
+		}
+		if(n_meetings > 0){
+			if(school->meetings == NULL) {
+				school->meetings = (Meeting*) calloc(n_meetings + 1, sizeof(Meeting));
+				school->n_meetings = 0;
+			} else {
+				school->meetings = (Meeting*) calloc(school->n_meetings + n_meetings + 1, sizeof(Meeting));
+			}
+			for(int i = 0; i < n_meetings; ++i){
+				school->meetings[school->n_meetings + i] = m_meetings[i];
+			}
+			school->n_meetings += n_meetings;
+		}
+
+		free(m_assignments);
+		free(m_teaches);
+		free(m_meetings);
+		return true;
+	}
+	return false;
 }
 wxString SubjectDeleteAction::Describe(){
 	return wxT("SubjectDeleteAction");

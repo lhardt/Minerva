@@ -1211,6 +1211,7 @@ void school_subject_remove(School * school, int subj_i, bool must_delete){
 			}
 		}
 	}
+	/* This should never be necessary, because of the can_remove_subject */
 	if(school->solutions != NULL){
 		for(i = 0; i < school->n_solutions; ++i){
 			Meeting * m_list = school->solutions[i].meetings;
