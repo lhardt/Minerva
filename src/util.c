@@ -1129,7 +1129,7 @@ void school_room_add(School * school, const Room * const room){
 
 	school->n_rooms++;
 }
-void school_subjectgroup_add(School * school, const char * const name, int id){
+int school_subjectgroup_add(School * school, const char * const name, int id){
 	/* TODO realloc class->in_groups */
 	int pos = 0;
 	LMH_ASSERT(school != NULL && name != NULL && id > 0);
@@ -1150,7 +1150,15 @@ void school_subjectgroup_add(School * school, const char * const name, int id){
 	}
 	school->subject_group_names[pos] = name;
 	school->subject_group_ids[pos] = id;
+
+	for(int i = 0; i < school->n_subjects; ++i){
+		add_zero_to_score_list_at(&(school->subjects[i].in_groups), school->n_subject_groups, pos);
+	}
+	for(int i = 0; i < school->n_classes; ++i){
+		add_zero_to_score_list_at(&(school->classes[i].max_per_day_subject_group), school->n_subject_groups, pos);
+	}
 	++school->n_subject_groups;
+	return pos;
 }
 void school_solution_add(School * school, const Solution * const sol){
 	LMH_ASSERT(school != NULL && sol != NULL);
@@ -1170,6 +1178,34 @@ void school_solution_add(School * school, const Solution * const sol){
 	}
 	school->solutions[i_insert] = *sol;
 	++ school->n_solutions;
+}
+
+void school_subjectgroup_remove(School * school, int i_sg, bool must_delete){
+	LMH_ASSERT(school != NULL && i_sg >= 0 && i_sg <= school->n_subject_groups);
+	if(must_delete){
+		free(school->subject_group_names[i_sg]);
+	}
+	for(int i = i_sg; i < school->n_subject_groups; ++i){
+		school->subject_group_names[i] = school->subject_group_names[i+1];
+		school->subject_group_ids[i] = school->subject_group_ids[i+1];
+	}
+	for(int i = 0; i < school->n_classes; ++i){
+		int * mpd = school->classes[i].max_per_day_subject_group;
+		if(mpd != NULL){
+			for(int j = i_sg; j < school->n_subjects; ++j){
+				mpd[j] = mpd[j+1];
+			}
+		}
+	}
+	for(int i = 0; i < school->n_subjects; ++i){
+		int * ing = school->subjects[i].in_groups;
+		if(ing != NULL){
+			for(int j = i_sg; j < school->n_subjects; ++j){
+				ing[j] = ing[j+1];
+			}
+		}
+	}
+	--school->n_subject_groups;
 }
 
 void school_subject_remove(School * school, int subj_i, bool must_delete){

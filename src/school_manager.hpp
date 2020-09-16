@@ -20,6 +20,7 @@ class ActionManager;
 class Application;
 
 enum ActionState {
+	state_UNMADE = 0,
 	state_DONE,
 	state_UNDONE
 };
@@ -159,6 +160,7 @@ private:
 	Assignment * m_assignments;
 	Teaches * m_teaches;
 	Meeting * m_meetings;
+	ActionState m_state;
 };
 
 class SubjectBasicDataUpdateAction : public Action {
@@ -175,11 +177,17 @@ public:
 
 class SubjectGroupInsertAction : public Action {
 public:
-	SubjectGroupInsertAction(Application * owner);
+	SubjectGroupInsertAction(Application * owner, char * name, int * members);
+	SubjectGroupInsertAction(Application * owner, char * name);
 	~SubjectGroupInsertAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	char * m_name;
+	int * m_members;
+	int m_id;
+	ActionState m_state;
 };
 
 class SubjectGroupDeleteAction : public Action{

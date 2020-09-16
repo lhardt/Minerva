@@ -60,27 +60,19 @@ void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
 
 	if(!m_name_text->IsEmpty() && n_subjects > 0){
 		char * name = copy_wx_string(m_name_text->GetValue());
-		id = insert_subject_group(stdout, m_owner->m_database, school, name, -1);
-		if(id != -1){
-			school_subjectgroup_add(school, name,id);
-			for(i = 0; i < school->n_subjects; ++i){
-				if(m_subjects_grid->GetCellState(i,0) > 0){
-					sing_id = insert_subject_in_group(stdout, m_owner->m_database, school->subjects[i].id, id);
-					if(sing_id >= 0){
-						if(school->subjects[i].in_groups == NULL){
-							school->subjects[i].in_groups = (int *)calloc(1 + school->n_subject_groups, sizeof(int));
-							school->subjects[i].in_groups[school->n_subject_groups] = -1;
-						}
-						school->subjects[i].in_groups[school->n_subject_groups -1] = 1;
-					} else {
-						m_err_msg->SetLabel(m_owner->m_lang->str_error);
-						break;
-					}
-				}
+		int * members = (int*) calloc(school->n_subjects + 1, sizeof(int));
+
+		members[school->n_subjects] = -1;
+		for(i = 0; i < school->n_subjects; ++i){
+			if(m_subjects_grid->GetCellState(i,0) > 0){
+				members[i] = 1;
 			}
+		}
+		SubjectGroupInsertAction * act = new SubjectGroupInsertAction(m_owner, name, members);
+		bool success = m_owner->Do(act);
+		if(success){
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			ClearInsertedData();
-			m_owner->NotifyNewUnsavedData();
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 		}

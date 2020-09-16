@@ -502,14 +502,30 @@ wxString SubjectInsertAction::Describe(){
 /*********************************************************/
 
 SubjectDeleteAction::SubjectDeleteAction(Application * owner, int subj_id) : Action(owner){
+	m_state = state_UNMADE;
 	m_subject = *(find_subject_by_id(m_owner->m_school,subj_id));
 }
 SubjectDeleteAction::~SubjectDeleteAction(){
-	/*TODO: if state == done, delete all the other variables*/
+	if(m_state == state_DONE){
+		free_subject(&m_subject);
+		for(int i = 0; m_assignments[i].m_class != NULL; ++i){
+			free_assignment(&m_assignments[i]);
+		}
+		for(int i = 0; m_teaches[i].teacher != NULL; ++i){
+			free_teaches(&m_teaches[i]);
+		}
+		for(int i = 0; m_meetings[i].type != meet_NULL; ++i){
+			free_meeting(&m_meetings[i]);
+		}
+		free(m_assignments);
+		free(m_teaches);
+		free(m_meetings);
+	}
 }
 bool SubjectDeleteAction::Do(){
 	int n_assignments = 0, n_teaches = 0, n_meetings = 0;
 	if(remove_subject(stdout, m_owner->m_database, m_subject.id)){
+		m_state = state_DONE;
 		School * school = m_owner->m_school;
 		/* TODO: is this 'update' needed? Will there be any information that will change? */
 		m_subject = *(find_subject_by_id(m_owner->m_school, m_subject.id));
@@ -563,6 +579,7 @@ bool SubjectDeleteAction::Undo(){
 	School * school = m_owner->m_school;
 	int retval = insert_subject(stdout, m_owner->m_database, &m_subject, school, m_subject.id);
 	if(retval != -1){
+		m_state = state_UNDONE;
 		m_subject.id = retval;
 		school_subject_add(school, &m_subject);
 
@@ -666,6 +683,93 @@ bool SubjectBasicDataUpdateAction::Undo(){
 }
 wxString SubjectBasicDataUpdateAction::Describe(){
 	return wxT("SubjectBasicDataUpdateAction");
+}
+
+/*********************************************************/
+/*               SubjectGroupInsertAction                */
+/*********************************************************/
+
+SubjectGroupInsertAction::SubjectGroupInsertAction(Application * owner, char * name, int * members) : Action(owner), m_name(name){
+	m_state = state_UNMADE;
+	m_members = members;
+	m_id = -1;
+}
+SubjectGroupInsertAction::SubjectGroupInsertAction(Application * owner, char * name) : Action(owner), m_name(name){
+	m_state = state_UNMADE;
+	m_members = NULL;
+	m_id = -1;
+}
+SubjectGroupInsertAction::~SubjectGroupInsertAction(){
+	free(m_members);
+}
+bool SubjectGroupInsertAction::Do(){
+	School * school = m_owner->m_school;
+	int newid = insert_subject_group(stdout, m_owner->m_database, m_owner->m_school, m_name, m_id);
+	LMH_ASSERT(m_name != NULL);
+	if(newid != -1){
+		LMH_ASSERT((m_id == -1) != (newid == m_id));
+		m_id = newid;
+		int sgroup_i = school_subjectgroup_add(m_owner->m_school, m_name, m_id);
+		if(m_members != NULL){
+			for(int i = 0; i < school->n_subjects; ++i){
+				if(m_members[i] > 0){
+					int sing_id = insert_subject_in_group(stdout, m_owner->m_database, school->subjects[i].id, m_id);
+					LMH_ASSERT(sing_id != -1);
+					school->subjects[i].in_groups[sgroup_i] = m_members[i];
+				}
+				LMH_ASSERT(m_members[i] != -1);
+			}
+		}
+		m_state = state_DONE;
+		return true;
+	}
+	return false;
+}
+bool SubjectGroupInsertAction::Undo(){
+	if(remove_subject_group(stdout, m_owner->m_database, m_id)){
+		school_subjectgroup_remove(m_owner->m_school, get_subject_group_index_by_id(m_owner->m_school,m_id), false);
+		return true;
+	}
+	return false;
+}
+wxString SubjectGroupInsertAction::Describe(){
+	return wxT("SubjectGroupInsertAction");
+}
+
+/*********************************************************/
+/*               SubjectGroupDeleteAction                */
+/*********************************************************/
+
+// SubjectGroupDeleteAction::SubjectGroupDeleteAction(Application * owner);
+// SubjectGroupDeleteAction::~SubjectGroupDeleteAction();
+// bool SubjectGroupDeleteAction::Do();
+// bool SubjectGroupDeleteAction::Undo();
+wxString SubjectGroupDeleteAction::Describe(){
+	return wxT("SubjectGroupDeleteAction");
+}
+
+/*********************************************************/
+/*             SubjectGroupNameUpdateAction              */
+/*********************************************************/
+
+// SubjectGroupNameUpdateAction::SubjectGroupNameUpdateAction(Application * owner);
+// SubjectGroupNameUpdateAction::~SubjectGroupNameUpdateAction();
+// bool SubjectGroupNameUpdateAction::Do();
+// bool SubjectGroupNameUpdateAction::Undo();
+wxString SubjectGroupNameUpdateAction::Describe(){
+	return wxT("SubjectGroupNameUpdateAction");
+}
+
+/*********************************************************/
+/*            SubjectGroupMembersUpdateAction            */
+/*********************************************************/
+
+// SubjectGroupMembersUpdateAction::SubjectGroupMembersUpdateAction(Application * owner);
+// SubjectGroupMembersUpdateAction::~SubjectGroupMembersUpdateAction();
+// bool SubjectGroupMembersUpdateAction::Do();
+// bool SubjectGroupMembersUpdateAction::Undo();
+wxString SubjectGroupMembersUpdateAction::Describe(){
+	return wxT("SubjectGroupMembersUpdateAction");
 }
 
 /*********************************************************/

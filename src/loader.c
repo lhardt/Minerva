@@ -300,7 +300,7 @@ const char * const CREATE_TABLE_SUBJECT_GROUP =
 				"UNIQUE (name, id_school)"
 			")");
 const char * const INSERT_TABLE_SUBJECT_GROUP =
- 			("INSERT INTO SubjectGroup(id, name,id_school) VALUES (?, ?,?)");
+ 			("INSERT INTO SubjectGroup(id, name,id_school) VALUES (?,?,?)");
 const char * const UPDATE_TABLE_SUBJECT_GROUP =
 			("UPDATE SubjectGroup SET (name, id_school) = (?,?) WHERE id=?");
 const char * const LASTID_TABLE_SUBJECT_GROUP =
