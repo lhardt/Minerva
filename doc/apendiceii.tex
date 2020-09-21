@@ -114,13 +114,13 @@
 
 			\par Ainda assim, eles são de vital importância para a rotina de indivíduos, escolas, indústrias, aeroportos, hospitais e eventos esportivos. Instituições de ensino, em particular, têm custos enormes com a elaboração de suas grades horárias: estima-se que elaborá-las manualmente pode demandar centenas de horas \cite{appleby} de um profissional. No entanto, esse processo é rotineiro: a cada mudança na docência, um novo cronograma pode ser necessário.
 
-			\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que ela faça um professor frequentar a escola em um dia a mais, ou que uma aula de física foi cortada ao meio pelo intervalo e seu rendimento foi reduzido ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo. Ineficiências como estas podem ser introduzidas por erro humano, ao não ver a contradição que o horário causa, ou por máquina, por deixar de levar em conta as preferências pessoais dos professores.
+			\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que ela faça um professor frequentar a escola em um dia a mais, ou que uma aula de física foi cortada ao meio pelo intervalo e seu rendimento foi reduzido ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo. Ineficiências como estas podem ser introduzidas por erro humano, ao não ver a contradição que o horário causa, ou por máquina, ao deixar de levar em conta as preferências pessoais dos professores.
 
-			\par Processos de verificação extensiva para o primeiro caso são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica. Por outro lado, um humano poderia definir suas prioridades na geração do horário, ou fazê-lo por conta própria, reduzindo, assim, ineficiências do segundo tipo.
+			\par Processos de verificação extensiva esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
 
-			\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Algumas demandas escolares, como aulas triplas, com dois professores e reuniões pré-agendadas, geralmente são muito específicas e muitos programas não foram pensados para atendê-las. Quando é encontrado um software que atenda a essas considerações, vê-se que o mesmo é caro, pois sua oferta é menor. Escolas de pequeno porte muitas vezes não têm verba suficiente para utilizá-los, optando novamente pela criação manual. Mesmo nas escolas que têm capital, seria ideal investí-lo na manutenção da qualidade de ensino.
+			\par Mas para a administração escolar não é fácil encontrar um software que acomode suas necessidades. Algumas demandas escolares, como aulas triplas, com dois professores e reuniões pré-agendadas, geralmente são muito específicas e muitos programas não foram pensados para atendê-las. Quando é encontrado um software que atenda a essas considerações, vê-se que o mesmo é caro, pois é mais difícil de produzir e serve a um nicho menor. Escolas de pequeno porte muitas vezes não têm verba suficiente para utilizá-los, optando novamente pela criação manual. Mesmo nas escolas com tal capital, se possível, seria ideal invesí-lo na manutenção de infraestrutura, da docência, da merenda, e melhorar assim, a qualidade de ensino.
 
-			\par É fácil identificar softwares acadêmicos na área. Foram criados otimizadores avançados de grade horária para participar de competições como a ITC \footnote{\textit{International Timetabling Competition}}. No entanto, muitas escolas, apesar de preferirem a uma maior eficiência, não possuem milhares de eventos dispersos, nem necesitam criar uma agenda personalizada para cada aluno. Assim, utilizar um software desta qualidade pode deixar muitas otimizações de fora.
+			\par Pode-se identificar softwares criados academicamente na área. Foram criados otimizadores avançados de grade horária para participar de competições como a ITC \footnote{\textit{International Timetabling Competition}}. No entanto, muitas escolas, apesar de preferirem a uma maior eficiência, não possuem milhares de eventos dispersos, nem necesitam criar uma agenda personalizada para cada aluno. Assim, utilizar um software desta qualidade pode deixar muitas otimizações de fora. Além disso, não é grande preocupação destes programas a usabilidade da interface com o usuário, se houver alguma.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%     Proposta de Solução    %%%%
@@ -129,7 +129,7 @@
 
 			 \par A partir das considerações acima, constata-se a ausência de um software público \cite{publico} de criação de grade horária que supra as necessidades das escolas brasileiras e que seja de fácil utilização por professores de fora da área de informática. Tal software, então, deveria ser implementado e utilizado tanto em computadores da rede pública de ensino quanto dos de professores em geral -- ou seja, compatível com os sistemas operacionais Windows, Ubuntu e Linux Educacional \cite{proinfo,w3s}.
 
-			 \par Neste software, o responsável pela criação do horário escolar insere as necessidades programáticas de aula, as demandas subjetivas dos professores e os horários disponíveis para esses encontros. O sistema então, em constante interação com o usuário, cria a grade horária. Desta forma, é aumentada a eficiência da escola que se propõe a utilizá-lo.
+			 \par Em tal software, o professor responsável pela criação do horário escolar insere as necessidades programáticas de aula, as demandas subjetivas dos professores e os horários disponíveis para esses encontros. O sistema então, em constante interação com o usuário, cria o horário escolar.  Desta forma, são reduzidos custos em tempo e em dinheiro da escola que se propõe a utilizar o sistema.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  		%%%          Objetivo          %%%%
@@ -141,7 +141,7 @@
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			\subsubsection{Objetivo Geral}
 
-				\par Implementar um software público para facilitar a criação do cronograma escolar.
+				\par Implementar um software público para a facilitação da criação e manutenção de cronograma escolar.
 
 			%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			%%%    Objetivos Específicos   %%%%
@@ -156,7 +156,7 @@
 					\item Definir os requisitos de um sistema que gere tais grades horárias;
 					\item Realizar a modelagem do sistema;
 					\item Implementar um sistema leve, eficiente e de fácil utilização para a criação de grades horárias escolares;
-					\item Testar o sistema, realizando \textit{benchmarking} do sistema e graduação do horário gerado, comparando-o com soluções anteriores;
+					\item Testar o sistema, realizando \textit{benchmarking} do mesmo e graduação do horário gerado, bem como testes de usabilidade, comparando-o com soluções anteriores;
 					\item Identificar falhas e possíveis trabalhos futuros no que diz respeito ao programa e sua implementação;
 					\item Publicar o software produzido no repositório de Software Público do governo brasileiro;
 					\item Documentar o processo.
@@ -171,9 +171,9 @@
 
 		\par A criação de grades horárias é um campo em desenvolvimento \cite{patat2020}. Há mais de 50 anos são pesquisadas formas de criação de cronogramas escolares com auxílio computacional \cite{appleby}. Há, então, uma abundância de trabalhos relacionados. Na busca por eles, não foi feita distinção entre softwares para escolas ou para universidades. Em geral, softwares para universidades têm mais funcionalidades, retendo grande parte das características da contraparte escolar.
 
-		\par Sendo assim, foram elencados, por meio de levantamento bibliográfico, softwares da área. Por cada escola ter suas particularidades na criação do horário, todos eles, em seu respectivo \textit{site}, listam características supostamente únicas, que os fariam mais adequados que os concorrentes. Essas características são levadas em consideração para elaborar a lista do software Minerva. Além disso, foram destacadas algumas peculiaridades de alguns programas, mencionadas nas seções abaixo.
+		\par Sendo assim, foram elencados softwares da área por meio de levantamento bibliográfico. Por cada escola ter suas particularidades na criação do horário, todos eles, em seu respectivo \textit{site}, listam características supostamente únicas, que os fariam mais adequados que seus concorrentes. Essas características são levadas em consideração para elaborar a lista do software Minerva. Além disso, foram destacadas algumas peculiaridades de alguns programas, mencionadas nas seções abaixo.
 
-		\par A tabela \ref{table:softwares} os estima. Além de fatores básicos, como linguagem e gratuidade, também foram elencados fatores como: se o \textit{software} é livre ou não, como definido em \cite{publico}; se o software está em desenvolvimento ativo ou não; e se o software é local ou web. Aqueles que são executados exclusivamente no computador do usuário são chamados de \textit{locais}, enquanto que quando o processamento é feito em um servidor é dito \textit{web}. Um software foi considerado "inativo"\, se não teve novas versões nos últimos 2 anos ou se seu website deixou de ser atualizado nesse mesmo período. Com sua \textit{webpage} fora do ar, o software foi dito como inativo.
+		\par A tabela \ref{table:softwares} os estima. Além de fatores básicos, como linguagem e gratuidade, também foram elencados fatores como: se o \textit{software} é livre ou não, como definido em \cite{publico}; se o software está em desenvolvimento ativo ou não; e se o software é local ou web. Aqueles que são executados exclusivamente no computador do usuário são chamados de \textit{locais}, enquanto que quando o processamento é feito em um servidor é dito \textit{web}. Um software foi considerado "inativo"\, se não teve novas versões nos últimos 2 anos ou se seu website deixou de ser atualizado nesse mesmo período. Com sua \textit{webpage} fora do ar, o software também foi dito como inativo.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%        Horário Fácil       %%%%
@@ -182,20 +182,19 @@
 
 			\par Horário Fácil é um \textit{web app} brasileiro para a criação da grade horária escolar. Assim, é o servidor que gera a grade horária, evitando possíveis problemas de performance no computador do usuário. O sistema é um tanto simples, mas conta com tutorial, interface simples de usar e suporte técnico via telefone. É, assim, uma opção desejável para escolas menores.
 
-
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%          UniTime           %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{UniTime}
 
-			\par UniTime é um tanto especial. É um software livre, bem documentado e disponível para quem quiser baixá-lo. Foi construído colaborativamente por universidades norteamericanas e apoia pesquisas na área. O usuário o utilizaria pela web, mas a universidade que o usa deve implementá-lo no próprio servidor, já que não há servidor central. Não possui nem a documentação nem o programa em Português.
+			\par UniTime é um tanto especial. É um software livre, bem documentado e disponível para quem quiser baixá-lo. Foi construído colaborativamente por universidades norteamericanas e apoia pesquisas na área. O usuário o utilizaria pela web, mas a universidade que o usa deve instalá-lo em seu próprio servidor, já que não há servidor central. Não possui nem a documentação nem o programa em Português.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%       Prime Timetable      %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{Prime Timetable}
 
-			\par Prime Timetable é um \textit{web app} compatível com Mac, PC, Linux, tablets e celulares. Sua interface elabora sobre do conceito de \textit{cards}, ou cartões. Uma aula é, então, um cartão que pode ser arrastado para o período em que ela é dada.  \textit{Cards} podem ser fixados em cetos períodos, bem como mesclados com \textit{cards} similares. Pode, a qualquer momento, ser criado o horário a partir da configuração atual. O usuário tem a liberdade de continuar movendo os cards até ficar satisfeito. Em qualquer dado momento, o sistema mostra quais restrições estão sendo violadas. Além disso, há a opção de mostrar um histórico de ações e desfazê-las. Isso é excelente, pois deve-se esperar que o usuário eventualmente cometa erros. \cite{norman, gnome_hig}.
+			\par Prime Timetable é um \textit{web app} compatível com Mac, PC, Linux, tablets e celulares. Sua interface elabora sobre do conceito de cartões. Uma aula é, então, um cartão que pode ser arrastado para o período em que ela é dada. Aulas podem ser fixadas em cetos períodos, bem como mescladas com cartões similares. A qualquer momento, pode ser criado o horário a partir da configuração atual. O usuário tem a liberdade de continuar movendo os cartões até ficar satisfeito. Durante todo o processo, o sistema mostra quais restrições que o usuário definiu estão sendo violadas. Além disso, há a opção de mostrar um histórico de ações e desfazê-las. Isso é excelente, pois deve-se esperar que o usuário eventualmente cometa erros. \cite{norman, gnome_hig}.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%           Skolaris         %%%%
@@ -210,14 +209,14 @@
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{Urânia}
 
-			\par Urânia é outro software local totalmente em português para a criação de cronogramas escolares. Sua interface possui seções de ajuda em quase todas as páginas, ainda que algumas funções do sistema sejam mais complexas. Estão disponíveis videoaulas detalhando o uso de várias partes do programa na Internet. Parece ser preferível para escolas de porte médio. Ao contrário do Skolaris e do Prime Timetable, ele cria sozinho o horário e depois o usuário pode fazer os chamados ajustes finais. Nesse sistema, é mais prático utilizar configurações específicas para gerenciar aulas fixas, máximos por dia, entre outros do que ajustar o horário por conta própria. Seus tutoriais mostram também várias formas de atingir um mesmo objetivo, por exemplo, fazer uma turma não ter aula em algum dia. Esses dois últimos fatores, na opinião do autor, deixam o uso do \textit{sofware} mais confuso.
+			\par Urânia é outro software local totalmente em português para a criação de cronogramas escolares. Sua interface possui seções de ajuda em quase todas as páginas, ainda que algumas funções do sistema sejam mais complexas. Estão disponíveis videoaulas detalhando o uso de várias partes do programa na Internet. Parece ser preferível para escolas de porte médio. Ao contrário do Skolaris e do Prime Timetable, ele cria sozinho o horário e depois o usuário pode fazer os chamados ajustes finais. Nesse sistema, é mais prático utilizar configurações específicas para gerenciar aulas fixas, máximos por dia, entre outros do que ajustar o horário por conta própria. Seus tutoriais mostram também várias formas de atingir um mesmo objetivo, por exemplo, fazer uma turma não ter aula em algum dia. Esses dois últimos fatores, na opinião do autor, deixam o uso do \textit{sofware} mais confuso. Além disso, apesar das seções de ajuda, a interface não é, na opinião do autor, muito visualmente agradável.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%        Peñalara GHC        %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{Peñalara GHC}
 
-			\par Como o nome já diz, Peñalara GHC é um software espanhol. É similar ao Urânia, em que ambos são locais e o horário é gerado pelo computador. No entanto, o GHC dispõe de mais praticidade: cada solução é armazenada em um arquivo, e o programa incentiva o usuário a tentar encontrar múltiplas soluções ao mesmo tempo, em sistemas multicore. Ao final, o usuário pode editar a solução final como desejar. Este programa não está disponível em Português e conta com algumas configurações que podem ficar um pouco ocultas para um usuário leigo.
+			\par Como o nome já indica, Peñalara GHC é um software espanhol. É similar ao Urânia, em que ambos são locais e o horário é gerado pelo computador. No entanto, o GHC dispõe de mais praticidade: cada solução é armazenada em um arquivo, e o programa incentiva o usuário a tentar encontrar múltiplas soluções ao mesmo tempo, em sistemas multicore. Ao final, o usuário pode editar a solução final como desejar. Este programa não está disponível em Português e conta com algumas configurações que podem ficar um pouco ocultas para um usuário leigo.
 
 		\vspace{1cm}
 
@@ -282,7 +281,7 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%         Cronograma         %%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\section{CRONOGRAMA}
+	\section{CRONOGRAMA (versão pré-pandemia)}
 		\begin{table}[htb]
 			\begin{center}
 				\scalebox{0.7}{

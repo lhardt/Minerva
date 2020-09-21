@@ -272,27 +272,24 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{INTRODUÇÃO}
 
+		\par Elaborar um cronograma é uma tarefa extraordinária. Até nos casos mais simples, como nos cronogramas pessoais, pode haver um grande número de possibilidades, restrições e preferências em jogo. Desta forma, a dificuldade de produzir um cronograma eficaz aumenta rapidamente conforme seu tamanho.
 
+		\par Ainda assim, eles são de vital importância para a rotina de indivíduos, escolas, indústrias, aeroportos, hospitais e eventos esportivos. Instituições de ensino, em particular, têm custos enormes com a elaboração de suas grades horárias: estima-se que elaborá-las manualmente pode demandar centenas de horas \cite{appleby} de um profissional. No entanto, esse processo é rotineiro: a cada mudança na docência, um novo cronograma pode ser necessário.
 
-		\par Elaborar um cronograma é uma tarefa extraordinária. Mesmo nos casos mais simples, como nos cronogramas pessoais, há um grande número de possiblidades, restrições e preferências do usuário. Assim, a dificuldade de produzir um cronograma eficaz aumenta rapidamente conforme seu tamanho.
+		\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que ela faça um professor frequentar a escola em um dia a mais, ou que uma aula de física foi cortada ao meio pelo intervalo e seu rendimento foi reduzido ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo. Ineficiências como estas podem ser introduzidas por erro humano, ao não ver a contradição que o horário causa, ou por máquina, ao deixar de levar em conta as preferências pessoais dos professores.
 
-		% Assim, a qualidade do cronograma depende não só das restrições seguidas, mas também do grau de satisfação dessas preferências.
-		\par Mesmo assim, eles são de vital importância para a rotina de indivíduos, escolas, indústrias, aeroportos, hospitais e eventos esportivos. Instituições de ensino, em particular, têm custos enormes com a elaboração de suas grades horárias: elaborá-las manualmente pode demandar dias, ou até semanas \cite{appleby,nikita} de um profissional. No entanto, esse processo é rotineiro, já que a cada mudança na docência, um novo cronograma pode ser necessário.
+		\par Processos de verificação extensiva esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
 
-		\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que esta faça um professor frequentar a escola desnecessariamente, ou que uma aula geminada é dividida ao meio pelo intervalo e seu rendimento, reduzido. Ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo.
+		\par Mas para a administração escolar não é fácil encontrar um software que acomode suas necessidades. Algumas demandas escolares, como aulas triplas, com dois professores e reuniões pré-agendadas, geralmente são muito específicas e muitos programas não foram pensados para atendê-las. Quando é encontrado um software que atenda a essas considerações, vê-se que o mesmo é caro, pois é mais difícil de produzir e serve a um nicho menor. Escolas de pequeno porte muitas vezes não têm verba suficiente para utilizá-los, optando novamente pela criação manual. Mesmo nas escolas com tal capital, se possível, seria ideal invesí-lo na manutenção de infraestrutura, da docência, da merenda, e melhorar assim, a qualidade de ensino.
 
-		\par Processos de verificação extensiva para esses casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da admistração acadêmica.
-
-		\par Mas para a administração escolar, não é fácil encontrar um software que acomode suas necessidades. Aulas triplas, com dois professores, logo antes do intervalo são exemplos exigências muito específicas, às quais muitos programas não foram pensados para atender \cite{nikita, carter1995}.
-
-		\par Por ser mais escasso e mais difícil de criar, o preço de um software comercial que atenda às especificadades de uma escola é elevado. Escolas de pequeno porte, portanto, muitas vezes não têm verba suficiente para utilizá-los, optando pela criação manual e aceitando a ineficácia que isso pode causar. Mesmo nas escolas com tal capital, se possível, seria ideal invesí-lo na manutenção de infraestrutura, da docência, da merenda, e melhorar assim, a qualidade de ensino.
+		\par Pode-se identificar softwares criados academicamente na área. Foram criados otimizadores avançados de grade horária para participar de competições como a ITC \footnote{\textit{International Timetabling Competition}}. No entanto, muitas escolas, apesar de preferirem a uma maior eficiência, não possuem milhares de eventos dispersos, nem necesitam criar uma agenda personalizada para cada aluno. Assim, utilizar um software desta qualidade pode deixar muitas otimizações de fora. Além disso, não é grande preocupação destes programas a usabilidade da interface com o usuário, se houver alguma.
 
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%      Solução Proposta      %%%%
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		\subsection{Solução Proposta}
 
-			 \par A partir das considerações acima, constata-se a ausência de um software público \cite{publico} que supra as necessidades das escolas brasileiras e que seja de fácil utilização por professores de fora da área de informática. Tal software, então, deveria poderia ser implementado e utilizado em computadores da rede pública de ensino -- ou seja, compatível com os sistemas operacionais Windows, Ubuntu e Linux Educacional \cite{proinfo, w3s}.
+			 \par A partir das considerações acima, constata-se a ausência de um software público \cite{publico} de criação de grade horária que supra as necessidades das escolas brasileiras e que seja de fácil utilização por professores de fora da área de informática. Tal software, então, deveria poderia ser implementado e utilizado em computadores da rede pública de ensino -- ou seja, compatível com os sistemas operacionais Windows, Ubuntu e Linux Educacional \cite{proinfo, w3s}.
 
 			 \par Em tal software, o professor responsável pela criação do horário escolar insere as necessidades programáticas de aula, as demandas subjetivas dos professores e os horários disponíveis para esses encontros. O sistema então, em constante interação com o usuário, cria o horário escolar.  Desta forma, são reduzidos custos em tempo e em dinheiro da escola que se propõe a utilizar o sistema.
 
@@ -313,11 +310,12 @@
 				\item Analisar a literatura existente em relação a softwares de escalonamento e \textit{timetabling};
 				\item Analisar a literatura existente em relação à criação de boas interfaces do usuário;
 				\item Realizar um levantamento de softwares da área, estabelecendo métricas de comparação tendo em vista a experiência do usuário final;
-				\item Definir os requisitos de uma grade horária de forma abrangente e precisa;
+				\item Definir os requisitos de uma grade horária escolar de forma abrangente e precisa;
 				\item Definir os requisitos de um sistema que gere tais grades horárias;
 				\item Realizar a modelagem do sistema;
 				\item Implementar um sistema leve, eficiente e de fácil utilização para a criação de grades horárias escolares;
-				\item Testar o sistema, realizando \textit{benchmarking} e graduação do horário gerado, com\-pa\-ran\-do-o com soluções anteriores;
+				\item Testar o sistema, realizando \textit{benchmarking} e graduação do horário gerado, bem como testes de usabilidade, com\-pa\-ran\-do-o com soluções anteriores;
+				\item Identificar falhas e possíveis trabalhos futuros no que diz respeito ao programa e sua implementação;
 				\item Publicar o software produzido no repositório de Software Público do governo brasileiro;
 				\item Documentar o processo.
 			\end{itemize}
@@ -340,37 +338,38 @@
 
 		\subsection{Descrição Formal do Cronograma}
 
-			\par Para a seguinte seção, pressupomos:
+			% \par Para a seguinte seção, pressupomos:
+			%
+			% \textbf{Pressuposições (ASs):}
+			% \begin{enumerate}
+			% 	\item O cronograma abrange um Ciclo, que é dividido em Dias e Períodos;
+			% 	\item Há um número fixo de dias em um ciclo;
+			% 	\item Há um número fixo de períodos em um dia, que é o mesmo para qualquer outro dia;
+			% 	\item Todos os períodos tem igual tamanho;
+			% 	\item O currículo de uma turma para cada disciplina é um número exato de períodos por ciclo;
+			% \end{enumerate}
 
-			\textbf{Pressuposições (ASs):}
-			\begin{enumerate}
-				\item O cronograma abrange um Ciclo, que é dividido em Dias e Períodos;
-				\item Há um número fixo de dias em um ciclo;
-				\item Há um número fixo de períodos em um dia, que é o mesmo para qualquer outro dia;
-				\item Todos os períodos tem igual tamanho;
-				\item O currículo de uma turma para cada disciplina é um número exato de períodos por ciclo;
-			\end{enumerate}
+			% \par Podemos definir o cronograma da seguinte forma:
+			%
+			% \begin{itemize}
+			% 	\item $P = \{p_1, p_2, p_3, ..., p_\pi\}$ é a lista de todos os $\pi$ períodos;
+			% 	\item $T = \{t_1, t_2, t_3, ..., t_\theta\}$ é a lista de todos os $\theta$ professores;
+			% 	\item $C = \{c_1, c_2, c_3, ..., c_\kappa\} $ é a lista de todas as $\kappa$ turmas;
+			% 	\item $R = \{r_1, r_2, r_3, ..., r_\rho\}$ é a lista de todas as $\rho$ salas;
+			% 	\item $L = \{l_1, l_2, l_3, ..., l_\lambda\}$ é a lista de todas as $\lambda$ aulas, sendo uma aula uma tupla $l = (p,t,c,r)$;
+			% \end{itemize}
 
-			\par Podemos definir o cronograma da seguinte forma:
+			% \par É chamada de cronograma a lista $L$ de todas as aulas em um ciclo.
 
-			\begin{itemize}
-				\item $P = \{p_1, p_2, p_3, ..., p_\pi\}$ é a lista de todos os $\pi$ períodos;
-				\item $T = \{t_1, t_2, t_3, ..., t_\theta\}$ é a lista de todos os $\theta$ professores;
-				\item $C = \{c_1, c_2, c_3, ..., c_\kappa\} $ é a lista de todas as $\kappa$ turmas;
-				\item $R = \{r_1, r_2, r_3, ..., r_\rho\}$ é a lista de todas as $\rho$ salas;
-				\item $L = \{l_1, l_2, l_3, ..., l_\lambda\}$ é a lista de todas as $\lambda$ aulas, sendo uma aula uma tupla $l = (p,t,c,r)$;
-			\end{itemize}
-
-			\par É chamada de cronograma a lista $L$ de todas as aulas em um ciclo.
+			\par Definiremos que um cronograma aloca dois tipos de eventos: aulas, envolvendo uma sala, um professor (ou grupo destes), uma turma (ou um grupo destas), um período e uma disciplina; e reuniões, envolvendo um grupo de professores e um período, podendo envolver uma sala, mas em geral esses eventos acontecem em uma chamada "sala dos professores". Repare que horários para a preparação de aulas podem ser
 
 			\par Para elaborá-lo, temos conhecimento de todas as necessidades curriculares das turmas e somos encarregados de escolher um professor, uma sala e um período para cada uma dessas aulas. Essas escolhas devem levar em conta os seguintes fatores:
 
-
 			\textbf{Requisitos Rígidos (HCs):}
 			\begin{enumerate}
-				\item Um professor pode ministrar, no máximo, uma aula por período;
-				\item Uma turma pode assistir a, no máximo, uma aula por período;
-				\item Uma sala pode ser ocupada por, no máximo, uma aula por período;
+				\item Um professor pode comparecer a, no máximo, um evento por período;
+				\item Uma turma pode comparecer a, no máximo, um evento por período;
+				\item Uma sala pode ser ocupada por, no máximo, um evento por período;
 				\item O número de períodos utilizados para uma disciplina por uma turma em um ciclo deve ser o especificado no seu currículo;
 				\item Um único grupo de professores é responsável por ministrar as aulas de uma disciplina para uma turma, e deve se fazer presente em todas essas aulas;
 				\item Nenhuma sala será ocupada acima de sua capacidade;
@@ -385,13 +384,13 @@
 			\textbf{Requisitos Flexíveies (OCs):}
 			\begin{enumerate}
 				\item As preferências de cada turma, considerando o período em que a aula é dada;
-				\item As preferências de cada professor, considerando o período em que a aula é dada;
+				\item As preferências de cada disciplina de cada turma, considerando o professor que dará a aula;
+				\item As preferências de cada disciplina de cada professor, considerando a geminação de períodos;
 				\item As preferências de cada sala considerando o período em que a aula é dada;
+				\item As preferências de cada professor, considerando a sala em que a aula é dada;
 				\item As preferências de cada aula, considerando o período em que a aula é dada;
-				\item As preferências de cada aula, considerando a geminação de períodos;
-				\item Podem ser definidas ordens de preferência por cada professor para o uso de salas para cada característica;
 			\end{enumerate}
-;
+
 			\textbf{Requisitos Opcionais Rígidos (OCs):}
 			\begin{enumerate}
 				\item A escola pode escolher operar em um subconjunto dos períodos de um ciclo;
@@ -406,11 +405,6 @@
 				\item Uma turma pode ter disponibilidade limitada durante um ciclo;
 				\item Um professor pode ter disponibilidade limitada durante um ciclo;
 			\end{enumerate}
-
-		\subsection{XHSTT}
-
-			\par O formato XHSTT permite a expressão de problemas de grade horária escolar. Por tentar ser um formato compatível com escolas e universidades de todo o mundo, ele tende a ser abstrato e algumas especificidades se tornam menos evidentes. Ainda assim, é um formato muito útil para, por exemplo, converter e interpretar problemas de outros \textit{softwares} ou \textit{datasets}. Assim, este software pode comparado com outros \textit{solvers} da área.
-
 	\newpage
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -474,6 +468,9 @@
 							Urânia 		   	 	& S & N & N & S & S & N & \cite{rel_urania} 							\\ \hline % Blog ativvo
 							%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 						\end{tabular}
+						% Ver mais softwares: https://link.springer.com/article/10.1007/s10479-013-1321-8/tables/5 %
+						% https://docendo.co/
+						% https://www.mathplan.de
 					}
 					\caption{Comparativo entre softwares da área}
 					\label{table:softwares}
