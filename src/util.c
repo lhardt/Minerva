@@ -874,7 +874,7 @@ void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new){
 	(*list_ptr)[n_new] = -1;
 }
 void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at){
-	LMH_ASSERT(list_ptr != NULL && at <= n_old && at > 0 && n_old >= 0);
+	LMH_ASSERT(list_ptr != NULL && at <= n_old && at >= 0 && n_old >= 0);
 	if(*list_ptr == NULL){
 		*list_ptr = calloc(n_old + 2, sizeof(int));
 		(*list_ptr)[n_old+1] = -1;
@@ -1192,16 +1192,16 @@ void school_subjectgroup_remove(School * school, int i_sg, bool must_delete){
 	for(int i = 0; i < school->n_classes; ++i){
 		int * mpd = school->classes[i].max_per_day_subject_group;
 		if(mpd != NULL){
-			for(int j = i_sg; j < school->n_subjects; ++j){
-				mpd[j] = mpd[j+1];
+			for(int j = i_sg+1; j < school->n_subjects; ++j){
+				mpd[j-1] = mpd[j];
 			}
 		}
 	}
 	for(int i = 0; i < school->n_subjects; ++i){
 		int * ing = school->subjects[i].in_groups;
 		if(ing != NULL){
-			for(int j = i_sg; j < school->n_subjects; ++j){
-				ing[j] = ing[j+1];
+			for(int j = i_sg+1; j < school->n_subjects; ++j){
+				ing[j-1] = ing[j];
 			}
 		}
 	}

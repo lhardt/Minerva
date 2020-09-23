@@ -117,9 +117,10 @@ void ListSubjectGroupsPane::OnDeleteButtonClicked(wxCommandEvent & evt){
 	int sel = m_groups_list->GetList()->GetSelection();
 	if(sel != wxNOT_FOUND){
 		int group_id = ((IntClientData*)m_groups_list->GetList()->GetClientObject(sel))->m_value;
-		if(remove_subject_group(stdout, m_owner->m_database, m_owner->m_school->subject_group_ids[group_id])){
+		SubjectGroupDeleteAction * act = new SubjectGroupDeleteAction(m_owner, get_subject_group_index_by_id(m_owner->m_school, group_id));
+		bool success = m_owner->Do(act);
+		if(success){
 			m_groups_list->RemoveItem(group_id);
-			m_owner->NotifyNewUnsavedData();
 		} else {
 			printf("Error! Could not delete\n");
 		}

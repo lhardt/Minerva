@@ -192,12 +192,18 @@ private:
 
 class SubjectGroupDeleteAction : public Action{
 public:
-	SubjectGroupDeleteAction(Application * owner);
+	SubjectGroupDeleteAction(Application * owner, int i_group);
 	~SubjectGroupDeleteAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
 
+private:
+	int    m_id;
+	char * m_name;
+	int  * m_in_group;
+	int  * m_class_max_per_day;
+	ActionState m_state;
 };
 
 class SubjectGroupNameUpdateAction : public Action {

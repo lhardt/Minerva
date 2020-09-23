@@ -14,7 +14,7 @@ extern "C" {
 /*********************************************************/
 
 Action::Action(Application * owner) : m_owner(owner){
-
+	LMH_ASSERT(m_owner != NULL && m_owner->m_school != NULL);
 }
 
 Action::~Action(){
@@ -589,6 +589,10 @@ bool SubjectDeleteAction::Undo(){
 		for(n_meetings = 0; m_meetings[n_meetings].type != meet_NULL; ++n_meetings){ }
 
 		if(n_teaches > 0){
+			for(int i = 0; i < n_teaches; ++i){
+				bool success = insert_or_update_teaches(stdout, m_owner->m_database, &m_teaches[i], school);
+				LMH_ASSERT(success);
+			}
 			if(school->teaches == NULL || school->n_teaches == 0){
 				school->teaches = (Teaches*) calloc(n_teaches + 1, sizeof(Teaches));
 				school->teaches = 0;
@@ -601,6 +605,10 @@ bool SubjectDeleteAction::Undo(){
 			school->n_teaches += n_teaches;
 		}
 		if(n_assignments > 0){
+			for(int i = 0; i < n_assignments; ++i){
+				bool success = insert_or_update_assignment(stdout, m_owner->m_database, &m_assignments[i], school);
+				LMH_ASSERT(success);
+			}
 			if(school->assignments == NULL || school->n_assignments == 0){
 				school->assignments = (Assignment*) calloc(n_assignments +1, sizeof(Assignment));
 			} else {
@@ -612,6 +620,8 @@ bool SubjectDeleteAction::Undo(){
 			school->n_assignments += n_assignments;
 		}
 		if(n_meetings > 0){
+			bool success = insert_meetings_list(stdout, m_owner->m_database, m_meetings, school);
+			LMH_ASSERT(success);
 			if(school->meetings == NULL) {
 				school->meetings = (Meeting*) calloc(n_meetings + 1, sizeof(Meeting));
 				school->n_meetings = 0;
@@ -726,8 +736,10 @@ bool SubjectGroupInsertAction::Do(){
 	return false;
 }
 bool SubjectGroupInsertAction::Undo(){
+	printf("Before undo, id was %d\n", m_id);
 	if(remove_subject_group(stdout, m_owner->m_database, m_id)){
 		school_subjectgroup_remove(m_owner->m_school, get_subject_group_index_by_id(m_owner->m_school,m_id), false);
+		printf("After undo, id was %d\n", m_id);
 		return true;
 	}
 	return false;
@@ -740,10 +752,73 @@ wxString SubjectGroupInsertAction::Describe(){
 /*               SubjectGroupDeleteAction                */
 /*********************************************************/
 
-// SubjectGroupDeleteAction::SubjectGroupDeleteAction(Application * owner);
-// SubjectGroupDeleteAction::~SubjectGroupDeleteAction();
-// bool SubjectGroupDeleteAction::Do();
-// bool SubjectGroupDeleteAction::Undo();
+SubjectGroupDeleteAction::SubjectGroupDeleteAction(Application * owner, int i_group) : Action(owner){
+	School * school = m_owner->m_school;
+	LMH_ASSERT(i_group >= 0 && i_group < school->n_subject_groups);
+	m_id = school->subject_group_ids[i_group];
+	m_name = school->subject_group_names[i_group];
+	m_state = state_UNMADE;
+}
+SubjectGroupDeleteAction::~SubjectGroupDeleteAction(){
+	if(m_state != state_UNMADE){
+		free(m_in_group);
+		free(m_class_max_per_day);
+		if(m_state == state_DONE){
+			free(m_name);
+		}
+	}
+}
+bool SubjectGroupDeleteAction::Do(){
+	School * school = m_owner->m_school;
+	int i_group = get_subject_group_index_by_id(school,m_id);
+	LMH_ASSERT(i_group >= 0 && i_group < school->n_subject_groups);
+	m_in_group = (int*) calloc(school->n_subjects + 1, sizeof(int));
+	m_in_group[school->n_subjects] = -1;
+	m_class_max_per_day =  (int*) calloc(school->n_classes + 1, sizeof(int));
+	m_class_max_per_day[school->n_classes] = -1;
+
+	for(int i = 0; i < school->n_subjects; ++i){
+		if(school->subjects[i].in_groups != NULL){
+			m_in_group[i] = school->subjects[i].in_groups[i_group];
+		} else {
+			m_in_group[i] = 0;
+		}
+	}
+	for(int i = 0; i < school->n_classes; ++i){
+		if(school->classes[i].max_per_day_subject_group){
+			m_class_max_per_day[i] = school->classes[i].max_per_day_subject_group[i_group];
+		} else {
+			m_class_max_per_day[i] = 0;
+		}
+	}
+
+	if(remove_subject_group(stdout, m_owner->m_database, m_id)){
+		school_subjectgroup_remove(m_owner->m_school, i_group, false);
+		m_state = state_DONE;
+		return true;
+	}
+	return false;
+}
+bool SubjectGroupDeleteAction::Undo(){
+	School * school = m_owner->m_school;
+	m_id = insert_subject_group(stdout, m_owner->m_database, school, m_name, m_id);
+	if(m_id > 0){
+		int i_group = school_subjectgroup_add(school, m_name,m_id);
+		for(int i = 0; i < school->n_subjects; ++i){
+			if(m_in_group[i] > 0){
+				insert_subject_in_group(stdout, m_owner->m_database, school->subjects[i].id, m_id);
+			}
+			school->subjects[i].in_groups[i_group] = 1;
+		}
+		for(int i = 0; i < school->n_classes; ++i){
+			update_class_max_per_day_subjectgroup(stdout, m_owner->m_database, school->classes[i].id, m_id, m_class_max_per_day[i]);
+			school->classes[i].max_per_day_subject_group[i_group] = 1;
+		}
+		m_state = state_UNDONE;
+		return true;
+	}
+	return false;
+}
 wxString SubjectGroupDeleteAction::Describe(){
 	return wxT("SubjectGroupDeleteAction");
 }

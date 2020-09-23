@@ -39,6 +39,8 @@ int insert_school(FILE * console_out, sqlite3* db, School * school);
 int insert_class(FILE * console_out, sqlite3* db, Class * c, School * school, int optional_id);
 int insert_teacher(FILE * console_out, sqlite3* db, Teacher * t, School * school, int optional_id);
 // int insert_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school, int optional_id);
+bool insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school);
+bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * assignment, School * school);
 int insert_room(FILE * console_out, sqlite3* db, Room * room, School * school, int optional_id);
 // int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * school, int optional_id);
 bool insert_meetings_list(FILE * console_out, sqlite3* db, Meeting * meetings, School * school);
@@ -65,7 +67,7 @@ bool update_period_names(FILE * console_out, sqlite3 * db, int n_days, int * day
 bool update_room_basic_data(FILE * console_out, sqlite3* db, int room_id, Room * room, School * school);
 bool update_room_availability(FILE * console_out, sqlite3* db, int room_id, int * availability, School * school);
 bool update_subject_basic_data(FILE * console_out, sqlite3 * db, int subj_id, Subject * subject, School * school);
-
+bool update_class_max_per_day_subjectgroup(FILE * console_out, sqlite3 * db, int class_id, int id_group, int max);
 
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);

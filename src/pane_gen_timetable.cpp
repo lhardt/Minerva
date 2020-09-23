@@ -6,7 +6,6 @@ extern "C" {
 	#include "util.h"
 };
 
-
 GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * parent, wxPoint pos)
 							: wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
 	int i = 0;
