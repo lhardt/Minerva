@@ -827,10 +827,42 @@ wxString SubjectGroupDeleteAction::Describe(){
 /*             SubjectGroupNameUpdateAction              */
 /*********************************************************/
 
-// SubjectGroupNameUpdateAction::SubjectGroupNameUpdateAction(Application * owner);
-// SubjectGroupNameUpdateAction::~SubjectGroupNameUpdateAction();
-// bool SubjectGroupNameUpdateAction::Do();
-// bool SubjectGroupNameUpdateAction::Undo();
+SubjectGroupNameUpdateAction::SubjectGroupNameUpdateAction(Application * owner, int i_sgr, char * new_name) : Action(owner){
+	LMH_ASSERT(owner != NULL && i_sgr < m_owner->m_school->n_subject_groups && i_sgr >= 0 && new_name != NULL);
+	m_name = new_name;
+	m_id = m_owner->m_school->subject_group_ids[i_sgr];
+}
+SubjectGroupNameUpdateAction::~SubjectGroupNameUpdateAction(){
+	free(m_name);
+}
+bool SubjectGroupNameUpdateAction::Do(){
+	if(update_subject_group_name(stdout, m_owner->m_database, m_id, m_name)){
+		School * school = m_owner->m_school;
+		int i_sgr = get_subject_group_index_by_id(school, m_id);
+		LMH_ASSERT(i_sgr >= 0);
+
+		char * name_temp = school->subject_group_names[i_sgr];
+		school->subject_group_names[i_sgr] = m_name;
+		m_name = name_temp;
+
+		return true;
+	}
+	return false;
+}
+bool SubjectGroupNameUpdateAction::Undo(){
+	if(update_subject_group_name(stdout, m_owner->m_database, m_id, m_name)){
+		School * school = m_owner->m_school;
+		int i_sgr = get_subject_group_index_by_id(school, m_id);
+		LMH_ASSERT(i_sgr >= 0);
+
+		char * name_temp = school->subject_group_names[i_sgr];
+		school->subject_group_names[i_sgr] = m_name;
+		m_name = name_temp;
+
+		return true;
+	}
+	return false;
+}
 wxString SubjectGroupNameUpdateAction::Describe(){
 	return wxT("SubjectGroupNameUpdateAction");
 }

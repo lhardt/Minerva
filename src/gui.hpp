@@ -404,6 +404,7 @@ class AddSubjectGroupPane : public wxScrolledWindow	 {
 	void OnCreateButtonClicked(wxCommandEvent &);
 	void ClearInsertedData();
 	void OnDataChange(wxNotifyEvent & );
+	void ShowData();
 };
 
 class AddTeacherPane : public wxScrolledWindow {

@@ -21,10 +21,6 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
 	m_members = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 
-	for(i = 0; i < school->n_subject_groups; ++i){
-		m_groups_list->AddItem(school->subject_group_ids[i], wxString::FromUTF8(school->subject_group_names[i]));
-	}
-
 	notebook->AddPage(m_members, m_owner->m_lang->str_member);
 
 	ChoiceGrid * members_grid = m_members->GetGrid();
@@ -72,14 +68,20 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 }
 
 void ListSubjectGroupsPane::ShowData(){
+	School * school = m_owner->m_school;
+
 	m_cancel_btn->Hide();
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	m_name_text->Enable(false);
 	m_name_text->SetValue("");
 	m_members->SetEditing(false);
 
+	m_groups_list->Clear();
+	for(int i = 0; i < school->n_subject_groups; ++i){
+		m_groups_list->AddItem(school->subject_group_ids[i], wxString::FromUTF8(school->subject_group_names[i]));
+	}
+
 	ChoiceGrid * members_grid = m_members->GetGrid();
-	School * school = m_owner->m_school;
 	for(int i = 0; i < school->n_subjects; ++i){
 		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
 		members_grid->SetRowName(i, row_name);
@@ -97,9 +99,18 @@ void ListSubjectGroupsPane::OnDataChange(wxNotifyEvent & evt) {
 
 void ListSubjectGroupsPane::OnEditButtonClicked(wxCommandEvent & evt){
 	if(m_cancel_btn->IsShown()){
-		m_cancel_btn->Hide();
-		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
-		m_name_text->Enable(false);
+		int i_select = m_groups_list->GetList()->GetSelection();
+		int group_id = ((IntClientData*)m_groups_list->GetList()->GetClientObject(i_select))->m_value;
+		int group_i = get_subject_group_index_by_id(m_owner->m_school, group_id);
+		char * sgr_name = copy_wx_string(m_name_text->GetValue());
+		SubjectGroupNameUpdateAction * act = new SubjectGroupNameUpdateAction(m_owner, group_i, sgr_name);
+		bool success = m_owner->Do(act);
+		if(success){
+			m_cancel_btn->Hide();
+			m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+			m_name_text->Enable(false);
+			m_groups_list->EditItem(group_id, m_name_text->GetValue());
+		}
 	} else {
 		m_cancel_btn->Show();
 		m_edit_btn->SetLabel(m_owner->m_lang->str_save);

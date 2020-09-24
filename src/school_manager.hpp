@@ -208,11 +208,14 @@ private:
 
 class SubjectGroupNameUpdateAction : public Action {
 public:
-	SubjectGroupNameUpdateAction(Application * owner);
+	SubjectGroupNameUpdateAction(Application * owner, int i_sgr, char * new_name);
 	~SubjectGroupNameUpdateAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	int		m_id;
+	char * 	m_name;
 };
 
 class SubjectGroupMembersUpdateAction : public Action {

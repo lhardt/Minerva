@@ -303,6 +303,8 @@ const char * const INSERT_TABLE_SUBJECT_GROUP =
  			("INSERT INTO SubjectGroup(id,name,id_school) VALUES (?,?,?)");
 const char * const UPDATE_TABLE_SUBJECT_GROUP =
 			("UPDATE SubjectGroup SET (name, id_school) = (?,?) WHERE id=?");
+const char * const UPDATE_SUBJECT_GROUP_NAME =
+			("UPDATE SubjectGroup SET name = ? WHERE id=?");
 const char * const LASTID_TABLE_SUBJECT_GROUP =
 			("SELECT id FROM SubjectGroup WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TABLE_SUBJECT_GROUP_BY_SCHOOL_ID =
@@ -3311,7 +3313,6 @@ bool update_room_availability(FILE * console_out, sqlite3* db, int room_id, int 
 bool update_subject_basic_data(FILE * console_out, sqlite3 * db, int subj_id, Subject * subject, School * school){
 	sqlite3_stmt * stmt;
 	int errc = sqlite3_prepare_v2(db, UPDATE_TABLE_SUBJECT, -1, &stmt, NULL);
-	// ("UPDATE Subject SET (name, short_name, id_school) = (?,?,?) WHERE id=?");
 	CERTIFY_ERRC_SQLITE_OK(false);
 	sqlite3_bind_text(stmt, 1, subject->name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt, 2, subject->short_name, -1, SQLITE_TRANSIENT);
@@ -3320,5 +3321,17 @@ bool update_subject_basic_data(FILE * console_out, sqlite3 * db, int subj_id, Su
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(false);
 	sqlite3_finalize(stmt);
+	return true;
+}
+
+bool update_subject_group_name(FILE * console_out, sqlite3 * db, int sgr_id, char * new_name){
+	LMH_ASSERT(db != NULL && sgr_id > 0 && new_name != NULL);
+	sqlite3_stmt * stmt;
+	int errc = sqlite3_prepare_v2(db, UPDATE_SUBJECT_GROUP_NAME, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	sqlite3_bind_text(stmt, 1, new_name, -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(stmt, 2, sgr_id);
+	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_DONE(stmt);
 	return true;
 }

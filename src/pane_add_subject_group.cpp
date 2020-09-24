@@ -26,11 +26,6 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	m_subjects_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 	wxString col_name = m_owner->m_lang->str_belongs;
 	m_subjects_grid->SetColName(0, col_name);
-	for(i = 0; i < school->n_subjects; ++i){
-		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
-		m_subjects_grid->SetRowName(i, row_name);
-	}
-	m_subjects_grid->GridRemake(1, school->n_subjects);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -48,10 +43,26 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	Layout();
 
 	add_group->Bind(wxEVT_BUTTON, &AddSubjectGroupPane::OnCreateButtonClicked, this);
+	Bind(DATA_CHANGE_EVENT, &AddSubjectGroupPane::OnDataChange, this);
+
+	ShowData();
+}
+
+void AddSubjectGroupPane::ShowData(){
+	School * school = m_owner->m_school;
+	for(int i = 0; i < school->n_subjects; ++i){
+		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
+		m_subjects_grid->SetRowName(i, row_name);
+	}
+	m_subjects_grid->GridRemake(1, school->n_subjects);
+}
+
+void AddSubjectGroupPane::OnDataChange(wxNotifyEvent & ev){
+	ShowData();
 }
 
 void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
-	int i, id, sing_id, n_subjects=0;
+	int i, n_subjects=0;
 	School * school = m_owner->m_school;
 
 	for(i = 0; i < school->n_subjects; ++i){
