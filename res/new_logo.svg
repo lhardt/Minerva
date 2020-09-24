@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Edit this text area to see live preview to the right -->
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" >
+	<defs>
+		<style type="text/css">
+			@font-face {
+				font-family: 'Averia Serif';
+				src: local('Averia Serif'), local('Averia'), url(./Averia.ttf), format('ttf');
+			}
+			.text{
+				font-size: 300px;
+			}
+		</style>
+	</defs>
+	<rect x="0" y="0" width="512" height="512" stroke-width="1" stroke="#000" fill="#222" />
+	<!-- <rect x="0" y="0" width="512" height="512" stroke-width="1" stroke="#000" fill="#eee" /> -->
+   	<text x="256" y="350" text-anchor="middle" dominant-baseline="top" fill="#bb6d5b" font-family="Averia Serif" class="text">M</text>
+	<path d="
+		M144 140
+		L150,150
+		A 20 20 80 0 0 140 140
+		A 20 20 20 0 1 120 120
+		L 120 107
+		L 135 112
+		A 20 20 50 0 1 145 135
+		L 132 120
+		L 128 120
+		Z" stroke="green" stroke-width="2" fill="green"/>
+</svg>
