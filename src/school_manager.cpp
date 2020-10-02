@@ -871,10 +871,31 @@ wxString SubjectGroupNameUpdateAction::Describe(){
 /*            SubjectGroupMembersUpdateAction            */
 /*********************************************************/
 
-// SubjectGroupMembersUpdateAction::SubjectGroupMembersUpdateAction(Application * owner);
-// SubjectGroupMembersUpdateAction::~SubjectGroupMembersUpdateAction();
-// bool SubjectGroupMembersUpdateAction::Do();
-// bool SubjectGroupMembersUpdateAction::Undo();
+SubjectGroupMembersUpdateAction::SubjectGroupMembersUpdateAction(Application * owner, int id_sgroup, int * members) : Action(owner){
+	LMH_ASSERT(owner != NULL && id_sgroup > 0 && members != NULL);
+	m_id = id_sgroup;
+	m_members = members;
+}
+SubjectGroupMembersUpdateAction::~SubjectGroupMembersUpdateAction(){
+	free(m_members);
+}
+bool SubjectGroupMembersUpdateAction::Do(){
+	School * school = m_owner->m_school;
+	if(update_subject_group_members(stdout, m_owner->m_database, m_id, m_members, school)){
+		int i_group = get_subject_group_index_by_id(school, m_id);
+		LMH_ASSERT(i_group != -1);
+		for(int i = 0; i < school->n_subjects; ++i){
+			LMH_ASSERT(school->subjects[i].in_groups != NULL);
+			int tmp = school->subjects[i].in_groups[i_group];
+			school->subjects[i].in_groups[i_group] = m_members[i];
+			m_members[i] = tmp;
+		}
+	}
+	return true;
+}
+bool SubjectGroupMembersUpdateAction::Undo(){
+	return Do();
+}
 wxString SubjectGroupMembersUpdateAction::Describe(){
 	return wxT("SubjectGroupMembersUpdateAction");
 }

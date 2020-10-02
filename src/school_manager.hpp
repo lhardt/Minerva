@@ -220,11 +220,14 @@ private:
 
 class SubjectGroupMembersUpdateAction : public Action {
 public:
-	SubjectGroupMembersUpdateAction(Application * owner);
+	SubjectGroupMembersUpdateAction(Application * owner, int sgr_id, int * members);
 	~SubjectGroupMembersUpdateAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	int 	m_id;
+	int	*	m_members;
 };
 
 class ActionManager{

@@ -571,7 +571,9 @@ class ListSubjectGroupsPane : public wxScrolledWindow {
 
 	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
-    void OnDeleteButtonClicked(wxCommandEvent &);
+	void OnDeleteButtonClicked(wxCommandEvent &);
+	void OnMembersSaveButtonClicked(wxCommandEvent &);
+    void OnMembersCancelButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
 	void OnDataChange(wxNotifyEvent & );
 	void ShowData();

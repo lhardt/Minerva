@@ -6,10 +6,7 @@ extern "C" {
 };
 
 ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
-	int i = 0;
-	School * school = NULL;
 	this->m_owner = owner;
-	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(250,250,250));
 
 	m_groups_list = new SearchableListPane(m_owner, this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
@@ -62,9 +59,47 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnDeleteButtonClicked, this);
 	m_groups_list->GetList()->Bind(wxEVT_LISTBOX, &ListSubjectGroupsPane::OnSelectionChanged, this);
+	m_members->GetSaveButton()->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnMembersSaveButtonClicked, this);
+	m_members->GetCancelButton()->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnMembersCancelButtonClicked, this);
+
 	Bind(DATA_CHANGE_EVENT, &ListSubjectGroupsPane::OnDataChange, this);
 
 	ShowData();
+}
+
+void ListSubjectGroupsPane::OnMembersCancelButtonClicked(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	ChoiceGrid * members_grid = m_members->GetGrid();
+	int i_select = m_groups_list->GetList()->GetSelection();
+	int group_id = ((IntClientData*)m_groups_list->GetList()->GetClientObject(i_select))->m_value;
+	int group_i = get_subject_group_index_by_id(m_owner->m_school, group_id);
+	for(int i = 0; i < school->n_subjects; ++i){
+		if(school->subjects[i].in_groups){
+			members_grid->SetCellState(i, 0, school->subjects[i].in_groups[group_i] > 0 ? 1:0);
+		} else {
+			members_grid->SetCellState(i, 0, 0);
+		}
+	}
+}
+
+void ListSubjectGroupsPane::OnMembersSaveButtonClicked(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	ChoiceGrid * members_grid = m_members->GetGrid();
+	int * members = (int *) calloc(school->n_subjects+1, sizeof(int));
+	members[school->n_subjects] = -1;
+
+	for(int i = 0; i < school->n_subjects; ++i){
+		members[i] = members_grid->GetCellState(i,0);
+	}
+	int i_select = m_groups_list->GetList()->GetSelection();
+	int group_id = ((IntClientData*)m_groups_list->GetList()->GetClientObject(i_select))->m_value;
+
+	SubjectGroupMembersUpdateAction * act = new SubjectGroupMembersUpdateAction(m_owner, group_id, members);
+	if(m_owner->Do(act)){
+		ShowData();
+	} else {
+		printf("Did not do.\n");
+	}
 }
 
 void ListSubjectGroupsPane::ShowData(){
@@ -144,8 +179,8 @@ void ListSubjectGroupsPane::OnSelectionChanged(wxCommandEvent & evt){
 	if(i_select != wxNOT_FOUND){
 		int group_id = ((IntClientData*)m_groups_list->GetList()->GetClientObject(i_select))->m_value;
 		int group_i = get_subject_group_index_by_id(school, group_id);
-		ChoiceGrid * members_grid = m_members->GetGrid();
 		m_name_text->SetValue(wxString::FromUTF8(school->subject_group_names[group_i]));
+		ChoiceGrid * members_grid = m_members->GetGrid();
 		for(i = 0; i < school->n_subjects; ++i){
 			if(school->subjects[i].in_groups){
 				members_grid->SetCellState(i, 0, school->subjects[i].in_groups[group_i] > 0 ? 1:0);

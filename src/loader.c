@@ -324,12 +324,14 @@ const char * const CREATE_TABLE_SUBJECT_IN_GROUP =
 				"UNIQUE (id_subject, id_group)"
 			")");
 const char * const INSERT_TABLE_SUBJECT_IN_GROUP =
-			("INSERT INTO SubjectInGroup(id_subject, id_group) VALUES (?,?)");
+			("INSERT OR IGNORE INTO SubjectInGroup(id_subject, id_group) VALUES (?,?)");
 /* NOTE: there is no reason to update this table. Only delete and add accordingly */
 const char * const LASTID_TABLE_SUBJECT_IN_GROUP =
 			("SELECT id FROM SubjectInGroup where rowid=last_insert_rowid()");
 const char * const SELECT_TABLE_SUBJECT_IN_GROUP_BY_SUBJECT_ID =
 			("SELECT * FROM SubjectInGroup WHERE id_subject=?");
+const char * const DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID_GROUP_ID =
+			("DELETE FROM SubjectInGroup WHERE id_subject = ? AND id_group = ? ");
 const char * const DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID =
 			("DELETE FROM SubjectInGroup WHERE id_subject = ?");
 const char * const DELETE_SUBJECT_IN_GROUP_BY_GROUP_ID =
@@ -2777,10 +2779,8 @@ static bool select_all_subjects_by_school_id(FILE * console_out, sqlite3* db, in
 			for(i = 0; i < n; ++i){
 				sqlite3_bind_int(stmt, 1, school->subjects[i].id);
 				errc = sqlite3_step(stmt);
-				if(errc == SQLITE_ROW){
-					school->subjects[i].in_groups = calloc(school->n_subjects + 1, sizeof(int));
-					school->subjects[i].in_groups[school->n_subjects]  = -1;
-				}
+				school->subjects[i].in_groups = calloc(school->n_subjects + 1, sizeof(int));
+				school->subjects[i].in_groups[school->n_subjects]  = -1;
 				while(errc == SQLITE_ROW){
 					int i_group = get_subject_group_index_by_id(school, sqlite3_column_int(stmt,2));
 					school->subjects[i].in_groups[i_group]  = 1;
@@ -3333,5 +3333,24 @@ bool update_subject_group_name(FILE * console_out, sqlite3 * db, int sgr_id, cha
 	sqlite3_bind_int(stmt, 2, sgr_id);
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(stmt);
+	return true;
+}
+
+bool update_subject_group_members(FILE * console_out, sqlite3 * db, int sgr_id, int * members, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && members != NULL && school != NULL && sgr_id > 0);
+	sqlite3_stmt * stmt_insert, * stmt_remove;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, INSERT_TABLE_SUBJECT_IN_GROUP, -1, &stmt_insert, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	errc = sqlite3_prepare_v2(db, DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID_GROUP_ID, -1, &stmt_remove, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < school->n_subjects; ++i){
+		sqlite3_stmt * to_exec = (members[i] > 0)?(stmt_insert):(stmt_remove);
+		sqlite3_bind_int(to_exec,1, school->subjects[i].id);
+		sqlite3_bind_int(to_exec,2, sgr_id);
+		errc = sqlite3_step(to_exec);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
 	return true;
 }
