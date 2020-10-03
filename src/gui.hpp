@@ -610,6 +610,7 @@ class ListTeachersPane : public wxScrolledWindow {
 	void OnDependencyButtonClicked(wxCommandEvent &);
     void OnSelectionChanged(wxCommandEvent &);
 	void OnDataChange(wxNotifyEvent & );
+	void ShowData();
 };
 
 class ListClassesPane : public wxScrolledWindow {

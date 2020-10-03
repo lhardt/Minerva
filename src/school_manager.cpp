@@ -901,6 +901,39 @@ wxString SubjectGroupMembersUpdateAction::Describe(){
 }
 
 /*********************************************************/
+/*                  TeacherInsertAction                  */
+/*********************************************************/
+TeacherInsertAction::TeacherInsertAction(Application * owner, Teacher t) : Action(owner){
+	m_teacher = t;
+	m_teacher.id = -1;
+}
+TeacherInsertAction::~TeacherInsertAction(){
+	if(m_state == state_UNDONE){
+
+	}
+}
+bool TeacherInsertAction::Do(){
+	int res_id = insert_teacher(stdout, m_owner->m_database, &m_teacher, m_owner->m_school, m_teacher.id);
+	if(res_id != -1){
+		school_teacher_add(m_owner->m_school, &m_teacher);
+		return true;
+	}
+	return false;
+}
+bool TeacherInsertAction::Undo(){
+	if(remove_teacher(stdout, m_owner->m_database, m_teacher.id)){
+		int i_teacher = get_teacher_index_by_id(m_owner->m_school, m_teacher.id);
+		LMH_ASSERT(i_teacher >= 0);
+		school_teacher_remove(m_owner->m_school, i_teacher, false);
+		return true;
+	}
+	return false;
+}
+wxString TeacherInsertAction::Describe(){
+	return wxT("TeacherInsertAction");
+}
+
+/*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/
 

@@ -1515,6 +1515,7 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 	errc = sqlite3_exec(db, LASTID_TABLE_TEACHER, get_id_callback, &(teacher->id), NULL);
 	if(teacher->teaches != NULL){
 		for(i = 0;  (teacher->teaches[i] != NULL) && (teacher->teaches[i]->subject != NULL); ++i){
+			teacher->teaches[i]->teacher = &teacher;
 			insert_or_update_teaches(console_out, db, teacher->teaches[i], school);
 		}
 	}

@@ -230,6 +230,72 @@ private:
 	int	*	m_members;
 };
 
+class TeacherInsertAction : public Action {
+public:
+	TeacherInsertAction(Application * owner, Teacher t);
+	~TeacherInsertAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	Teacher 	m_teacher;
+	ActionState m_state;
+};
+
+class TeacherBasicDataUpdateAction : public Action {
+public:
+	TeacherBasicDataUpdateAction(Application * owner);
+	~TeacherBasicDataUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
+class TeacherSubjectsUpdateAction : public Action {
+public:
+	TeacherSubjectsUpdateAction(Application * owner);
+	~TeacherSubjectsUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
+class TeacherDaysUpdateAction : public Action {
+public:
+	TeacherDaysUpdateAction(Application * owner);
+	~TeacherDaysUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
+class TeacherTwinningUpdateAction : public Action {
+public:
+	TeacherTwinningUpdateAction(Application * owner);
+	~TeacherTwinningUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
+class TeacherLectureRoomUpdateAction : public Action {
+public:
+	TeacherLectureRoomUpdateAction(Application * owner);
+	~TeacherLectureRoomUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
+class TeacherPlanningRoomUpdateAction : public Action {
+public:
+	TeacherPlanningRoomUpdateAction(Application * owner);
+	~TeacherPlanningRoomUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+};
+
 class ActionManager{
 public:
 	Application * m_owner;

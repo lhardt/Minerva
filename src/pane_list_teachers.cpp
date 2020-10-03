@@ -54,7 +54,6 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_cancel_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_cancel, wxDefaultPosition, wxSize(200,30));
 
 	wxButton * delete_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_remove, wxDefaultPosition, wxSize(200,30));
-
 	/* PERIODS CODE */
 	ChoiceGrid * periods_grid =  m_periods->GetGrid();
 	periods_grid->AddState(m_owner->m_lang->str_teacher_unavailable, wxColor(255,200,200));
@@ -64,52 +63,25 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
 	periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 
-	/* TEACHES CODE */
 	ChoiceGrid * teaches_grid = m_teaches->GetGrid();
 	teaches_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	teaches_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
+	teaches_grid->SetColName(i, m_owner->m_lang->str_teaches);
 
-	teaches_grid->SetColName(i, wxT("Leciona"));
-	for(i = 0; i < school->n_subjects;++i){
-		teaches_grid->SetRowName(i, wxString::FromUTF8(school->subjects[i].name));
-	}
-	teaches_grid->GridRemake(1,school->n_subjects);
-
-	// LECTURE ROOM PANE CODE
 	ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	lec_rooms_grid->SetColName(0,m_owner->m_lang->str_name);
-	for(i = 0; i < school->n_rooms; ++i){
-		lec_rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
-	}
-	lec_rooms_grid->GridRemake(1, school->n_rooms);
 
-	// PLANNING ROOM PANE CODE
 	ChoiceGrid * planning_rooms_grid = m_planning_rooms->GetGrid();
 	planning_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	planning_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	planning_rooms_grid->SetColName(0,m_owner->m_lang->str_name);
-	for(i = 0; i < school->n_rooms; ++i){
-		planning_rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
-	}
-	planning_rooms_grid->GridRemake(1, school->n_rooms);
 
-
-	// Planning twinning code
 	ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();
 	twinning_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	twinning_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	twinning_grid->SetColName(0,m_owner->m_lang->str_name);
-	for(i = 0; i < school->n_periods_per_day; ++i){
-		twinning_grid->SetRowName(i, wxString::Format("%d", i+1));
-	}
-	twinning_grid->GridRemake(1, school->n_periods_per_day);
-	for(i = 0; i < school->n_periods; ++i){
-		if(school->periods[i] == false){
-			periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
-		}
-	}
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
@@ -155,13 +127,6 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_dependency_text->Bind(wxEVT_CHECKBOX, &ListTeachersPane::OnDependencyButtonClicked,this);
 	Bind(DATA_CHANGE_EVENT, &ListTeachersPane::OnDataChange, this);
 
-	for(i = 0; i < school->n_teachers; ++i){
-		if(school->teachers[i].subordinates && (find_first_positive(school->teachers[i].subordinates) >= 0)){
-			m_teachers_list->AddItem(school->teachers[i].id, wxString::Format("(%s) %s", m_owner->m_lang->str_group, wxString::FromUTF8(school->teachers[i].name)));
-		} else {
-			m_teachers_list->AddItem(school->teachers[i].id, wxString::FromUTF8(school->teachers[i].name));
-		}
-	}
 
 	m_cancel_btn->Hide();
 	m_name_text->Disable();
@@ -172,10 +137,60 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_active_text->Disable();
 	m_dependency_text->Disable();
 	m_groups->Hide();
+
+	ShowData();
+}
+
+void ListTeachersPane::ShowData(){
+	int i;
+
+	ChoiceGrid * periods_grid =  m_periods->GetGrid();
+	ChoiceGrid * teaches_grid = m_teaches->GetGrid();
+	ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
+	ChoiceGrid * planning_rooms_grid = m_planning_rooms->GetGrid();
+	ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();
+
+	School * school = m_owner->m_school;
+
+	for(i = 0; i < school->n_subjects;++i){
+		teaches_grid->SetRowName(i, wxString::FromUTF8(school->subjects[i].name));
+	}
+	teaches_grid->GridRemake(1,school->n_subjects);
+
+	for(i = 0; i < school->n_rooms; ++i){
+		lec_rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
+	}
+	lec_rooms_grid->GridRemake(1, school->n_rooms);
+
+	for(i = 0; i < school->n_rooms; ++i){
+		planning_rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
+	}
+	planning_rooms_grid->GridRemake(1, school->n_rooms);
+
+	for(i = 0; i < school->n_periods_per_day; ++i){
+		twinning_grid->SetRowName(i, wxString::Format("%d", i+1));
+	}
+	twinning_grid->GridRemake(1, school->n_periods_per_day);
+
+
+	for(i = 0; i < school->n_periods; ++i){
+		if(school->periods[i] == false){
+			periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+		}
+	}
+
+	m_teachers_list->Clear();
+	for(i = 0; i < school->n_teachers; ++i){
+		if(school->teachers[i].subordinates && (find_first_positive(school->teachers[i].subordinates) >= 0)){
+			m_teachers_list->AddItem(school->teachers[i].id, wxString::Format("(%s) %s", m_owner->m_lang->str_group, wxString::FromUTF8(school->teachers[i].name)));
+		} else {
+			m_teachers_list->AddItem(school->teachers[i].id, wxString::FromUTF8(school->teachers[i].name));
+		}
+	}
 }
 
 void ListTeachersPane::OnDataChange(wxNotifyEvent & evt) {
-	printf("Data change!\n");
+	ShowData();
 }
 
 void ListTeachersPane::OnDependencyButtonClicked(wxCommandEvent &){

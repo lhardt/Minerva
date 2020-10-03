@@ -968,7 +968,8 @@ void school_teacher_add(School * school, const Teacher * const t){
 
 	if(t->teaches){
 		for(n_teaches = 0; t->teaches[n_teaches] != NULL; ++n_teaches){
-			/* Blank on purpouse */
+			t->teaches[n_teaches]->teacher = &school->teachers[pos];
+			/* Counting n_teaches */
 		}
 		/* Teacheses are ordered by the id of the teacher. */
 		int i_start = 0;
