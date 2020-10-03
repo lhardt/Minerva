@@ -67,6 +67,7 @@ bool update_period_names(FILE * console_out, sqlite3 * db, int n_days, int * day
 bool update_room_basic_data(FILE * console_out, sqlite3* db, int room_id, Room * room, School * school);
 bool update_room_availability(FILE * console_out, sqlite3* db, int room_id, int * availability, School * school);
 bool update_subject_basic_data(FILE * console_out, sqlite3 * db, int subj_id, Subject * subject, School * school);
+bool update_teacher_basic_data(FILE * console_out, sqlite3 * db, Teacher * teacher, School * school);
 bool update_class_max_per_day_subjectgroup(FILE * console_out, sqlite3 * db, int class_id, int id_group, int max);
 bool update_subject_group_name(FILE * console_out, sqlite3 * db, int sgr_id, char * new_name);
 bool update_subject_group_members(FILE * console_out, sqlite3 * db, int sgr_id, int * members, School * school);

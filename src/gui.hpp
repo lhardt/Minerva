@@ -589,7 +589,9 @@ class ListTeachersPane : public wxScrolledWindow {
 	wxSpinCtrl			* m_max_days_text;
 	wxSpinCtrl  		* m_max_periods_text;
 	wxSpinCtrl			* m_max_ppd_text;
+	wxSpinCtrl			* m_max_ppcpd_text;
 	wxSpinCtrl			* m_planning_periods_text;
+	wxCheckBox			* m_planning_needs_room_text;
 	wxCheckBox			* m_active_text;
 	wxCheckBox			* m_dependency_text;
 	ScoreGridPane		* m_periods;

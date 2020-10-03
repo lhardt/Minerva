@@ -17,7 +17,9 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	wxStaticText * max_days_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_days);
 	wxStaticText * max_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods);
 	wxStaticText * max_ppd_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods_per_day);
+	wxStaticText * max_ppcpd_label = new wxStaticText(this, wxID_ANY, wxT("MAX PPCPD"));
 	wxStaticText * planning_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_number_of_planning_periods);
+	wxStaticText * planning_needs_room_label = new wxStaticText(this, wxID_ANY, wxT("Planning needs room"));
 	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
 	wxStaticText * dependency_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_dependency);
 	wxNotebook   * notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
@@ -47,7 +49,9 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_max_days_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 	m_max_periods_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 	m_max_ppd_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
+	m_max_ppcpd_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 	m_planning_periods_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
+	m_planning_needs_room_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_dependency_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
@@ -96,8 +100,12 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	fields_sz->Add(m_max_periods_text);
 	fields_sz->Add(max_ppd_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_max_ppd_text);
+	fields_sz->Add(max_ppcpd_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
+	fields_sz->Add(m_max_ppcpd_text);
 	fields_sz->Add(planning_periods_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_planning_periods_text);
+	fields_sz->Add(planning_needs_room_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
+	fields_sz->Add(m_planning_needs_room_text);
 	fields_sz->Add(active_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_active_text);
 	fields_sz->Add(dependency_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
@@ -133,7 +141,9 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_max_days_text->Disable();
 	m_max_periods_text->Disable();
 	m_max_ppd_text->Disable();
+	m_max_ppcpd_text->Disable();
 	m_planning_periods_text->Disable();
+	m_planning_needs_room_text->Disable();
 	m_active_text->Disable();
 	m_dependency_text->Disable();
 	m_groups->Hide();
@@ -203,16 +213,39 @@ void ListTeachersPane::OnDependencyButtonClicked(wxCommandEvent &){
 }
 
 void ListTeachersPane::OnEditButtonClicked(wxCommandEvent &) {
-	if(m_cancel_btn->IsShown()){
-		m_cancel_btn->Hide();
-		m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
-		m_name_text->Disable();
-		m_max_days_text->Disable();
-		m_max_periods_text->Disable();
-		m_max_ppd_text->Disable();
-		m_planning_periods_text->Disable();
-		m_active_text->Disable();
-		m_dependency_text->Disable();
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND && m_cancel_btn->IsShown()){
+		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+
+		Teacher new_data = {
+			.name = copy_wx_string(m_name_text->GetValue()),
+			.short_name = copy_wx_string(m_name_text->GetValue()),
+			.max_days = m_max_days_text->GetValue(),
+			.max_meetings_per_day = m_max_ppd_text->GetValue(),
+			.max_meetings_per_class_per_day = m_max_ppcpd_text->GetValue(),
+			.max_meetings = m_max_periods_text->GetValue(),
+			.planning_needs_room = m_planning_needs_room_text->GetValue(),
+			.num_planning_periods = m_planning_periods_text->GetValue(),
+			.active = m_active_text->GetValue()
+		};
+
+		Action * act = new TeacherBasicDataUpdateAction(m_owner, new_data, teacher_id);
+		bool success = m_owner->Do(act);
+		if(success){
+			m_cancel_btn->Hide();
+			m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+			m_name_text->Disable();
+			m_max_days_text->Disable();
+			m_max_periods_text->Disable();
+			m_max_ppd_text->Disable();
+			m_max_ppcpd_text->Disable();
+			m_planning_periods_text->Disable();
+			m_planning_needs_room_text->Disable();
+			m_active_text->Disable();
+			m_dependency_text->Disable();
+		} else {
+			printf("Failure");
+		}
 	} else {
 		m_cancel_btn->Show();
 		m_edit_btn->SetLabel(m_owner->m_lang->str_save);
@@ -220,7 +253,9 @@ void ListTeachersPane::OnEditButtonClicked(wxCommandEvent &) {
 		m_max_days_text->Enable();
 		m_max_periods_text->Enable();
 		m_max_ppd_text->Enable();
+		m_max_ppcpd_text->Enable();
 		m_planning_periods_text->Enable();
+		m_planning_needs_room_text->Enable();
 		m_active_text->Enable();
 		m_dependency_text->Enable();
 	}
@@ -273,7 +308,9 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		m_max_days_text->SetValue(t->max_days);
 		m_max_periods_text->SetValue(t->max_meetings);
 		m_max_ppd_text->SetValue(t->max_meetings_per_day);
+		m_max_ppcpd_text->SetValue(t->max_meetings_per_class_per_day);
 		m_planning_periods_text->SetValue(t->num_planning_periods);
+		m_planning_needs_room_text->SetValue(t->planning_needs_room);
 		if(t->teaches != NULL){
 			for(int i = 0; t->teaches[i] != NULL; ++i){
 				int subj_i = get_subject_index_by_id(school, t->teaches[i]->subject->id);

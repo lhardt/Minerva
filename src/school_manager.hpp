@@ -244,11 +244,14 @@ private:
 
 class TeacherBasicDataUpdateAction : public Action {
 public:
-	TeacherBasicDataUpdateAction(Application * owner);
+	TeacherBasicDataUpdateAction(Application * owner, Teacher t, int id_teacher);
 	~TeacherBasicDataUpdateAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	int		m_id;
+	Teacher m_teacher;
 };
 
 class TeacherSubjectsUpdateAction : public Action {

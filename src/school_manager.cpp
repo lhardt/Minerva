@@ -933,6 +933,65 @@ wxString TeacherInsertAction::Describe(){
 	return wxT("TeacherInsertAction");
 }
 
+
+/*********************************************************/
+/*             TeacherBasicDataUpdateAction              */
+/*********************************************************/
+TeacherBasicDataUpdateAction::TeacherBasicDataUpdateAction(Application * owner, Teacher t, int id) : Action(owner), m_teacher(t){
+	m_teacher.id = id;
+	LMH_ASSERT(get_teacher_index_by_id(m_owner->m_school, id) >= 0);
+}
+TeacherBasicDataUpdateAction::~TeacherBasicDataUpdateAction(){
+	free_teacher(&m_teacher);
+}
+bool TeacherBasicDataUpdateAction::Do(){
+	School * school = m_owner->m_school;
+	if(update_teacher_basic_data(stdout, m_owner->m_database, &m_teacher, m_owner->m_school)){
+		int i_teacher = get_teacher_index_by_id(m_owner->m_school, m_teacher.id);
+		LMH_ASSERT(i_teacher >= 0);
+		Teacher tmp = (Teacher){
+			.name = school->teachers[i_teacher].name,
+			.short_name = school->teachers[i_teacher].short_name,
+			.max_days = school->teachers[i_teacher].max_days,
+			.max_meetings_per_day = school->teachers[i_teacher].max_meetings_per_day,
+			.max_meetings_per_class_per_day = school->teachers[i_teacher].max_meetings_per_class_per_day,
+			.max_meetings = school->teachers[i_teacher].max_meetings,
+			.planning_needs_room = school->teachers[i_teacher].planning_needs_room,
+			.num_planning_periods = school->teachers[i_teacher].num_planning_periods,
+			.active = school->teachers[i_teacher].active
+		};
+		school->teachers[i_teacher].name = m_teacher.name;
+		school->teachers[i_teacher].short_name = m_teacher.short_name;
+		school->teachers[i_teacher].max_days = m_teacher.max_days;
+		school->teachers[i_teacher].max_meetings_per_day = m_teacher.max_meetings_per_day;
+		school->teachers[i_teacher].max_meetings_per_class_per_day = m_teacher.max_meetings_per_class_per_day;
+		school->teachers[i_teacher].max_meetings = m_teacher.max_meetings;
+		school->teachers[i_teacher].planning_needs_room = m_teacher.planning_needs_room;
+		school->teachers[i_teacher].num_planning_periods = m_teacher.num_planning_periods;
+		school->teachers[i_teacher].active = m_teacher.active;
+
+		m_teacher = (Teacher){
+			.id = school->teachers[i_teacher].id,
+			.name = tmp.name,
+			.short_name = tmp.short_name,
+			.max_days = tmp.max_days,
+			.max_meetings_per_day = tmp.max_meetings_per_day,
+			.max_meetings_per_class_per_day = tmp.max_meetings_per_class_per_day,
+			.max_meetings = tmp.max_meetings,
+			.planning_needs_room = tmp.planning_needs_room,
+			.active = tmp.active
+		};
+		return true;
+	}
+	return false;
+}
+bool TeacherBasicDataUpdateAction::Undo(){
+	return Do();
+}
+wxString TeacherBasicDataUpdateAction::Describe(){
+	return wxT("TeacherBasicDataUpdateAction");
+}
+
 /*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/

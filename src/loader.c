@@ -421,7 +421,8 @@ const char * const CREATE_TABLE_TEACHER =
 const char * const INSERT_TABLE_TEACHER =
 			("INSERT INTO Teacher (id, name, short_name, max_days, max_per_day, max_per_class_per_day, max_per, planning_needs_room, num_per_planning, active, id_school) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
 const char * const UPDATE_TABLE_TEACHER =
-			("UPDATE Teacher SET (name, short_name, max_days, max_per_day, max_per_class_per_day, max_per, planning_needs_room, num_per_planning, active, id_school) = (?,?,?,?,?,?,?,?,?,?)");
+			("UPDATE Teacher SET (name, short_name, max_days, max_per_day, max_per_class_per_day, max_per, planning_needs_room, num_per_planning, active, id_school) = (?,?,?,?,?,?,?,?,?,?) "
+			 " WHERE id=?");
 const char * const LASTID_TABLE_TEACHER =
 			("SELECT id FROM Teacher where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_BY_SCHOOL_ID =
@@ -1462,7 +1463,7 @@ static bool insert_or_update_teacher_day_scores(FILE * console_out, sqlite3 * db
 }
 
 /* NOTE: Shallow UPDATE. For deeper updates, update each table manually. */
-bool update_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School * school){
+bool update_teacher_basic_data(FILE * console_out, sqlite3 * db, Teacher * teacher, School * school){
 	int errc;
 	sqlite3_stmt * stmt;
 	LMH_ASSERT(db != NULL && teacher != NULL && school != NULL);
@@ -3334,6 +3335,7 @@ bool update_subject_group_name(FILE * console_out, sqlite3 * db, int sgr_id, cha
 	sqlite3_bind_int(stmt, 2, sgr_id);
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(stmt);
+	sqlite3_finalize(stmt);
 	return true;
 }
 
