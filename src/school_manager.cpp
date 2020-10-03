@@ -993,6 +993,54 @@ wxString TeacherBasicDataUpdateAction::Describe(){
 }
 
 /*********************************************************/
+/*             TeacherBasicDataUpdateAction              */
+/*********************************************************/
+
+TeacherSubjectsUpdateAction::TeacherSubjectsUpdateAction(Application * owner, int id_teacher, int * subjects) : Action(owner){
+	m_id = id_teacher;
+	m_subjects = subjects;
+}
+TeacherSubjectsUpdateAction::~TeacherSubjectsUpdateAction(){
+	free(m_subjects);
+}
+bool TeacherSubjectsUpdateAction::Do(){
+	int i = 0;
+	School * school = m_owner->m_school;
+	for(i = 0; i < school->n_subjects; ++i){
+		int i_teaches = get_teaches_index_by_teacher_subj_id(school, m_id, school->subjects[i].id);
+		Teacher * this_teacher = find_teacher_by_id(school, m_id);
+		if(i_teaches == -1 && m_subjects[i] > 0){
+			Teaches t = (Teaches) {
+				.teacher = this_teacher,
+				.subject = &(school->subjects[i]),
+				.max_per_day = this_teacher->max_meetings_per_day,
+				.max_per_class_per_day = this_teacher->max_meetings_per_class_per_day,
+				.score   = m_subjects[i],
+				.room_scores = int_list_copy(this_teacher->lecture_room_scores),
+				.period_scores = int_list_copy(this_teacher->lecture_period_scores),
+				.twin_scores = (int*)calloc(school->n_periods_per_day, sizeof(int)),
+
+			};
+			/* Then we need to add it. */
+		} else if(i_teaches >= 0 && m_subjects[i] > 0){
+			if(remove_teaches(stdout, m_owner->m_database, school->teaches[i_teaches].id)){
+				school_teaches_remove(school, i_teaches, false);
+			}
+			/* Then we have to remove it. */
+		} else if(i_teaches >= 0 && m_subjects[i] != school->teaches[i_teaches].score){
+			/* Then we need to edit it. */
+		}
+	}
+}
+bool TeacherSubjectsUpdateAction::Undo(){
+	return Do();
+}
+wxString TeacherSubjectsUpdateAction::Describe(){
+	return wxT("TeacherSubjectsUpdateAction");
+}
+
+
+/*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/
 

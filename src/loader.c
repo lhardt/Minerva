@@ -486,6 +486,8 @@ const char * const SELECT_TEACHES_BY_SCHOOL_ID =
 			);
 const char * const DELETE_TEACHES_BY_SUBJECT_ID =
 			("DELETE FROM Teaches WHERE id_subject = ?");
+const char * const DELETE_TEACHES_BY_ID =
+			("DELETE FROM Teaches WHERE id = ?");
 const char * const DELETE_TEACHES_BY_TEACHER_ID =
 			("DELETE FROM Teaches WHERE id_teacher = ?");
 const char * const DELETE_TEACHES_BY_SCHOOL_ID =
@@ -657,6 +659,8 @@ const char * const LASTID_TEACHES_PERIOD =
 			("SELECT id FROM TeachesPeriod where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHES_PERIOD_BY_TEACHES_ID =
 			("SELECT * FROM TeachesPeriod WHERE id_teaches=?");
+const char * const DELETE_TEACHES_PERIOD_BY_TEACHES_ID =
+			("DELETE FROM TeachesPeriod WHERE id_teaches=?");
 const char * const DELETE_TEACHES_PERIOD_BY_SUBJECT_ID =
 			("DELETE FROM TeachesPeriod WHERE EXISTS ("
 				"SELECT id from Teaches WHERE Teaches.id = TeachesPeriod.id_teaches "
@@ -689,6 +693,8 @@ const char * const LASTID_TEACHES_TWIN_PREFERENCE =
 			("SELECT id FROM TeachesTwinPreference where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHES_TWIN_PREFERENCE_BY_TEACHES_ID =
 			("SELECT * FROM TeachesTwinPreference WHERE id_teaches=?");
+const char * const DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHES_ID =
+			("DELETE FROM TeachesTwinPreference WHERE id_teaches=?");
 const char * const DELETE_TEACHES_TWIN_PREFERENCE_BY_SUBJECT_ID =
 			("DELETE FROM TeachesTwinPreference WHERE EXISTS ("
 				"SELECT id from Teaches WHERE Teaches.id = TeachesTwinPreference.id_teaches "
@@ -3164,6 +3170,16 @@ bool remove_teacher(FILE * console_out, sqlite3* db, int id) {
 			!exec_and_check(db, DELETE_TEACHER_BY_ID, id)?false:
 			true;
 			// !exec_and_check(db, UNSET_MEETING_SOLUTION_TEACHER_BY_TEACHER_ID, id)?false:
+}
+
+/* TODO Check. */
+bool remove_teaches(FILE * console_out, sqlite3* db, int id){
+	return	!exec_and_check(db, SELECT_TEACHES_PERIOD_BY_TEACHES_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHES_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_PERIOD_BY_TEACHES_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_ROOM_BY_TEACHES_ID, id)?false:
+			!exec_and_check(db, DELETE_TEACHES_BY_ID, id)?false:
+			true;
 }
 
 bool remove_class(FILE * console_out, sqlite3* db, int id) {

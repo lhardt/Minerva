@@ -717,6 +717,16 @@ Subject * find_subject_by_id(School * school, int id){
 	}
 	return NULL;
 }
+Teaches * 		find_teaches_by_teacher_subj_id(School * school, int id_teacher, int id_subj){
+	int i;
+
+	for(i = 0; i < school->n_teaches; ++i){
+		if(school->teaches[i].teacher->id == id_teacher && school->teaches[i].subject->id == id_subj){
+			return &school->teaches[i];
+		}
+	}
+	return NULL;
+}
 Solution * find_solution_by_id(School * school, int id){
 	int i;
 
@@ -794,6 +804,15 @@ int get_solution_index_by_id(School * school, int id){
 	int i;
 	for(i = 0; i < school->n_solutions; ++i){
 		if(school->solutions[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
+int get_teaches_index_by_teacher_subj_id(School * school, int id_teacher, int id_subj){
+	int i;
+	for(i = 0; i < school->n_teaches; ++i){
+		if(school->teaches[i].teacher->id == id_teacher && school->teaches[i].subject->id == id_subj){
 			return i;
 		}
 	}

@@ -256,11 +256,14 @@ private:
 
 class TeacherSubjectsUpdateAction : public Action {
 public:
-	TeacherSubjectsUpdateAction(Application * owner);
+	TeacherSubjectsUpdateAction(Application * owner, int id_teacher, int * subjects);
 	~TeacherSubjectsUpdateAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	int 	m_id;
+	int *	m_subjects;
 };
 
 class TeacherDaysUpdateAction : public Action {
