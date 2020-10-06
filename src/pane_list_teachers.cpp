@@ -128,6 +128,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
 
+	m_teaches->GetSaveButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnSaveTeaches, this);
+	m_teaches->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelTeaches, this);
 	m_teachers_list->GetList()->Bind(wxEVT_LISTBOX, &ListTeachersPane::OnSelectionChanged, this);
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelButtonClicked, this);
@@ -149,6 +151,30 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_groups->Hide();
 
 	ShowData();
+}
+
+void ListTeachersPane::OnSaveTeaches(wxCommandEvent & evt){
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	School * school = m_owner->m_school;
+	if(i_select != wxNOT_FOUND){
+		int id_teacher = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		int * subjects = (int*) calloc(school->n_subjects + 1, sizeof(int));
+		subjects[school->n_subjects] = -1;
+
+		ChoiceGrid * teaches_grid = m_teaches->GetGrid();
+		for(int i = 0; i < school->n_subjects; ++i){
+			subjects[i] = teaches_grid->GetCellState(i, 0);
+		}
+		TeacherSubjectsUpdateAction * act = new TeacherSubjectsUpdateAction(m_owner, id_teacher, subjects);
+		bool success = m_owner->Do(act);
+		if(success) {
+			evt.Skip();
+		}
+	}
+}
+
+void ListTeachersPane::OnCancelTeaches(wxCommandEvent &){
+
 }
 
 void ListTeachersPane::ShowData(){
@@ -314,8 +340,11 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		if(t->teaches != NULL){
 			for(int i = 0; t->teaches[i] != NULL; ++i){
 				int subj_i = get_subject_index_by_id(school, t->teaches[i]->subject->id);
+				printf("With teachesi %d, Subject i was %d\n", i, subj_i);
 				teaches_grid->SetCellState(subj_i, 0, t->teaches[i]->score > 0 ? 1:0);
 			}
+		} else {
+			printf("T->teaches was null\n");
 		}
 		for(int i = 0; i < school->n_periods; ++i){
 			if(school->periods[i]){

@@ -606,6 +606,8 @@ class ListTeachersPane : public wxScrolledWindow {
 
 	Application * m_owner;
 
+	void OnSaveTeaches(wxCommandEvent &);
+	void OnCancelTeaches(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnCancelButtonClicked(wxCommandEvent &);
     void OnDeleteButtonClicked(wxCommandEvent &);

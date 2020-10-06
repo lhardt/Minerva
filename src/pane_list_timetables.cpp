@@ -195,7 +195,6 @@ void ListTimetablesPane::OnRoomSelectionChaged(wxCommandEvent &){
 }
 
 void ListTimetablesPane::OnSelectionChanged(wxCommandEvent &){
-	School * school = m_owner->m_school;
 	int i_select = m_timetables_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND) {
 		int solution_id = ((IntClientData*)m_timetables_list->GetList()->GetClientObject(i_select))->m_value;

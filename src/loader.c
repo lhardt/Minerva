@@ -1522,7 +1522,7 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 	errc = sqlite3_exec(db, LASTID_TABLE_TEACHER, get_id_callback, &(teacher->id), NULL);
 	if(teacher->teaches != NULL){
 		for(i = 0;  (teacher->teaches[i] != NULL) && (teacher->teaches[i]->subject != NULL); ++i){
-			teacher->teaches[i]->teacher = &teacher;
+			teacher->teaches[i]->teacher = teacher;
 			insert_or_update_teaches(console_out, db, teacher->teaches[i], school);
 		}
 	}
@@ -3174,7 +3174,7 @@ bool remove_teacher(FILE * console_out, sqlite3* db, int id) {
 
 /* TODO Check. */
 bool remove_teaches(FILE * console_out, sqlite3* db, int id){
-	return	!exec_and_check(db, SELECT_TEACHES_PERIOD_BY_TEACHES_ID, id)?false:
+	return	!exec_and_check(db, DELETE_TEACHES_PERIOD_BY_TEACHES_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHES_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHES_PERIOD_BY_TEACHES_ID, id)?false:
 			!exec_and_check(db, DELETE_TEACHES_ROOM_BY_TEACHES_ID, id)?false:

@@ -8,7 +8,6 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 							 wxWindowID id,
 							 wxPoint pos,
 							 wxSize size) :  wxScrolledWindow(parent, id, pos, size){
-	int i;
 	SetBackgroundColour(wxColour(250,250,250));
 	this->m_owner = owner;
 
@@ -141,7 +140,6 @@ wxButton * PosIntGridPane::GetCancelButton(){
 }
 
 void 	   PosIntGridPane::SetValues(int * values){
-	School * school = m_owner->m_school;
 	if(values == NULL){
 		for(int i = 0; i < m_grid->GetNumberRows(); ++i){
 			m_grid->SetCellValue(i, 0, wxString::Format("%d", 0));

@@ -6,9 +6,7 @@ extern "C" {
 };
 
 AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent, wxPoint pos)  : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
-	int i;
 	this->m_owner = owner;
-	School * school = m_owner->m_school;
 	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_group_name, wxDefaultPosition, wxSize(200,15));

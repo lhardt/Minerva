@@ -936,7 +936,7 @@ int school_class_assignments_add(School * school, Class * c){
 void school_teacher_add(School * school, const Teacher * const t){
 	int n_teaches = 0, i_teaches = 0, pos = 0;
 	LMH_ASSERT(school != NULL && t != NULL);
-	if(school->teachers == NULL || school->n_teachers == 0){
+	if(school->teachers == NULL){
 		school->teachers = calloc(2, sizeof(Teacher));
 		school->n_teachers = 0;
 	} else {
@@ -1003,12 +1003,41 @@ void school_teacher_add(School * school, const Teacher * const t){
 		}
 		for(i_teaches = 0; i_teaches < n_teaches; ++i_teaches){
 			school->teaches[i_start + i_teaches] = * t->teaches[i_teaches];
+			school->teaches[i_start + i_teaches].teacher = &school->teachers[school->n_teachers];
 			t->teaches[i_teaches] = &school->teaches[i_start + i_teaches];
 			++ school->n_teaches;
 		}
 	}
 
 	++school->n_teachers;
+}
+void school_teaches_add(School * school, Teaches * teaches){
+	LMH_ASSERT(school != NULL && teaches != NULL);
+	if(school->teaches == NULL){
+		school->teaches = calloc(2, sizeof(Teaches));
+		school->n_teaches = 0;
+	} else {
+		school->teaches = realloc(school->teaches, (school->n_teaches + 2) * sizeof(Teaches));
+	}
+	school->teaches[school->n_teaches] = *teaches;
+
+	Teacher * teacher = find_teacher_by_id(school, teaches->teacher->id);
+	LMH_ASSERT(teacher != NULL);
+
+	int tt_ctr = 0;
+	if(teacher->teaches == NULL){
+		teacher->teaches = calloc(2, sizeof(Teaches*));
+		printf("t->Teaches was null.\n");
+	} else {
+		for(tt_ctr = 0; teacher->teaches[tt_ctr] != NULL; ++tt_ctr){
+			++tt_ctr;
+		}
+		printf("t->Teaches wasn't null. reallocating to %d + 2. .\n", tt_ctr);
+		teacher->teaches = realloc(teacher->teaches, (tt_ctr + 2)* sizeof(Teaches*));
+	}
+	teacher->teaches[tt_ctr] = &(school->teaches[school->n_teaches]);
+	teacher->teaches[tt_ctr+1] = NULL;
+	++school->n_teaches;
 }
 void school_class_add(School * school, Class * c){
 	int pos = 0;
@@ -1329,6 +1358,32 @@ void school_teacher_remove(School * school, int i_remove, bool must_delete){
 	}
 
 	--school->n_teachers;
+}
+void school_teaches_remove(School * school, int i_remove, bool must_delete){
+	LMH_ASSERT(school != NULL && i_remove >= 0 && i_remove < school->n_teaches);
+	if(must_delete){
+		free_teaches(&school->teaches[i_remove]);
+	}
+
+	int n_tt, i_teacher_remove = -1;
+	Teacher * t = school->teaches[i_remove].teacher;
+	printf("Is t part of school? T address %x, Teachers address %x, sub: %x\n", t, school->teachers, t-school->teachers);
+	for(n_tt = 0; t->teaches[n_tt] != NULL; ++n_tt){
+		printf("Is t->teaches part of school? T->teaches[n_tt] address %x, sub: %x\n", t->teaches[n_tt], (t->teaches[n_tt] - school->teaches));
+		if(i_teacher_remove == -1 && t->teaches[n_tt]->id == school->teaches[i_remove].id){
+			i_teacher_remove = n_tt;
+		}
+	}
+	LMH_ASSERT(i_teacher_remove >= 0);
+	for(int i = i_teacher_remove; i < n_tt; ++i){
+		t->teaches[i] = t->teaches[i+1];
+	}
+	t->teaches[n_tt-1] = NULL;
+	for(int i = i_remove; i < school->n_teaches-2; ++i){
+		school->teaches[i] = school->teaches[i+1];
+	}
+
+	--school->n_teaches;
 }
 void school_class_remove(School * school, int class_i, bool must_delete){
 	int i,j;

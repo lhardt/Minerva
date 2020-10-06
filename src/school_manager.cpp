@@ -1005,32 +1005,52 @@ TeacherSubjectsUpdateAction::~TeacherSubjectsUpdateAction(){
 }
 bool TeacherSubjectsUpdateAction::Do(){
 	int i = 0;
+	bool success = true;
 	School * school = m_owner->m_school;
 	for(i = 0; i < school->n_subjects; ++i){
 		int i_teaches = get_teaches_index_by_teacher_subj_id(school, m_id, school->subjects[i].id);
 		Teacher * this_teacher = find_teacher_by_id(school, m_id);
-		if(i_teaches == -1 && m_subjects[i] > 0){
+		if(i_teaches >= 0 && m_subjects[i] == 0){
+			if(remove_teaches(stdout, m_owner->m_database, school->teaches[i_teaches].id)){
+				school_teaches_remove(school, i_teaches, false);
+			} else {
+				printf("remove teaches without success\n");
+				success = false;
+				break;
+			}
+		} else if((i_teaches == -1 && m_subjects[i] > 0) || (i_teaches >= 0 && m_subjects[i] != school->teaches[i_teaches].score)){
 			Teaches t = (Teaches) {
 				.teacher = this_teacher,
 				.subject = &(school->subjects[i]),
 				.max_per_day = this_teacher->max_meetings_per_day,
 				.max_per_class_per_day = this_teacher->max_meetings_per_class_per_day,
 				.score   = m_subjects[i],
-				.room_scores = int_list_copy(this_teacher->lecture_room_scores),
-				.period_scores = int_list_copy(this_teacher->lecture_period_scores),
-				.twin_scores = (int*)calloc(school->n_periods_per_day, sizeof(int)),
-
+				.room_scores = this_teacher->lecture_room_scores == NULL?NULL:int_list_copy(this_teacher->lecture_room_scores),
+				.period_scores = this_teacher->lecture_period_scores == NULL?NULL:int_list_copy(this_teacher->lecture_period_scores),
+				.twin_scores = (int*)calloc(school->n_periods_per_day + 1, sizeof(int)),
 			};
-			/* Then we need to add it. */
-		} else if(i_teaches >= 0 && m_subjects[i] > 0){
-			if(remove_teaches(stdout, m_owner->m_database, school->teaches[i_teaches].id)){
-				school_teaches_remove(school, i_teaches, false);
+			t.twin_scores[school->n_periods_per_day] = -1;
+			success = insert_or_update_teaches(stdout, m_owner->m_database, &t, school);
+			if(success){
+				if(i_teaches < 0){
+					school_teaches_add(school, &t);
+				} else {
+					Teaches * to_edit = &(school->teaches[i_teaches]);
+					to_edit->teacher = t.teacher;
+					to_edit->subject = t.subject;
+					to_edit->max_per_day = t.max_per_day;
+					to_edit->max_per_class_per_day = t.max_per_class_per_day;
+					to_edit->score = t.score;
+					to_edit->room_scores = t.room_scores;
+					to_edit->period_scores = t.period_scores;
+					to_edit->twin_scores = t.twin_scores;
+				}
+			} else {
+				printf("Insert teaches without success\n");
 			}
-			/* Then we have to remove it. */
-		} else if(i_teaches >= 0 && m_subjects[i] != school->teaches[i_teaches].score){
-			/* Then we need to edit it. */
 		}
 	}
+	return success;
 }
 bool TeacherSubjectsUpdateAction::Undo(){
 	return Do();

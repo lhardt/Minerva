@@ -1,9 +1,7 @@
 #include "gui.hpp"
 
 ListPlanningTimesPane::ListPlanningTimesPane(Application * owner, wxWindow * parent, wxPoint pos)  : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
-	School * school = NULL;
 	this->m_owner = owner;
-	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * teacher_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher);
