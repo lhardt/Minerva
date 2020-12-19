@@ -27,8 +27,8 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	capacity_label->SetFont(*m_owner->m_small_font);
 	grid_label->SetFont(*m_owner->m_small_font);
 
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxPoint(30,90), wxSize(200,30));
-	m_capacity_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxPoint(30,150), wxSize(200,30));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxPoint(30,90), wxSize(200,-1));
+	m_capacity_text = new wxSpinCtrl(this, wxID_ANY, wxT(""), wxPoint(30,150), wxSize(200,-1));
 	m_grid = new ChoiceGrid(m_owner,this, wxID_ANY);
 
 	m_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));

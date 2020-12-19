@@ -17,9 +17,9 @@ GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * par
 	wxStaticText * description = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_generate_timetable_text , wxDefaultPosition, wxSize(400,-1));
 	wxStaticText * last_gen_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_last_generated_timetables, wxDefaultPosition, wxSize(400,-1));
 	wxStaticText * tt_name_label = new wxStaticText(this,wxID_ANY, m_owner->m_lang->str_name);
-	m_tt_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,30));
-	wxButton * gen_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_generate, wxDefaultPosition, wxSize(150,30));
-	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,30));
+	m_tt_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1));
+	wxButton * gen_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_generate, wxDefaultPosition, wxSize(150,-1));
+	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(300,-1));
 
 	if(school->solutions){
 		for(i = 0; i < school->n_solutions; ++i){

@@ -13,7 +13,7 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * date_label = new wxStaticText(this, wxID_ANY, wxT("Data de Geração"));
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(180,30));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(180,-1));
 	m_date_text = new wxStaticText(this, wxID_ANY, wxT("-- / -- / --"));
 
 	wxButton * delete_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_delete);

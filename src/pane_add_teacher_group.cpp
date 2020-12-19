@@ -21,10 +21,10 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 	subjects_label->SetFont(*m_owner->m_small_font);
 	m_err_msg->SetFont(*m_owner->m_small_font);
 
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
 	m_teachers_grid = new ChoiceGrid(m_owner, this, wxID_ANY);
 	m_subjects_grid = new ChoiceGrid(m_owner, this, wxID_ANY);
-	wxButton * add_group = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_group, wxDefaultPosition, wxSize(180,30));
+	wxButton * add_group = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_group, wxDefaultPosition, wxSize(180,-1));
 
 	m_teachers_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	m_teachers_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));

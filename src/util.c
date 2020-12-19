@@ -21,21 +21,18 @@
 /*********************************************************/
 /*                     FREE Functions                    */
 /*********************************************************/
-
 void free_room(Room * room){
 	LMH_ASSERT(room != NULL);
 	FREE_IF_NOT_NULL(room->name);
 	FREE_IF_NOT_NULL(room->short_name);
 	FREE_IF_NOT_NULL(room->availability);
 }
-
 void free_subject(Subject * subject){
 	LMH_ASSERT(subject != NULL);
 	FREE_IF_NOT_NULL(subject->name);
 	FREE_IF_NOT_NULL(subject->short_name);
 	FREE_IF_NOT_NULL(subject->in_groups);
 }
-
 void free_teacher(Teacher * teacher){
 	LMH_ASSERT(teacher != NULL);
 	FREE_IF_NOT_NULL(teacher->name);
@@ -50,14 +47,12 @@ void free_teacher(Teacher * teacher){
 	FREE_IF_NOT_NULL(teacher->planning_period_scores);
 	FREE_IF_NOT_NULL(teacher->planning_twin_scores);
 }
-
 void free_teaches(Teaches * teaches){
 	LMH_ASSERT(teaches != NULL);
 	FREE_IF_NOT_NULL(teaches->room_scores);
 	FREE_IF_NOT_NULL(teaches->period_scores);
 	FREE_IF_NOT_NULL(teaches->twin_scores);
 }
-
 void free_class(Class * class){
 	LMH_ASSERT(class != NULL);
 	FREE_IF_NOT_NULL(class->name);
@@ -67,19 +62,16 @@ void free_class(Class * class){
 	FREE_IF_NOT_NULL(class->subordinates);
 	FREE_IF_NOT_NULL(class->assignments);
 }
-
 void free_assignment(Assignment * assignment){
 	LMH_ASSERT(assignment != NULL);
 	FREE_IF_NOT_NULL(assignment->possible_teachers);
 }
-
 void free_meeting(Meeting * meeting){
 	LMH_ASSERT(meeting != NULL);
 	FREE_IF_NOT_NULL(meeting->possible_periods);
 	FREE_IF_NOT_NULL(meeting->possible_rooms);
 	FREE_IF_NOT_NULL(meeting->possible_teachers);
 }
-
 void free_meetings_list(Meeting * list){
 	LMH_ASSERT(list != NULL);
 	for(int i_met = 0; list[i_met].m_class != NULL; ++i_met){
@@ -87,7 +79,6 @@ void free_meetings_list(Meeting * list){
 	}
 	free(list);
 }
-
 void free_node(DecisionNode * node){
 	LMH_ASSERT(node != NULL);
 	for(int i = 0; i < node->n_children; ++i){
@@ -128,6 +119,57 @@ void free_school(School * s){
 		free(s);
 	}
 }
+
+/*********************************************************/
+/*                   REALLOC Functions                   */
+/*********************************************************/
+
+/* We have elements s.a. meetings[i]->teacher, that point inside the block
+ * allocated as school->teachers. So we can't use realloc because if it fails,
+ * we won't be able to (universally) do ptr arithmetic
+ * TODO optimize; confirm.
+ */
+bool realloc_teachers(School * school, int n_teachers){
+	LMH_ASSERT(school != NULL && n_teachers > 0);
+	Teacher * tmp = calloc(n_teachers+1, sizeof(Teacher));
+	if(tmp == NULL){
+		return false;
+	}
+	for(int i = 0; i < school->n_teachers; ++i){
+		tmp[i] = school->teachers[i];
+	}
+	/* Needs to repoint every reference to every teacher */
+	for(int i = 0; i < school->n_teaches; ++i){
+		if(school->teaches[i].teacher != NULL){
+			Teacher * teacher_ptr = find_teacher_by_id(school, school->teaches[i].teacher->id);
+			school->teaches[i].teacher = teacher_ptr;
+		}
+	}
+	for(int i = 0; i < school->n_meetings; ++i){
+		if(school->meetings[i].teacher != NULL){
+			Teacher * teacher_ptr = find_teacher_by_id(school, school->meetings[i].teacher->id);
+			school->meetings[i].teacher = teacher_ptr;
+		}
+	}
+	for(int i = 0; i < school->n_solutions; ++i){
+		int n_meetings = school->solutions[i].n_meetings;
+		Meeting * meetings = school->solutions[i].meetings;
+		for(int j = 0; j < n_meetings; ++j){
+			if(meetings[j].teacher != NULL){
+				Teacher * teacher_ptr = find_teacher_by_id(school, meetings[j].teacher->id);
+				meetings[j].teacher = teacher_ptr;
+			}
+		}
+	}
+	free(school->teachers);
+	school->teachers = tmp;
+	return true;
+}
+bool realloc_teaches(School * school, int n_teaches);
+bool realloc_classes(School * school, int n_classes);
+bool realloc_subjects(School * school, int n_subjects);
+bool realloc_assignments(School * school, int n_assignments);
+bool realloc_rooms(School * school, int n_rooms);
 
 /*********************************************************/
 /*                     COPY Functions                    */
@@ -940,7 +982,9 @@ void school_teacher_add(School * school, const Teacher * const t){
 		school->teachers = calloc(2, sizeof(Teacher));
 		school->n_teachers = 0;
 	} else {
-		school->teachers = realloc(school->teachers, (school->n_teachers + 2)*sizeof(Teacher));
+		bool success = realloc_teachers(school, school->n_teachers+1);
+		// **TODO** -- decent memory management.
+		LMH_ASSERT(success);
 	}
 	/* Teachers are ordered by id. */
 	for(pos = 0; pos < school->n_teachers && t->id > school->teachers[pos].id; ++pos){
@@ -995,23 +1039,42 @@ void school_teacher_add(School * school, const Teacher * const t){
 		if(school->teaches == NULL || school->n_teaches == 0){
 			school->teaches = calloc(n_teaches + 1, sizeof(Teaches));
 			school->n_teaches = 0;
-		} else if(school->n_teaches %10 == 0){
+		} else {
 			school->teaches = realloc(school->teaches, (school->n_teaches + n_teaches +1) * sizeof(Teaches));
 			for(i_start = 0; i_start < school->n_teaches && school->teaches[i_start].teacher->id < t->id; ++i_start){
 				/* Stops where we need to insert our list of teaches. */
 			}
 		}
+		/* Reallocates the displaced ones (from i_start to school->n_teaches) to the end of the list (from i_start + n_teaches to school->n_teaches + n_teaches) */
+		for(i_teaches = school->n_teaches; i_teaches > i_start; --i_teaches){
+			school->teaches[i_teaches + n_teaches] = school->teaches[i_teaches];
+
+			/* We need to repoiont the teachers' pointer to this teaches, that has changed place */
+			Teacher * teacher_to_repoint = school->teaches[i_teaches + n_teaches].teacher;
+			LMH_ASSERT(teacher_to_repoint != NULL);
+			LMH_ASSERT(teacher_to_repoint->teaches != NULL);
+			bool replaced = false;
+			for(int j = 0; teacher_to_repoint->teaches[j] != NULL; ++j){
+				if(teacher_to_repoint->teaches[j] == &school->teaches[i_teaches]){
+					teacher_to_repoint->teaches[j] = &school->teaches[i_teaches + n_teaches];
+					replaced = true;
+					break;
+				}
+			}
+			LMH_ASSERT(replaced);
+		}
 		for(i_teaches = 0; i_teaches < n_teaches; ++i_teaches){
 			school->teaches[i_start + i_teaches] = * t->teaches[i_teaches];
 			school->teaches[i_start + i_teaches].teacher = &school->teachers[school->n_teachers];
-			t->teaches[i_teaches] = &school->teaches[i_start + i_teaches];
-			++ school->n_teaches;
+			school->teachers[pos].teaches[i_teaches] = &school->teaches[i_start + i_teaches];
+			++school->n_teaches;
 		}
 	}
 
 	++school->n_teachers;
 }
 void school_teaches_add(School * school, Teaches * teaches){
+	printf("SCHOOL TEACHES ADD \n\n");
 	LMH_ASSERT(school != NULL && teaches != NULL);
 	if(school->teaches == NULL){
 		school->teaches = calloc(2, sizeof(Teaches));
@@ -1023,20 +1086,38 @@ void school_teaches_add(School * school, Teaches * teaches){
 
 	Teacher * teacher = find_teacher_by_id(school, teaches->teacher->id);
 	LMH_ASSERT(teacher != NULL);
+	LMH_ASSERT(teacher == school->teaches[school->n_teaches].teacher);
 
 	int tt_ctr = 0;
+	bool already_pointed = false;
 	if(teacher->teaches == NULL){
 		teacher->teaches = calloc(2, sizeof(Teaches*));
 		printf("t->Teaches was null.\n");
 	} else {
 		for(tt_ctr = 0; teacher->teaches[tt_ctr] != NULL; ++tt_ctr){
-			++tt_ctr;
+			if(teacher->teaches[tt_ctr] == teaches){
+				already_pointed = true;
+				teacher->teaches[tt_ctr] = & school->teaches[school->n_teaches];
+				printf("Already had it.\n");
+			}
 		}
-		printf("t->Teaches wasn't null. reallocating to %d + 2. .\n", tt_ctr);
-		teacher->teaches = realloc(teacher->teaches, (tt_ctr + 2)* sizeof(Teaches*));
+		if(!already_pointed){
+			printf("t->Teaches wasn't null. reallocating to %d + 2. .\n", tt_ctr);
+			teacher->teaches = realloc(teacher->teaches, (tt_ctr + 2)* sizeof(Teaches*));
+		}
 	}
-	teacher->teaches[tt_ctr] = &(school->teaches[school->n_teaches]);
-	teacher->teaches[tt_ctr+1] = NULL;
+	if(!already_pointed) {
+		teacher->teaches[tt_ctr] = &(school->teaches[school->n_teaches]);
+		teacher->teaches[tt_ctr+1] = NULL;
+	}
+
+	for(int i = 0; i < tt_ctr; ++i){
+		/* If it is still pointing to the 'old' teaches */
+		if(teacher->teaches[i] == teaches){
+			teacher->teaches[i] = school->teaches;
+		}
+	}
+
 	++school->n_teaches;
 }
 void school_class_add(School * school, Class * c){

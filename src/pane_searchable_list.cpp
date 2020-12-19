@@ -10,7 +10,7 @@ SearchableListPane::SearchableListPane(Application * owner, wxWindow * parent, w
 	search_label->SetFont(*m_owner->m_small_font);
 	selection_label->SetFont(*m_owner->m_small_font);
 
-	m_searchbox = new wxTextCtrl(this, wxID_ANY, wxT(""),wxDefaultPosition, wxSize(200,30));
+	m_searchbox = new wxTextCtrl(this, wxID_ANY, wxT(""),wxDefaultPosition, wxSize(200,-1));
 	m_list = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(200,200), 0, NULL, wxLB_SORT);
 	wxButton * clear_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_clear, wxDefaultPosition, wxSize(200,30));
 

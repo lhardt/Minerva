@@ -35,6 +35,16 @@ void free_solution(Solution * s);
 void free_assignment(Assignment * s);
 
 /*********************************************************/
+/*                   REALLOC Functions                   */
+/*********************************************************/
+bool realloc_teachers(School * school, int n_teachers);
+bool realloc_teaches(School * school, int n_teaches);
+bool realloc_classes(School * school, int n_classes);
+bool realloc_subjects(School * school, int n_subjects);
+bool realloc_assignments(School * school, int n_assignments);
+bool realloc_rooms(School * school, int n_rooms);
+
+/*********************************************************/
 /*                     COPY Functions                    */
 /*********************************************************/
 

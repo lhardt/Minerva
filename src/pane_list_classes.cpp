@@ -27,7 +27,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	wxStaticText * composite_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_is_superclass);
 	wxStaticText * m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_classes_list = new SearchableListPane(m_owner, this, wxID_ANY, wxDefaultPosition, wxSize(230,250));
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,30));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1));
 	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
 	m_size_text = new wxSpinCtrl(this, wxID_ANY);
 	m_free_periods_text = new wxCheckBox(this, wxID_ANY, wxT(""));

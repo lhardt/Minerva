@@ -11,9 +11,9 @@ AddSubjectPane::AddSubjectPane(Application * owner, wxWindow * parent, wxPoint p
 
 	wxStaticText * subject_name_label = new wxStaticText(this,wxID_ANY,m_owner->m_lang->str_name);
 	subject_name_label->SetFont(*m_owner->m_small_font);
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
 
-	wxButton * button = new wxButton(this,wxID_ANY, m_owner->m_lang->str_add, wxDefaultPosition, wxSize(200,30));
+	wxButton * button = new wxButton(this,wxID_ANY, m_owner->m_lang->str_add, wxDefaultPosition, wxSize(200,-1));
 	button->Bind(wxEVT_BUTTON, &AddSubjectPane::OnCreateButtonClicked, this);
 
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
