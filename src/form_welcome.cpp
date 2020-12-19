@@ -41,7 +41,7 @@ WelcomeForm::WelcomeForm(Application * owner) : wxFrame(nullptr, wxID_ANY, owner
 	m_dropdown = new wxChoice(buttons_wrap, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	for(i = 0; school_names[i] != NULL; ++i){
-		m_dropdown->Append(wxString(school_names[i]), new IntClientData(school_ids[i], wxString::FromUTF8(school_names[i])));
+		m_dropdown->Append(wxString::FromUTF8(school_names[i]), new IntClientData(school_ids[i], wxString::FromUTF8(school_names[i])));
 	}
 
 	m_dropdown->SetSelection(0);
