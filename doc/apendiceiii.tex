@@ -12,9 +12,7 @@
 \usepackage[pagestyles]{titlesec} % titleformat
 \usepackage{geometry}
 \usepackage[symbol]{footmisc} % Asterisco em notas de rodapé
-\usepackage{graphicx} % resizebox & imagens
-\usepackage{caption}
-\graphicspath{ {./} }
+\usepackage{graphicx} % resizebox
 % \usepackage[style=abnt2cite]{biblatex}
 % backend=biber, sorting=nty,
 \usepackage[style=abnt, citestyle=abnt]{biblatex}
@@ -31,16 +29,27 @@
 	\renewcommand{\listtablename}{ }
 }
 
-\usepackage[breaklinks=true,
-			pdfauthor={Léo Hardt},
-			pdftitle={AP1 - Léo Hardt},
-			pdfsubject={Minerva:  Um Software para a Criação da Grade Horária de Escolas Brasileiras},
-			pdfkeywords={Software, Escola, Grade Horária}]{hyperref}
+% \usepackage[breaklinks=true]{hyperref}
 % \addbibresource{texto.bib}
 
 \renewcommand{\thefootnote}{\fnsymbol{footnote}} % Asterisco em notas de rodapé
 
+\usepackage[breaklinks=true,
+			pdfauthor={Léo Hardt},
+			pdftitle={AP3 - Léo Hardt},
+			pdfsubject={Minerva:  Um Software para a Criação da Grade Horária de Escolas Brasileiras},
+			pdfkeywords={Software, Escola, Grade Horária}]{hyperref}
+
 \title{Minerva:  Um Software para a Criação da Grade Horária de Escolas Brasileiras}
+% \ifpdf
+% 	\hypersetup{
+% 		pdftitle    = Minerva,
+% 		pdfauthor   = {Léo Hardt, leom.hardt@gmail.com},
+% 		pdfsubject  = TCC - Léo Hardt,
+% 		pdfcreator  = Léo Hardt,
+% 		pdfkeywords = {Software, Escola, Grade Horária}
+% 	}
+% \fi
 
 \geometry{
 	a4paper,
@@ -86,7 +95,7 @@
 		\vskip 3cm
 
 		\begin{center}
-			\textbf{APÊNDICE II\\Minerva:  Um Software para a Criação da Grade Horária de Escolas Brasileiras}
+			\textbf{APÊNDICE III\\Minerva:  Um Software para a Criação da Grade Horária de Escolas Brasileiras}
 		\end{center}
 
 		\vskip 3cm
@@ -138,6 +147,14 @@
 
 	\clearpage
 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%   Trabalhos Relacionados   %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\section{METODOLOGIA}
+
+		\subfile{sections/metodologia.tex}
+
+	\clearpage
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%         Cronograma         %%%%

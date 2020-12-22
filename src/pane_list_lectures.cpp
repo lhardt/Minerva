@@ -71,7 +71,7 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	right_sz->Add(notebook, 1, wxEXPAND | wxBOTTOM, 10);
 
 	sizer->Add(left_sz, 0, wxALL, 10);
-	sizer->Add(right_sz, 0, wxRIGHT | wxTOP | wxBOTTOM, 10);
+	sizer->Add(right_sz, 1, wxRIGHT | wxTOP | wxBOTTOM, 10);
 
 	this->SetSizer(sizer);
 

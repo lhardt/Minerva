@@ -1,0 +1,59 @@
+\documentclass{subfiles}
+
+\begin{document}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%    Descrição do Problema   %%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Descrição do Problema}
+
+	\par Grades horárias são essenciais para muitas instituições, como indústrias, aeroportos, hospitais e eventos esportivos, por exemplo. Escolas, em particular, podem ter custos altos com a elaboração de suas grades: estima-se que um professor pode levar 100 horas ou mais para produzir uma grade horária \cite{appleby}. No entanto, esse processo é rotineiro, já que um novo horário pode ser necessário a cada trimestre, a depender da escola \cite{minhapesquisa}.
+
+	\par Uma grade horária mal-pensada pode prejudicar e muito uma escola. Pode-se imaginar, por exemplo, que ela faça um professor frequentar a escola em um dia a mais ou que, por descuido de seu elaborador, a grade horária requisita um professor em duas turmas ao mesmo tempo. Ineficiências como estas podem ser introduzidas por erro humano, ao não ver a contradição que o horário causa.
+
+	\par Processos de verificação extensiva nestes casos são facilmente automatizados por computador. Não só isso, mas podem ser percorridas formas de otimização da grade horária em velocidades incomparáveis às de qualquer humano, livrando a escola de custos e desafogando um dos processos mais lentos da administração acadêmica.
+
+	\par Mas para a administração escolar não é fácil encontrar um software que acomode suas necessidades. Como podem haver muitas diferentes demandas escolares, como aulas triplas, reuniões pré-agendadas, uma grade horária para cada aluno, etc., são muito específicas, estudos e programas são criados com especificações variadas \cite{Pillay}. \cite{Pillay} também cria uma definição geral deste problema, fornecendo uma lista de restrições que um horário deveria acomodar, acompanhado de artigos que utilizam cada restrição. No capítulo \textit{Modelagem do Sistema} será dada a lista de restrições que este software acomodará.
+
+	\par Mesmo quando uma escola encontra um software adequado, usualmente o custo é um fator acentuado, o que faz com que escolas de baixo orçamento tenham que escolher entre a ineficiência de uma grade horária manual ou arcar com o preço de um software. Atualmente, apesar de haver software livre na área, como é o caso do Unitime, não há tradução para Português ou há outros empecilhos para seu uso em escolas. No capítulo \textit{Trabalhos Relacionados}, serão estudados programas que compõem este mercado.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Proposta de Solução    %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Proposta de Solução}
+
+	 \par Como um grande número de escolas públicas necessita deste tipo de programa, um grande volume de dinheiro público é gasto no aluguel destes sistemas. Por outro lado, se houvesse um software público para atender estas demandas, parte deste dinheiro poderia ser empregado para manutenção e suporte do mesmo, enquanto outra seria economizada. Até o presente momento, não há um programa público \cite{publico} de criação de grade horária que supra as necessidades das escolas brasileiras. Este trabalho visa, então, implementá-lo para que esteja disponível tanto em computadores da rede pública de ensino quanto dos de professores em geral -- ou seja, compatível com os sistemas operacionais Windows e Linux \cite{proinfo,w3s}.
+
+	 \par Em tal software, o professor responsável pela criação do horário escolar insere as necessidades programáticas de aula, as demandas subjetivas dos professores e os horários disponíveis para esses encontros. O sistema então, em constante interação com o usuário, cria o horário escolar.  Desta forma, são reduzidos custos em tempo e em dinheiro da escola que se propõe a utilizar o sistema.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%          Objetivo          %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Objetivo}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%       Objetivo Geral       %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\subsubsection{Objetivo Geral}
+
+		\par Implementar um software livre para a facilitação da criação e manutenção da grade horária escolar.
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%    Objetivos Específicos   %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\subsubsection{Objetivos Específicos}
+
+		\begin{itemize}
+			\item Analisar a literatura existente em relação a softwares de escalonamento e \textit{timetabling};
+			\item Analisar a literatura existente em relação à criação de interfaces do usuário;
+			\item Realizar um levantamento de softwares da área, estabelecendo métricas de comparação tendo em vista a experiência do usuário final;
+			\item Definir os requisitos de uma grade horária escolar de forma abrangente e precisa;
+			\item Definir os requisitos de um sistema que gere tais grades horárias;
+			\item Realizar a modelagem do sistema;
+			\item Implementar um sistema para a criação de grades horárias escolares;
+			\item Testar o sistema com testes do usuário;
+			\item Identificar falhas e possíveis trabalhos futuros no que diz respeito ao programa e sua implementação;
+			\item Disponibilizar o software para escolas que participaram dos testes;
+			\item Documentar o processo.
+		\end{itemize}
+\end{document}

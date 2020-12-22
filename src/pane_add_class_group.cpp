@@ -48,8 +48,8 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	sizer->Add(name_label, 0, wxLEFT | wxTOP,15);
 	sizer->Add(m_name_text, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(classes_label, 0, wxLEFT, 15);
-	sizer->Add(m_classes_grid, 0, wxLEFT, 15);
-	sizer->Add(subjects_label, 0, wxLEFT | wxBOTTOM, 15);
+	sizer->Add(m_classes_grid, 0, wxLEFT | wxBOTTOM, 15);
+	sizer->Add(subjects_label, 0, wxLEFT, 15);
 	sizer->Add(m_subjects_grid, 0, wxLEFT | wxBOTTOM, 15);
 	sizer->Add(add_group, 0, wxLEFT | wxBOTTOM, 15);
 	sizer->Add(m_err_msg, 0, wxLEFT | wxBOTTOM, 15);

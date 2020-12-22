@@ -61,7 +61,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	desc_sz->Add(delete_btn, 0, wxEXPAND |wxBOTTOM, 5);
 
 	sizer->Add(m_rooms_list, 0, wxEXPAND|wxALL, 15);
-	sizer->Add(desc_sz, 0, wxEXPAND|wxALL, 15);
+	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);

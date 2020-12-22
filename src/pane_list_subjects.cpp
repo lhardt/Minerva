@@ -32,9 +32,9 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	fields_sz->Add(m_cancel_btn, 1, wxEXPAND);
 	fields_sz->Add(m_edit_btn, 1, wxEXPAND);
 	fields_wrap->Add(fields_sz, 1, wxALL | wxEXPAND, 5);
-	desc_sz->Add(fields_wrap, 0, wxBOTTOM , 5);
+	desc_sz->Add(fields_wrap, 0, wxEXPAND | wxBOTTOM , 5);
 	desc_sz->AddStretchSpacer();
-	desc_sz->Add(delete_btn, 0, 0);
+	desc_sz->Add(delete_btn, 0,  wxEXPAND);
 
 	sizer->Add(m_subjects_list, 0, wxEXPAND|wxALL, 15);
 	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
