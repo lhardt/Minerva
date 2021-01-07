@@ -41,7 +41,7 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	occurence_label->SetFont(*m_owner->m_small_font);
 
 	wxSizer * sizer   = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * left_sz = new wxBoxSizer(wxVERTICAL);
+	wxSizer * left_sz = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_selection);
 	wxSizer * right_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_data_to_fix);
 	wxSizer * fields_sz = new wxGridSizer(4,5,5);
@@ -53,12 +53,12 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	left_sz->Add(occurence_label, 0, wxBOTTOM, 5);
 	left_sz->Add(occurence_choice, 0, wxBOTTOM, 10);
 
-	fields_sz->Add(teacher_label);
-	fields_sz->Add(teacher_text);
+	fields_sz->Add(teacher_label, 0, 0);
+	fields_sz->Add(teacher_text, 1, wxEXPAND);
 	fields_sz->Add(room_label);
-	fields_sz->Add(room_text);
+	fields_sz->Add(room_text, 1, wxEXPAND);
 	fields_sz->Add(period_label);
-	fields_sz->Add(period_text);
+	fields_sz->Add(period_text, 1, wxEXPAND);
 	fields_sz->AddStretchSpacer();
 	fields_sz->AddStretchSpacer();
 	fields_sz->AddStretchSpacer();
@@ -68,10 +68,10 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 
 	fields_wrap->Add(fields_sz, 0, wxEXPAND | wxALL, 10);
 	right_sz->Add(fields_wrap, 0, wxEXPAND | wxBOTTOM, 10);
-	right_sz->Add(notebook, 1, wxEXPAND | wxBOTTOM, 10);
+	right_sz->Add(notebook, 1, wxEXPAND, 10);
 
-	sizer->Add(left_sz, 0, wxALL, 10);
-	sizer->Add(right_sz, 1, wxRIGHT | wxTOP | wxBOTTOM, 10);
+	sizer->Add(left_sz, 0, wxEXPAND |  wxALL, 10);
+	sizer->Add(right_sz, 1,  wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 10);
 
 	this->SetSizer(sizer);
 
@@ -91,8 +91,8 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
 	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
 	periods_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
-	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
+	periods_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
+	periods_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
 	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
 
 	Layout();

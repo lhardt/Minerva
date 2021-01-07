@@ -36,9 +36,9 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 	}
 	m_subjects_grid->SetTable(grid_table, true);
 
-	m_classes_grid->SetColName(0, m_owner->m_lang->str_belongs);
+	m_classes_grid->SetColLabel(0, m_owner->m_lang->str_belongs);
 	for(i = 0; i < school->n_classes; ++i){
-		m_classes_grid->SetRowName(i, wxString::FromUTF8(school->classes[i].name));
+		m_classes_grid->SetRowLabel(i, wxString::FromUTF8(school->classes[i].name));
 	}
 	m_classes_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 	m_classes_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
@@ -162,7 +162,7 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 				school_meeting_list_add_and_bind(school, i_class, meetings);
 			}
 			m_classes_grid->InsertRows(school->n_classes);
-			m_classes_grid->SetRowName(school->n_classes-1, wxString::FromUTF8(c.name));
+			m_classes_grid->SetRowLabel(school->n_classes-1, wxString::FromUTF8(c.name));
 			ClearInsertedData();
 			m_err_msg->SetLabel(m_owner->m_lang->str_success);
 			m_owner->NotifyNewUnsavedData();

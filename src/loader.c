@@ -1107,7 +1107,7 @@ static bool exec_and_check(sqlite3 * db, const char * const sql, int id){
 	errc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
 	if(errc == SQLITE_OK){
 		sqlite3_bind_int(stmt,1,id);
-		errc =sqlite3_step(stmt);
+		errc = sqlite3_step(stmt);
 		if(errc != SQLITE_DONE){
 			printf("Could not execute SQL %s. %d %s.\n", sql, errc, sqlite3_errmsg(db));
 			retc = false;
@@ -1142,7 +1142,7 @@ static char * copy_sqlite_string(sqlite3_stmt * stmt, int col_i){
 	sqlite3_column_text(stmt,col_i); /* Defines the type to utf8 */
 	int sz = (sqlite3_column_bytes(stmt,col_i));
 	str = calloc(sz + 1, sizeof(char));
-	strncpy(str,(const char * )sqlite3_column_text(stmt,col_i),sz);
+	strncpy(str, (const char *)sqlite3_column_text(stmt,col_i), sz);
 	return str;
 }
 
@@ -1575,9 +1575,14 @@ bool insert_or_update_class_subject_group(FILE * console_out, sqlite3 * db, Clas
 
 	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_CLASS_SUBJECT_GROUP, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
-	//exec_and_check(db,DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID, id);
 	for(i = 0; i < school->n_subject_groups && class->max_per_day_subject_group[i] >= 0; ++i){
-		// TODO
+		// TODO: Testar
+		sqlite3_bind_int(stmt,1, class->id);
+		sqlite3_bind_int(stmt,2, school->subject_group_ids[i]);
+		sqlite3_bind_int(stmt,3, class->max_per_day_subject_group[i]);
+		errc = sqlite3_step(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(stmt);
+		// id_class, id_group, max_per_day
 	}
 
 	return true;
@@ -1829,7 +1834,7 @@ bool insert_meetings_list(FILE * console_out, sqlite3 * db, Meeting * meetings, 
 	return true;
 }
 
-/* TODO insert lectures TODO */
+/* TODO test */
 static bool insert_all_meetings(FILE * console_out, sqlite3* db, School * school){
 	int i,errc;
 	sqlite3_stmt * stmt;
@@ -1902,7 +1907,7 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 	if(optional_id != -1){
 		sqlite3_bind_int(stmt,1, optional_id);
 	}
-	sqlite3_bind_text(stmt,2, "?", -1, SQLITE_TRANSIENT);
+	sqlite3_bind_text(stmt,2, sol->gen_date, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt,3,sol->name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt,4,sol->desc, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_int(stmt,5,school->id);
@@ -2305,6 +2310,7 @@ static int select_all_solutions(FILE * console_out, sqlite3* db, School * school
 		school->solutions = calloc(11, sizeof(Solution));
 		while(errc == SQLITE_ROW){
 			school->solutions[i].id = sqlite3_column_int(stmt,0);
+			school->solutions[i].gen_date = copy_sqlite_string(stmt,1);
 			school->solutions[i].name = copy_sqlite_string(stmt,2);
 			school->solutions[i].desc = copy_sqlite_string(stmt,3);
 

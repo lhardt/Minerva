@@ -48,10 +48,15 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	m_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
 	m_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
 
-	m_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	m_grid->m_basic_row_name = m_owner->m_lang->str_period;
+	// m_grid->m_basic_col_name = m_owner->m_lang->str_day;
+	// m_grid->m_basic_row_name = m_owner->m_lang->str_period;
 
-	m_grid->GridRemake(m_number_of_days_text->GetValue(), m_number_of_periods_text->GetValue());
+	m_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
+	m_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
+
+	m_number_of_periods_text->SetValue(2);
+	m_number_of_days_text->SetValue(3);
+	m_grid->GridRemake(3, 2);
 
 	m_err_msg = new wxStaticText(m_left_pane, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
 	m_err_msg->SetFont(*m_owner->m_small_font);
@@ -124,6 +129,7 @@ CreateSchoolForm::~CreateSchoolForm(){
 
 void CreateSchoolForm::OnGridSizeUpdated(wxSpinEvent & ev){
 	m_grid->GridRemake(m_number_of_days_text->GetValue(),m_number_of_periods_text->GetValue());
+	Layout();
 }
 
 void CreateSchoolForm::OnBackClicked(wxCommandEvent & ev){

@@ -11,6 +11,7 @@
 #include "gui.hpp"
 
 #include <wx/wx.h>
+#include <windows.h>
 
 extern "C" {
 	#include "loader.h"
@@ -137,6 +138,14 @@ IntClientData::IntClientData(int value, wxString name):
 bool Application::OnInit(){
 	int errc;
 	bool loaded;
+
+	/* stdout does not work properly */
+	#ifdef __WINDOWS__
+		AllocConsole();
+		freopen("CONIN$", "r", stdin);
+		freopen("CONOUT$", "w", stderr);
+		freopen("CONOUT$", "w", stdout);
+	#endif
 
 	errc = sqlite3_open(":memory:",&m_database);
 	loaded = load_backup(m_database, "./Database.db");

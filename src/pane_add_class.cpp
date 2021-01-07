@@ -58,8 +58,8 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	m_periods->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	m_periods->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 
-	m_periods->m_basic_col_name = m_owner->m_lang->str_day;
-	m_periods->m_basic_row_name = m_owner->m_lang->str_period;
+	m_periods->SetDefaultColumnLabel(m_owner->m_lang->str_day);
+	m_periods->SetDefaultRowLabel(m_owner->m_lang->str_period);
 
 	m_periods->GridRemake(school->n_days,school->n_periods_per_day);
 

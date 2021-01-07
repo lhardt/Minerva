@@ -45,7 +45,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	notebook->InsertPage(5, m_planning_rooms, m_owner->m_lang->str_planning_rooms);
 	notebook->InsertPage(6, m_groups, m_owner->m_lang->str_teacher_groups);
 	m_teachers_list = new SearchableListPane(m_owner, this, wxID_ANY, wxDefaultPosition, wxSize(230,300));
-	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
+	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
 	m_max_days_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 	m_max_periods_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 	m_max_ppd_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
@@ -63,29 +63,29 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	periods_grid->AddState(m_owner->m_lang->str_teacher_unavailable, wxColor(255,200,200));
 	periods_grid->AddState(m_owner->m_lang->str_teacher_available, wxColor(200,200,255));
 	// TODO substitute by the names
-	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
+	periods_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
+	periods_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
 	periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 
 	ChoiceGrid * teaches_grid = m_teaches->GetGrid();
 	teaches_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	teaches_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
-	teaches_grid->SetColName(i, m_owner->m_lang->str_teaches);
+	teaches_grid->SetColLabel(i, m_owner->m_lang->str_teaches);
 
 	ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
-	lec_rooms_grid->SetColName(0,m_owner->m_lang->str_name);
+	lec_rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
 
 	ChoiceGrid * planning_rooms_grid = m_planning_rooms->GetGrid();
 	planning_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	planning_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
-	planning_rooms_grid->SetColName(0,m_owner->m_lang->str_name);
+	planning_rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
 
 	ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();
 	twinning_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	twinning_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
-	twinning_grid->SetColName(0,m_owner->m_lang->str_name);
+	twinning_grid->SetColLabel(0,m_owner->m_lang->str_name);
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
@@ -93,27 +93,27 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 
 	fields_sz->Add(name_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_name_text);
+	fields_sz->Add(m_name_text, 0, wxEXPAND);
 	fields_sz->Add(max_days_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_max_days_text);
+	fields_sz->Add(m_max_days_text, 0,	 wxEXPAND);
 	fields_sz->Add(max_periods_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_max_periods_text);
+	fields_sz->Add(m_max_periods_text, 0, wxEXPAND);
 	fields_sz->Add(max_ppd_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_max_ppd_text);
+	fields_sz->Add(m_max_ppd_text, 0, wxEXPAND);
 	fields_sz->Add(max_ppcpd_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_max_ppcpd_text);
+	fields_sz->Add(m_max_ppcpd_text, 0, wxEXPAND);
 	fields_sz->Add(planning_periods_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_planning_periods_text);
+	fields_sz->Add(m_planning_periods_text, 0, wxEXPAND);
 	fields_sz->Add(planning_needs_room_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_planning_needs_room_text);
+	fields_sz->Add(m_planning_needs_room_text, 0, wxEXPAND);
 	fields_sz->Add(active_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_active_text);
+	fields_sz->Add(m_active_text, 0, wxEXPAND);
 	fields_sz->Add(dependency_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_dependency_text);
-	fields_sz->Add(m_cancel_btn);
-	fields_sz->Add(m_edit_btn);
+	fields_sz->Add(m_dependency_text, 0, wxEXPAND);
+	fields_sz->Add(m_cancel_btn, 0, wxEXPAND);
+	fields_sz->Add(m_edit_btn, 0, wxEXPAND);
 
-	fields_wrap->Add(fields_sz, 0, wxEXPAND|wxALL, 5);
+	fields_wrap->Add(fields_sz, 1, wxEXPAND|wxALL, 5);
 
 	desc_sz->Add(fields_wrap, 0,wxEXPAND);
 	desc_sz->Add(notebook, 1, wxEXPAND);
@@ -189,22 +189,22 @@ void ListTeachersPane::ShowData(){
 	School * school = m_owner->m_school;
 
 	for(i = 0; i < school->n_subjects;++i){
-		teaches_grid->SetRowName(i, wxString::FromUTF8(school->subjects[i].name));
+		teaches_grid->SetRowLabel(i, wxString::FromUTF8(school->subjects[i].name));
 	}
 	teaches_grid->GridRemake(1,school->n_subjects);
 
 	for(i = 0; i < school->n_rooms; ++i){
-		lec_rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
+		lec_rooms_grid->SetRowLabel(i, wxString::FromUTF8(school->rooms[i].name));
 	}
 	lec_rooms_grid->GridRemake(1, school->n_rooms);
 
 	for(i = 0; i < school->n_rooms; ++i){
-		planning_rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
+		planning_rooms_grid->SetRowLabel(i, wxString::FromUTF8(school->rooms[i].name));
 	}
 	planning_rooms_grid->GridRemake(1, school->n_rooms);
 
 	for(i = 0; i < school->n_periods_per_day; ++i){
-		twinning_grid->SetRowName(i, wxString::Format("%d", i+1));
+		twinning_grid->SetRowLabel(i, wxString::Format("%d", i+1));
 	}
 	twinning_grid->GridRemake(1, school->n_periods_per_day);
 

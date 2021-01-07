@@ -35,17 +35,17 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 	wxString col_name = wxT("");
 	for(i = 0; i < school->n_teachers; ++i){
 		wxString row_name = wxString::FromUTF8(school->teachers[i].name);
-		m_teachers_grid->SetRowName(i, row_name);
+		m_teachers_grid->SetRowLabel(i, row_name);
 	}
-	m_teachers_grid->SetColName(0, col_name);
+	m_teachers_grid->SetColLabel(0, col_name);
 	m_teachers_grid->GridRemake(1, school->n_teachers);
 
 	col_name = wxT("");
 	for(i = 0; i < school->n_subjects; ++i){
 		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
-		m_subjects_grid->SetRowName(i, row_name);
+		m_subjects_grid->SetRowLabel(i, row_name);
 	}
-	m_subjects_grid->SetColName(0, col_name);
+	m_subjects_grid->SetColLabel(0, col_name);
 	m_subjects_grid->GridRemake(1, school->n_subjects);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);

@@ -24,7 +24,7 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
 	btsz->Add(m_save_btn, 0, wxLEFT, 10);
-	sz->Add(m_grid, 0, wxALL, 10);
+	sz->Add(m_grid, 0, wxEXPAND | wxALL, 10);
 	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
 	SetSizerAndFit(sz);
@@ -107,7 +107,7 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
 	btsz->Add(m_save_btn, 0, wxLEFT, 10);
-	sz->Add(m_grid, 0, wxALL, 10);
+	sz->Add(m_grid, 0, wxEXPAND | wxALL, 10);
 	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
 	SetSizerAndFit(sz);
@@ -172,25 +172,24 @@ StringGridPane::StringGridPane(Application * owner,
 				 wxWindowID id,
 				 wxPoint pos,
 				 wxSize size,
-				 wxString column_name,
+				 wxVector<wxString> col_names,
 				 wxVector<wxString> row_names) :  wxScrolledWindow(parent, id, pos, size), m_owner(owner){
  	int i;
  	SetBackgroundColour(wxColour(245,245,245));
-
- 	SetFont(*m_owner->m_text_font);
+	SetFont(*m_owner->m_text_font);
 
  	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_save_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_save);
  	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
 	m_grid = new wxGrid(this, wxID_ANY);
-	m_grid->CreateGrid(row_names.size(),1);
-
-	m_grid->SetColLabelValue(0, column_name);
+	m_grid->CreateGrid(row_names.size(),col_names.size());
+	m_grid->SetLabelBackgroundColour( wxColour(255,255,255) );
+	for(int i = 0; i < col_names.size(); ++i){
+		m_grid->SetColLabelValue(i, col_names[i]);
+	}
 	for(i = 0; i < row_names.size(); ++i){
 		m_grid->SetRowLabelValue(i, row_names[i]);
 	}
-	m_grid->AutoSizeColumn(0, true);
-
 	wxBoxSizer * sz = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer * btsz = new wxBoxSizer(wxHORIZONTAL);
 
@@ -198,8 +197,8 @@ StringGridPane::StringGridPane(Application * owner,
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
 	btsz->Add(m_save_btn, 0, wxLEFT, 10);
-	sz->Add(m_grid, 0, wxALL, 10);
-	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
+	sz->Add(m_grid, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 10);
+	sz->Add(btsz, 0, wxALL, 10);
 
 	SetSizerAndFit(sz);
 	m_grid->EnableEditing(false);

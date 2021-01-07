@@ -811,8 +811,13 @@ bool SubjectGroupDeleteAction::Undo(){
 			school->subjects[i].in_groups[i_group] = 1;
 		}
 		for(int i = 0; i < school->n_classes; ++i){
+			if(school->classes[i].max_per_day_subject_group == NULL){
+				printf("This should never happen if we done do/undo/redo properly\n");
+				school->classes[i].max_per_day_subject_group = (int*) calloc(school->n_subject_groups + 1, sizeof(int));
+				school->classes[i].max_per_day_subject_group[school->n_subject_groups] = -1;
+			}
 			update_class_max_per_day_subjectgroup(stdout, m_owner->m_database, school->classes[i].id, m_id, m_class_max_per_day[i]);
-			school->classes[i].max_per_day_subject_group[i_group] = 1;
+			school->classes[i].max_per_day_subject_group[i_group] = m_class_max_per_day[i];
 		}
 		m_state = state_UNDONE;
 		return true;

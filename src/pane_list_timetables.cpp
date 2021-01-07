@@ -20,6 +20,7 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 	wxButton * export_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_export_timetable);
 	wxNotebook * notebook = new wxNotebook(this, wxID_ANY);
 
+	m_desc_text = new wxTextCtrl(notebook, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
 	wxScrolledWindow * class_pane = new wxScrolledWindow(notebook, wxID_ANY);
 	wxScrolledWindow * teacher_pane = new wxScrolledWindow(notebook, wxID_ANY);
 	wxScrolledWindow * room_pane = new wxScrolledWindow(notebook, wxID_ANY);
@@ -57,7 +58,7 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 	teacher_pane->SetSizerAndFit(teacher_sizer);
 	room_pane->SetSizerAndFit(room_sizer);
 
-	notebook->AddPage(new wxScrolledWindow(notebook, wxID_ANY), wxT("Descrição"));
+	notebook->AddPage(m_desc_text, wxT("Descrição"));
 	notebook->AddPage(class_pane, m_owner->m_lang->str_classes);
 	notebook->AddPage(teacher_pane, m_owner->m_lang->str_teachers);
 	notebook->AddPage(room_pane, m_owner->m_lang->str_rooms);
@@ -76,13 +77,13 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 	basic_container->Add(basic_sizer, 1, wxEXPAND | wxALL, 5);
 
 	wxSizer * content_sizer = new wxBoxSizer(wxVERTICAL);
-	content_sizer->Add(basic_container, 0, wxBOTTOM | wxEXPAND, 5);
-	content_sizer->Add(notebook, 1, wxBOTTOM | wxEXPAND, 5);
-	content_sizer->Add(actions_sizer, 0, wxBOTTOM | wxEXPAND, 5);
+	content_sizer->Add(basic_container, 0, wxEXPAND | wxBOTTOM | wxEXPAND, 5);
+	content_sizer->Add(notebook, 1, wxEXPAND |  wxBOTTOM | wxEXPAND, 5);
+	content_sizer->Add(actions_sizer, 0, wxEXPAND |  wxBOTTOM | wxEXPAND, 5);
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->Add(m_timetables_list, 0, wxALL | wxEXPAND, 10);
-	sizer->Add(content_sizer, 0, wxALL | wxEXPAND, 10);
+	sizer->Add(content_sizer, 1, wxALL | wxEXPAND, 10);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -93,6 +94,8 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 	m_class_picker->Enable(false);
 	m_teacher_picker->Enable(false);
 	m_room_picker->Enable(false);
+	m_name_text->Enable(false);
+	m_desc_text->Enable(false);
 
 	m_timetables_list->GetList()->Bind(wxEVT_LISTBOX, &ListTimetablesPane::OnSelectionChanged, this);
 	m_teacher_picker->Bind(wxEVT_CHOICE, &ListTimetablesPane::OnTeacherSelectionChaged, this);
@@ -200,7 +203,8 @@ void ListTimetablesPane::OnSelectionChanged(wxCommandEvent &){
 		int solution_id = ((IntClientData*)m_timetables_list->GetList()->GetClientObject(i_select))->m_value;
 		Solution * sol = find_solution_by_id(m_owner->m_school, solution_id);
 		m_name_text->SetValue(wxString::FromUTF8(sol->name));
-		m_date_text->SetLabel(wxT("-- / -- / --"));
+		m_desc_text->SetValue(wxString::FromUTF8(sol->desc));
+		m_date_text->SetLabel(wxString::FromUTF8(sol->gen_date));
 
 		m_class_picker->Enable(true);
 		m_teacher_picker->Enable(true);
@@ -241,14 +245,14 @@ void ListTimetablesPane::ShowData(){
 	m_classes->AddState(wxT("Free"), wxColor(255,255,255));
 
 	for(int i = 0; i < school->n_days; ++i){
-		m_classes->SetColName(i, wxString::FromUTF8(school->day_names[i]));
-		m_teachers->SetColName(i, wxString::FromUTF8(school->day_names[i]));
-		m_rooms->SetColName(i, wxString::FromUTF8(school->day_names[i]));
+		m_classes->SetColLabel(i, wxString::FromUTF8(school->day_names[i]));
+		m_teachers->SetColLabel(i, wxString::FromUTF8(school->day_names[i]));
+		m_rooms->SetColLabel(i, wxString::FromUTF8(school->day_names[i]));
 	}
 	for(int i = 0; i < school->n_periods_per_day; ++i){
-		m_classes->SetRowName(i, wxString::FromUTF8(school->daily_period_names[i]));
-		m_teachers->SetRowName(i, wxString::FromUTF8(school->daily_period_names[i]));
-		m_rooms->SetRowName(i, wxString::FromUTF8(school->daily_period_names[i]));
+		m_classes->SetRowLabel(i, wxString::FromUTF8(school->daily_period_names[i]));
+		m_teachers->SetRowLabel(i, wxString::FromUTF8(school->daily_period_names[i]));
+		m_rooms->SetRowLabel(i, wxString::FromUTF8(school->daily_period_names[i]));
 	}
 	m_teachers->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 	m_classes->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);

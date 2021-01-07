@@ -23,7 +23,7 @@ AddSubjectGroupPane::AddSubjectGroupPane(Application * owner, wxWindow * parent,
 	m_subjects_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	m_subjects_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 	wxString col_name = m_owner->m_lang->str_belongs;
-	m_subjects_grid->SetColName(0, col_name);
+	m_subjects_grid->SetColLabel(0, col_name);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -50,7 +50,7 @@ void AddSubjectGroupPane::ShowData(){
 	School * school = m_owner->m_school;
 	for(int i = 0; i < school->n_subjects; ++i){
 		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
-		m_subjects_grid->SetRowName(i, row_name);
+		m_subjects_grid->SetRowLabel(i, row_name);
 	}
 	m_subjects_grid->GridRemake(1, school->n_subjects);
 }

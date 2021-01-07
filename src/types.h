@@ -121,6 +121,7 @@ typedef struct Solution {
 	int 	  id;
 	char 	* name;
 	char 	* desc;
+	char 	* gen_date;
 	Meeting * meetings;
 	int 	  n_meetings;
 } Solution;

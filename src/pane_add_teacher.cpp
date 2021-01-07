@@ -26,19 +26,19 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	wxButton * add_teacher = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_teacher, wxDefaultPosition, wxSize(180,30));
 
 	wxString col_name = m_owner->m_lang->str_teaches;
-	m_subjects_grid->SetColName(0, col_name);
+	m_subjects_grid->SetColLabel(0, col_name);
 	m_subjects_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	m_subjects_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 	for(i = 0; i < m_owner->m_school->n_subjects; ++i){
-		m_subjects_grid->SetRowName(i, wxString::FromUTF8(m_owner->m_school->subjects[i].name));
+		m_subjects_grid->SetRowLabel(i, wxString::FromUTF8(m_owner->m_school->subjects[i].name));
 	}
 	m_subjects_grid->GridRemake(1,m_owner->m_school->n_subjects);
 
 	m_periods_grid->AddState(m_owner->m_lang->str_teacher_unavailable, wxColor(255,200,200));
 	m_periods_grid->AddState(m_owner->m_lang->str_teacher_available, wxColor(200,200,255));
 
-	m_periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	m_periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
+	m_periods_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
+	m_periods_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
 
 	m_periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 	for(i = 0; i < m_owner->m_school->n_periods; ++i){

@@ -25,7 +25,7 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	members_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 
 	wxString col_name = m_owner->m_lang->str_member;
-	members_grid->SetColName(0,col_name);
+	members_grid->SetColLabel(0,col_name);
 
 	wxSizer * fields_wrap = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 	wxSizer * fields_sz = new wxGridSizer(4,5,5);
@@ -119,7 +119,7 @@ void ListSubjectGroupsPane::ShowData(){
 	ChoiceGrid * members_grid = m_members->GetGrid();
 	for(int i = 0; i < school->n_subjects; ++i){
 		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
-		members_grid->SetRowName(i, row_name);
+		members_grid->SetRowLabel(i, row_name);
 	}
 	members_grid->GridRemake(1, school->n_subjects);
 	members_grid->SetAllActiveCellsState(0);

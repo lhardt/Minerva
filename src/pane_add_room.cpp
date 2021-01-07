@@ -34,8 +34,8 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 	m_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
 	m_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
 
-	m_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	m_grid->m_basic_row_name = m_owner->m_lang->str_period;
+	m_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
+	m_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
 
 	m_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 

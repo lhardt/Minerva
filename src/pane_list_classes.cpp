@@ -115,8 +115,8 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
 	periods_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	periods_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
-	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
+	periods_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
+	periods_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
 	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
 	for(i = 0; i < school->n_periods; ++i){
 		periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i]?0:-1);
@@ -132,9 +132,9 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
 	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
-	rooms_grid->SetColName(0,m_owner->m_lang->str_name);
+	rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
 	for(i = 0; i < school->n_rooms; ++i){
-		rooms_grid->SetRowName(i, wxString::FromUTF8(school->rooms[i].name));
+		rooms_grid->SetRowLabel(i, wxString::FromUTF8(school->rooms[i].name));
 	}
 	rooms_grid->GridRemake(1, school->n_rooms);
 

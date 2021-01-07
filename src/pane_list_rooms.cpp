@@ -31,8 +31,8 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
 	periods_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
 	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
-	periods_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	periods_grid->m_basic_row_name = m_owner->m_lang->str_period;
+	periods_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
+	periods_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
 
 	periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 
@@ -54,8 +54,8 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	fields_sz->Add(m_cancel_btn, 1, wxEXPAND);
 	fields_sz->Add(m_edit_btn, 1, wxEXPAND);
 
-	fields_wrap->Add(fields_sz, 0, wxALL | wxEXPAND, 10);
-	desc_sz->Add(fields_wrap, 0, wxBOTTOM, 5);
+	fields_wrap->Add(fields_sz, 0, wxEXPAND | wxALL, 10);
+	desc_sz->Add(fields_wrap, 0, wxEXPAND | wxBOTTOM, 5);
 	desc_sz->Add(notebook, 0, wxEXPAND | wxBOTTOM, 5);
 	desc_sz->AddStretchSpacer();
 	desc_sz->Add(delete_btn, 0, wxEXPAND |wxBOTTOM, 5);

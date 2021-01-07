@@ -58,27 +58,63 @@ enum AppFormType {
 };
 
 /* Grid table that only accepts positive integers. */
-class PosIntGridTable : public wxGridTableBase{
+class PosIntGridTable : public wxGridTableBase {
  public:
 	PosIntGridTable(int n_rows, int n_cols);
 	~PosIntGridTable();
-	virtual int GetNumberRows();
-	virtual int GetNumberCols();
-	virtual bool IsEmptyCell( int row, int col );
-	virtual wxString GetValue( int row, int col );
-	virtual void SetValue( int row, int col, const wxString& value );
-	virtual bool AppendRows(unsigned long n_new_rows);
-	virtual bool AppendCols(unsigned long n_new_cols);
-	virtual void SetColLabelValue(int col, wxString & str);
-	virtual void SetRowLabelValue(int row, wxString & str);
-	virtual wxString GetColLabelValue(int col);
-	virtual wxString GetRowLabelValue(int row);
+	int GetNumberRows() override;
+	int GetNumberCols() override;
+	bool IsEmptyCell( int row, int col ) override;
+	wxString GetValue( int row, int col ) override;
+	void SetValue( int row, int col, const wxString& value ) override;
+	bool AppendRows(size_t n_new_rows) override;
+	bool AppendCols(size_t n_new_cols) override;
+	void SetColLabelValue(int col, const wxString & str) override;
+	void SetRowLabelValue(int row, const wxString & str) override;
+	wxString GetColLabelValue(int col) override;
+	wxString GetRowLabelValue(int row) override;
  private:
 	int n_rows;
 	int n_cols;
 	int * values;
 	wxVector<wxString> col_labels;
 	wxVector<wxString> row_labels;
+};
+
+class ChoiceGridTable : public wxGridTableBase {
+ public:
+	ChoiceGridTable(int n_rows, int n_cols);
+	~ChoiceGridTable();
+	int GetNumberRows() override;
+	int GetState( int row, int col );
+	void SetState( int row, int col, int state );
+	void SetNextState( int row, int col );
+	void AddState(wxString name, wxColor color);
+	int GetNumberCols() override;
+	bool IsEmptyCell( int row, int col ) override;
+	wxString GetValue( int row, int col ) override;
+	void SetValue( int row, int col, const wxString& value ) override;
+	bool AppendRows(size_t n_new_rows) override;
+	bool AppendCols(size_t n_new_cols) override;
+	void SetColLabelValue(int col, const wxString & str) override;
+	void SetRowLabelValue(int row, const wxString & str) override;
+	wxString GetColLabelValue(int col) override;
+	wxString GetRowLabelValue(int row) override;
+
+	void SetDefaultColumnLabel(wxString lbl);
+	void SetDefaultRowLabel(wxString lbl);
+	void SetRowLabel(int i_row, wxString lbl);
+	void SetColLabel(int i_col, wxString lbl);
+ private:
+	int n_rows;
+	int n_cols;
+	int * values;
+	wxVector<wxString> value_labels;
+	wxVector<wxColor>  value_colors;
+	wxVector<wxString> col_labels;
+	wxVector<wxString> row_labels;
+	wxString default_row_label;
+	wxString default_col_label;
 };
 
 class Notification : public wxPanel {
@@ -106,28 +142,18 @@ class ChoiceGrid : public wxGrid {
 	ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 	~ChoiceGrid();
 
-	int m_n_cols;
-	int m_n_rows;
-
 	wxString m_immutable_cell_text;
 	wxColor  m_immutable_cell_color;
-
-	wxString m_basic_col_name;
-	wxString m_basic_row_name;
-	wxVector<wxString> m_col_names;
-	wxVector<wxString> m_row_names;
-
-	wxVector<wxString> m_value_names;
 	wxVector<wxColor>  m_background_colors;
-	wxVector<int> possible_values;
 
 	bool m_can_user_click = true;
 
 	void GridRemake(int n_cols, int n_rows);
-	void SetColName(int i_col, wxString name);
-	void SetRowName(int i_row, wxString name);
+	void SetColLabel(int i_col, wxString name);
+	void SetRowLabel(int i_row, wxString name);
 	void SetCellImmutable(int i_col, int i_row);
 	void SetCellState(int i_row, int i_col, int state);
+	void SetCellNextState(int i_row, int i_col);
 	void SetAllCellsState(int state);
 	void SetAllActiveCellsState(int state);
 	void SetColActiveCellsState(int i_col, int state);
@@ -135,8 +161,11 @@ class ChoiceGrid : public wxGrid {
 	int  GetCellState(int i_row, int i_col);
 	int  AddState(wxString state_name, wxColor state_color);
 	void SetCanUserClick(bool can_user_click);
+	void SetDefaultColumnLabel(wxString lbl);
+	void SetDefaultRowLabel(wxString lbl);
  private:
-	void OnLeftClick(wxGridEvent &);
+	 void OnLeftClick(wxGridEvent &);
+	void OnHeaderLeftClick(wxGridEvent &);
 	Application * m_owner;
 };
 
@@ -203,7 +232,7 @@ class StringGridPane : public wxScrolledWindow {
 					 wxWindowID id = wxID_ANY,
 					 wxPoint pos = wxDefaultPosition,
 					 wxSize sz = wxDefaultSize,
-				 	 wxString column_name = wxT(""),
+				 	 wxVector<wxString> column_names = wxVector<wxString>(),
 					 wxVector<wxString> row_names = wxVector<wxString>());
 	/*NOTE: You have to .skip() those events in client code. */
 	void 		  OnEditButtonClicked(wxCommandEvent &);
@@ -707,6 +736,7 @@ class ListTimetablesPane : public wxScrolledWindow {
 	wxChoice * m_class_picker;
 	wxChoice * m_teacher_picker;
 	wxChoice * m_room_picker;
+	wxTextCtrl * m_desc_text;
 	void OnDataChange(wxNotifyEvent & );
 	void OnSelectionChanged(wxCommandEvent &);
 	void OnDeleteButtonClicked(wxCommandEvent &);
@@ -727,6 +757,7 @@ class GenerateTimetablePane : public wxScrolledWindow {
 	Application * m_owner;
 	wxStaticText * m_err_msg;
 	wxTextCtrl * m_tt_name_text;
+	wxTextCtrl * m_tt_desc_text;
 	void OnButtonClicked(wxCommandEvent &);
 	void OnDataChange(wxNotifyEvent & );
 };
