@@ -48,9 +48,6 @@ CreateSchoolForm::CreateSchoolForm(Application * owner)  : wxFrame(nullptr, wxID
 	m_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));
 	m_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
 
-	// m_grid->m_basic_col_name = m_owner->m_lang->str_day;
-	// m_grid->m_basic_row_name = m_owner->m_lang->str_period;
-
 	m_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
 	m_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
 

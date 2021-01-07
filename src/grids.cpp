@@ -53,8 +53,8 @@ PosIntGridTable::PosIntGridTable(int n_rows, int n_cols) : wxGridTableBase(){
 	this->n_cols = n_cols;
 	this->n_rows = n_rows;
 	values = (int*)calloc(n_rows * n_cols, sizeof(int));
-	row_labels = wxVector<wxString>(n_rows);
-	col_labels = wxVector<wxString>(n_cols);
+	row_labels = wxVector<wxString>();
+	col_labels = wxVector<wxString>();
 }
 PosIntGridTable::~PosIntGridTable(){
 	free(values);
@@ -102,13 +102,14 @@ ChoiceGridTable::ChoiceGridTable(int n_rows, int n_cols) : wxGridTableBase() {
 	if(n_rows > 0 && n_cols > 0){
 		values = (int*)calloc(n_rows * n_cols, sizeof(int));
 	}
-	row_labels = wxVector<wxString>(n_rows);
-	col_labels = wxVector<wxString>(n_cols);
+	row_labels = wxVector<wxString>();
+	col_labels = wxVector<wxString>();
 	value_labels = wxVector<wxString>();
 	value_colors = wxVector<wxColor>();
 }
 
 wxString ChoiceGridTable::GetRowLabelValue(int row){
+	printf("Getting row %d label, with rowlabelssize %d\n", row, row_labels.size());
 	if(row < row_labels.size()){
 		return row_labels[row];
 	} else {
@@ -117,7 +118,7 @@ wxString ChoiceGridTable::GetRowLabelValue(int row){
 }
 
 wxString ChoiceGridTable::GetColLabelValue(int col){
-	if(col < col_labels.size()){
+	if(col >= 0 && col < col_labels.size()){
 		return col_labels[col];
 	} else {
 		return wxString::Format("%s %d", default_col_label, col + 1);
@@ -125,11 +126,17 @@ wxString ChoiceGridTable::GetColLabelValue(int col){
 }
 
 void ChoiceGridTable::SetRowLabelValue(int row, const wxString & str){
-	row_labels.insert(row_labels.begin()+row,str);
+	if(row_labels.size() <= row){
+		row_labels.resize(row+1);
+	}
+	row_labels[row] = str;
 }
 
 void ChoiceGridTable::SetColLabelValue(int col, const wxString & str){
-	col_labels.insert(col_labels.begin()+col, str);
+	if(col_labels.size() <= col){
+		col_labels.resize(col+1);
+	}
+	col_labels[col] = str;
 }
 
 bool ChoiceGridTable::AppendCols(size_t n_new_cols){
@@ -197,57 +204,44 @@ wxString ChoiceGridTable::GetValue( int row, int col ){
 	if(row < n_rows && col < n_cols){
 		int val = values[col * n_rows + row];
 		if(val >= 0 && val < value_labels.size()){
-			return value_labels[values[col * n_rows + row]];
+			return value_labels[val];
+		} else if(val == -1){
+			return wxT("");
 		} else {
-			return wxString::Format("???%d", values[col * n_rows + row]);
+			return wxString::Format("??? (%d)", val);
 		}
 	} else {
 		return wxT("");
 	}
 }
 int ChoiceGridTable::GetState( int row, int col ){
-	if(row < n_rows && col < n_cols){
+	if(row >= 0 && col >= 0 && row < n_rows && col < n_cols){
 		return values[col * n_rows + row];
-		// /* TODO: Use a PosIntGridTable backend. It would speed up to not compare strings/colors */
-		// if(i_col < GetNumberCols() && i_row < GetNumberRows()){
-		// 	wxColor bgcolor = GetCellBackgroundColour(i_row, i_col);
-		// 	for(int i = 0; i < m_background_colors.size(); ++i){
-		// 		if(bgcolor == m_background_colors[i]){
-		// 			return i;
-		// 		}
-		// 	}
-		// 	/* The immutable might not have been set yet */
-		// 	if(bgcolor == m_immutable_cell_color){
-		// 		return -1;
-		// 	}
-		// 	printf("Something is wrong. GetCellState with invalid/blank cell r %d cm %d\n", i_row, i_col);
-		// }
-		// return -2;
-
 	}
 	return -1;
 }
 void ChoiceGridTable::SetValue( int row, int col, const wxString& value ){
-	long long_val = -1L;
-	int int_val = -1;
-	if(value.ToLong(&long_val)){
-		int_val = (int) long_val;
-		if(row >= n_rows || col >= n_cols){
-			int max_rows = (row + 1)>n_rows?(row+1):n_rows;
-			int max_cols = (col + 1)>n_cols?(col+1):n_cols;
-			if(values == NULL){
-				values = (int*)calloc(max_rows * max_cols, sizeof(int));
-			} else {
-				values = (int*)realloc(values, (max_rows * max_cols)*sizeof(int));
-			}
-		}
-		if(int_val >= 0){
-			values[col * n_rows + row] = int_val;
-			wxGridCellAttr * attr = GetAttr(row,col, wxGridCellAttr::Cell);
-			attr->SetBackgroundColour( wxColor(244,244,0) );
-			SetAttr(attr, row, col);
-		}
-	}
+	// long long_val = -1L;
+	// int int_val = -1;
+	// if(value.ToLong(&long_val)){
+	// 	int_val = (int) long_val;
+	// 	if(row >= n_rows || col >= n_cols){
+	// 		int max_rows = (row + 1)>n_rows?(row+1):n_rows;
+	// 		int max_cols = (col + 1)>n_cols?(col+1):n_cols;
+	// 		if(values == NULL){
+	// 			values = (int*)calloc(max_rows * max_cols, sizeof(int));
+	// 		} else {
+	// 			values = (int*)realloc(values, (max_rows * max_cols)*sizeof(int));
+	// 		}
+	// 	}
+	// 	if(int_val >= 0){
+	// 		printf("Setting attr\n");
+	// 		values[col * n_rows + row] = int_val;
+	// 		wxGridCellAttr * attr = GetAttr(row,col, wxGridCellAttr::Cell);
+	// 		attr->SetBackgroundColour( wxColor(244,244,0) );
+	// 		SetAttr(attr, row, col);
+	// 	}
+	// }
 }
 
 void ChoiceGridTable::AddState(wxString name, wxColor color){
@@ -258,16 +252,28 @@ void ChoiceGridTable::AddState(wxString name, wxColor color){
 void ChoiceGridTable::SetNextState(int i_row, int i_col){
 	int i = i_col * n_rows + i_row;
 	values[i] = (values[i] + 1) % value_labels.size();
+
+	// wxGridCellAttr * attr = GetAttr(i_row,i_col, wxGridCellAttr::Cell);
+	// attr->SetBackgroundColour( wxColor(244,244,0) );
+	// SetAttr(attr, i_row, i_col);
+}
+
+wxGridCellAttr * ChoiceGridTable::GetAttr(int row, int col, wxGridCellAttr::wxAttrKind kind){
+	int value = values[col * n_rows + row];
+	wxColor text_color  = wxColor(0,0,0);
+	wxColor back_color;
+	if(value >= 0 && value_colors.size() > value){
+		back_color  = value_colors[value];
+	} else if(value == -1){
+		back_color = wxColor(240,240,240);
+	} else {
+		back_color = wxColor(255,0,0);
+	}
+	wxFont font = GetView()->GetFont();
+	return new wxGridCellAttr(text_color, back_color, font, wxAlignment::wxALIGN_CENTRE, wxAlignment::wxALIGN_CENTRE );
 }
 
 void ChoiceGridTable::SetState(int i_row, int i_col, int state){
-	// if(state == -1){
-	// 	SetCellValue(i_row, i_col, m_immutable_cell_text);
-	// 	SetCellBackgroundColour(i_row, i_col,m_immutable_cell_color);
-	// } else if(state < m_value_names.size() && state < m_background_colors.size()){
-	// 	SetCellValue(i_row, i_col, m_value_names[state]);
-	// 	SetCellBackgroundColour(i_row, i_col, m_background_colors[state]);
-	// }
 	values[i_col * n_rows + i_row] = state;
 }
 
@@ -279,14 +285,6 @@ void ChoiceGridTable::SetDefaultColumnLabel(wxString lbl){
 	default_col_label = lbl;
 }
 
-void ChoiceGridTable::SetRowLabel(int i, wxString lbl){
-	row_labels[i] = lbl;
-}
-
-void ChoiceGridTable::SetColLabel(int i, wxString lbl){
-	col_labels[i] = lbl;
-}
-
 ChoiceGrid::ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id, wxPoint position, wxSize size) : wxGrid(parent,id,position,size), m_owner(owner){
 	Bind(wxEVT_GRID_CELL_LEFT_CLICK, &ChoiceGrid::OnLeftClick, this);
 	Bind(wxEVT_GRID_LABEL_LEFT_CLICK, &ChoiceGrid::OnHeaderLeftClick, this);
@@ -294,22 +292,23 @@ ChoiceGrid::ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id, wx
 	SetLabelBackgroundColour( wxColor(255,255,255) );
 	// SetSelectionMode(0);
 	SetTable(new ChoiceGridTable(1,1));
+	EnableEditing(false);
 }
 ChoiceGrid::~ChoiceGrid(){
 
 }
 
 void ChoiceGrid::GridRemake(int n_cols, int n_rows){
-	printf("Getting ncols as %d nrows as %d\n", GetNumberCols(), GetNumberRows());
-	printf("While table numbers are ncols as %d nrows as %d\n", GetTable()->GetNumberCols(), GetTable()->GetNumberRows());
 	unsigned int i = 0,j = 0;
 	int old_n_rows = GetNumberRows();
 	int old_n_cols = GetNumberCols();
 
+	// printf("Setting row label 0 as %s\n", copy_wx_string(GetTable()->GetRowLabelValue(0)));
 	if(n_cols > 0 && n_rows > 0){
-		SetRowLabel(0, GetTable()->GetRowLabelValue(0));
-		SetColLabel(0, GetTable()->GetColLabelValue(0));
+		// SetRowLabel(0, GetTable()->GetRowLabelValue(0));
+		// SetColLabel(0, GetTable()->GetColLabelValue(0));
 	}
+
 
 	if(n_rows > old_n_rows){
 		AppendRows(n_rows - old_n_rows);
@@ -322,9 +321,6 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 	} else if(n_cols < old_n_cols){
 		DeleteCols(n_cols, old_n_cols - n_cols);
 	}
-
-	EnableEditing(false);
-
 	// m_immutable_cell_text = wxT("");
 	// m_immutable_cell_color = wxColor(200, 200, 200);
 
@@ -369,8 +365,8 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 	// 		}
 	// 	}
 	// }
-	// Refresh();
-	// AutoSize();
+	Refresh();
+	AutoSize();
 }
 
 
@@ -495,11 +491,11 @@ int  ChoiceGrid::AddState(wxString name, wxColor color){
 
 void ChoiceGrid::SetColLabel(int i_col, wxString name){
 	ChoiceGridTable * table = (ChoiceGridTable *) GetTable();
-	table->SetColLabel(i_col, name);
+	table->SetColLabelValue(i_col, name);
 }
 void ChoiceGrid::SetRowLabel(int i_row, wxString name){
 	ChoiceGridTable * table = (ChoiceGridTable *) GetTable();
-	table->SetRowLabel(i_row, name);
+	table->SetRowLabelValue(i_row, name);
 }
 
 void ChoiceGrid::SetDefaultColumnLabel(wxString lbl){

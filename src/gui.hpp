@@ -100,11 +100,10 @@ class ChoiceGridTable : public wxGridTableBase {
 	void SetRowLabelValue(int row, const wxString & str) override;
 	wxString GetColLabelValue(int col) override;
 	wxString GetRowLabelValue(int row) override;
+	wxGridCellAttr * GetAttr(int row, int col, wxGridCellAttr::wxAttrKind kind) override;
 
 	void SetDefaultColumnLabel(wxString lbl);
 	void SetDefaultRowLabel(wxString lbl);
-	void SetRowLabel(int i_row, wxString lbl);
-	void SetColLabel(int i_col, wxString lbl);
  private:
 	int n_rows;
 	int n_cols;

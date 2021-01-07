@@ -16,6 +16,7 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
 	m_grid = new ChoiceGrid(m_owner, this);
 
+	m_grid->SetLabelBackgroundColour( wxColor(255,255,255) );
 	m_grid->SetCanUserClick(false);
 
 	wxBoxSizer * sz = new wxBoxSizer(wxVERTICAL);
@@ -24,7 +25,7 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
 	btsz->Add(m_save_btn, 0, wxLEFT, 10);
-	sz->Add(m_grid, 0, wxEXPAND | wxALL, 10);
+	sz->Add(m_grid, 0, wxALL, 10);
 	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
 	SetSizerAndFit(sz);
@@ -85,8 +86,7 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 				 wxVector<wxString> row_names) :  wxScrolledWindow(parent, id, pos, size), m_owner(owner){
  	int i;
  	SetBackgroundColour(wxColour(245,245,245));
-
- 	SetFont(*m_owner->m_text_font);
+	SetFont(*m_owner->m_text_font);
 
  	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_save_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_save);
@@ -94,6 +94,7 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 	m_grid = new wxGrid(this, wxID_ANY);
 	PosIntGridTable * grid_table = new PosIntGridTable(row_names.size(),1);
 
+	m_grid->SetLabelBackgroundColour( wxColor(255,255,255) );
 	grid_table->SetColLabelValue(0, column_name);
 	for(i = 0; i < row_names.size(); ++i){
 		grid_table->SetRowLabelValue(i, row_names[i]);
@@ -107,7 +108,7 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
 	btsz->Add(m_save_btn, 0, wxLEFT, 10);
-	sz->Add(m_grid, 0, wxEXPAND | wxALL, 10);
+	sz->Add(m_grid, 0, wxALL, 10);
 	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
 	SetSizerAndFit(sz);
@@ -197,7 +198,7 @@ StringGridPane::StringGridPane(Application * owner,
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
 	btsz->Add(m_save_btn, 0, wxLEFT, 10);
-	sz->Add(m_grid, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 10);
+	sz->Add(m_grid, 0, wxTOP | wxLEFT | wxRIGHT, 10);
 	sz->Add(btsz, 0, wxALL, 10);
 
 	SetSizerAndFit(sz);

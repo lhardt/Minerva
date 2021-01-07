@@ -120,23 +120,23 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
 	for(i = 0; i < school->n_periods; ++i){
 		periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i]?0:-1);
-		if(school->periods[i]){
-			periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-			wxT(""));
-			periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-			wxColor(255,255,255));
-		}
+		// if(school->periods[i]){
+		// 	periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+		// 	wxT(""));
+		// 	periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
+		// 	wxColor(255,255,255));
+		// }
 	}
 
 	// ROOM PANE CODE
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
 	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
+	rooms_grid->GridRemake(1, school->n_rooms);
 	rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
 	for(i = 0; i < school->n_rooms; ++i){
 		rooms_grid->SetRowLabel(i, wxString::FromUTF8(school->rooms[i].name));
 	}
-	rooms_grid->GridRemake(1, school->n_rooms);
 
 	if(school->n_classes > 0){
 		for(i = 0; i < school->n_classes; ++i){
