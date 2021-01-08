@@ -11,7 +11,9 @@
 #include "gui.hpp"
 
 #include <wx/wx.h>
-#include <windows.h>
+#ifdef __WINDOWS__
+	#include <windows.h>
+#endif
 
 extern "C" {
 	#include "loader.h"

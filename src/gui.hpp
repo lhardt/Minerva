@@ -23,6 +23,7 @@
 
 #include "gui_language.hpp"
 #include "school_manager.hpp"
+#include "art_metro.h"
 
 extern "C" {
 	#include "types.h"
@@ -55,6 +56,18 @@ enum AppFormType {
 	FORM_CREATE_SCHOOL,
 	FORM_MAIN_MENU,
 	FORM_SETTINGS
+};
+
+class RibbonArtProvider : public wxRibbonMetroArtProvider {
+public:
+	RibbonArtProvider(Application * owner, bool set_colour_scheme, const wxFont * font);
+	virtual ~RibbonArtProvider();
+	void DrawTabCtrlBackground(
+                        wxDC& dc,
+                        wxWindow* wnd,
+                        const wxRect& rect) override;
+private:
+	Application * m_owner;
 };
 
 /* Grid table that only accepts positive integers. */
