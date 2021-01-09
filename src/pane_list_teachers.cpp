@@ -210,9 +210,7 @@ void ListTeachersPane::ShowData(){
 
 
 	for(i = 0; i < school->n_periods; ++i){
-		if(school->periods[i] == false){
-			periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
-		}
+		periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? 1 : ChoiceGrid::CELL_STATE_LOCKED);
 	}
 
 	m_teachers_list->Clear();

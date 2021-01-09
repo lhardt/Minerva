@@ -23,7 +23,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1));
 	m_periods_grid = new ChoiceGrid(m_owner, this, wxID_ANY);
 	m_subjects_grid = new ChoiceGrid(m_owner, this, wxID_ANY);
-	wxButton * add_teacher = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_teacher, wxDefaultPosition, wxSize(180,30));
+	wxButton * button_add = new wxButton(this, wxID_ANY, m_owner->m_lang->str_add_teacher, wxDefaultPosition, wxSize(180,30));
 
 	wxString col_name = m_owner->m_lang->str_teaches;
 	m_subjects_grid->SetColLabel(0, col_name);
@@ -42,11 +42,9 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 
 	m_periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 	for(i = 0; i < m_owner->m_school->n_periods; ++i){
-		if(m_owner->m_school->periods[i] == false){
-			m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
-		}
+		m_periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? 1 : ChoiceGrid::CELL_STATE_LOCKED);
 	}
-	add_teacher->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddTeacherButtonClicked, this);
+	button_add->Bind(wxEVT_BUTTON, &AddTeacherPane::OnAddTeacherButtonClicked, this);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(name_label, 0, wxLEFT | wxTOP ,15);
@@ -55,7 +53,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	sizer->Add(m_periods_grid, 0, wxLEFT | wxBOTTOM,15);
 	sizer->Add(subjects_label, 0, wxLEFT, 15);
 	sizer->Add(m_subjects_grid, 0, wxLEFT | wxBOTTOM,15);
-	sizer->Add(add_teacher, 0, wxLEFT | wxBOTTOM, 15);
+	sizer->Add(button_add, 0, wxLEFT | wxBOTTOM, 15);
 	sizer->Add(m_err_msg, 0, wxLEFT | wxBOTTOM, 15);
 
 	SetSizerAndFit(sizer);
@@ -73,11 +71,7 @@ void AddTeacherPane::ClearInsertedData(){
 		m_subjects_grid->SetCellState(i,0,1);
 	}
 	for(i = 0; i < school->n_periods; ++i){
-		if(school->periods[i] == false){
-			m_periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
-		} else {
-			m_periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, 1);
-		}
+		m_periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? 1 : ChoiceGrid::CELL_STATE_LOCKED);
 	}
 
 }

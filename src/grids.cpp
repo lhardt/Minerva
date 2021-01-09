@@ -445,9 +445,9 @@ void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
 	}
 }
 
-void ChoiceGrid::SetCellImmutable(int i, int j){
-	SetCellValue(i,j, m_immutable_cell_text);
-	SetCellBackgroundColour(i,j,m_immutable_cell_color);
+void ChoiceGrid::SetCellLocked(int i, int j){
+	((ChoiceGridTable *)GetTable())->SetState(i, j, CELL_STATE_LOCKED);
+	Refresh();
 }
 
 void ChoiceGrid::SetCellState(int i_row, int i_col, int state){
@@ -466,24 +466,12 @@ void ChoiceGrid::SetCellNextState(int i_row, int i_col){
 
 
 void ChoiceGrid::SetAllCellsState(int state){
-	/* Inneficiently elegant. Refactor before production */
-	for(int i = 0; i < GetNumberRows(); ++i){
-		for(int j = 0; j < GetNumberCols(); ++j){
-			SetCellState(i,j,state);
-		}
-	}
+	((ChoiceGridTable*)GetTable())->SetTableState(state);
 	Refresh();
 }
 
 void ChoiceGrid::SetAllActiveCellsState(int state){
-	/* Inneficiently elegant. Refactor before production */
-	for(int i = 0; i < GetNumberRows(); ++i){
-		for(int j = 0; j < GetNumberCols(); ++j){
-			if(GetCellState(i,j) != -1){
-				SetCellState(i,j,state);
-			}
-		}
-	}
+	((ChoiceGridTable*)GetTable())->SetTableActiveState(state);
 	Refresh();
 }
 

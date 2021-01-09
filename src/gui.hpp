@@ -164,7 +164,7 @@ class Notification : public wxPanel {
 
 class ChoiceGrid : public wxGrid {
  public:
-	static const int CELL_STATE_LOCKED = ChoiceGridTable::CELL_STATE_LOCKED;
+	static constexpr int CELL_STATE_LOCKED = ChoiceGridTable::CELL_STATE_LOCKED;
 
 	ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 	~ChoiceGrid();
@@ -178,7 +178,7 @@ class ChoiceGrid : public wxGrid {
 	void GridRemake(int n_cols, int n_rows);
 	void SetColLabel(int i_col, wxString name);
 	void SetRowLabel(int i_row, wxString name);
-	void SetCellImmutable(int i_col, int i_row);
+	void SetCellLocked(int i_col, int i_row);
 	void SetCellState(int i_row, int i_col, int state);
 	void SetCellNextState(int i_row, int i_col);
 	void SetAllCellsState(int state);

@@ -41,9 +41,10 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 
 	for(i = 0; i < school->n_periods; ++i){
 		if(school->periods[i] == false){
-			m_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+			m_grid->SetCellLocked(i % school->n_periods_per_day, i / school->n_periods_per_day);
 		}
 	}
+	m_grid->SetAllActiveCellsState(1);
 
 	button_go->Bind(wxEVT_BUTTON, &AddRoomPane::OnCreateButtonClicked, this);
 
@@ -70,12 +71,7 @@ void AddRoomPane::ClearInsertedData(){
 	m_name_text->Clear();
 	m_capacity_text->SetValue(0);
 	for(i = 0; i < school->n_periods; ++i){
-		if(school->periods[i]){
-			m_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), m_owner->m_lang->str_adj__open);
-			m_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), wxColor(200,200,255));
-		} else {
-			m_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
-		}
+		m_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? ChoiceGrid::CELL_STATE_LOCKED : 1);
 	}
 }
 
@@ -95,6 +91,7 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		room.availability = (int*)calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
 			int state = m_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+			printf("Getting state of day %d per %d as %d\n", i / school->n_periods_per_day, i % school->n_periods_per_day, state);
 			room.availability[i] = state >= 0? state:0; /* State -1 is for blocked cells */
 		}
 		room.availability[school->n_periods] = -1;
@@ -107,5 +104,4 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 	} else {
 		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
 	}
-
 }

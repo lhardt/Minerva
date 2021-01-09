@@ -230,11 +230,10 @@ void ListRoomsPane::OnSelectionChanged(wxCommandEvent &){
 		periods_grid->GridRemake(school->n_days,school->n_periods_per_day);
 		for(i = 0; i < school->n_periods; ++i){
 			if(school->periods[i] == false){
-				periods_grid->SetCellImmutable(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day));
+				periods_grid->SetCellLocked(i % school->n_periods_per_day, i / school->n_periods_per_day);
 			} else {
 				periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, room->availability[i] > 0? 1:0);
 			}
-			periods_grid->SetReadOnly(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day), true);
 		}
 
 	}

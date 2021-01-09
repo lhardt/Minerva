@@ -120,12 +120,6 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
 	for(i = 0; i < school->n_periods; ++i){
 		periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i]?0:-1);
-		// if(school->periods[i]){
-		// 	periods_grid->SetCellValue(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-		// 	wxT(""));
-		// 	periods_grid->SetCellBackgroundColour(1 + (i % school->n_periods_per_day),1 +  (i / school->n_periods_per_day),
-		// 	wxColor(255,255,255));
-		// }
 	}
 
 	// ROOM PANE CODE
