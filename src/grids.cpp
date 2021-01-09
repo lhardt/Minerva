@@ -101,6 +101,8 @@ ChoiceGridTable::ChoiceGridTable(int n_rows, int n_cols) : wxGridTableBase() {
 	this->n_rows = n_rows;
 	if(n_rows > 0 && n_cols > 0){
 		values = (int*)calloc(n_rows * n_cols, sizeof(int));
+	} else {
+		values = NULL;
 	}
 	row_labels = wxVector<wxString>();
 	col_labels = wxVector<wxString>();
@@ -109,7 +111,6 @@ ChoiceGridTable::ChoiceGridTable(int n_rows, int n_cols) : wxGridTableBase() {
 }
 
 wxString ChoiceGridTable::GetRowLabelValue(int row){
-	printf("Getting row %d label, with rowlabelssize %d\n", row, row_labels.size());
 	if(row < row_labels.size()){
 		return row_labels[row];
 	} else {
@@ -147,7 +148,7 @@ bool ChoiceGridTable::AppendCols(size_t n_new_cols){
 			values = (int*)calloc(n_rows * n_cols, sizeof(int));
 		} else {
 			values = (int*)realloc(values, (n_rows * n_cols)*sizeof(int));
-			for(int i = old_n_cols; i < n_cols * n_rows; ++i){
+			for(int i = old_n_cols * n_rows; i < n_cols * n_rows; ++i){
 				values[i] = 0;
 			}
 		}
@@ -158,8 +159,6 @@ bool ChoiceGridTable::AppendCols(size_t n_new_cols){
 	view->ProcessTableMessage(pop);
 	view->ForceRefresh();
 	view->EndBatch();
-
-	printf("Appended colx\n");
 	return true;
 }
 
@@ -171,9 +170,17 @@ bool ChoiceGridTable::AppendRows(size_t n_new_rows){
 			values = (int*)calloc(n_rows * n_cols, sizeof(int));
 		} else {
 			values = (int*)realloc(values, (n_rows * n_cols)*sizeof(int));
-			// TODO! Transpose values from the old to the new. it's not exactly trivial
-			for(int i = 0; i < n_cols * n_rows; ++i){
-				values[i] = 0;
+			// Transpose values from the old to the new array of values.
+			// No need to do these for's when we are callocing -- there would be no values anyway
+			for(int i_col = n_cols -1; i_col >= 0; --i_col){
+				for(int i_row = old_n_rows -1; i_row >= 0; --i_row){
+					values[(i_col * old_n_rows) + (n_new_rows * i_col) + i_row] = values[i_col * old_n_rows + i_row];
+				}
+			}
+			for(int i_col = 0; i_col < n_cols; ++i_col){
+				for(int i_row = old_n_rows; i_row < n_rows; ++i_row){
+					values[i_col * n_rows + i_row] = 0;
+				}
 			}
 		}
 	}
@@ -181,12 +188,102 @@ bool ChoiceGridTable::AppendRows(size_t n_new_rows){
 	view->BeginBatch();
 	wxGridTableMessage pop(this, wxGRIDTABLE_NOTIFY_ROWS_APPENDED, n_new_rows);
 	view->ProcessTableMessage(pop);
-	// view->ForceRefresh();
 	view->EndBatch();
-
-	printf("Appended rows. n rows is now %d\n", n_rows);
 	return true;
 }
+
+bool ChoiceGridTable::DeleteRows(size_t pos, size_t n_del_rows){
+	// TODO: maybe use pos, but in the current use of this program,
+	// 		 it is irrelevant and simply easier to use the last rows.
+	/* No need to shrink/realloc */
+	n_rows -= n_del_rows;
+	for(int i_col = 0; i_col < n_cols; ++i_col){
+		for(int i_row = 0; i_row < n_rows; ++i_row){
+			values[i_col * n_rows + i_row] = values[i_col * n_rows + (i_row + n_del_rows * i_col)];
+		}
+	}
+	wxGrid * view = GetView();
+	view->BeginBatch();
+	wxGridTableMessage pop(this, wxGRIDTABLE_NOTIFY_ROWS_DELETED, n_rows, n_del_rows);
+	view->ProcessTableMessage(pop);
+	view->EndBatch();
+	return true;
+}
+bool ChoiceGridTable::DeleteCols(size_t pos, size_t n_del_cols){
+	// TODO: maybe use pos, but in the current use of this program,
+	// 		 it is irrelevant and simply easier to use the last cols.
+	/* No need to shrink/realloc */
+	n_cols -= n_del_cols;
+
+	wxGrid * view = GetView();
+	view->BeginBatch();
+	wxGridTableMessage pop(this, wxGRIDTABLE_NOTIFY_COLS_DELETED, n_cols, n_del_cols);
+	view->ProcessTableMessage(pop);
+	view->EndBatch();
+	return true;
+	return true;
+}
+
+void ChoiceGridTable::SetColNextState(int col){
+	int state = -1;
+	// Finds a state to 'calculate' the next.
+	for(int i = 0; state == CELL_STATE_LOCKED && i < n_rows; ++i){
+		state = values[col * n_rows + i];
+	}
+	// No need to set if there are no settable cells
+	if(state == CELL_STATE_LOCKED) return;
+	// Sets all to $state+1, except for those marked as -1.
+	state = (state + 1) % value_labels.size();
+
+	for(int i = 0; i < n_rows; ++i){
+		values[col * n_rows + i] = values[col * n_rows + i] == CELL_STATE_LOCKED ? CELL_STATE_LOCKED : state;
+	}
+}
+void ChoiceGridTable::SetRowNextState(int row){
+	int state = CELL_STATE_LOCKED;
+	// Finds a state to 'calculate' the next.
+	for(int i = row; state == CELL_STATE_LOCKED && i < n_rows * n_cols; i += n_rows){
+		state = values[i];
+	}
+	// i_col * n_rows + i_row
+	// No need to set if there are no settable cells
+	if(state == CELL_STATE_LOCKED) return;
+	// Sets all to $state+1, except for those marked as -1.
+	state = (state + 1) % value_labels.size();
+	for(int i = row; i < n_rows * n_cols; i += n_rows){
+		values[i] = values[i] == CELL_STATE_LOCKED ? CELL_STATE_LOCKED : state;
+	}
+}
+void ChoiceGridTable::SetTableNextState(){
+	int state = -1;
+	// Finds a state to 'calculate' the next.
+	for(int i = 0; state == -1 && i < n_rows; ++i){
+		for(int j = 0; state == -1 && j < n_cols; ++j){
+			state = values[i * n_cols + j];
+		}
+	}
+	// No need to set if there are no settable cells
+	if(state == -1) return;
+	// Sets all to $state+1, except for those marked as -1.
+	state = (state + 1) % value_labels.size();
+	for(int i = 0; i < n_rows * n_cols; ++i){
+		values[i] = (values[i] == CELL_STATE_LOCKED)? CELL_STATE_LOCKED : state;
+	}
+}
+void ChoiceGridTable::SetTableState(int state){
+	for(int i = 0; i < n_rows * n_cols; ++i){
+		values[i] = state;
+	}
+
+}
+void ChoiceGridTable::SetTableActiveState(int state){
+	for(int i = 0; i < n_rows * n_cols; ++i){
+		values[i] = (values[i] == CELL_STATE_LOCKED)? CELL_STATE_LOCKED : state;
+	}
+
+}
+
+
 ChoiceGridTable::~ChoiceGridTable(){
 	free(values);
 }
@@ -205,7 +302,7 @@ wxString ChoiceGridTable::GetValue( int row, int col ){
 		int val = values[col * n_rows + row];
 		if(val >= 0 && val < value_labels.size()){
 			return value_labels[val];
-		} else if(val == -1){
+		} else if(val == CELL_STATE_LOCKED){
 			return wxT("");
 		} else {
 			return wxString::Format("??? (%d)", val);
@@ -218,44 +315,24 @@ int ChoiceGridTable::GetState( int row, int col ){
 	if(row >= 0 && col >= 0 && row < n_rows && col < n_cols){
 		return values[col * n_rows + row];
 	}
-	return -1;
+	return CELL_STATE_LOCKED;
 }
 void ChoiceGridTable::SetValue( int row, int col, const wxString& value ){
-	// long long_val = -1L;
-	// int int_val = -1;
-	// if(value.ToLong(&long_val)){
-	// 	int_val = (int) long_val;
-	// 	if(row >= n_rows || col >= n_cols){
-	// 		int max_rows = (row + 1)>n_rows?(row+1):n_rows;
-	// 		int max_cols = (col + 1)>n_cols?(col+1):n_cols;
-	// 		if(values == NULL){
-	// 			values = (int*)calloc(max_rows * max_cols, sizeof(int));
-	// 		} else {
-	// 			values = (int*)realloc(values, (max_rows * max_cols)*sizeof(int));
-	// 		}
-	// 	}
-	// 	if(int_val >= 0){
-	// 		printf("Setting attr\n");
-	// 		values[col * n_rows + row] = int_val;
-	// 		wxGridCellAttr * attr = GetAttr(row,col, wxGridCellAttr::Cell);
-	// 		attr->SetBackgroundColour( wxColor(244,244,0) );
-	// 		SetAttr(attr, row, col);
-	// 	}
-	// }
+	printf("SetValue used in ChoiceGridTable...\n");
 }
 
-void ChoiceGridTable::AddState(wxString name, wxColor color){
+/* Returns the code of that created state. */
+int ChoiceGridTable::AddState(wxString name, wxColor color){
 	value_labels.push_back(name);
 	value_colors.push_back(color);
+	return value_labels.size() - 1;
 }
 
 void ChoiceGridTable::SetNextState(int i_row, int i_col){
 	int i = i_col * n_rows + i_row;
-	values[i] = (values[i] + 1) % value_labels.size();
-
-	// wxGridCellAttr * attr = GetAttr(i_row,i_col, wxGridCellAttr::Cell);
-	// attr->SetBackgroundColour( wxColor(244,244,0) );
-	// SetAttr(attr, i_row, i_col);
+	if(values[i] != CELL_STATE_LOCKED){
+		values[i] = (values[i] + 1) % value_labels.size();
+	}
 }
 
 wxGridCellAttr * ChoiceGridTable::GetAttr(int row, int col, wxGridCellAttr::wxAttrKind kind){
@@ -288,6 +365,8 @@ void ChoiceGridTable::SetDefaultColumnLabel(wxString lbl){
 ChoiceGrid::ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id, wxPoint position, wxSize size) : wxGrid(parent,id,position,size), m_owner(owner){
 	Bind(wxEVT_GRID_CELL_LEFT_CLICK, &ChoiceGrid::OnLeftClick, this);
 	Bind(wxEVT_GRID_LABEL_LEFT_CLICK, &ChoiceGrid::OnHeaderLeftClick, this);
+	Bind(wxEVT_GRID_SELECT_CELL, &ChoiceGrid::BlankFunction, this);
+	Bind(wxEVT_GRID_SELECT_CELL, &ChoiceGrid::BlankFunction, this);
 	SetDefaultRenderer(new NoSelectGridCellRenderer);
 	SetLabelBackgroundColour( wxColor(255,255,255) );
 	// SetSelectionMode(0);
@@ -298,17 +377,11 @@ ChoiceGrid::~ChoiceGrid(){
 
 }
 
+void ChoiceGrid::BlankFunction(wxGridEvent &){ }
+
 void ChoiceGrid::GridRemake(int n_cols, int n_rows){
-	unsigned int i = 0,j = 0;
 	int old_n_rows = GetNumberRows();
 	int old_n_cols = GetNumberCols();
-
-	// printf("Setting row label 0 as %s\n", copy_wx_string(GetTable()->GetRowLabelValue(0)));
-	if(n_cols > 0 && n_rows > 0){
-		// SetRowLabel(0, GetTable()->GetRowLabelValue(0));
-		// SetColLabel(0, GetTable()->GetColLabelValue(0));
-	}
-
 
 	if(n_rows > old_n_rows){
 		AppendRows(n_rows - old_n_rows);
@@ -321,50 +394,6 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 	} else if(n_cols < old_n_cols){
 		DeleteCols(n_cols, old_n_cols - n_cols);
 	}
-	// m_immutable_cell_text = wxT("");
-	// m_immutable_cell_color = wxColor(200, 200, 200);
-
-	/* the FORs below don't catch the (0,0) because we need to generate the table with 1,1 before */
-	// if(m_row_names.size() > 0){
-	// 	SetRowLabelValue(i, m_row_names[i]);
-	// } else {
-	// 	SetRowLabelValue(0, m_basic_row_name + wxString::Format(" %d",i + 1));
-	// }
-	// if(m_col_names.size() > 0){
-	// 	SetColLabelValue(j, m_col_names[j]);
-	// } else {
-	// 	SetColLabelValue(j, m_basic_col_name + wxString::Format(" %d",j + 1));
-	// }
-	if(GetCellState(0,0) == -2){
-		SetCellState(0,0,0);
-	}
-
-	// if(n_rows > old_n_rows){
-	// 	for(i = old_n_rows; i < n_rows; ++i){
-	// 		// if(m_row_names.size() <= i){
-	// 		// 	SetRowLabelValue(i, m_basic_row_name + wxString::Format(" %d",i + 1));
-	// 		// } else {
-	// 		// 	SetRowLabelValue(i, m_row_names[i]);
-	// 		// }
-	// 		for(j = 0; j < old_n_cols; ++j){
-	// 			SetCellState(i,j,0);
-	// 			SetReadOnly(i,j,true);
-	// 		}
-	// 	}
-	// }
-	// if(n_cols > old_n_cols){
-	// 	for(j = old_n_cols; j < n_cols; ++j){
-	// 		// if(m_col_names.size() <= j){
-	// 		// 	SetColLabelValue(j, m_basic_col_name + wxString::Format(" %d",j + 1));
-	// 		// } else {
-	// 		// 	SetColLabelValue(j, m_col_names[j]);
-	// 		// }
-	// 		for(i = 0; i < n_rows; ++i){
-	// 			SetCellState(i,j,0);
-	// 			SetReadOnly(i,j,true);
-	// 		}
-	// 	}
-	// }
 	Refresh();
 	AutoSize();
 }
@@ -395,43 +424,18 @@ void ChoiceGrid::SetCanUserClick(bool can){
 
 void ChoiceGrid::OnHeaderLeftClick(wxGridEvent & evt){
 	int evt_col = evt.GetCol(), evt_row = evt.GetRow();
-
-	// if(GetNumberRows() > 0 && GetNumberCols() > 0 &&  m_can_user_click ){ // && m_value_names.size() > 0){
-	// 	if(evt_col == -1 && evt_row == -1){
-	// 		/* Loop until it finds one active cell with a state */
-	// 		int last_state = -1;
-	// 		for(int i_row = 0; last_state == -1 && i_row < GetNumberRows(); ++i_row){
-	// 			for(int i_col = 0; last_state == -1 && i_col < GetNumberCols(); ++i_col){
-	// 				last_state = GetCellState(i_row, i_col);
-	// 			}
-	// 		}
-	// 		if(last_state >= 0){
-	// 			SetAllActiveCellsState((last_state + 1) % m_value_names.size());
-	// 		} /* Otherwise all cells are disabled */
-	// 	} else if(evt_col == -1){
-	// 		/* Loop until it finds one active cell with a state */
-	// 		int last_state = -1;
-	// 		for(int i_col = 0; last_state == -1 && i_col < GetNumberCols(); ++i_col){
-	// 			last_state = GetCellState(evt_row,i_col);
-	// 		}
-	// 		if(last_state != -1){
-	// 			SetRowActiveCellsState(evt_row, (last_state + 1) % m_value_names.size());
-	// 		}
-	// 	} else if(evt_row == -1){
-	// 		/* Loop until it finds one active cell with a state */
-	// 		int last_state = -1;
-	// 		for(int i_row = 0; last_state == -1 && i_row < GetNumberRows(); ++i_row){
-	// 			last_state = GetCellState(i_row,evt_col);
-	// 		}
-	// 		if(last_state != -1){
-	// 			SetColActiveCellsState(evt_col,(last_state + 1) % m_value_names.size());
-	// 		}
-	// 	}
-	// }
+	ChoiceGridTable * table = (ChoiceGridTable *) GetTable();
+	if(evt_col != -1){
+		table->SetColNextState(evt_col);
+	} else if(evt_row != -1){
+		table->SetRowNextState(evt_row);
+	} else {
+		table->SetTableNextState();
+	}
+	Refresh();
 }
 
 void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
-	int i = 0;
 	int evt_col = evt.GetCol(), evt_row = evt.GetRow();
 
 	if(GetNumberRows() > 0 && GetNumberCols() > 0 &&  m_can_user_click ){
@@ -468,6 +472,7 @@ void ChoiceGrid::SetAllCellsState(int state){
 			SetCellState(i,j,state);
 		}
 	}
+	Refresh();
 }
 
 void ChoiceGrid::SetAllActiveCellsState(int state){
@@ -479,6 +484,7 @@ void ChoiceGrid::SetAllActiveCellsState(int state){
 			}
 		}
 	}
+	Refresh();
 }
 
 int ChoiceGrid::GetCellState(int i_row, int i_col){
@@ -486,7 +492,7 @@ int ChoiceGrid::GetCellState(int i_row, int i_col){
 }
 
 int  ChoiceGrid::AddState(wxString name, wxColor color){
-	((ChoiceGridTable*)GetTable())->AddState(name,color);
+	return ((ChoiceGridTable*)GetTable())->AddState(name,color);
 }
 
 void ChoiceGrid::SetColLabel(int i_col, wxString name){

@@ -30,7 +30,7 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	SetBackgroundColour(wxColor(0x29, 0x80, 0xb9));
 
 	wxRibbonBar * m_ribbon = new wxRibbonBar(this,-1,wxDefaultPosition, wxSize(800,150), wxRIBBON_BAR_FLOW_HORIZONTAL | wxRIBBON_BAR_SHOW_PAGE_LABELS);
-	m_ribbon->SetArtProvider(new wxRibbonMetroArtProvider(true, m_owner->m_small_font));
+	m_ribbon->SetArtProvider(new RibbonArtProvider(m_owner,true, m_owner->m_small_font));
 	wxRibbonButtonBar * m_rib_bbars[7][5];
 
 	const wchar_t * const menu_names[7] = {

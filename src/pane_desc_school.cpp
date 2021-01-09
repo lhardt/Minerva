@@ -143,12 +143,18 @@ void DescSchoolPane::ShowData(){
 	wxGrid * per_names_grid = m_period_names->GetGrid();
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		for(j = 0; j < school->n_days; ++j){
-			per_names_grid->SetCellValue(i,j, wxString::FromUTF8(school->period_names[i]));
+			per_names_grid->SetCellValue(i,j, wxString::FromUTF8(school->period_names[ j * school->n_periods_per_day + i]));
 		}
 	}
 	m_period_names->SetEditing(false);
 
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
+	for(int i = 0; i < school->n_periods_per_day; ++i){
+		periods_grid->SetRowLabelValue(i, wxString::FromUTF8(school->daily_period_names[i]));
+	}
+	for(int i = 0; i < school->n_days; ++i){
+		periods_grid->SetColLabelValue(i, wxString::FromUTF8(school->day_names[i]));
+	}
 	for(int i = 0; i < school->n_periods; ++i){
 		periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i]?1:0);
 	}
@@ -162,15 +168,23 @@ void DescSchoolPane::OnDataChange(wxNotifyEvent & evt) {
 void DescSchoolPane::OnDayNamesSaveButtonClicked(wxCommandEvent & evt) {
 	int i;
 	School * school = m_owner->m_school;
-	wxGrid * grid = m_days->GetGrid();
+	wxGrid * days_grid = m_days->GetGrid();
 
 	char ** names = (char **) calloc(school->n_days, sizeof(char*));
 	for(i = 0; i < school->n_days; ++i){
-		names[i] = copy_wx_string(grid->GetCellValue(i,0));
+		names[i] = copy_wx_string(days_grid->GetCellValue(i,0));
 	}
 
 	DayNamesUpdateAction * action = new DayNamesUpdateAction(m_owner, names);
 	m_owner->Do(action);
+
+	// must be after confirmation
+	wxGrid * periods_grid = m_periods->GetGrid();
+	for(i = 0; i < school->n_days; ++i){
+		wxString label = days_grid->GetCellValue(i,0);
+		periods_grid->SetColLabelValue(i, label);
+	}
+
 	evt.Skip();
 }
 
@@ -195,6 +209,13 @@ void DescSchoolPane::OnDailyPeriodNamesSaveButtonClicked(wxCommandEvent & evt) {
 
 	DailyPeriodNamesUpdateAction * action = new DailyPeriodNamesUpdateAction(m_owner, names);
 	m_owner->Do(action);
+
+	wxGrid * periods_grid = m_periods->GetGrid();
+	for(i = 0; i < school->n_days; ++i){
+		wxString label = grid->GetCellValue(i,0);
+		periods_grid->SetRowLabelValue(i, label);
+	}
+
 	evt.Skip();
 }
 
@@ -293,7 +314,6 @@ void DescSchoolPane::OnPeriodNamesCancelButtonClicked(wxCommandEvent & evt){
 			per_names_grid->SetCellValue(i,j, wxString::FromUTF8(school->period_names[ j * school->n_periods_per_day + i]));
 		}
 	}
-
 	evt.Skip();
 }
 
@@ -301,11 +321,12 @@ void DescSchoolPane::OnPeriodNamesSaveButtonClicked(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	wxGrid * per_names_grid = m_period_names->GetGrid();
 	int i, j;
-	char ** names = (char**) calloc(school->n_days, sizeof(char*));
-	for(j = 0; j < school->n_days; ++j){
-		for(i = 0; i < school->n_periods_per_day; ++i){
-			names[j * school->n_periods_per_day + i] = copy_wx_string(per_names_grid->GetCellValue(i,j));
-			printf("Names at %d is %s\n", j * school->n_periods_per_day + i, names[j * school->n_periods_per_day + i]);
+	char ** names = (char**) calloc(school->n_periods, sizeof(char*));
+	for(i = 0; i < school->n_days; ++i){
+		for(j = 0; j < school->n_periods_per_day; ++j){
+			int index = i * school->n_periods_per_day + j;
+			names[index] = copy_wx_string(per_names_grid->GetCellValue(j, i));
+			printf("Names at %d is %s\n", index, names[index]);
 		}
 	}
 	PeriodNameUpdateAction * act = new PeriodNameUpdateAction(m_owner, names);

@@ -96,27 +96,40 @@ class PosIntGridTable : public wxGridTableBase {
 
 class ChoiceGridTable : public wxGridTableBase {
  public:
+	/* Used when a cell is unavailable. */
+	static constexpr int CELL_STATE_LOCKED = -1;
+
 	ChoiceGridTable(int n_rows, int n_cols);
 	~ChoiceGridTable();
-	int GetNumberRows() override;
+
+	wxString GetValue( int row, int col ) override;
+	void SetValue( int row, int col, const wxString& value ) override;
+	bool IsEmptyCell( int row, int col ) override;
+	/* Cell states. */
+	int AddState(wxString name, wxColor color);
 	int GetState( int row, int col );
 	void SetState( int row, int col, int state );
 	void SetNextState( int row, int col );
-	void AddState(wxString name, wxColor color);
+	void SetColNextState(int col);
+	void SetRowNextState(int col);
+	void SetTableNextState();
+	void SetTableState(int state);
+	void SetTableActiveState(int state);
+	/* N rows / N cols */
+	int GetNumberRows() override;
 	int GetNumberCols() override;
-	bool IsEmptyCell( int row, int col ) override;
-	wxString GetValue( int row, int col ) override;
-	void SetValue( int row, int col, const wxString& value ) override;
 	bool AppendRows(size_t n_new_rows) override;
 	bool AppendCols(size_t n_new_cols) override;
+	bool DeleteRows(size_t pos, size_t n_del_rows) override;
+	bool DeleteCols(size_t pos, size_t n_del_cols) override;
+	/* Labels */
 	void SetColLabelValue(int col, const wxString & str) override;
 	void SetRowLabelValue(int row, const wxString & str) override;
 	wxString GetColLabelValue(int col) override;
 	wxString GetRowLabelValue(int row) override;
-	wxGridCellAttr * GetAttr(int row, int col, wxGridCellAttr::wxAttrKind kind) override;
-
 	void SetDefaultColumnLabel(wxString lbl);
 	void SetDefaultRowLabel(wxString lbl);
+	wxGridCellAttr * GetAttr(int row, int col, wxGridCellAttr::wxAttrKind kind) override;
  private:
 	int n_rows;
 	int n_cols;
@@ -151,6 +164,8 @@ class Notification : public wxPanel {
 
 class ChoiceGrid : public wxGrid {
  public:
+	static const int CELL_STATE_LOCKED = ChoiceGridTable::CELL_STATE_LOCKED;
+
 	ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id = wxID_ANY, wxPoint position = wxDefaultPosition, wxSize size = wxDefaultSize);
 	~ChoiceGrid();
 
@@ -175,6 +190,7 @@ class ChoiceGrid : public wxGrid {
 	void SetCanUserClick(bool can_user_click);
 	void SetDefaultColumnLabel(wxString lbl);
 	void SetDefaultRowLabel(wxString lbl);
+	void BlankFunction(wxGridEvent &);
  private:
 	 void OnLeftClick(wxGridEvent &);
 	void OnHeaderLeftClick(wxGridEvent &);
