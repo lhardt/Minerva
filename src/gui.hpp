@@ -82,6 +82,8 @@ class PosIntGridTable : public wxGridTableBase {
 	void SetValue( int row, int col, const wxString& value ) override;
 	bool AppendRows(size_t n_new_rows) override;
 	bool AppendCols(size_t n_new_cols) override;
+	bool DeleteCols(size_t pos, size_t n_del_cols) override;
+	bool DeleteRows(size_t pos, size_t n_del_rows) override;
 	void SetColLabelValue(int col, const wxString & str) override;
 	void SetRowLabelValue(int row, const wxString & str) override;
 	wxString GetColLabelValue(int col) override;
@@ -228,6 +230,13 @@ class PosIntGridPane : public wxScrolledWindow {
 	~PosIntGridPane();
 	PosIntGridPane(Application * owner,
 					 wxWindow * parent,
+					 int n_rows,
+					 wxWindowID id = wxID_ANY,
+					 wxPoint pos = wxDefaultPosition,
+					 wxSize sz = wxDefaultSize,
+				 	 wxString column_name = wxT(""));
+	PosIntGridPane(Application * owner,
+					 wxWindow * parent,
 					 wxWindowID id = wxID_ANY,
 					 wxPoint pos = wxDefaultPosition,
 					 wxSize sz = wxDefaultSize,
@@ -244,6 +253,11 @@ class PosIntGridPane : public wxScrolledWindow {
 	int		 	* GetValues();
 	void	 	  SetValues(int * values);
 	void 		  SetEditing(bool editing = true);
+	// TODO: Restructure. These methods should not be here,
+	// or at least should be in all other *GridPanes. Design consistency.
+	void 		  ResizeTable(int new_size);
+	void 		  SetRowLabel(int i_row, wxString );
+	void 		  SetColLabel(wxString lbl);
  private:
 	Application * m_owner;
 	wxGrid		* m_grid;
@@ -702,6 +716,7 @@ class ListClassesPane : public wxScrolledWindow {
 	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnRemoveButtonClicked(wxCommandEvent &);
 	void OnDataChange(wxNotifyEvent &);
+	void ShowData();
 };
 
 class ListLecturesPane : public wxScrolledWindow {

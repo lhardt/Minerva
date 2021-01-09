@@ -71,7 +71,7 @@ void AddRoomPane::ClearInsertedData(){
 	m_name_text->Clear();
 	m_capacity_text->SetValue(0);
 	for(i = 0; i < school->n_periods; ++i){
-		m_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? ChoiceGrid::CELL_STATE_LOCKED : 1);
+		m_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? 1 : ChoiceGrid::CELL_STATE_LOCKED);
 	}
 }
 

@@ -33,7 +33,6 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	wxVector<wxString> daily_col_names = wxVector<wxString>();
 	daily_col_names.push_back(m_owner->m_lang->str_name);
 
-
 	wxVector<wxString> day_row_names = wxVector<wxString>();
 	for(i = 0; i < school->n_days; ++i){
 		day_row_names.push_back(wxString::Format("%s %d", m_owner->m_lang->str_day, 1+i));

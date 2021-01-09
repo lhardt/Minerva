@@ -12,12 +12,8 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	this->m_owner = owner;
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(250,250,250));
-	int i = 0;
 
-	/* Layout */
 	wxNotebook  * notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-
-	/* Declaration of members */
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_size);
 	wxStaticText * free_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_free_periods);
@@ -38,24 +34,13 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	wxButton * delete_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_delete);
 	m_basic_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
 	m_basic_edit_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_edit);
-
 	m_periods = new ScoreGridPane(m_owner,notebook, wxID_ANY);
 	m_superclasses = new ScoreGridPane(m_owner,notebook, wxID_ANY);
 	m_rooms = new ScoreGridPane(m_owner,notebook, wxID_ANY);
-
-	wxVector<wxString> all_subject_names = wxVector<wxString>();
 	wxString subject_col_name = m_owner->m_lang->str_periods;
-	for(i = 0; i < school->n_subjects; ++i){
-		all_subject_names.push_back(wxString::FromUTF8(school->subjects[i].name));
-	}
-	m_assignments = new PosIntGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, subject_col_name, all_subject_names);
-
-	wxVector<wxString> all_sgroup_names = wxVector<wxString>();
+	m_assignments = new PosIntGridPane(m_owner, notebook, school->n_subjects, wxID_ANY, wxDefaultPosition, wxDefaultSize, subject_col_name);
 	wxString sgroup_col_name = m_owner->m_lang->str_max_number_of_periods_per_day;
-	for(i = 0; i < school->n_subject_groups; ++i){
-		all_sgroup_names.push_back(wxString::FromUTF8(school->subject_group_names[i]));
-	}
-	m_groups = new PosIntGridPane(m_owner, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, sgroup_col_name, all_sgroup_names);
+	m_groups = new PosIntGridPane(m_owner, notebook, school->n_subject_groups, wxID_ANY, wxDefaultPosition, wxDefaultSize, sgroup_col_name);
 
 	m_err_msg->SetFont(*m_owner->m_small_font);
 
@@ -104,43 +89,68 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
 
-	/* Functionality and Information */
 	m_basic_edit_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnEditButtonClicked, this);
 	m_basic_cancel_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnRemoveButtonClicked, this);
 	m_classes_list->GetList()->Bind(wxEVT_LISTBOX, &ListClassesPane::OnSelectionChanged, this);
 	Bind(DATA_CHANGE_EVENT, &ListClassesPane::OnDataChange, this);
 
+	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
+	rooms_grid->GridRemake(1, school->n_rooms);
+	rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
 	// AVAILABILITY PANE CODE
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
 	periods_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	periods_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	periods_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
 	periods_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
+
+	ShowData();
+}
+
+void ListClassesPane::ShowData(){
+	School * school = m_owner->m_school;
+	int i;
+
+	m_classes_list->Clear();
+	for(i = 0; i < school->n_classes; ++i){
+		m_classes_list->AddItem(school->classes[i].id,wxString::FromUTF8(school->classes[i].name));
+	}
+
+	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
+	rooms_grid->GridRemake(1, school->n_rooms);
+	for(i = 0; i < school->n_rooms; ++i){
+		rooms_grid->SetRowLabel(i, wxString::FromUTF8(school->rooms[i].name));
+	}
+
+	ChoiceGrid * periods_grid = m_periods->GetGrid();
 	periods_grid->GridRemake(school->n_days, school->n_periods_per_day);
 	for(i = 0; i < school->n_periods; ++i){
 		periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i]?0:-1);
 	}
 
-	// ROOM PANE CODE
-	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
-	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
-	rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
-	rooms_grid->GridRemake(1, school->n_rooms);
-	rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
-	for(i = 0; i < school->n_rooms; ++i){
-		rooms_grid->SetRowLabel(i, wxString::FromUTF8(school->rooms[i].name));
-	}
-
-	if(school->n_classes > 0){
-		for(i = 0; i < school->n_classes; ++i){
-			m_classes_list->AddItem(school->classes[i].id,wxString::FromUTF8(school->classes[i].name));
-		}
-	}
+	m_entry_period_text->Clear();
+	m_exit_period_text->Clear();
 	for(i = 0; i < school->n_periods_per_day; ++i){
 		m_entry_period_text->Insert(wxString::FromUTF8(school->daily_period_names[i]), i, new IntClientData(i));
 		m_exit_period_text->Insert(wxString::FromUTF8(school->daily_period_names[i]), i, new IntClientData(i));
 	}
+
+	if(m_groups->GetGrid()->GetNumberRows() != school->n_subject_groups){
+		m_groups->ResizeTable(school->n_subject_groups);
+	}
+	for(i = 0; i < school->n_subject_groups; ++i){
+		m_groups->SetRowLabel(i, wxString::FromUTF8(school->subject_group_names[i]));
+	}
+
+	if(m_assignments->GetGrid()->GetNumberRows() != school->n_subjects){
+		m_assignments->ResizeTable(school->n_subjects);
+	}
+	for(i = 0; i < school->n_subjects; ++i){
+		m_assignments->SetRowLabel(i, wxString::FromUTF8(school->subjects[i].name));
+	}
+
+
 
 	m_name_text->Disable();
 	m_active_text->Disable();
@@ -149,12 +159,13 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_exit_period_text->Disable();
 	m_free_periods_text->Disable();
 	m_basic_cancel_btn->Hide();
-
 }
 
 void ListClassesPane::OnDataChange(wxNotifyEvent &){
-	printf("Data change!\n");
+	ShowData();
 }
+
+
 
 void ListClassesPane::OnCancelButtonClicked(wxCommandEvent & ev){
 	m_name_text->Disable();

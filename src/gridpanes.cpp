@@ -79,6 +79,46 @@ ScoreGridPane::~ScoreGridPane(){
 
 PosIntGridPane::PosIntGridPane(Application * owner,
 				 wxWindow * parent,
+				 int n_rows,
+				 wxWindowID id,
+				 wxPoint pos,
+				 wxSize size,
+				 wxString column_name) : wxScrolledWindow(parent, id, pos, size), m_owner(owner){
+	int i;
+	SetBackgroundColour(wxColour(245,245,245));
+	SetFont(*m_owner->m_text_font);
+
+	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
+	m_save_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_save);
+	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
+	m_grid = new wxGrid(this, wxID_ANY);
+	PosIntGridTable * grid_table = new PosIntGridTable(n_rows,1);
+
+	m_grid->SetLabelBackgroundColour( wxColor(255,255,255) );
+	grid_table->SetColLabelValue(0, column_name);
+	m_grid->SetTable(grid_table, true);
+	m_grid->AutoSizeColumn(0, true);
+
+	wxBoxSizer * sz = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer * btsz = new wxBoxSizer(wxHORIZONTAL);
+
+	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
+	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
+	btsz->Add(m_save_btn, 0, wxLEFT, 10);
+	sz->Add(m_grid, 0, wxALL, 10);
+	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
+
+	SetSizerAndFit(sz);
+	m_grid->EnableEditing(false);
+	m_cancel_btn->Show(false);
+	m_save_btn->Show(false);
+
+	m_edit_btn->Bind(wxEVT_BUTTON, &PosIntGridPane::OnEditButtonClicked, this);
+	m_cancel_btn->Bind(wxEVT_BUTTON, &PosIntGridPane::OnCancelButtonClicked, this);
+}
+
+PosIntGridPane::PosIntGridPane(Application * owner,
+				 wxWindow * parent,
 				 wxWindowID id,
 				 wxPoint pos,
 				 wxSize size,
@@ -126,6 +166,28 @@ void PosIntGridPane::SetEditing(bool editing){
 	m_edit_btn->Show(!editing);
 	m_grid->EnableEditing(editing);
 	FitInside();
+}
+
+void PosIntGridPane::ResizeTable(int new_size){
+	wxGrid * grid = GetGrid();
+	int n_rows = grid->GetNumberRows();
+	if(n_rows > new_size){
+		// First param is position
+		grid->DeleteRows(new_size-1, n_rows - new_size);
+	} else if(n_rows < new_size){
+		grid->AppendRows();
+	}
+	Refresh();
+}
+
+void PosIntGridPane::SetRowLabel(int i_row, wxString lbl){
+	GetGrid()->SetRowLabelValue(i_row, lbl);
+	Refresh();
+}
+
+void PosIntGridPane::SetColLabel(wxString lbl){
+	GetGrid()->SetColLabelValue(0, lbl);
+	Refresh();
 }
 
 wxGrid * PosIntGridPane::GetGrid(){

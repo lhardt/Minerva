@@ -34,6 +34,11 @@ bool PosIntGridTable::AppendCols(size_t n_new_cols){
 			values = (int*)realloc(values, (n_rows * n_cols)*sizeof(int));
 		}
 	}
+	wxGrid * view = GetView();
+	view->BeginBatch();
+	wxGridTableMessage pop(this, wxGRIDTABLE_NOTIFY_COLS_APPENDED, n_new_cols);
+	view->ProcessTableMessage(pop);
+	view->EndBatch();
 	return true;
 }
 
@@ -46,6 +51,36 @@ bool PosIntGridTable::AppendRows(size_t n_new_rows){
 			values = (int*)realloc(values, (n_rows * n_cols)*sizeof(int));
 		}
 	}
+	wxGrid * view = GetView();
+	view->BeginBatch();
+	wxGridTableMessage pop(this, wxGRIDTABLE_NOTIFY_ROWS_APPENDED, n_new_rows);
+	view->ProcessTableMessage(pop);
+	view->EndBatch();
+	return true;
+}
+
+
+bool PosIntGridTable::DeleteCols(size_t pos, size_t n_del_cols) {
+	n_cols -= n_del_cols;
+
+	wxGrid * view = GetView();
+	view->BeginBatch();
+	wxGridTableMessage pop(this, wxGRIDTABLE_NOTIFY_COLS_DELETED, n_cols, n_del_cols);
+	view->ProcessTableMessage(pop);
+	view->EndBatch();
+}
+bool PosIntGridTable::DeleteRows(size_t pos, size_t n_del_rows) {
+	n_rows -= n_del_rows;
+	for(int i_col = 0; i_col < n_cols; ++i_col){
+		for(int i_row = 0; i_row < n_rows; ++i_row){
+			values[i_col * n_rows + i_row] = values[i_col * n_rows + (i_row + n_del_rows * i_col)];
+		}
+	}
+	wxGrid * view = GetView();
+	view->BeginBatch();
+	wxGridTableMessage pop(this, wxGRIDTABLE_NOTIFY_ROWS_DELETED, n_rows, n_del_rows);
+	view->ProcessTableMessage(pop);
+	view->EndBatch();
 	return true;
 }
 

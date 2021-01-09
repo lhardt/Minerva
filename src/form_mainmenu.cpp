@@ -1,5 +1,6 @@
 #include "gui.hpp"
 #include <wx/wx.h>
+#include <wx/wupdlock.h>
 #include <wx/ribbon/bar.h>
 #include <wx/ribbon/buttonbar.h>
 #include <wx/ribbon/gallery.h>
@@ -333,6 +334,7 @@ void MainMenuForm::CloseOpenedPane(){
 void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 	wxString title, detail;
 	wxPanel * pane_to_open = nullptr;
+    wxWindowUpdateLocker noUpdates(m_center_pane);
 	switch(ev.GetId()){
 		/* School */
 		case ID_SCHOOL_DATA: {
