@@ -216,13 +216,15 @@ class ScoreGridPane : public wxScrolledWindow {
 	wxButton 	* GetSaveButton();
 	wxButton 	* GetCancelButton();
 	ChoiceGrid  * GetGrid();
+	void 		  SetLabel(wxString label);
 	void 		  SetEditing(bool editing = true);
  private:
-	Application * m_owner;
-	ChoiceGrid  * m_grid;
-	wxButton 	* m_edit_btn;
-	wxButton 	* m_save_btn;
-	wxButton 	* m_cancel_btn;
+	Application  * m_owner;
+	ChoiceGrid   * m_grid;
+	wxStaticText * m_label;
+	wxButton 	 * m_edit_btn;
+	wxButton 	 * m_save_btn;
+	wxButton 	 * m_cancel_btn;
 };
 
 class PosIntGridPane : public wxScrolledWindow {

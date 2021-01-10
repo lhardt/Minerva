@@ -232,13 +232,13 @@ private:
 
 class TeacherInsertAction : public Action {
 public:
-	TeacherInsertAction(Application * owner, Teacher t);
+	TeacherInsertAction(Application * owner, Teacher * t);
 	~TeacherInsertAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
 private:
-	Teacher 	m_teacher;
+	Teacher *	m_teacher;
 	ActionState m_state;
 };
 

@@ -11,7 +11,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
-	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availibility);
+	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availability);
 	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_teaches);
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 
@@ -68,7 +68,7 @@ void AddTeacherPane::ClearInsertedData(){
 	int i;
 	m_name_text->Clear();
 	for(int i = 0; i < m_owner->m_school->n_subjects; ++i){
-		m_subjects_grid->SetCellState(i,0,1);
+		m_subjects_grid->SetCellState(i,0,0);
 	}
 	for(i = 0; i < school->n_periods; ++i){
 		m_periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? 1 : ChoiceGrid::CELL_STATE_LOCKED);
@@ -87,51 +87,52 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		}
 	}
 	if(!m_name_text->GetValue().IsEmpty()){
-		Teacher t;
+		// This structure will outlive the function.
+		Teacher * t = (Teacher *) calloc(1, sizeof(Teacher));
 
-		t.name = copy_wx_string(m_name_text->GetValue());
-		t.short_name = copy_wx_string(m_name_text->GetValue());
-		t.max_days = school->n_days;
-		t.max_meetings = school->n_periods;
-		t.max_meetings_per_day = school->n_periods_per_day;
-		t.max_meetings_per_class_per_day = school->n_periods_per_day;
-		t.num_planning_periods = 0;
-		t.planning_needs_room = false;
-		t.active = true;
-		t.subordinates = NULL;
-		t.lecture_room_scores = NULL;
-		t.planning_room_scores = NULL;
-		t.day_max_meetings = NULL;
-		t.day_scores = NULL;
-		t.planning_twin_scores = NULL;
+		t->name = copy_wx_string(m_name_text->GetValue());
+		t->short_name = copy_wx_string(m_name_text->GetValue());
+		t->max_days = school->n_days;
+		t->max_meetings = school->n_periods;
+		t->max_meetings_per_day = school->n_periods_per_day;
+		t->max_meetings_per_class_per_day = school->n_periods_per_day;
+		t->num_planning_periods = 0;
+		t->planning_needs_room = false;
+		t->active = true;
+		t->subordinates = NULL;
+		t->lecture_room_scores = NULL;
+		t->planning_room_scores = NULL;
+		t->day_max_meetings = NULL;
+		t->day_scores = NULL;
+		t->planning_twin_scores = NULL;
 
 		if(n_subjects > 0){
-			t.teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*));
+			t->teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*));
 			teaches_vals = (Teaches*)calloc(n_subjects + 1, sizeof(Teaches));
 			int i_teaches = 0;
 			for(i_subject = 0; i_subject < school->n_subjects; ++i_subject){
 				if(m_subjects_grid->GetCellState(i_subject,0) > 0){
-					t.teaches[i_teaches] = &(teaches_vals[i_teaches]);
-					t.teaches[i_teaches]->teacher = &t;
-					t.teaches[i_teaches]->subject = &(school->subjects[i_subject]);
+					t->teaches[i_teaches] = &(teaches_vals[i_teaches]);
+					t->teaches[i_teaches]->teacher = t;
+					t->teaches[i_teaches]->subject = &(school->subjects[i_subject]);
 					int state = m_subjects_grid->GetCellState(i_subject,0);
-					t.teaches[i_teaches]->score = state >= 0? state:0;
+					t->teaches[i_teaches]->score = state >= 0? state:0;
 					++i_teaches;
 				}
 			}
-			t.teaches[i_teaches] = NULL;
+			t->teaches[i_teaches] = NULL;
 		} else {
-			t.teaches = NULL;
+			t->teaches = NULL;
 		}
-		t.lecture_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
-		t.planning_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
+		t->lecture_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
+		t->planning_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
 		for(int i = 0; i < school->n_periods; ++i){
 			int state = m_periods_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
-			t.lecture_period_scores[i] = state >= 0? state:0;
-			t.planning_period_scores[i] = t.lecture_period_scores[i];
+			t->lecture_period_scores[i] = state >= 0? state:0;
+			t->planning_period_scores[i] = t->lecture_period_scores[i];
 		}
-		t.lecture_period_scores[school->n_periods] = -1;
-		t.planning_period_scores[school->n_periods] = -1;
+		t->lecture_period_scores[school->n_periods] = -1;
+		t->planning_period_scores[school->n_periods] = -1;
 
 		TeacherInsertAction * act = new TeacherInsertAction(m_owner, t);
 		bool inserted = m_owner->Do(act);

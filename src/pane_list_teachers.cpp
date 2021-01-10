@@ -70,7 +70,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	ChoiceGrid * teaches_grid = m_teaches->GetGrid();
 	teaches_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	teaches_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
-	teaches_grid->SetColLabel(i, m_owner->m_lang->str_teaches);
+	teaches_grid->SetColLabel(0, m_owner->m_lang->str_teaches);
 
 	ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
@@ -338,7 +338,6 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		if(t->teaches != NULL){
 			for(int i = 0; t->teaches[i] != NULL; ++i){
 				int subj_i = get_subject_index_by_id(school, t->teaches[i]->subject->id);
-				printf("With teachesi %d, Subject i was %d\n", i, subj_i);
 				teaches_grid->SetCellState(subj_i, 0, t->teaches[i]->score > 0 ? 1:0);
 			}
 		} else {
