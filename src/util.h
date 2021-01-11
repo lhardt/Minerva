@@ -37,12 +37,14 @@ void free_assignment(Assignment * s);
 /*********************************************************/
 /*                   REALLOC Functions                   */
 /*********************************************************/
-bool realloc_teachers(School * school, int n_teachers);
-bool realloc_teaches(School * school, int n_teaches);
+bool realloc_teachers(School * school, int n_teachers, int i_start);
+bool realloc_teaches(School * school, int n_teaches, int i_start);
 bool realloc_classes(School * school, int n_classes);
 bool realloc_subjects(School * school, int n_subjects);
 bool realloc_assignments(School * school, int n_assignments);
 bool realloc_rooms(School * school, int n_rooms);
+
+bool displace_teachers(School * school, Teacher * target, int start, int n_teachers, int new_start);
 
 /*********************************************************/
 /*                     COPY Functions                    */
@@ -112,7 +114,7 @@ void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at);
 void remove_from_int_list(int * list, int i_remove);
 
 void school_teacher_add(School * school, const Teacher * const teacher);
-void school_teaches_add(School * school, Teaches * teaches);
+int school_teaches_add(School * school, Teaches * teaches, bool alter_teacher_teaches_list);
 void school_class_add(School * school, Class * c);
 void school_subject_add(School * school, const Subject * const subject);
 void school_room_add(School * school, const Room * const room);

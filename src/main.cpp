@@ -169,7 +169,7 @@ bool Application::OnInit(){
 		printf("Could open in-memory-db? %d %s\n", errc, sqlite3_errmsg(m_database));
 		printf("Could load back-up? %s\n", loaded?("Yes"):("No"));
 		if(m_database == nullptr){
-			int err_response = wxMessageBox(wxT("Erro!"),wxT("Não foi possível abrir o banco de dados."), wxOK);
+			wxMessageBox(wxT("Erro!"),wxT("Não foi possível abrir o banco de dados."), wxOK);
 			Exit();
 		}
 

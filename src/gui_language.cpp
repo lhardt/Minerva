@@ -257,6 +257,7 @@ const Language LANG_POR = {
 	.str_subjects_required_by_the_class=L"Disciplinas requeridas pela turma",
 	.str_participation_in_class_groups=L"Participação em grupos de turmas",
 	.str_max_periods_per_day_subject_group=L"Nº máximo de períodos por dia por grupo de disciplinas",
+	.str_members=L"Membros",
 };
 
 const Language LANG_ENG = {
@@ -502,6 +503,7 @@ const Language LANG_ENG = {
 	.str_subjects_required_by_the_class=L"Subjects required by the class",
 	.str_participation_in_class_groups=L"Participation in class groups",
 	.str_max_periods_per_day_subject_group=L"Max periods per day for each subject group",
+	.str_members=L"Members",
 };
 
 const Language LANG_SPA = {
@@ -737,6 +739,7 @@ const Language LANG_SPA = {
 	.str_subjects_required_by_the_class=L"",
 	.str_participation_in_class_groups=L"",
 	.str_max_periods_per_day_subject_group=L"",
+	.str_members=L"Membros",
 };
 
 const Language LANG_DEU = {
@@ -971,4 +974,5 @@ const Language LANG_DEU = {
 	.str_subjects_required_by_the_class=L"",
 	.str_participation_in_class_groups=L"",
 	.str_max_periods_per_day_subject_group=L"",
+	.str_members=L"",
 };

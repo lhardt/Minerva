@@ -331,9 +331,7 @@ RoomInsertAction::RoomInsertAction(Application * owner, Room room)  : Action(own
 RoomInsertAction::~RoomInsertAction(){
 	/* If the state is done, then the data is in elsewhere. */
 	if(m_state == state_UNDONE){
-		free(m_room.name);
-		free(m_room.short_name);
-		free(m_room.availability);
+		free_room(&m_room);
 	}
 }
 bool RoomInsertAction::Do(){
@@ -908,27 +906,27 @@ wxString SubjectGroupMembersUpdateAction::Describe(){
 /*********************************************************/
 /*                  TeacherInsertAction                  */
 /*********************************************************/
-TeacherInsertAction::TeacherInsertAction(Application * owner, Teacher* t) : Action(owner){
+TeacherInsertAction::TeacherInsertAction(Application * owner, Teacher t) : Action(owner){
+	m_owner = owner;
 	m_teacher = t;
-	m_teacher->id = -1;
+	m_teacher.id = -1;
 }
 TeacherInsertAction::~TeacherInsertAction(){
 	if(m_state == state_UNDONE){
-		free_teacher(m_teacher);
-		free(m_teacher);
+		free_teacher(&m_teacher);
 	}
 }
 bool TeacherInsertAction::Do(){
-	int res_id = insert_teacher(stdout, m_owner->m_database, m_teacher, m_owner->m_school, m_teacher->id);
+	int res_id = insert_teacher(stdout, m_owner->m_database, &m_teacher, m_owner->m_school, m_teacher.id);
 	if(res_id != -1){
-		school_teacher_add(m_owner->m_school, m_teacher);
+		school_teacher_add(m_owner->m_school, & m_teacher);
 		return true;
 	}
 	return false;
 }
 bool TeacherInsertAction::Undo(){
-	if(remove_teacher(stdout, m_owner->m_database, m_teacher->id)){
-		int i_teacher = get_teacher_index_by_id(m_owner->m_school, m_teacher->id);
+	if(remove_teacher(stdout, m_owner->m_database, m_teacher.id)){
+		int i_teacher = get_teacher_index_by_id(m_owner->m_school, m_teacher.id);
 		LMH_ASSERT(i_teacher >= 0);
 		school_teacher_remove(m_owner->m_school, i_teacher, false);
 		return true;
@@ -937,6 +935,41 @@ bool TeacherInsertAction::Undo(){
 }
 wxString TeacherInsertAction::Describe(){
 	return wxT("TeacherInsertAction");
+}
+
+
+/*********************************************************/
+/*                  TeacherDeleteAction                  */
+/*********************************************************/
+TeacherDeleteAction::TeacherDeleteAction(Application * owner, int id) : Action(owner){
+	m_owner = owner;
+	m_teacher = * find_teacher_by_id(owner->m_school, id);
+	m_state = state_UNDONE;
+}
+
+bool TeacherDeleteAction::Do(){
+	School * school = m_owner->m_school;
+	if(remove_teacher(stdout, m_owner->m_database, m_teacher.id)){
+		int i_teacher = get_teacher_index_by_id(m_owner->m_school, m_teacher.id);
+		LMH_ASSERT(i_teacher >= 0);
+
+		// TODO
+
+		school_teacher_remove(m_owner->m_school, i_teacher, false);
+		return true;
+	}
+	return false;
+}
+TeacherDeleteAction::~TeacherDeleteAction(){
+	if(m_state == state_DONE){
+		free_teacher(&m_teacher);
+	}
+}
+bool TeacherDeleteAction::Undo(){
+	return false;
+}
+wxString TeacherDeleteAction::Describe(){
+	return wxT("TeacherDeleteAction");
 }
 
 
@@ -1039,7 +1072,7 @@ bool TeacherSubjectsUpdateAction::Do(){
 			success = insert_or_update_teaches(stdout, m_owner->m_database, &t, school);
 			if(success){
 				if(i_teaches < 0){
-					school_teaches_add(school, &t);
+					school_teaches_add(school, &t, true);
 				} else {
 					Teaches * to_edit = &(school->teaches[i_teaches]);
 					to_edit->teacher = t.teacher;

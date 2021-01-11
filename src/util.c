@@ -129,29 +129,41 @@ void free_school(School * s){
  * we won't be able to (universally) do ptr arithmetic
  * TODO optimize; confirm.
  */
-bool realloc_teachers(School * school, int n_teachers){
-	LMH_ASSERT(school != NULL && n_teachers > 0);
+bool realloc_teachers(School * school, int n_teachers, int i_start){
+	LMH_ASSERT(school != NULL && n_teachers > 0 && n_teachers > school->n_teachers);
+	LMH_ASSERT(i_start >= 0 && i_start <= school->n_teachers);
 	Teacher * tmp = calloc(n_teachers+1, sizeof(Teacher));
 	if(! tmp ){
 		LMH_ASSERT(tmp != NULL);
 		return false;
 	}
-	for(int i = 0; i < school->n_teachers; ++i){
+	for(int i = 0; i < i_start; ++i){
 		tmp[i] = school->teachers[i];
+	}
+	for(int i = i_start; i < school->n_teachers; ++i){
+		tmp[i + n_teachers - school->n_teachers] = school->teachers[i];
 	}
 	/* Needs to repoint every reference to every teacher */
 	for(int i = 0; i < school->n_teaches; ++i){
 		if(school->teaches[i].teacher != NULL){
 			int teacher_i = get_teacher_index_by_id(school, school->teaches[i].teacher->id);
 			LMH_ASSERT(teacher_i != -1);
-			school->teaches[i].teacher = & tmp[teacher_i];
+			if(teacher_i < i_start){
+				school->teaches[i].teacher = & tmp[teacher_i];
+			} else {
+				school->teaches[i].teacher = & tmp[teacher_i + n_teachers - school->n_teachers];
+			}
 		}
 	}
 	for(int i = 0; i < school->n_meetings; ++i){
 		if(school->meetings[i].teacher != NULL){
 			int teacher_i = get_teacher_index_by_id(school, school->meetings[i].teacher->id);
 			LMH_ASSERT(teacher_i != -1);
-			school->meetings[i].teacher = & tmp[teacher_i];
+			if(teacher_i < i_start){
+				school->meetings[i].teacher = & tmp[teacher_i];
+			} else {
+				school->meetings[i].teacher = & tmp[teacher_i + n_teachers - school->n_teachers];
+			}
 		}
 	}
 	for(int i = 0; i < school->n_solutions; ++i){
@@ -161,7 +173,11 @@ bool realloc_teachers(School * school, int n_teachers){
 			if(meetings[j].teacher != NULL){
 				int teacher_i = get_teacher_index_by_id(school, meetings[j].teacher->id);
 				LMH_ASSERT(teacher_i != -1);
-				meetings[j].teacher = & tmp[teacher_i];
+				if(teacher_i < i_start){
+					meetings[j].teacher = & tmp[teacher_i];
+				} else {
+					meetings[j].teacher = & tmp[teacher_i + n_teachers - school->n_teachers];
+				}
 			}
 		}
 	}
@@ -169,16 +185,20 @@ bool realloc_teachers(School * school, int n_teachers){
 	school->teachers = tmp;
 	return true;
 }
-bool realloc_teaches(School * school, int n_teaches){
+bool realloc_teaches(School * school, int n_teaches, int i_start){
 	LMH_ASSERT(school != NULL && n_teaches > 0 && n_teaches > school->n_teaches);
 	Teaches * tmp = calloc(n_teaches + 1, sizeof(Teaches));
+	LMH_ASSERT(tmp != NULL);
 	if(! tmp ){
-		LMH_ASSERT(tmp != NULL);
 		return false;
 	}
 	if(school->teaches != NULL){
-		for(int i = 0; i < school->n_teaches; ++i){
+		LMH_ASSERT(i_start <= school->n_teaches && i_start >= 0);
+		for(int i = 0; i < i_start; ++i){
 			tmp[i] = school->teaches[i];
+		}
+		for(int i = i_start; i < school->n_teaches; ++i){
+			tmp[i + n_teaches - school->n_teaches] = school->teaches[i];
 		}
 
 		for(int i = 0; i < school->n_teachers; ++i){
@@ -188,10 +208,18 @@ bool realloc_teaches(School * school, int n_teaches){
 
 			for(int j = 0; teacher->teaches[j] != NULL; ++j){
 				int teaches_i = get_teaches_index_by_id(school, teacher->teaches[j]->id);
-				teacher->teaches[j]= & tmp[teaches_i];
+				if(teaches_i != -1){
+					printf("Teaches_i was %d when id was %d\n", teaches_i, teacher->teaches[j]->id);
+					if(teaches_i >= i_start){
+						teacher->teaches[j] = & tmp[teaches_i + n_teaches - school->n_teaches];
+					} else {
+						teacher->teaches[j] = & tmp[teaches_i];
+					}
+				} else {
+					printf("Looking at an uninserted teaches...\n");
+				}
 			}
 		}
-
 		free(school->teaches);
 	}
 	school->teaches = tmp;
@@ -301,6 +329,71 @@ bool realloc_rooms(School * school, int n_rooms){
 	return true;
 }
 bool realloc_assignments(School * school, int n_assignments);
+
+bool displace_teachers(School * school, Teacher * target,  int start, int n_teachers, int new_start){
+	// we aren't checking if new_start <= school->n_teachers because this function
+	// may be used to insert new teachers afterwards.
+	LMH_ASSERT(school != NULL && start >= 0 && n_teachers >= 0 && new_start >= 0 );
+
+	if(target == NULL){
+		target = school->teachers;
+	} else {
+		for(int i = 0; i < school->n_teachers; ++i){
+			// TODO: maybe if we didn't insert everyone it would be more efficient
+			// after all, we are already redoing part of this in the next lines.
+			target[i] = school->teachers[i];
+		}
+	}
+
+	for(int i = 0; i < school->n_teaches; ++i){
+		if(school->teaches[i].teacher != NULL){
+			int teacher_i = get_teacher_index_by_id(school, school->teaches[i].teacher->id);
+			LMH_ASSERT(teacher_i != -1);
+			if(teacher_i >= start && teacher_i < start + n_teachers){
+				school->teaches[i].teacher = & target[teacher_i - start + new_start];
+			} else {
+				school->teaches[i].teacher = & target[teacher_i];
+			}
+		}
+	}
+
+	for(int i = 0; i < school->n_meetings; ++i){
+		if(school->meetings[i].teacher != NULL){
+			int teacher_i = get_teacher_index_by_id(school, school->meetings[i].teacher->id);
+			LMH_ASSERT(teacher_i != -1);
+			if(teacher_i >= start && teacher_i < start + n_teachers){
+				school->meetings[i].teacher = & target[teacher_i - start + new_start];
+			} else {
+				school->meetings[i].teacher = & target[teacher_i];
+			}
+		}
+	}
+
+	for(int i = 0; i < school->n_solutions; ++i){
+		Solution * solution = & school->solutions[i];
+		for(int j = 0; j < solution->n_meetings; ++j){
+			if(solution->meetings[j].teacher != NULL){
+				int teacher_i = get_teacher_index_by_id(school, solution->meetings[j].teacher->id);
+				LMH_ASSERT(teacher_i != -1);
+				if(teacher_i >= start && teacher_i < start + n_teachers){
+					solution->meetings[j].teacher = & target[teacher_i - start + new_start];
+				} else {
+					solution->meetings[j].teacher = & target[teacher_i];
+				}
+			}
+		}
+	}
+
+	if(new_start > start){
+		for(int i = n_teachers - 1; i > 0; --i){
+			target[new_start + i] = school->teachers[start + i];
+		}
+	} else {
+		for(int i = 0; i < school->n_teachers; ++i){
+			target[new_start + i] = school->teachers[start + i];
+		}
+	}
+}
 
 /*********************************************************/
 /*                     COPY Functions                    */
@@ -1117,33 +1210,21 @@ int school_class_assignments_add(School * school, Class * c){
 	return school->n_assignments;
 }
 void school_teacher_add(School * school, const Teacher * const t){
-	int n_teaches = 0, i_teaches = 0, pos = 0;
+	int n_teaches = 0, pos = 0;
 	LMH_ASSERT(school != NULL && t != NULL);
 	if(school->teachers == NULL){
 		school->teachers = calloc(2, sizeof(Teacher));
 		school->n_teachers = 0;
 	} else {
-		bool success = realloc_teachers(school, school->n_teachers+1);
+		for(pos = 0; pos < school->n_teachers && t->id > school->teachers[pos].id; ++pos){
+			/* Blank. Teachers are ordered by id. */
+		}
+		bool success = realloc_teachers(school, school->n_teachers+1, pos);
 		// **TODO** -- decent memory management.
 		LMH_ASSERT(success);
 	}
-	/* Teachers are ordered by id. */
-	for(pos = 0; pos < school->n_teachers && t->id > school->teachers[pos].id; ++pos){
-
-	}
-
-	for(int i = school->n_teachers; i > pos; --i){
-		school->teachers[i] = school->teachers[i-1];
-	}
 	school->teachers[ pos ] = *t;
-	/* As the teachers after pos moved, we need to 'repoint' every reference to any of them. */
-	for(int i = 0; i < school->n_teaches; ++i){
-		int teacher_i = get_teacher_index_by_id(school, school->teaches[i].teacher->id);
-		if(teacher_i >= pos){
-			/* Jumped one index forward */
-			school->teaches[i].teacher = &(school->teachers[teacher_i + 1]);
-		}
-	}
+	++school->n_teachers;
 	for(int i = 0; i < school->n_meetings; ++i){
 		if(school->meetings[i].teacher != NULL){
 			int teacher_i = get_teacher_index_by_id(school, school->meetings[i].teacher->id);
@@ -1154,7 +1235,7 @@ void school_teacher_add(School * school, const Teacher * const t){
 	}
 	for(int i = 0; i < school->n_assignments; ++i){
 		/* TODO predefine as zero seems inconvenient for the user. */
-		add_zero_to_score_list_at(&(school->assignments[i].possible_teachers), school->n_teachers, pos);
+		add_zero_to_score_list_at(&(school->assignments[i].possible_teachers), school->n_teachers-1, pos);
 	}
 	for(int i = 0; i < school->n_solutions; ++i){
 		Meeting * meetings = school->solutions[i].meetings;
@@ -1169,97 +1250,61 @@ void school_teacher_add(School * school, const Teacher * const t){
 			}
 		}
 	}
-
 	if(t->teaches){
 		for(n_teaches = 0; t->teaches[n_teaches] != NULL; ++n_teaches){
-			t->teaches[n_teaches]->teacher = &school->teachers[pos];
 			/* Counting n_teaches */
 		}
-		/* Teacheses are ordered by the id of the teacher. */
-		int i_start = 0;
-		if(school->teaches == NULL || school->n_teaches == 0){
-			school->teaches = calloc(n_teaches + 1, sizeof(Teaches));
-			school->n_teaches = 0;
-		} else {
-			realloc_teaches(school, school->n_teaches + n_teaches +1);
-			for(i_start = 0; i_start < school->n_teaches && school->teaches[i_start].teacher->id < t->id; ++i_start){
-				/* Stops where we need to insert our list of teaches. */
-			}
-		}
-		/* Reallocates the displaced ones (from i_start to school->n_teaches) to the end of the list (from i_start + n_teaches to school->n_teaches + n_teaches) */
-		for(i_teaches = school->n_teaches; i_teaches > i_start; --i_teaches){
-			school->teaches[i_teaches + n_teaches] = school->teaches[i_teaches];
-
-			/* We need to repoiont the teachers' pointer to this teaches, that has changed place */
-			Teacher * teacher_to_repoint = school->teaches[i_teaches + n_teaches].teacher;
-			LMH_ASSERT(teacher_to_repoint != NULL);
-			LMH_ASSERT(teacher_to_repoint->teaches != NULL);
-			bool replaced = false;
-			for(int j = 0; teacher_to_repoint->teaches[j] != NULL; ++j){
-				if(teacher_to_repoint->teaches[j] == &school->teaches[i_teaches]){
-					teacher_to_repoint->teaches[j] = &school->teaches[i_teaches + n_teaches];
-					replaced = true;
-					break;
-				}
-			}
-			LMH_ASSERT(replaced);
-		}
-		for(i_teaches = 0; i_teaches < n_teaches; ++i_teaches){
-			school->teaches[i_start + i_teaches] = * t->teaches[i_teaches];
-			school->teaches[i_start + i_teaches].teacher = &school->teachers[school->n_teachers];
-			school->teachers[pos].teaches[i_teaches] = &school->teaches[i_start + i_teaches];
-			++school->n_teaches;
+		for(int i = 0; i < n_teaches; ++i){
+			// TODO: It will realloc unnecessarily many times. The code would be big and ugly though.
+			printf("Teacher id %d and sub considering it as %d\n", t->id, t->teaches[i]->teacher->id);
+			int i_teaches = school_teaches_add(school, t->teaches[i], false);
+			school->teachers[ pos ].teaches[i] = & school->teaches[i_teaches];
+			school->teaches[i_teaches].teacher = & school->teachers[pos];
 		}
 	}
-
-	++school->n_teachers;
 }
-void school_teaches_add(School * school, Teaches * teaches){
-	printf("SCHOOL TEACHES ADD \n\n");
+int school_teaches_add(School * school, Teaches * teaches, bool alter_teacher_teaches_list){
 	LMH_ASSERT(school != NULL && teaches != NULL);
+	int pos = 0;
 	if(school->teaches == NULL){
 		school->teaches = calloc(2, sizeof(Teaches));
 		school->n_teaches = 0;
 	} else {
-		school->teaches = realloc(school->teaches, (school->n_teaches + 2) * sizeof(Teaches));
+		for(int pos = 0; pos < school->n_teaches && teaches->id > school->teaches[pos].id; ++pos){
+			/* Blank */
+		}
+		realloc_teaches(school, school->n_teaches + 1, pos);
 	}
-	school->teaches[school->n_teaches] = *teaches;
+	school->teaches[pos] = *teaches;
 
 	Teacher * teacher = find_teacher_by_id(school, teaches->teacher->id);
 	LMH_ASSERT(teacher != NULL);
-	LMH_ASSERT(teacher == school->teaches[school->n_teaches].teacher);
-
-	int tt_ctr = 0;
-	bool already_pointed = false;
-	if(teacher->teaches == NULL){
-		teacher->teaches = calloc(2, sizeof(Teaches*));
-		printf("t->Teaches was null.\n");
-	} else {
-		for(tt_ctr = 0; teacher->teaches[tt_ctr] != NULL; ++tt_ctr){
-			if(teacher->teaches[tt_ctr] == teaches){
-				already_pointed = true;
-				teacher->teaches[tt_ctr] = & school->teaches[school->n_teaches];
-				printf("Already had it.\n");
+	// TODO : Maybe?
+	// LMH_ASSERT(teacher == school->teaches[pos].teacher);
+	if(alter_teacher_teaches_list){
+		int tt_ctr = 0;
+		bool already_pointed = false;
+		if(teacher->teaches == NULL){
+			teacher->teaches = calloc(2, sizeof(Teaches*));
+		} else {
+			for(tt_ctr = 0; teacher->teaches[tt_ctr] != NULL; ++tt_ctr){
+				if(teacher->teaches[tt_ctr] == teaches){
+					already_pointed = true;
+					teacher->teaches[tt_ctr] = & school->teaches[pos];
+				}
+			}
+			if(!already_pointed){
+				teacher->teaches = realloc(teacher->teaches, (tt_ctr + 2)* sizeof(Teaches*));
 			}
 		}
-		if(!already_pointed){
-			printf("t->Teaches wasn't null. reallocating to %d + 2. .\n", tt_ctr);
-			teacher->teaches = realloc(teacher->teaches, (tt_ctr + 2)* sizeof(Teaches*));
+		if(!already_pointed) {
+			// TODO : would it be necessary to order by id here?
+			teacher->teaches[tt_ctr] = &(school->teaches[pos]);
 		}
-	}
-	if(!already_pointed) {
-		teacher->teaches[tt_ctr] = &(school->teaches[school->n_teaches]);
 		teacher->teaches[tt_ctr+1] = NULL;
 	}
-
-	for(int i = 0; i < tt_ctr; ++i){
-		/* If it is still pointing to the 'old' teaches */
-		if(teacher->teaches[i] == teaches){
-			teacher->teaches[i] = school->teaches;
-		}
-	}
-
 	++school->n_teaches;
+	return pos;
 }
 void school_class_add(School * school, Class * c){
 	int pos = 0;
@@ -1473,7 +1518,7 @@ void school_subjectgroup_remove(School * school, int i_sg, bool must_delete){
 	for(int i = 0; i < school->n_subjects; ++i){
 		int * ing = school->subjects[i].in_groups;
 		if(ing != NULL){
-			for(int j = i_sg+1; j < school->n_subjects; ++j){
+			for(int j = i_sg+1; j < school->n_subject_groups; ++j){
 				ing[j-1] = ing[j];
 			}
 		}
@@ -1550,16 +1595,15 @@ void school_teacher_remove(School * school, int i_remove, bool must_delete){
 	LMH_ASSERT(school != NULL && i_remove < school->n_teachers && i_remove >= 0);
 	/* TODO Check for subordinates too. */
 	for(i = 0; i < school->n_teaches; ++i){
+		printf("Teacher remove. %d", school->teaches == NULL);
+		printf(" %d", school->teaches[i].teacher == NULL);
+		printf(" %d",  school->teachers == NULL);
+		printf(" %d", school->teachers[i_remove].id);
+
+		printf("\n");
 		if(school->teaches[i].teacher->id == school->teachers[i_remove].id){
-			if(must_delete){
-				/* Else it will be still referenced by the teacher */
-				free_teaches(&school->teaches[i]);
-			}
-			for(j = i; j < school->n_teaches; ++j){
-				school->teaches[j] = school->teaches[j+1];
-			}
+			school_teaches_remove(school, i, must_delete);
 			--i;
-			--school->n_teaches;
 		}
 	}
 	if(school->solutions != NULL){
@@ -1567,10 +1611,10 @@ void school_teacher_remove(School * school, int i_remove, bool must_delete){
 			Meeting * m_list = school->solutions[i].meetings;
 			if(m_list != NULL){
 				for(j = 0; m_list[j].m_class != NULL; ++j ){
-				if(m_list[j].teacher->id == school->teachers[i_remove].id){
-					m_list[j].teacher = NULL;
+					if(m_list[j].teacher->id == school->teachers[i_remove].id){
+						m_list[j].teacher = NULL;
+					}
 				}
-			}
 			}
 		}
 	}
@@ -1589,23 +1633,49 @@ void school_teaches_remove(School * school, int i_remove, bool must_delete){
 		free_teaches(&school->teaches[i_remove]);
 	}
 
+	printf("Before teachesremove: ");
+	for(int i = 0; i < school->n_teaches; ++i){
+		printf("%d ", school->teaches[i].teacher == NULL);
+	}
+	printf("\n");
+
 	int n_tt, i_teacher_remove = -1;
 	Teacher * t = school->teaches[i_remove].teacher;
+	LMH_ASSERT(find_teacher_by_id(school, t->id) == t);
 	for(n_tt = 0; t->teaches[n_tt] != NULL; ++n_tt){
 		if(i_teacher_remove == -1 && t->teaches[n_tt]->id == school->teaches[i_remove].id){
+			printf("This teacher (%d) had a teaches with id %d\n", t->id, t->teaches[n_tt]->id);
 			i_teacher_remove = n_tt;
 		}
 	}
 	LMH_ASSERT(i_teacher_remove >= 0);
 	for(int i = i_teacher_remove; i < n_tt; ++i){
 		t->teaches[i] = t->teaches[i+1];
+	} /* The last one will receive NULL */
+	--n_tt;
+
+	for(int i = 0; i < school->n_teachers; ++i){
+		for(int j = 0; school->teachers[i].teaches[j] != NULL; ++j){
+			int i_teaches = get_teaches_index_by_id(school, school->teachers[i].teaches[j]->id);
+			LMH_ASSERT(i_teaches != -1);
+			LMH_ASSERT(i_teaches != i_remove);
+			if(i_teaches > i_remove){
+				school->teachers[i].teaches[j] = & school->teaches[i_teaches-1];
+			}
+		}
 	}
-	t->teaches[n_tt-1] = NULL;
-	for(int i = i_remove; i < school->n_teaches-2; ++i){
+	for(int i = i_remove; i < school->n_teaches-1; ++i){
 		school->teaches[i] = school->teaches[i+1];
 	}
 
+	printf("After teachesremove: ");
+	for(int i = 0; i < school->n_teaches; ++i){
+		printf("%d ", school->teaches[i].teacher == NULL);
+	}
+	printf("\n");
+
 	--school->n_teaches;
+
 }
 void school_class_remove(School * school, int class_i, bool must_delete){
 	int i,j;
