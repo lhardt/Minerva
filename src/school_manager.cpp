@@ -910,6 +910,7 @@ TeacherInsertAction::TeacherInsertAction(Application * owner, Teacher t) : Actio
 	m_owner = owner;
 	m_teacher = t;
 	m_teacher.id = -1;
+	m_teaches = NULL;
 }
 TeacherInsertAction::~TeacherInsertAction(){
 	if(m_state == state_UNDONE){
@@ -917,18 +918,37 @@ TeacherInsertAction::~TeacherInsertAction(){
 	}
 }
 bool TeacherInsertAction::Do(){
+	if(m_teaches != NULL){
+		for(int i = 0; m_teaches[i].teacher != NULL; ++i){
+			m_teacher.teaches[i] = &m_teaches[i];
+
+		}
+	}
 	int res_id = insert_teacher(stdout, m_owner->m_database, &m_teacher, m_owner->m_school, m_teacher.id);
 	if(res_id != -1){
 		school_teacher_add(m_owner->m_school, & m_teacher);
+		free(m_teaches);
+		this->m_teaches = NULL;
 		return true;
 	}
 	return false;
 }
 bool TeacherInsertAction::Undo(){
 	if(remove_teacher(stdout, m_owner->m_database, m_teacher.id)){
+
+		School * school = m_owner->m_school;
 		int i_teacher = get_teacher_index_by_id(m_owner->m_school, m_teacher.id);
 		LMH_ASSERT(i_teacher >= 0);
-		school_teacher_remove(m_owner->m_school, i_teacher, false);
+
+		int teaches_ctr;
+		for(teaches_ctr = 0; school->teachers[i_teacher].teaches[teaches_ctr] != NULL; ++teaches_ctr){
+			/**/
+		}
+		m_teaches = (Teaches *) calloc(teaches_ctr+1, sizeof(Teaches));
+		for(int i = 0; school->teachers[i_teacher].teaches[i] != NULL; ++i){
+			m_teaches[i] = *(school->teachers[i_teacher].teaches[i]);
+		}
+		school_teacher_remove(school, i_teacher, false);
 		return true;
 	}
 	return false;

@@ -239,6 +239,7 @@ public:
 	wxString Describe();
 private:
 	Teacher		m_teacher;
+	Teaches *   m_teaches;
 	ActionState m_state;
 };
 

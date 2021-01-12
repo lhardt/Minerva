@@ -18,6 +18,120 @@
 		} while(0)
 
 
+void print_teaches_list(Teaches ** teaches){
+	printf("[");
+	for(int i = 0 ; teaches[i] != NULL; ++i){
+		printf("%s,  ", teaches[i]->subject->name);
+	}
+	printf("]\n");
+}
+
+void print_school_teaches_list(School *school){
+	printf("[");
+	for(int i = 0 ; i < school->n_teaches; ++i){
+		printf("%s,  ", school->teaches[i].subject->name);
+	}
+	printf("]\n");
+}
+
+
+void debug_func(){
+	School * school = (School *) calloc(1, sizeof(School));
+	school->n_teachers = 2;
+	school->n_teaches = 3;
+
+	school->teachers = (Teacher *) calloc(3, sizeof(Teacher));
+	school->teaches = (Teaches * ) calloc(3, sizeof(Teaches));
+	school->subjects = (Subject *) calloc(4, sizeof(Subject));
+
+	school->subjects[0] = (Subject){
+		.id = 1,
+		.name = "Math",
+
+	};
+	school->subjects[1] = (Subject){
+		.id = 2,
+		.name = "Port",
+
+	};
+
+	school->subjects[2] = (Subject){
+		.id = 3,
+		.name = "Hist",
+
+	};
+	school->teaches[0] = (Teaches){
+			.id = 1,
+			.teacher = &school->teachers[0],
+			.subject = &school->subjects[0]
+	};
+	school->teaches[1] = (Teaches){
+			.id = 2,
+			.teacher = &school->teachers[1],
+			.subject = &school->subjects[1]
+	};
+	school->teaches[2] = (Teaches){
+			.id = 3,
+			.teacher = &school->teachers[0],
+			.subject = &school->subjects[2]
+	};
+
+	Teaches ** t1_teaches_ptr =(Teaches**) calloc(3 , sizeof(Teaches*));
+	t1_teaches_ptr[0] = &school->teaches[0];
+	t1_teaches_ptr[1] = &school->teaches[2];
+	Teaches ** t2_teaches_ptr =(Teaches**) calloc(2 , sizeof(Teaches*));
+	t2_teaches_ptr[0] = &school->teaches[1];
+
+	school->teachers[0] = (Teacher){
+		.id = 1,
+		.name = "Rudolph",
+		.short_name = "Rud",
+		.teaches = t1_teaches_ptr,
+	};
+	school->teachers[1] = (Teacher){
+		.id = 2,
+		.name = "Dmitri",
+		.short_name = "Dmi",
+		.teaches = t2_teaches_ptr,
+	};
+
+	printf("----------\n");
+	printf("n_teachers %d n_teaches %d teacher[0].teaches %d, teacher[1].teaches %d\n",
+			school->n_teachers, school->n_teaches, school->teachers[0].teaches != NULL
+			, school->teachers[1].teaches != NULL);
+	print_teaches_list(school->teachers[0].teaches);
+	print_teaches_list(school->teachers[1].teaches);
+	printf("School->teaches (%d): ", school->n_teaches);
+	print_school_teaches_list(school);
+	printf("school->teaches[0].teacher %s\n", school->teaches[0].teacher->name);
+	printf("----------\n");
+	school_teacher_remove(school, 0, false);
+	printf("----------\n");
+	printf("n_teachers %d n_teaches %d teacher[0].teaches %d, teacher[1].teaches %d\n",
+			school->n_teachers, school->n_teaches, school->teachers[0].teaches != NULL
+			, school->teachers[1].teaches != NULL);
+	printf("school->teaches[0].subj %s\n", school->teaches[0].subject->name);
+	print_teaches_list(school->teachers[0].teaches);
+	print_teaches_list(school->teachers[1].teaches);
+	printf("School->teaches (%d): ", school->n_teaches);
+	print_school_teaches_list(school);
+	printf("school->teaches[0].teacher %s\n", school->teaches[0].teacher->name);
+	printf("----------\n");
+	// school_teaches_remove(school, 1, false);
+	// printf("----------\n");
+	// printf("n_teachers %d n_teaches %d teacher[0].teaches %d, teacher[1].teaches %d\n",
+	// 		school->n_teachers, school->n_teaches, school->teachers[0].teaches != NULL
+	// 		, school->teachers[1].teaches != NULL);
+	// printf("school->teaches[0].subj %d\n", school->teaches[0].subject != NULL);
+	// print_teaches_list(school->teachers[0].teaches);
+	// print_teaches_list(school->teachers[1].teaches);
+	// printf("school->teaches[0].teacher %s\n", school->teaches[0].teacher->name);
+	// printf("School->teaches (%d): ", school->n_teaches);
+	// print_school_teaches_list(school);
+	// printf("----------\n");
+}
+
+
 /*********************************************************/
 /*                     FREE Functions                    */
 /*********************************************************/
@@ -1595,12 +1709,6 @@ void school_teacher_remove(School * school, int i_remove, bool must_delete){
 	LMH_ASSERT(school != NULL && i_remove < school->n_teachers && i_remove >= 0);
 	/* TODO Check for subordinates too. */
 	for(i = 0; i < school->n_teaches; ++i){
-		printf("Teacher remove. %d", school->teaches == NULL);
-		printf(" %d", school->teaches[i].teacher == NULL);
-		printf(" %d",  school->teachers == NULL);
-		printf(" %d", school->teachers[i_remove].id);
-
-		printf("\n");
 		if(school->teaches[i].teacher->id == school->teachers[i_remove].id){
 			school_teaches_remove(school, i, must_delete);
 			--i;
@@ -1621,10 +1729,9 @@ void school_teacher_remove(School * school, int i_remove, bool must_delete){
 	if(must_delete){
 		free_teacher(&school->teachers[i_remove]);
 	}
-	for(i = i_remove; i < school->n_teachers; ++i){
+	for(i = i_remove; i < school->n_teachers-1; ++i){
 		school->teachers[i] = school->teachers[i+1];
 	}
-
 	--school->n_teachers;
 }
 void school_teaches_remove(School * school, int i_remove, bool must_delete){
@@ -1633,18 +1740,11 @@ void school_teaches_remove(School * school, int i_remove, bool must_delete){
 		free_teaches(&school->teaches[i_remove]);
 	}
 
-	printf("Before teachesremove: ");
-	for(int i = 0; i < school->n_teaches; ++i){
-		printf("%d ", school->teaches[i].teacher == NULL);
-	}
-	printf("\n");
-
 	int n_tt, i_teacher_remove = -1;
 	Teacher * t = school->teaches[i_remove].teacher;
 	LMH_ASSERT(find_teacher_by_id(school, t->id) == t);
 	for(n_tt = 0; t->teaches[n_tt] != NULL; ++n_tt){
 		if(i_teacher_remove == -1 && t->teaches[n_tt]->id == school->teaches[i_remove].id){
-			printf("This teacher (%d) had a teaches with id %d\n", t->id, t->teaches[n_tt]->id);
 			i_teacher_remove = n_tt;
 		}
 	}
@@ -1667,13 +1767,6 @@ void school_teaches_remove(School * school, int i_remove, bool must_delete){
 	for(int i = i_remove; i < school->n_teaches-1; ++i){
 		school->teaches[i] = school->teaches[i+1];
 	}
-
-	printf("After teachesremove: ");
-	for(int i = 0; i < school->n_teaches; ++i){
-		printf("%d ", school->teaches[i].teacher == NULL);
-	}
-	printf("\n");
-
 	--school->n_teaches;
 
 }
