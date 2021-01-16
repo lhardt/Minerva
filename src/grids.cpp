@@ -1,4 +1,5 @@
 #include "gui.hpp"
+#include <wx/wupdlock.h>
 #include <wx/grid.h>
 
 /* Credits to RemcoM in the wxWidgets forum for the NoSelect renderer. */
@@ -389,6 +390,10 @@ void ChoiceGridTable::SetState(int i_row, int i_col, int state){
 	values[i_col * n_rows + i_row] = state;
 }
 
+int  ChoiceGridTable::GetNumberStates(){
+	return value_labels.size();
+}
+
 void ChoiceGridTable::SetDefaultRowLabel(wxString lbl){
 	default_row_label = lbl;
 }
@@ -430,7 +435,7 @@ void ChoiceGrid::GridRemake(int n_cols, int n_rows){
 		DeleteCols(n_cols, old_n_cols - n_cols);
 	}
 	Refresh();
-	AutoSize();
+	SetDefaultColSize(m_cell_width, true);
 }
 
 
@@ -482,32 +487,39 @@ void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
 
 void ChoiceGrid::SetCellLocked(int i, int j){
 	((ChoiceGridTable *)GetTable())->SetState(i, j, CELL_STATE_LOCKED);
-	Refresh();
+	// Refresh();
 }
 
 void ChoiceGrid::SetCellState(int i_row, int i_col, int state){
 	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
 		((ChoiceGridTable*)GetTable())->SetState(i_row, i_col, state);
 	}
-	Refresh();
+	// AutoSizeColumns();
+	// SetSize(GetBestSize());
+	// ForceRefresh();
 }
 
 void ChoiceGrid::SetCellNextState(int i_row, int i_col){
 	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
 		((ChoiceGridTable*)GetTable())->SetNextState(i_row, i_col);
 	}
-	Refresh();
+	// AutoSizeColumns();
+	// SetSize(GetBestSize());
+	// ForceRefresh();
 }
 
 
 void ChoiceGrid::SetAllCellsState(int state){
 	((ChoiceGridTable*)GetTable())->SetTableState(state);
-	Refresh();
+	wxWindowUpdateLocker noUpdates(this);
+	// AutoSizeColumns();
+	// SetSize(GetBestSize());
+	// ForceRefresh();
 }
 
 void ChoiceGrid::SetAllActiveCellsState(int state){
 	((ChoiceGridTable*)GetTable())->SetTableActiveState(state);
-	Refresh();
+	// Refresh();
 }
 
 int ChoiceGrid::GetCellState(int i_row, int i_col){
@@ -515,7 +527,25 @@ int ChoiceGrid::GetCellState(int i_row, int i_col){
 }
 
 int  ChoiceGrid::AddState(wxString name, wxColor color){
-	return ((ChoiceGridTable*)GetTable())->AddState(name,color);
+	int ret_val = ((ChoiceGridTable*)GetTable())->AddState(name,color);
+	int n_states = ((ChoiceGridTable*)GetTable())->GetNumberStates();
+	if(n_states > 0){
+		int max_width = 0;
+		// cell 0,0 is used as measure unit here
+		int dummy_old_state = GetCellState(0,0);
+		for(int i = 0; i < n_states; ++i){
+			SetCellState(0,0,i);
+			AutoSizeColumn(0);
+			int width = GetColSize(0);
+			max_width = (max_width > width)? max_width : width;
+		}
+		if(max_width > 0){
+			SetDefaultColSize(max_width, true);
+		}
+		m_cell_width = max_width;
+		SetCellState(0,0,dummy_old_state);
+	}
+	return ret_val;
 }
 
 void ChoiceGrid::SetColLabel(int i_col, wxString name){

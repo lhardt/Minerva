@@ -117,6 +117,7 @@ class ChoiceGridTable : public wxGridTableBase {
 	void SetTableNextState();
 	void SetTableState(int state);
 	void SetTableActiveState(int state);
+	int  GetNumberStates();
 	/* N rows / N cols */
 	int GetNumberRows() override;
 	int GetNumberCols() override;
@@ -194,8 +195,9 @@ class ChoiceGrid : public wxGrid {
 	void SetDefaultRowLabel(wxString lbl);
 	void BlankFunction(wxGridEvent &);
  private:
-	 void OnLeftClick(wxGridEvent &);
+	void OnLeftClick(wxGridEvent &);
 	void OnHeaderLeftClick(wxGridEvent &);
+	int m_cell_width;
 	Application * m_owner;
 };
 
