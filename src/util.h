@@ -18,6 +18,8 @@
 #include "decisions.h"
 #include "school_examples.h"
 
+
+void debug_func();
 /*********************************************************/
 /*                     FREE Functions                    */
 /*********************************************************/
@@ -37,12 +39,14 @@ void free_assignment(Assignment * s);
 /*********************************************************/
 /*                   REALLOC Functions                   */
 /*********************************************************/
-bool realloc_teachers(School * school, int n_teachers);
-bool realloc_teaches(School * school, int n_teaches);
+bool realloc_teachers(School * school, int n_teachers, int i_start);
+bool realloc_teaches(School * school, int n_teaches, int i_start);
 bool realloc_classes(School * school, int n_classes);
 bool realloc_subjects(School * school, int n_subjects);
 bool realloc_assignments(School * school, int n_assignments);
 bool realloc_rooms(School * school, int n_rooms);
+
+bool displace_teachers(School * school, Teacher * target, int start, int n_teachers, int new_start);
 
 /*********************************************************/
 /*                     COPY Functions                    */
@@ -85,12 +89,14 @@ int 			get_daily_period_index_by_id(School * school, int id);
 int 			get_subject_group_index_by_id(School * school, int id);
 int 			get_solution_index_by_id(School * school, int id);
 int 			get_teaches_index_by_teacher_subj_id(School * school, int id_teacher, int id_subj);
+int 			get_teaches_index_by_id(School * school, int id);
 Room * 			find_room_by_id(School * school, int id);
 Class * 		find_class_by_id(School * school, int id);
 Teacher * 		find_teacher_by_id(School * school, int id);
 Meeting * 		find_meeting_by_id(School * school, int id);
 Subject * 		find_subject_by_id(School * school, int id);
 Teaches * 		find_teaches_by_teacher_subj_id(School * school, int id_teacher, int id_subj);
+Teaches * 		find_teaches_by_id(School * school, int id);
 Solution * 		find_solution_by_id(School * school, int id);
 Assignment * 	find_assignment_by_class_subj_id(School * school, int id_class, int id_subj);
 Assignment * 	find_assignment_by_id(School * school, int id);
@@ -110,7 +116,7 @@ void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at);
 void remove_from_int_list(int * list, int i_remove);
 
 void school_teacher_add(School * school, const Teacher * const teacher);
-void school_teaches_add(School * school, Teaches * teaches);
+int school_teaches_add(School * school, Teaches * teaches, bool alter_teacher_teaches_list);
 void school_class_add(School * school, Class * c);
 void school_subject_add(School * school, const Subject * const subject);
 void school_room_add(School * school, const Room * const room);

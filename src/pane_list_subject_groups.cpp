@@ -18,7 +18,7 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""));
 	m_members = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 
-	notebook->AddPage(m_members, m_owner->m_lang->str_member);
+	notebook->AddPage(m_members, m_owner->m_lang->str_members);
 
 	ChoiceGrid * members_grid = m_members->GetGrid();
 	members_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));

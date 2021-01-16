@@ -95,10 +95,15 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_classes_list->GetList()->Bind(wxEVT_LISTBOX, &ListClassesPane::OnSelectionChanged, this);
 	Bind(DATA_CHANGE_EVENT, &ListClassesPane::OnDataChange, this);
 
+
+	m_superclasses->SetLabel(m_owner->m_lang->str_participation_in_class_groups);
+	m_groups->SetLabel(m_owner->m_lang->str_max_periods_per_day_subject_group);
+	m_rooms->SetLabel(m_owner->m_lang->str_room_preference);
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
 	rooms_grid->GridRemake(1, school->n_rooms);
 	rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
 	// AVAILABILITY PANE CODE
+	m_periods->SetLabel(m_owner->m_lang->str_class_availability);
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
 	periods_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	periods_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));

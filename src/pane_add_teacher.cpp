@@ -11,7 +11,7 @@ AddTeacherPane::AddTeacherPane(Application * owner, wxWindow * parent, wxPoint p
 	SetBackgroundColour(wxColour(250,250,250));
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
-	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availibility);
+	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_availability);
 	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_teacher_teaches);
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 
@@ -68,7 +68,7 @@ void AddTeacherPane::ClearInsertedData(){
 	int i;
 	m_name_text->Clear();
 	for(int i = 0; i < m_owner->m_school->n_subjects; ++i){
-		m_subjects_grid->SetCellState(i,0,1);
+		m_subjects_grid->SetCellState(i,0,0);
 	}
 	for(i = 0; i < school->n_periods; ++i){
 		m_periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? 1 : ChoiceGrid::CELL_STATE_LOCKED);
@@ -87,6 +87,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		}
 	}
 	if(!m_name_text->GetValue().IsEmpty()){
+		// This structure will outlive the function.
 		Teacher t;
 
 		t.name = copy_wx_string(m_name_text->GetValue());
@@ -112,7 +113,8 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 			for(i_subject = 0; i_subject < school->n_subjects; ++i_subject){
 				if(m_subjects_grid->GetCellState(i_subject,0) > 0){
 					t.teaches[i_teaches] = &(teaches_vals[i_teaches]);
-					t.teaches[i_teaches]->teacher = &t;
+					// the var 't' is temporary and the info will be corrected in the school_teacher_add anyway;
+					// t.teaches[i_teaches]->teacher = &t;
 					t.teaches[i_teaches]->subject = &(school->subjects[i_subject]);
 					int state = m_subjects_grid->GetCellState(i_subject,0);
 					t.teaches[i_teaches]->score = state >= 0? state:0;

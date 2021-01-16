@@ -19,7 +19,7 @@ AddRoomPane::AddRoomPane(Application * owner, wxWindow * parent, wxPoint pos) : 
 
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * capacity_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room_size_in_students);
-	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room_availibility);
+	wxStaticText * grid_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_room_availability);
 	wxButton * button_go = new wxButton(this,wxID_ANY, m_owner->m_lang->str_add_room, wxDefaultPosition, wxSize(200,30));
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,30));
 
@@ -91,7 +91,6 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		room.availability = (int*)calloc(school->n_periods + 1, sizeof(int));
 		for(i = 0; i < school->n_periods; ++i){
 			int state = m_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
-			printf("Getting state of day %d per %d as %d\n", i / school->n_periods_per_day, i % school->n_periods_per_day, state);
 			room.availability[i] = state >= 0? state:0; /* State -1 is for blocked cells */
 		}
 		room.availability[school->n_periods] = -1;

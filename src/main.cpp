@@ -149,31 +149,37 @@ bool Application::OnInit(){
 		freopen("CONOUT$", "w", stdout);
 	#endif
 
-	errc = sqlite3_open(":memory:",&m_database);
-	loaded = load_backup(m_database, "./Database.db");
-
-	if(m_database != nullptr && loaded && (errc == SQLITE_OK)){
-		init_all_tables(stdout, m_database);
-
-		m_island_image = new wxImage(400,400);
-		m_island_image->AddHandler(new wxPNGHandler);
-		m_island_image->LoadFile("res/floating.png", wxBITMAP_TYPE_PNG);
-
-		LoadConfig();
-
-		m_form_welcome = new WelcomeForm(this);
-		m_form_welcome->Show();
-		SetExitOnFrameDelete(true);
+	if(argc	== 2 && argv.GetArguments().Item(1) == wxT("debug")){
+		debug_func();
+		Exit();
 		return true;
 	} else {
-		printf("Could open in-memory-db? %d %s\n", errc, sqlite3_errmsg(m_database));
-		printf("Could load back-up? %s\n", loaded?("Yes"):("No"));
-		if(m_database == nullptr){
-			int err_response = wxMessageBox(wxT("Erro!"),wxT("Não foi possível abrir o banco de dados."), wxOK);
-			Exit();
-		}
+		errc = sqlite3_open(":memory:",&m_database);
+		loaded = load_backup(m_database, "./Database.db");
 
-		return false;
+		if(m_database != nullptr && loaded && (errc == SQLITE_OK)){
+			init_all_tables(stdout, m_database);
+
+			m_island_image = new wxImage(400,400);
+			m_island_image->AddHandler(new wxPNGHandler);
+			m_island_image->LoadFile("res/floating.png", wxBITMAP_TYPE_PNG);
+
+			LoadConfig();
+
+			m_form_welcome = new WelcomeForm(this);
+			m_form_welcome->Show();
+			SetExitOnFrameDelete(true);
+			return true;
+		} else {
+			printf("Could open in-memory-db? %d %s\n", errc, sqlite3_errmsg(m_database));
+			printf("Could load back-up? %s\n", loaded?("Yes"):("No"));
+			if(m_database == nullptr){
+				wxMessageBox(wxT("Erro!"),wxT("Não foi possível abrir o banco de dados."), wxOK);
+				Exit();
+			}
+
+			return false;
+		}
 	}
 }
 
@@ -239,7 +245,7 @@ int Application::OnExit(){
 	if(m_school != NULL){
 		free_school(m_school);
 	}
+	return 0;
 }
-
 
 wxIMPLEMENT_APP(Application);

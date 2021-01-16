@@ -14,7 +14,10 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_save_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_save);
 	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
+	m_label = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_grid = new ChoiceGrid(m_owner, this);
+
+	m_label->SetFont(* m_owner->m_small_font);
 
 	m_grid->SetLabelBackgroundColour( wxColor(255,255,255) );
 	m_grid->SetCanUserClick(false);
@@ -25,7 +28,8 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 	btsz->Add(m_edit_btn, 0, wxLEFT, 10);
 	btsz->Add(m_cancel_btn, 0, wxLEFT, 10);
 	btsz->Add(m_save_btn, 0, wxLEFT, 10);
-	sz->Add(m_grid, 0, wxALL, 10);
+	sz->Add(m_label, 0, wxLEFT | wxTOP, 10);
+	sz->Add(m_grid, 0, wxLEFT | wxBOTTOM, 10);
 	sz->Add(btsz, 1, wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
 	SetSizerAndFit(sz);
@@ -35,6 +39,11 @@ ScoreGridPane::ScoreGridPane(Application * owner,
 	m_edit_btn->Bind(wxEVT_BUTTON, &ScoreGridPane::OnEditButtonClicked, this);
 	m_save_btn->Bind(wxEVT_BUTTON, &ScoreGridPane::OnSaveButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ScoreGridPane::OnCancelButtonClicked, this);
+}
+
+
+void ScoreGridPane::SetLabel(wxString label){
+	m_label->SetLabel(label);
 }
 
 void ScoreGridPane::SetEditing(bool editing){

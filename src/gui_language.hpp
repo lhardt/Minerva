@@ -139,7 +139,7 @@ typedef struct Language {
 	const wchar_t * const str_class_size;
 	const wchar_t * const str_class_entry_period;
 	const wchar_t * const str_class_exit_period;
-	const wchar_t * const str_class_availibility;
+	const wchar_t * const str_class_availability;
 	const wchar_t * const str_class_subjects;
 
 	const wchar_t * const str_class_can_have_free_periods;
@@ -147,13 +147,13 @@ typedef struct Language {
 	const wchar_t * const str_class_unavailable;
 
 	const wchar_t * const str_room_size_in_students;
-	const wchar_t * const str_room_availibility;
+	const wchar_t * const str_room_availability;
 	const wchar_t * const str_room_add_features_with_scores;
 
 	const wchar_t * const str_add_subjects_to_the_group;
 	const wchar_t * const str_add_teachers_to_the_group;
 
-	const wchar_t * const str_teacher_availibility;
+	const wchar_t * const str_teacher_availability;
 	const wchar_t * const str_teacher_available;
 	const wchar_t * const str_teacher_unavailable;
 	const wchar_t * const str_teacher_teaches;
@@ -195,7 +195,7 @@ typedef struct Language {
 
 	const wchar_t * const str_group_available;
 	const wchar_t * const str_group_unavailable;
-	const wchar_t * const str_group_availibility;
+	const wchar_t * const str_group_availability;
 	const wchar_t * const str_group_members;
 
 	const wchar_t * const str_score_0;
@@ -251,6 +251,12 @@ typedef struct Language {
 	const wchar_t * const str_clear;
 	const wchar_t * const str_selection_and_search;
 	const wchar_t * const str_member;
+	const wchar_t * const str_periods_school_open;
+	const wchar_t * const str_subjects_required_by_the_class;
+	const wchar_t * const str_participation_in_class_groups;
+	const wchar_t * const str_max_periods_per_day_subject_group;
+
+	const wchar_t * const str_members;
 } Language;
 
 const extern Language LANG_POR;

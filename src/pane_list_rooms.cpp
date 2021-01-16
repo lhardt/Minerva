@@ -28,6 +28,7 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 
 	notebook->AddPage(m_periods, m_owner->m_lang->str_periods);
 
+	m_periods->SetLabel(m_owner->m_lang->str_room_availability);
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
 	periods_grid->AddState(m_owner->m_lang->str_adj__closed, wxColor(255,200,200));
 	periods_grid->AddState(m_owner->m_lang->str_adj__open, wxColor(200,200,255));

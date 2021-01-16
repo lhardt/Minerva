@@ -17,7 +17,7 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_size);
 	wxStaticText * entry_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_entry_period);
 	wxStaticText * exit_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_exit_period);
-	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_availibility);
+	wxStaticText * periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_availability);
 	wxStaticText * subjects_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_class_subjects);
 	m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 

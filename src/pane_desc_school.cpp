@@ -67,6 +67,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	periods_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
 
 	periods_grid->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
+	m_periods->SetLabel(m_owner->m_lang->str_periods_school_open);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * content_sz = new wxBoxSizer(wxVERTICAL);
