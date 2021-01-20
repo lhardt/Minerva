@@ -303,14 +303,13 @@ void ListTeachersPane::OnDeleteButtonClicked(wxCommandEvent &) {
 	if(i_select != wxNOT_FOUND){
 		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
 		if(can_remove_teacher(school, teacher_id)){
-			success = remove_teacher(stdout, m_owner->m_database, teacher_id);
+			TeacherDeleteAction * action = new TeacherDeleteAction(m_owner, teacher_id);
+			success = m_owner->Do(action);
 			if(success){
-				/* TODO: substitute for an action */
-				school_teacher_remove(school, get_teacher_index_by_id(school, teacher_id), true);
-				m_owner->NotifyNewUnsavedData();
 				m_teachers_list->RemoveItem(teacher_id);
 			} else {
-				printf("Couldn't delete teacher\n");
+				wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("Could not delete teacher..."), m_owner->m_lang->str_error, wxOK);
+				dialog->ShowModal();
 			}
 		} else {
 			wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("(TODO lang) Error! Could not remove, because it is in a timetable already"), m_owner->m_lang->str_error, wxOK);

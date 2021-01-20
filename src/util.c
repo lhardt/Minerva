@@ -1323,7 +1323,7 @@ int school_class_assignments_add(School * school, Class * c){
 	school->n_assignments += n;
 	return school->n_assignments;
 }
-void school_teacher_add(School * school, const Teacher * const t){
+int school_teacher_add(School * school, const Teacher * const t){
 	int n_teaches = 0, pos = 0;
 	LMH_ASSERT(school != NULL && t != NULL);
 	if(school->teachers == NULL){
@@ -1351,6 +1351,9 @@ void school_teacher_add(School * school, const Teacher * const t){
 		/* TODO predefine as zero seems inconvenient for the user. */
 		add_zero_to_score_list_at(&(school->assignments[i].possible_teachers), school->n_teachers-1, pos);
 	}
+	for(int i = 0; i < school->n_meetings; ++i){
+		add_zero_to_score_list_at(&(school->meetings[i].possible_teachers), school->n_teachers-1, pos);
+	}
 	for(int i = 0; i < school->n_solutions; ++i){
 		Meeting * meetings = school->solutions[i].meetings;
 		if(meetings != NULL){
@@ -1369,13 +1372,12 @@ void school_teacher_add(School * school, const Teacher * const t){
 			/* Counting n_teaches */
 		}
 		for(int i = 0; i < n_teaches; ++i){
-			// TODO: It will realloc unnecessarily many times. The code would be big and ugly though.
-			printf("Teacher id %d and sub considering it as %d\n", t->id, t->teaches[i]->teacher->id);
 			int i_teaches = school_teaches_add(school, t->teaches[i], false);
 			school->teachers[ pos ].teaches[i] = & school->teaches[i_teaches];
 			school->teaches[i_teaches].teacher = & school->teachers[pos];
 		}
 	}
+	return pos;
 }
 int school_teaches_add(School * school, Teaches * teaches, bool alter_teacher_teaches_list){
 	LMH_ASSERT(school != NULL && teaches != NULL);
@@ -1516,8 +1518,8 @@ void school_room_add(School * school, const Room * const room){
 	if(school->n_rooms == 0){
 		school->rooms = (Room*) calloc(2, sizeof(Room));
 	} else {
-		// realloc_rooms
-		school->rooms = (Room *) realloc(school->rooms, (school->n_rooms + 2)*sizeof(Room));
+		realloc_rooms(school, school->n_rooms + 1);
+		// school->rooms = (Room *) realloc(school->rooms, (school->n_rooms + 2)*sizeof(Room));
 		for(pos = 0; pos < school->n_rooms && school->rooms[pos].id < room->id; ++pos){
 			/* Blank */
 		}

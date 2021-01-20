@@ -403,7 +403,6 @@ bool RoomDeleteAction::Do(){
 	for(i = 0; i < school->n_teaches; ++i){
 		m_teaches_scores[i] = school->teaches[i].room_scores[m_i_room];
 	}
-	printf("School n_meetings: %d\n", school->n_meetings);
 	for(i = 0; i < school->n_meetings; ++i){
 		if(school->meetings[i].room != NULL && school->meetings[i].room->id == m_room.id){
 			m_meetings[i] = true;
@@ -412,10 +411,8 @@ bool RoomDeleteAction::Do(){
 			m_meeting_scores[i] = school->meetings[i].possible_rooms[m_i_room];
 		} /* No need for else because of calloc. */
 	}
-	printf("m_i_room: %d\n", m_i_room);
 	if(remove_room(stdout, m_owner->m_database, m_room.id)){
 		school_room_remove(m_owner->m_school, get_room_index_by_id(m_owner->m_school, m_room.id), false);
-		m_room.id = 0;
 		return true;
 	}
 	return false;
@@ -426,21 +423,30 @@ bool RoomDeleteAction::Undo(){
 	School * school = m_owner->m_school;
 	int id = insert_room(stdout, m_owner->m_database, &m_room, m_owner->m_school, m_room.id);
 	if(id != -1){
+		bool success = true;
 		m_room.id = id;
 		school_room_add(m_owner->m_school, &m_room);
 
 		LMH_ASSERT(m_owner->m_school->rooms[m_i_room].id == id );
 		/* These are surely allocated because of school_room_add. */
+		success &= update_room_teacher_score(stdout, m_owner->m_database, id, m_teacher_planning_scores, m_teacher_lecture_scores, school);
+		LMH_ASSERT(success);
 		for(i = 0; i < school->n_teachers; ++i){
 			school->teachers[i].lecture_room_scores[m_i_room] = m_teacher_lecture_scores[i];
 			school->teachers[i].planning_room_scores[m_i_room] = m_teacher_planning_scores[i];
 		}
+		success &= update_room_class_score(stdout, m_owner->m_database, id, m_class_scores, school);
+		LMH_ASSERT(success);
 		for(i = 0; i < school->n_classes; ++i){
 			school->classes[i].room_scores[m_i_room] = m_class_scores[i];
 		}
+		success &= update_room_teaches_score(stdout, m_owner->m_database, id, m_class_scores, school);
+		LMH_ASSERT(success);
 		for(i = 0; i < school->n_teaches; ++i){
 			school->teaches[i].room_scores[m_i_room] = m_teaches_scores[i];
 		}
+		success &= update_room_meeting_score(stdout, m_owner->m_database, id, m_meeting_scores, school);
+		LMH_ASSERT(success);
 		for(i = 0; i < school->n_meetings; ++i){
 			school->meetings[i].possible_rooms[m_i_room] = m_meeting_scores[i];
 			if(m_meetings[i]){
@@ -453,7 +459,7 @@ bool RoomDeleteAction::Undo(){
 		free(m_teacher_lecture_scores);
 		free(m_meeting_scores);
 		free(m_meetings);
-		return true;
+		return success;
 	}
 	return false;
 }
@@ -918,6 +924,7 @@ TeacherInsertAction::~TeacherInsertAction(){
 	}
 }
 bool TeacherInsertAction::Do(){
+	// TODO : MAKE WORK WITH SUBORDINATES
 	if(m_teaches != NULL){
 		for(int i = 0; m_teaches[i].teacher != NULL; ++i){
 			m_teacher.teaches[i] = &m_teaches[i];
@@ -934,6 +941,7 @@ bool TeacherInsertAction::Do(){
 	return false;
 }
 bool TeacherInsertAction::Undo(){
+	// TODO : MAKE WORK WITH SUBORDINATES
 	if(remove_teacher(stdout, m_owner->m_database, m_teacher.id)){
 
 		School * school = m_owner->m_school;
@@ -941,12 +949,14 @@ bool TeacherInsertAction::Undo(){
 		LMH_ASSERT(i_teacher >= 0);
 
 		int teaches_ctr;
-		for(teaches_ctr = 0; school->teachers[i_teacher].teaches[teaches_ctr] != NULL; ++teaches_ctr){
-			/**/
-		}
-		m_teaches = (Teaches *) calloc(teaches_ctr+1, sizeof(Teaches));
-		for(int i = 0; school->teachers[i_teacher].teaches[i] != NULL; ++i){
-			m_teaches[i] = *(school->teachers[i_teacher].teaches[i]);
+		if(school->teachers[i_teacher].teaches != NULL){
+			for(teaches_ctr = 0; school->teachers[i_teacher].teaches[teaches_ctr] != NULL; ++teaches_ctr){
+				/**/
+			}
+			m_teaches = (Teaches *) calloc(teaches_ctr+1, sizeof(Teaches));
+			for(int i = 0; school->teachers[i_teacher].teaches[i] != NULL; ++i){
+				m_teaches[i] = *(school->teachers[i_teacher].teaches[i]);
+			}
 		}
 		school_teacher_remove(school, i_teacher, false);
 		return true;
@@ -968,15 +978,85 @@ TeacherDeleteAction::TeacherDeleteAction(Application * owner, int id) : Action(o
 }
 
 bool TeacherDeleteAction::Do(){
+	// TODO : MAKE WORK WITH SUBORDINATES
 	School * school = m_owner->m_school;
 	if(remove_teacher(stdout, m_owner->m_database, m_teacher.id)){
 		int i_teacher = get_teacher_index_by_id(m_owner->m_school, m_teacher.id);
+		int teaches_ctr = 0;
 		LMH_ASSERT(i_teacher >= 0);
 
-		// TODO
+		m_teacher = school->teachers[i_teacher];
+
+		if(m_teacher.teaches != NULL){
+			for(teaches_ctr = 0; m_teacher.teaches[teaches_ctr] != NULL; ++teaches_ctr){
+				/* Counting teaches_ctr */
+			}
+
+			m_teaches = (Teaches *) calloc(teaches_ctr + 1, sizeof(Teaches));
+			for(int i = 0; i < teaches_ctr; ++i){
+				// It was previously stored in school->teaches and
+				// we need to save it from there because there it
+				// will be deleted.
+				m_teaches[i] = * (m_teacher.teaches[i]);
+				m_teaches[i].teacher = &m_teacher;
+				m_teacher.teaches[i] = &m_teaches[i];
+			}
+		} else {
+			m_teaches = NULL;
+		}
+		m_assignment_pref = (int *) calloc(school->n_assignments + 1, sizeof(int));
+		for(int i = 0; i < school->n_assignments; ++i){
+			m_assignment_pref[i] = school->assignments[i].possible_teachers[i_teacher];
+		}
+
+		m_meeting_pref = (int *) calloc(school->n_meetings + 1, sizeof(int));
+		m_set_on_meetings = (bool *) calloc(school->n_meetings + 1, sizeof(bool));
+		for(int i = 0; i < school->n_meetings; ++i){
+			m_meeting_pref[i] = school->meetings[i].possible_teachers[i_teacher];
+			m_set_on_meetings[i] = (m_teacher.id == school->meetings[i].teacher->id);
+		}
 
 		school_teacher_remove(m_owner->m_school, i_teacher, false);
+
+		for(int i = 0; i < teaches_ctr; ++i){
+			m_teacher.teaches[i] = &m_teaches[i];
+		}
 		return true;
+	}
+	return false;
+}
+bool TeacherDeleteAction::Undo(){
+	School * school = m_owner->m_school;
+	int id = insert_teacher(stdout, m_owner->m_database, &m_teacher, school, m_teacher.id);
+	if(id != -1){
+		bool success = true;
+		int i_teacher = school_teacher_add(school, &m_teacher);
+
+		// TODO!!!
+
+		// don't need to do anything with this one.
+		// already inserted by the insert_teacher & school_teacher_add funcs
+		free(m_teaches);
+
+		// success &= update_teacher_meeting_score(stdout, m_owner->m_database, id, m_meeting_pref, school);
+		// success &= update_teacher_meeting_fixation(stdout, m_owner->m_database, id, m_set_on_meetings, School * school);
+		for(int i = 0; i < school->n_meetings; ++i){
+			if(m_set_on_meetings[i]){
+				school->meetings[i].teacher = & school->teachers[i_teacher];
+			}
+			// school->meetings[i].possible_teachers[i_teacher] = m_meeting_pref[i];
+		}
+		success &= update_teacher_assignment_score(stdout, m_owner->m_database, id, m_assignment_pref, school);
+		for(int i = 0; i < school->n_assignments; ++i){
+			school->assignments[i].possible_teachers[i_teacher] = m_assignment_pref[i];
+		}
+
+		LMH_ASSERT(success);
+
+		free(m_set_on_meetings);
+		free(m_assignment_pref);
+		free(m_meeting_pref);
+		return success;
 	}
 	return false;
 }
@@ -984,9 +1064,6 @@ TeacherDeleteAction::~TeacherDeleteAction(){
 	if(m_state == state_DONE){
 		free_teacher(&m_teacher);
 	}
-}
-bool TeacherDeleteAction::Undo(){
-	return false;
 }
 wxString TeacherDeleteAction::Describe(){
 	return wxT("TeacherDeleteAction");

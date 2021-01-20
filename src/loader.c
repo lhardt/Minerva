@@ -993,7 +993,7 @@ const char * const CREATE_TABLE_PLANNING_ROOM =
 				"id 					integer primary key autoincrement not null,"
 				"id_planning			integer,"
 				"id_room				integer,"
-				"value					integer,"
+				"score					integer,"
 				"FOREIGN KEY (id_planning) REFERENCES Planning(id),"
 				"FOREIGN KEY (id_room) REFERENCES Room(id),"
 				"UNIQUE (id_planning, id_room)"
@@ -3377,5 +3377,124 @@ bool update_subject_group_members(FILE * console_out, sqlite3 * db, int sgr_id, 
 		errc = sqlite3_step(to_exec);
 		CERTIFY_ERRC_SQLITE_DONE(false);
 	}
+	sqlite3_finalize(stmt_insert);
+	sqlite3_finalize(stmt_remove);
 	return true;
 }
+
+bool update_room_teacher_score(FILE * console_out, sqlite3 * db, int room_id, int * plan_scr, int * lec_scr,  School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && plan_scr != NULL && lec_scr != NULL && school != NULL && room_id > 0);
+	sqlite3_stmt * stmt;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_TEACHER_ROOM, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < school->n_teachers; ++i){
+		sqlite3_bind_int(stmt, 1, school->teachers[i].id);
+		sqlite3_bind_int(stmt, 2, room_id);
+		sqlite3_bind_int(stmt, 3, lec_scr[i]);
+		sqlite3_bind_int(stmt, 4, plan_scr[i]);
+		errc = sqlite3_step(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	sqlite3_finalize(stmt);
+	return true;
+}
+
+bool update_room_class_score(FILE * console_out, sqlite3 * db, int room_id, int * scores,  School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && room_id > 0);
+	sqlite3_stmt * stmt;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_CLASS_ROOM, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < school->n_classes; ++i){
+		sqlite3_bind_int(stmt, 1, school->classes[i].id);
+		sqlite3_bind_int(stmt, 2, room_id);
+		sqlite3_bind_int(stmt, 3, scores[i]);
+		errc = sqlite3_step(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	sqlite3_finalize(stmt);
+	return true;
+}
+
+bool update_room_teaches_score(FILE * console_out, sqlite3 * db, int room_id, int * scores, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && room_id > 0);
+	sqlite3_stmt * stmt;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_TEACHES_ROOM, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < school->n_teaches; ++i){
+		sqlite3_bind_int(stmt, 1, school->teaches[i].id);
+		sqlite3_bind_int(stmt, 2, room_id);
+		sqlite3_bind_int(stmt, 3, scores[i]);
+		errc = sqlite3_step(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	sqlite3_finalize(stmt);
+	return true;
+}
+
+bool update_room_meeting_score(FILE * console_out, sqlite3 * db, int room_id, int * scores, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && room_id > 0);
+	sqlite3_stmt * stmt_lec, * stmt_plan;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_LECTURE_POSSIBLE_ROOM, -1, &stmt_lec, NULL);
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_PLANNING_ROOM, -1, &stmt_lec, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < school->n_meetings; ++i){
+		sqlite3_stmt * stmt = school->meetings[i].type == meet_LECTURE ? stmt_lec :
+								school->meetings[i].type == meet_PLANNING ? stmt_plan :
+								NULL;
+		LMH_ASSERT(stmt != NULL);
+		sqlite3_bind_int(stmt, 1, school->teaches[i].id);
+		sqlite3_bind_int(stmt, 2, room_id);
+		sqlite3_bind_int(stmt, 3, scores[i]);
+		errc = sqlite3_step(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+
+	}
+	sqlite3_finalize(stmt_plan);
+	sqlite3_finalize(stmt_lec);
+	return true;
+}
+bool update_teacher_assignment_score(FILE * console_out, sqlite3 * db, int teacher_id, int * scores, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && teacher_id > 0);
+	sqlite3_stmt * stmt;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_POSSIBLE_TEACHER, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < school->n_assignments; ++i){
+		//id_classsubject, id_teacher, score
+		sqlite3_bind_int(stmt, 1, school->assignments[i].id);
+		sqlite3_bind_int(stmt, 2, teacher_id);
+		sqlite3_bind_int(stmt, 3, scores[i]);
+		errc = sqlite3_step(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	sqlite3_finalize(stmt);
+	return true;
+}
+// bool update_teacher_meeting_fixation(FILE * console_out, sqlite3 * db, int teacher_id, bool * fixed, School * school){
+// 	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && teacher_id > 0);
+// 	sqlite3_stmt * stmt;
+// 	int errc;
+//
+// 	errc = sqlite3_prepare_v2(db, UPDATE_MEETING_TEACHER, -1, &stmt, NULL);
+// 	CERTIFY_ERRC_SQLITE_OK(false);
+// 	for(int i = 0; i < school->n_assignments; ++i){
+// 		//id_classsubject, id_teacher, score
+// 		sqlite3_bind_int(stmt, 1, school->assignments[i].id);
+// 		sqlite3_bind_int(stmt, 2, teacher_id);
+// 		sqlite3_bind_int(stmt, 3, scores[i]);
+// 		errc = sqlite3_step(stmt);
+// 		CERTIFY_ERRC_SQLITE_DONE(false);
+// 	}
+// 	sqlite3_finalize(stmt);
+// 	return true;
+// 	return true;
+// }

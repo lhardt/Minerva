@@ -115,7 +115,7 @@ void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new);
 void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at);
 void remove_from_int_list(int * list, int i_remove);
 
-void school_teacher_add(School * school, const Teacher * const teacher);
+int school_teacher_add(School * school, const Teacher * const teacher);
 int school_teaches_add(School * school, Teaches * teaches, bool alter_teacher_teaches_list);
 void school_class_add(School * school, Class * c);
 void school_subject_add(School * school, const Subject * const subject);
