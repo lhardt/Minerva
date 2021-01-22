@@ -11,6 +11,7 @@
 #ifndef GUI_H
 #define GUI_H
 
+#include <stdio.h>
 #include <sqlite3.h>
 
 #include <wx/wx.h>
@@ -683,6 +684,8 @@ class ListTeachersPane : public wxScrolledWindow {
 
 	void OnSaveTeaches(wxCommandEvent &);
 	void OnCancelTeaches(wxCommandEvent &);
+	void OnSaveDays(wxCommandEvent &);
+	void OnCancelDays(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnCancelButtonClicked(wxCommandEvent &);
     void OnDeleteButtonClicked(wxCommandEvent &);
@@ -870,6 +873,8 @@ class Application : public wxApp {
 	ActionManager   m_actions;
 	sqlite3 	  *	m_database = nullptr;
 	School 		  * m_school = nullptr;
+
+	FILE 		  * std_out = nullptr;
 };
 
 

@@ -149,6 +149,11 @@ bool Application::OnInit(){
 		freopen("CONOUT$", "w", stdout);
 	#endif
 
+	/* May be useful for implementing a debugging console,
+	 * or logging widget.
+	 */
+	std_out = stdout;
+
 	if(argc	== 2 && argv.GetArguments().Item(1) == wxT("debug")){
 		debug_func();
 		Exit();

@@ -2,6 +2,7 @@
 #include <wx/spinctrl.h>
 extern "C" {
 	#include "loader.h"
+	#include "assert.h"
 	#include "util.h"
 	#include "maths.h"
 };
@@ -130,6 +131,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	m_teaches->GetSaveButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnSaveTeaches, this);
 	m_teaches->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelTeaches, this);
+	m_days->GetSaveButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnSaveDays, this);
+	m_days->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelDays, this);
 	m_teachers_list->GetList()->Bind(wxEVT_LISTBOX, &ListTeachersPane::OnSelectionChanged, this);
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelButtonClicked, this);
@@ -158,6 +161,7 @@ void ListTeachersPane::OnSaveTeaches(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	if(i_select != wxNOT_FOUND){
 		int id_teacher = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		LMH_ASSERT(id_teacher > 0);
 		int * subjects = (int*) calloc(school->n_subjects + 1, sizeof(int));
 		subjects[school->n_subjects] = -1;
 
@@ -176,6 +180,34 @@ void ListTeachersPane::OnSaveTeaches(wxCommandEvent & evt){
 void ListTeachersPane::OnCancelTeaches(wxCommandEvent &){
 
 }
+
+void ListTeachersPane::OnSaveDays(wxCommandEvent & evt){
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	School * school = m_owner->m_school;
+	if(i_select != wxNOT_FOUND){
+		int id_teacher = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		LMH_ASSERT(id_teacher > 0);
+		int * day_max = (int*) calloc(school->n_days + 1, sizeof(int));
+		day_max[school->n_days] = -1;
+
+		wxGrid* days_grid = m_days->GetGrid();
+		for(int i = 0; i < school->n_days; ++i){
+			day_max[i] = wxAtoi(days_grid->GetCellValue(i, 0));
+			printf("Day max[%d] was %d\n", i, day_max[i]);
+		}
+		TeacherDaysUpdateAction * act = new TeacherDaysUpdateAction(m_owner, id_teacher, day_max);
+
+		bool success = m_owner->Do(act);
+		if(success){
+			evt.Skip();
+		}
+	}
+}
+
+void ListTeachersPane::OnCancelDays(wxCommandEvent &){
+
+}
+
 
 void ListTeachersPane::ShowData(){
 	int i;
@@ -323,6 +355,7 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 	if(school != NULL && school->teachers != NULL && i_select != wxNOT_FOUND){
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		ChoiceGrid * teaches_grid = m_teaches->GetGrid();
+		wxGrid * days_grid = m_days->GetGrid();
 		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
 		Teacher * t = find_teacher_by_id(school, teacher_id);
 		teaches_grid->SetAllCellsState(0);
@@ -346,6 +379,9 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 			if(school->periods[i]){
 				periods_grid->SetCellState(i % school->n_periods_per_day,i / school->n_periods_per_day, t->lecture_period_scores[i] > 0? 1:0);
 			}
+		}
+		for(int i = 0; i < school->n_days; ++i){
+			days_grid->SetCellValue(i,0, wxString::Format("%d", t->day_max_meetings[i]));
 		}
 		FitInside();
 	}

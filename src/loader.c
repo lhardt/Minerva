@@ -446,10 +446,8 @@ const char * const CREATE_TABLE_TEACHER_DAY =
 const char * const UPSERT_TABLE_TEACHER_DAY =
 			("INSERT INTO TeacherDay(id_teacher, id_day, max_periods, score) VALUES (?1, ?2, ?3, ?4) "
 			 "ON CONFLICT (id_teacher, id_day) DO UPDATE SET (max_periods, score) = (?3,?4)");
-const char * const INSERT_TABLE_TEACHER_DAY =
-			("INSERT INTO TeacherDay(id_teacher, id_day, max_periods, score) VALUES (?,?,?,?)");
-const char * const UPDATE_TABLE_TEACHER_DAY =
-			("UPDATE TeacherDay SET (id_teacher, id_day, max_periods, score) = (?1, ?2, ?3, ?4) WHERE id_teacher=?1 AND id_day=?2");
+const char * const UPDATE_TEACHER_DAY_MAX_PER =
+			("UPDATE TeacherDay SET max_periods = ?3 WHERE (id_teacher=?1) AND (id_day=?2)");
 const char * const LASTID_TABLE_TEACHER_DAY =
 			("SELECT id from TeacherDay where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_DAY_BY_TEACHER_ID =
@@ -2485,18 +2483,19 @@ static bool select_teacher_day_by_teacher_id(FILE * console_out, sqlite3 * db, T
 	sqlite3_bind_int(stmt,1, teacher->id);
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(false);
-	if(errc == SQLITE_ROW){
-		teacher->day_max_meetings = calloc(1 + school->n_days, sizeof(int));
-		teacher->day_scores = calloc(1 + school->n_days, sizeof(int));
-		while(errc == SQLITE_ROW){
-			teacher->day_max_meetings[i] = sqlite3_column_int(stmt,2);
-			teacher->day_scores[i] = sqlite3_column_int(stmt,3);
-			++i;
-			errc = sqlite3_step(stmt);
-		}
-		teacher->day_max_meetings[school->n_days] = -1;
-		teacher->day_scores[school->n_days] = -1;
+	teacher->day_max_meetings = calloc(1 + school->n_days, sizeof(int));
+	teacher->day_scores = calloc(1 + school->n_days, sizeof(int));
+	// if(errc == SQLITE_ROW){
+	while(errc == SQLITE_ROW){
+		teacher->day_max_meetings[i] = sqlite3_column_int(stmt,3);
+		teacher->day_scores[i] = sqlite3_column_int(stmt,4);
+		++i;
+		errc = sqlite3_step(stmt);
+		CERTIFY_ERRC_SQLITE_ROW_OR_DONE(false);
 	}
+	teacher->day_max_meetings[school->n_days] = -1;
+	teacher->day_scores[school->n_days] = -1;
+	// }
 	sqlite3_finalize(stmt);
 	return true;
 }
@@ -3375,6 +3374,7 @@ bool update_subject_group_members(FILE * console_out, sqlite3 * db, int sgr_id, 
 		sqlite3_bind_int(to_exec,1, school->subjects[i].id);
 		sqlite3_bind_int(to_exec,2, sgr_id);
 		errc = sqlite3_step(to_exec);
+		sqlite3_reset(to_exec);
 		CERTIFY_ERRC_SQLITE_DONE(false);
 	}
 	sqlite3_finalize(stmt_insert);
@@ -3395,6 +3395,7 @@ bool update_room_teacher_score(FILE * console_out, sqlite3 * db, int room_id, in
 		sqlite3_bind_int(stmt, 3, lec_scr[i]);
 		sqlite3_bind_int(stmt, 4, plan_scr[i]);
 		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
 		CERTIFY_ERRC_SQLITE_DONE(false);
 	}
 	sqlite3_finalize(stmt);
@@ -3413,6 +3414,7 @@ bool update_room_class_score(FILE * console_out, sqlite3 * db, int room_id, int 
 		sqlite3_bind_int(stmt, 2, room_id);
 		sqlite3_bind_int(stmt, 3, scores[i]);
 		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
 		CERTIFY_ERRC_SQLITE_DONE(false);
 	}
 	sqlite3_finalize(stmt);
@@ -3431,6 +3433,7 @@ bool update_room_teaches_score(FILE * console_out, sqlite3 * db, int room_id, in
 		sqlite3_bind_int(stmt, 2, room_id);
 		sqlite3_bind_int(stmt, 3, scores[i]);
 		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
 		CERTIFY_ERRC_SQLITE_DONE(false);
 	}
 	sqlite3_finalize(stmt);
@@ -3443,7 +3446,7 @@ bool update_room_meeting_score(FILE * console_out, sqlite3 * db, int room_id, in
 	int errc;
 
 	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_LECTURE_POSSIBLE_ROOM, -1, &stmt_lec, NULL);
-	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_PLANNING_ROOM, -1, &stmt_lec, NULL);
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_PLANNING_ROOM, -1, &stmt_plan, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	for(int i = 0; i < school->n_meetings; ++i){
 		sqlite3_stmt * stmt = school->meetings[i].type == meet_LECTURE ? stmt_lec :
@@ -3454,6 +3457,7 @@ bool update_room_meeting_score(FILE * console_out, sqlite3 * db, int room_id, in
 		sqlite3_bind_int(stmt, 2, room_id);
 		sqlite3_bind_int(stmt, 3, scores[i]);
 		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
 		CERTIFY_ERRC_SQLITE_DONE(false);
 
 	}
@@ -3474,27 +3478,53 @@ bool update_teacher_assignment_score(FILE * console_out, sqlite3 * db, int teach
 		sqlite3_bind_int(stmt, 2, teacher_id);
 		sqlite3_bind_int(stmt, 3, scores[i]);
 		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
 		CERTIFY_ERRC_SQLITE_DONE(false);
 	}
 	sqlite3_finalize(stmt);
 	return true;
 }
+// Seems to be dead code.
 // bool update_teacher_meeting_fixation(FILE * console_out, sqlite3 * db, int teacher_id, bool * fixed, School * school){
-// 	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && teacher_id > 0);
+// 	LMH_ASSERT(console_out != NULL && db != NULL && fixed != NULL && school != NULL && teacher_id > 0);
 // 	sqlite3_stmt * stmt;
 // 	int errc;
 //
-// 	errc = sqlite3_prepare_v2(db, UPDATE_MEETING_TEACHER, -1, &stmt, NULL);
+// 	errc = sqlite3_prepare_v2(db, UPDATE_CLASSSUBJECT_TEACHER_BY_LECTURE_ID, -1, &stmt, NULL);
 // 	CERTIFY_ERRC_SQLITE_OK(false);
-// 	for(int i = 0; i < school->n_assignments; ++i){
-// 		//id_classsubject, id_teacher, score
-// 		sqlite3_bind_int(stmt, 1, school->assignments[i].id);
-// 		sqlite3_bind_int(stmt, 2, teacher_id);
-// 		sqlite3_bind_int(stmt, 3, scores[i]);
-// 		errc = sqlite3_step(stmt);
-// 		CERTIFY_ERRC_SQLITE_DONE(false);
+//
+//  	for(int i = 0; i < school->n_meetings; ++i){
+// 		if(school->meetings[i].type == meet_LECTURE){
+// 			sqlite3_bind_int(stmt, 1, school->meetings[i].id);
+// 			if(fixed[i]){
+// 				sqlite3_bind_int(stmt, 2, teacher_id);
+// 			} else {
+// 				sqlite3_bind_null(stmt,2);
+// 			}
+// 			errc = sqlite3_step(stmt);
+// 			CERTIFY_ERRC_SQLITE_DONE(false);
+// 		}
 // 	}
 // 	sqlite3_finalize(stmt);
 // 	return true;
-// 	return true;
 // }
+
+bool update_teacher_day_max_per(FILE * console_out, sqlite3 * db, int id_teacher, int * max_per, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && max_per != NULL && school != NULL && id_teacher > 0);
+	sqlite3_stmt * stmt;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, UPDATE_TEACHER_DAY_MAX_PER, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < school->n_days; ++i){
+		printf("Executing statement as %d %d %d\n", id_teacher, school->day_ids[i], max_per[i]);
+		sqlite3_bind_int(stmt, 1, id_teacher);
+		sqlite3_bind_int(stmt, 2, school->day_ids[i]);
+		sqlite3_bind_int(stmt, 3, max_per[i]);
+		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	sqlite3_finalize(stmt);
+	return true;
+}

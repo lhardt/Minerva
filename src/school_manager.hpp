@@ -285,11 +285,15 @@ private:
 
 class TeacherDaysUpdateAction : public Action {
 public:
-	TeacherDaysUpdateAction(Application * owner);
+	TeacherDaysUpdateAction(Application * owner, int id_teacher, int * max_per_day);
 	~TeacherDaysUpdateAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	int 		m_id;
+	int   	  * m_max_per_day;
+	ActionState m_state;
 };
 
 class TeacherTwinningUpdateAction : public Action {

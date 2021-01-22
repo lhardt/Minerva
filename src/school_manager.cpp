@@ -1039,12 +1039,13 @@ bool TeacherDeleteAction::Undo(){
 		free(m_teaches);
 
 		// success &= update_teacher_meeting_score(stdout, m_owner->m_database, id, m_meeting_pref, school);
-		// success &= update_teacher_meeting_fixation(stdout, m_owner->m_database, id, m_set_on_meetings, School * school);
+		// WTF
+		// success &= update_teacher_meeting_fixation(stdout, m_owner->m_database, id, m_set_on_meetings, school);
 		for(int i = 0; i < school->n_meetings; ++i){
 			if(m_set_on_meetings[i]){
 				school->meetings[i].teacher = & school->teachers[i_teacher];
 			}
-			// school->meetings[i].possible_teachers[i_teacher] = m_meeting_pref[i];
+			// TODO: Should i copy the meeting->possible_teacher value from assignment->possible_teacher?
 		}
 		success &= update_teacher_assignment_score(stdout, m_owner->m_database, id, m_assignment_pref, school);
 		for(int i = 0; i < school->n_assignments; ++i){
@@ -1129,7 +1130,7 @@ wxString TeacherBasicDataUpdateAction::Describe(){
 }
 
 /*********************************************************/
-/*             TeacherBasicDataUpdateAction              */
+/*              TeacherSubjectsUpdateAction              */
 /*********************************************************/
 
 TeacherSubjectsUpdateAction::TeacherSubjectsUpdateAction(Application * owner, int id_teacher, int * subjects) : Action(owner){
@@ -1193,6 +1194,41 @@ bool TeacherSubjectsUpdateAction::Undo(){
 }
 wxString TeacherSubjectsUpdateAction::Describe(){
 	return wxT("TeacherSubjectsUpdateAction");
+}
+
+/*********************************************************/
+/*                TeacherDaysUpdateAction                */
+/*********************************************************/
+
+TeacherDaysUpdateAction::TeacherDaysUpdateAction(Application * owner, int id_teacher, int * max_per_day) : Action(owner){
+	m_max_per_day = max_per_day;
+	m_id = id_teacher;
+}
+TeacherDaysUpdateAction::~TeacherDaysUpdateAction(){
+	free(m_max_per_day);
+}
+bool TeacherDaysUpdateAction::Do() {
+	School * school = m_owner->m_school;
+	if(update_teacher_day_max_per(m_owner->std_out, m_owner->m_database, m_id, m_max_per_day, school)){
+
+		Teacher * teacher = find_teacher_by_id(m_owner->m_school, m_id);
+		LMH_ASSERT(teacher != NULL);
+
+		// memcpy?
+		for(int i = 0; i < school->n_days; ++i){
+			int tmp = teacher->day_max_meetings[i];
+			teacher->day_max_meetings[i] = m_max_per_day[i];
+			m_max_per_day[i] = tmp;
+		}
+		return true;
+	}
+	return false;
+}
+bool TeacherDaysUpdateAction::Undo() {
+	return Do();
+}
+wxString TeacherDaysUpdateAction::Describe(){
+	return wxT("TeacherDaysUpdateAction");
 }
 
 
