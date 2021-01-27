@@ -293,16 +293,18 @@ public:
 private:
 	int 		m_id;
 	int   	  * m_max_per_day;
-	ActionState m_state;
 };
 
 class TeacherTwinningUpdateAction : public Action {
 public:
-	TeacherTwinningUpdateAction(Application * owner);
+	TeacherTwinningUpdateAction(Application * owner, int id_teacher, int * twinning_scores);
 	~TeacherTwinningUpdateAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	int			m_id;
+	int		  * m_twinning_scores;
 };
 
 class TeacherLectureRoomUpdateAction : public Action {

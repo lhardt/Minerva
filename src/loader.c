@@ -1395,7 +1395,7 @@ static bool insert_or_update_teacher_period_scores(FILE * console_out, sqlite3 *
 /**
  * General Insert/Update function for TeachesTwinPreference and TeacherTwinPreference
  */
-static bool insert_or_update_twin_scores(FILE * console_out, sqlite3 * db, const char * const sql, int obj_id, int * twin_scores, School * school){
+static bool insert_or_update_twin_scores(FILE * console_out, sqlite3 * db, const char * const sql, int obj_id, int * twin_scores){
 	int i, errc;
 	sqlite3_stmt * stmt;
 	errc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
@@ -1438,7 +1438,7 @@ bool insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, Scho
 		insert_or_update_period_scores(console_out, db, UPSERT_TABLE_TEACHES_PERIOD, t->id, t->period_scores, school);
 	}
 	if(t->twin_scores != NULL){
-		insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHES_TWIN_PREFERENCE, t->id, t->twin_scores, school);
+		insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHES_TWIN_PREFERENCE, t->id, t->twin_scores);
 	}
 	/* TODO must insert at all assignments that this is a possible teacher? */
 	return true;
@@ -1543,7 +1543,7 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 		insert_or_update_teacher_period_scores(console_out, db, teacher, school, false);
 	}
 	if(teacher->planning_twin_scores != NULL){
-		insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHER_TWIN_PREFERENCE, teacher->id, teacher->planning_twin_scores, school);
+		insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHER_TWIN_PREFERENCE, teacher->id, teacher->planning_twin_scores);
 	}
 	return teacher->id;
 }
@@ -3527,4 +3527,8 @@ bool update_teacher_day_max_per(FILE * console_out, sqlite3 * db, int id_teacher
 	}
 	sqlite3_finalize(stmt);
 	return true;
+}
+
+bool update_teacher_twin_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * twinning){
+	return insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHER_TWIN_PREFERENCE, id_teacher, twinning);
 }

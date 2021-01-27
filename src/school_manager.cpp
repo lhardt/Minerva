@@ -1,4 +1,4 @@
-#include "school_manager.hpp"
+	#include "school_manager.hpp"
 
 #include <wx/string.h>
 
@@ -47,7 +47,6 @@ SchoolNameUpdateAction::~SchoolNameUpdateAction(){
 }
 
 bool SchoolNameUpdateAction::Do(){
-	printf("Updating name from %s to %s\n", m_owner->m_school->name, m_name);
 	if(update_school_name(stdout, m_owner->m_database, m_owner->m_school->id, m_name)){
 		char * temp = m_owner->m_school->name;
 		m_owner->m_school->name = m_name;
@@ -58,7 +57,6 @@ bool SchoolNameUpdateAction::Do(){
 }
 
 bool SchoolNameUpdateAction::Undo(){
-	printf("Undoing name update from %s to %s\n", m_owner->m_school->name, m_name);
 	if(update_school_name(stdout, m_owner->m_database, m_owner->m_school->id, m_name)){
 		char * temp = m_owner->m_school->name;
 		m_owner->m_school->name = m_name;
@@ -1231,6 +1229,37 @@ wxString TeacherDaysUpdateAction::Describe(){
 	return wxT("TeacherDaysUpdateAction");
 }
 
+
+/*********************************************************/
+/*              TeacherTwinningUpdateAction              */
+/*********************************************************/
+
+TeacherTwinningUpdateAction::TeacherTwinningUpdateAction(Application * owner, int id_teacher, int * twinning_scores) : Action(owner){
+	m_id = id_teacher;
+	m_twinning_scores = twinning_scores;
+}
+TeacherTwinningUpdateAction::~TeacherTwinningUpdateAction(){
+	free(m_twinning_scores);
+}
+bool TeacherTwinningUpdateAction::Do(){
+	School * school = m_owner->m_school;
+	if(update_teacher_twin_preference(m_owner->std_out, m_owner->m_database, m_id, m_twinning_scores)){
+		Teacher * t = find_teacher_by_id(school, m_id);
+		for(int i = 0; i < school->n_periods_per_day; ++i){
+			int tmp = m_twinning_scores[i];
+			m_twinning_scores[i] = t->planning_twin_scores[i];
+			t->planning_twin_scores[i] = tmp;
+
+		}
+
+	}
+}
+bool TeacherTwinningUpdateAction::Undo(){
+	return Do();
+}
+wxString TeacherTwinningUpdateAction::Describe(){
+	return wxT("TeacherTwinningUpdateAction");
+}
 
 /*********************************************************/
 /*                     ActionManager                     */
