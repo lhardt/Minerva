@@ -919,6 +919,10 @@ TeacherInsertAction::TeacherInsertAction(Application * owner, Teacher t) : Actio
 TeacherInsertAction::~TeacherInsertAction(){
 	if(m_state == state_UNDONE){
 		free_teacher(&m_teacher);
+		if(m_teaches != NULL){
+			free(m_teaches);
+			free(m_subj_ids);
+		}
 	}
 }
 bool TeacherInsertAction::Do(){
@@ -926,13 +930,14 @@ bool TeacherInsertAction::Do(){
 	if(m_teaches != NULL){
 		for(int i = 0; m_teaches[i].teacher != NULL; ++i){
 			m_teacher.teaches[i] = &m_teaches[i];
-
+			m_teacher.teaches[i]->subject = find_subject_by_id(m_owner->m_school, m_subj_ids[i]);
 		}
 	}
 	int res_id = insert_teacher(stdout, m_owner->m_database, &m_teacher, m_owner->m_school, m_teacher.id);
 	if(res_id != -1){
 		school_teacher_add(m_owner->m_school, & m_teacher);
 		free(m_teaches);
+		free(m_subj_ids);
 		this->m_teaches = NULL;
 		return true;
 	}
@@ -951,9 +956,11 @@ bool TeacherInsertAction::Undo(){
 			for(teaches_ctr = 0; school->teachers[i_teacher].teaches[teaches_ctr] != NULL; ++teaches_ctr){
 				/**/
 			}
-			m_teaches = (Teaches *) calloc(teaches_ctr+1, sizeof(Teaches));
+			m_teaches = (Teaches *) calloc(teaches_ctr + 1, sizeof(Teaches));
+			m_subj_ids = (int *) calloc(teaches_ctr + 1, sizeof(int));
 			for(int i = 0; school->teachers[i_teacher].teaches[i] != NULL; ++i){
 				m_teaches[i] = *(school->teachers[i_teacher].teaches[i]);
+				m_subj_ids[i] = m_teaches[i].subject->id;
 			}
 		}
 		school_teacher_remove(school, i_teacher, false);

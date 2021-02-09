@@ -240,6 +240,7 @@ public:
 private:
 	Teacher		m_teacher;
 	Teaches *   m_teaches;
+	int * 		m_subj_ids;
 	ActionState m_state;
 };
 
