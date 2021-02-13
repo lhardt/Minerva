@@ -72,8 +72,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	teaches_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	teaches_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 	teaches_grid->SetColLabel(0, m_owner->m_lang->str_teaches);
-
-	ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
+ 	ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	lec_rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
@@ -133,6 +132,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_teaches->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelTeaches, this);
 	m_days->GetSaveButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnSaveDays, this);
 	m_days->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelDays, this);
+	m_planning_twinning->GetSaveButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnSavePlannningTwinning, this);
+	m_planning_twinning->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelPlannningTwinning, this);
 	m_teachers_list->GetList()->Bind(wxEVT_LISTBOX, &ListTeachersPane::OnSelectionChanged, this);
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelButtonClicked, this);
@@ -204,9 +205,64 @@ void ListTeachersPane::OnSaveDays(wxCommandEvent & evt){
 	}
 }
 
-void ListTeachersPane::OnCancelDays(wxCommandEvent &){
+void ListTeachersPane::OnCancelDays(wxCommandEvent & evt){
+	School * school = m_owner->m_school;
 
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+	Teacher * t = find_teacher_by_id(school, teacher_id);
+
+	LMH_ASSERT(teacher_id != -1 && t != NULL);
+
+	for(int i = 0; i < school->n_days; ++i){
+		m_days->SetCellValue(i,0, t->day_max_meetings[i]);
+	}
+	evt.Skip();
 }
+
+void ListTeachersPane::OnSavePlannningTwinning(wxCommandEvent & evt){
+	School * school = m_owner->m_school;
+	ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	if(i_select >= 0){
+		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		Teacher * t = find_teacher_by_id(school, teacher_id);
+
+		int * data = (int *) calloc(1 + school->n_periods_per_day, sizeof(int));
+		bool success = false;
+
+		LMH_ASSERT(data);
+
+		for(int i = 0; i < school->n_periods_per_day; ++i){
+			data[i] = twinning_grid->GetCellState(i,0);
+		}
+		data[school->n_periods_per_day] = -1;
+
+		Action * action = new TeacherTwinningUpdateAction(m_owner, t->id, data);
+		success = m_owner->Do(action);
+		if(success){
+			evt.Skip();
+		}
+	}
+}
+
+void ListTeachersPane::OnCancelPlannningTwinning(wxCommandEvent & evt){
+	School * school = m_owner->m_school;
+	ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	if(i_select >= 0){
+		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		Teacher * t = find_teacher_by_id(school, teacher_id);
+
+		if(t->planning_twin_scores){
+			for(int i = 0; i < school->n_periods_per_day; ++i){
+				twinning_grid->SetCellState(i, 0, t->planning_twin_scores[i]);
+			}
+		}
+		evt.Skip();
+	}
+}
+
 
 
 void ListTeachersPane::ShowData(){
@@ -355,6 +411,7 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 	if(school != NULL && school->teachers != NULL && i_select != wxNOT_FOUND){
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		ChoiceGrid * teaches_grid = m_teaches->GetGrid();
+		ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();
 		wxGrid * days_grid = m_days->GetGrid();
 		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
 		Teacher * t = find_teacher_by_id(school, teacher_id);
@@ -378,6 +435,11 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		for(int i = 0; i < school->n_periods; ++i){
 			if(school->periods[i]){
 				periods_grid->SetCellState(i % school->n_periods_per_day,i / school->n_periods_per_day, t->lecture_period_scores[i] > 0? 1:0);
+			}
+		}
+		if(t->planning_twin_scores){
+			for(int i = 0; i < school->n_periods_per_day; ++i){
+				twinning_grid->SetCellState(i, 0, t->planning_twin_scores[i]);
 			}
 		}
 		for(int i = 0; i < school->n_days; ++i){

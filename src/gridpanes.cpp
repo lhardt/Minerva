@@ -211,6 +211,10 @@ wxButton * PosIntGridPane::GetCancelButton(){
 	return m_cancel_btn;
 }
 
+void 	   PosIntGridPane::SetCellValue(int row, int col, int value){
+	((PosIntGridTable*)GetGrid()->GetTable())->SetCellValue(row,col,value);
+}
+
 void 	   PosIntGridPane::SetValues(int * values){
 	if(values == NULL){
 		for(int i = 0; i < m_grid->GetNumberRows(); ++i){

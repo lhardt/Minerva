@@ -81,6 +81,7 @@ class PosIntGridTable : public wxGridTableBase {
 	bool IsEmptyCell( int row, int col ) override;
 	wxString GetValue( int row, int col ) override;
 	void SetValue( int row, int col, const wxString& value ) override;
+	void SetCellValue( int row, int col, int value );
 	bool AppendRows(size_t n_new_rows) override;
 	bool AppendCols(size_t n_new_cols) override;
 	bool DeleteCols(size_t pos, size_t n_del_cols) override;
@@ -257,6 +258,7 @@ class PosIntGridPane : public wxScrolledWindow {
 	wxGrid 		* GetGrid();
 	int		 	* GetValues();
 	void	 	  SetValues(int * values);
+	void		  SetCellValue(int row, int col, int val);
 	void 		  SetEditing(bool editing = true);
 	// TODO: Restructure. These methods should not be here,
 	// or at least should be in all other *GridPanes. Design consistency.
@@ -686,6 +688,8 @@ class ListTeachersPane : public wxScrolledWindow {
 	void OnCancelTeaches(wxCommandEvent &);
 	void OnSaveDays(wxCommandEvent &);
 	void OnCancelDays(wxCommandEvent &);
+	void OnSavePlannningTwinning(wxCommandEvent &);
+	void OnCancelPlannningTwinning(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);
 	void OnCancelButtonClicked(wxCommandEvent &);
     void OnDeleteButtonClicked(wxCommandEvent &);

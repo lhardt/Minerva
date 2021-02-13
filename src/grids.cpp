@@ -117,18 +117,21 @@ void PosIntGridTable::SetValue( int row, int col, const wxString& value ){
 	int int_val = -1;
 	if(value.ToLong(&long_val)){
 		int_val = (int) long_val;
-		if(row >= n_rows || col >= n_cols){
-			int max_rows = (row + 1)>n_rows?(row+1):n_rows;
-			int max_cols = (col + 1)>n_cols?(col+1):n_cols;
-			if(values == NULL){
-				values = (int*)calloc(max_rows * max_cols, sizeof(int));
-			} else {
-				values = (int*)realloc(values, (max_rows * max_cols)*sizeof(int));
-			}
+		SetCellValue(row, col, int_val);
+	}
+}
+void PosIntGridTable::SetCellValue(int row, int col, int value){
+	if(row >= n_rows || col >= n_cols){
+		int max_rows = (row + 1)>n_rows?(row+1):n_rows;
+		int max_cols = (col + 1)>n_cols?(col+1):n_cols;
+		if(values == NULL){
+			values = (int*)calloc(max_rows * max_cols, sizeof(int));
+		} else {
+			values = (int*)realloc(values, (max_rows * max_cols)*sizeof(int));
 		}
-		if(int_val >= 0){
-			values[col * n_rows + row] = int_val;
-		}
+	}
+	if(value >= 0){
+		values[col * n_rows + row] = value;
 	}
 }
 
@@ -531,7 +534,7 @@ int  ChoiceGrid::AddState(wxString name, wxColor color){
 	int n_states = ((ChoiceGridTable*)GetTable())->GetNumberStates();
 	if(n_states > 0){
 		int max_width = 0;
-		// cell 0,0 is used as measure unit here
+		// cell 0,0 is used as ruler here
 		int dummy_old_state = GetCellState(0,0);
 		for(int i = 0; i < n_states; ++i){
 			SetCellState(0,0,i);

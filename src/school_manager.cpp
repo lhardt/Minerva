@@ -1252,14 +1252,24 @@ bool TeacherTwinningUpdateAction::Do(){
 	School * school = m_owner->m_school;
 	if(update_teacher_twin_preference(m_owner->std_out, m_owner->m_database, m_id, m_twinning_scores)){
 		Teacher * t = find_teacher_by_id(school, m_id);
-		for(int i = 0; i < school->n_periods_per_day; ++i){
-			int tmp = m_twinning_scores[i];
-			m_twinning_scores[i] = t->planning_twin_scores[i];
-			t->planning_twin_scores[i] = tmp;
 
+		if(t == NULL) return false;
+
+		if(t->planning_twin_scores == NULL){
+			int * tmp = m_twinning_scores;
+			m_twinning_scores = (int *) calloc(school->n_periods_per_day + 1, sizeof(int));
+			m_twinning_scores[school->n_periods_per_day] = -1;
+			t->planning_twin_scores = tmp;
+		} else {
+			for(int i = 0; i < school->n_periods_per_day; ++i){
+				int tmp = m_twinning_scores[i];
+				m_twinning_scores[i] = t->planning_twin_scores[i];
+				t->planning_twin_scores[i] = tmp;
+			}
 		}
-
+		return true;
 	}
+	return false;
 }
 bool TeacherTwinningUpdateAction::Undo(){
 	return Do();

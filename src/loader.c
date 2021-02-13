@@ -557,7 +557,7 @@ const char * const CREATE_TABLE_TEACHER_TWIN_PREFERENCE =
 				"UNIQUE (id_teacher, twin_val)"
 			")");
 const char * const UPSERT_TABLE_TEACHER_TWIN_PREFERENCE =
-			("INSERT INTO TeaherTwinPreference(twin_val, score_planning, id_teacher) VALUES (?1,?2,?3) "
+			("INSERT INTO TeacherTwinPreference(twin_val, score_planning, id_teacher) VALUES (?1,?2,?3) "
 			 "ON CONFLICT (id_teacher, twin_val) DO UPDATE SET score_planning=?2");
 const char * const LASTID_TEACHER_TWIN_PREFERENCE =
 			("SELECT id FROM TeacherTwinPreference WHERE rowid = last_insert_rowid()");
@@ -1398,6 +1398,9 @@ static bool insert_or_update_teacher_period_scores(FILE * console_out, sqlite3 *
 static bool insert_or_update_twin_scores(FILE * console_out, sqlite3 * db, const char * const sql, int obj_id, int * twin_scores){
 	int i, errc;
 	sqlite3_stmt * stmt;
+
+	LMH_ASSERT(db != NULL && obj_id > 0 && twin_scores != NULL);
+
 	errc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	for(i = 0; twin_scores[i] >= 0; ++i){
