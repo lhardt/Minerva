@@ -378,13 +378,18 @@ wxGridCellAttr * ChoiceGridTable::GetAttr(int row, int col, wxGridCellAttr::wxAt
 	int value = values[col * n_rows + row];
 	wxColor text_color  = wxColor(0,0,0);
 	wxColor back_color;
+	printf("Getting attr.");
 	if(value >= 0 && value_colors.size() > value){
 		back_color  = value_colors[value];
+		printf(" propercolor %d ", value);
 	} else if(value == -1){
 		back_color = wxColor(240,240,240);
+		printf(" lightgrey ");
 	} else {
 		back_color = wxColor(255,0,0);
+		printf(" red ");
 	}
+	printf("\n");
 	wxFont font = GetView()->GetFont();
 	return new wxGridCellAttr(text_color, back_color, font, wxAlignment::wxALIGN_CENTRE, wxAlignment::wxALIGN_CENTRE );
 }
@@ -466,16 +471,18 @@ void ChoiceGrid::SetCanUserClick(bool can){
 
 
 void ChoiceGrid::OnHeaderLeftClick(wxGridEvent & evt){
-	int evt_col = evt.GetCol(), evt_row = evt.GetRow();
-	ChoiceGridTable * table = (ChoiceGridTable *) GetTable();
-	if(evt_col != -1){
-		table->SetColNextState(evt_col);
-	} else if(evt_row != -1){
-		table->SetRowNextState(evt_row);
-	} else {
-		table->SetTableNextState();
+	if(m_can_user_click){
+		int evt_col = evt.GetCol(), evt_row = evt.GetRow();
+		ChoiceGridTable * table = (ChoiceGridTable *) GetTable();
+		if(evt_col != -1){
+			table->SetColNextState(evt_col);
+		} else if(evt_row != -1){
+			table->SetRowNextState(evt_row);
+		} else {
+			table->SetTableNextState();
+		}
+		ForceRefresh();
 	}
-	Refresh();
 }
 
 void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
@@ -484,19 +491,20 @@ void ChoiceGrid::OnLeftClick(wxGridEvent & evt){
 	if(GetNumberRows() > 0 && GetNumberCols() > 0 &&  m_can_user_click ){
 		SetCellNextState(evt_row, evt_col);
 		evt.Skip();
-		Refresh();
+		ForceRefresh();
 	}
 }
 
 void ChoiceGrid::SetCellLocked(int i, int j){
 	((ChoiceGridTable *)GetTable())->SetState(i, j, CELL_STATE_LOCKED);
-	// Refresh();
+	ForceRefresh();
 }
 
 void ChoiceGrid::SetCellState(int i_row, int i_col, int state){
 	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
 		((ChoiceGridTable*)GetTable())->SetState(i_row, i_col, state);
 	}
+	ForceRefresh();
 	// AutoSizeColumns();
 	// SetSize(GetBestSize());
 	// ForceRefresh();
@@ -508,7 +516,7 @@ void ChoiceGrid::SetCellNextState(int i_row, int i_col){
 	}
 	// AutoSizeColumns();
 	// SetSize(GetBestSize());
-	// ForceRefresh();
+	ForceRefresh();
 }
 
 
@@ -517,12 +525,13 @@ void ChoiceGrid::SetAllCellsState(int state){
 	wxWindowUpdateLocker noUpdates(this);
 	// AutoSizeColumns();
 	// SetSize(GetBestSize());
-	// ForceRefresh();
+	ForceRefresh();
 }
 
 void ChoiceGrid::SetAllActiveCellsState(int state){
 	((ChoiceGridTable*)GetTable())->SetTableActiveState(state);
 	// Refresh();
+	ForceRefresh();
 }
 
 int ChoiceGrid::GetCellState(int i_row, int i_col){

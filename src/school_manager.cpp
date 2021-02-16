@@ -1,4 +1,4 @@
-	#include "school_manager.hpp"
+#include "school_manager.hpp"
 
 #include <wx/string.h>
 
@@ -1276,6 +1276,36 @@ bool TeacherTwinningUpdateAction::Undo(){
 }
 wxString TeacherTwinningUpdateAction::Describe(){
 	return wxT("TeacherTwinningUpdateAction");
+}
+
+/*********************************************************/
+/*             TeacherLectureRoomUpdateAction            */
+/*********************************************************/
+
+TeacherLectureRoomUpdateAction::TeacherLectureRoomUpdateAction(Application * owner, int id_teacher, int * room_scores) : Action(owner){
+	m_id = id_teacher;
+	m_scores = room_scores;
+}
+TeacherLectureRoomUpdateAction::~TeacherLectureRoomUpdateAction(){
+	free(m_scores);
+}
+bool TeacherLectureRoomUpdateAction::Do(){
+	Teacher * t = find_teacher_by_id(m_owner->m_school, m_id);
+	LMH_ASSERT(t != NULL);
+	if(update_teacher_lecture_room_preference(m_owner->std_out, m_owner->m_database, m_id, m_scores, m_owner->m_school)){
+		int * tmp = t->lecture_room_scores;
+		t->lecture_room_scores = m_scores;
+		m_scores = tmp;
+		LMH_ASSERT(tmp != NULL);
+		return true;
+	}
+	return false;
+}
+bool TeacherLectureRoomUpdateAction::Undo(){
+	return Do();
+}
+wxString TeacherLectureRoomUpdateAction::Describe(){
+	return wxT("TeacherLectureRoomUpdateAction");
 }
 
 /*********************************************************/

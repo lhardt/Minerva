@@ -310,11 +310,14 @@ private:
 
 class TeacherLectureRoomUpdateAction : public Action {
 public:
-	TeacherLectureRoomUpdateAction(Application * owner);
+	TeacherLectureRoomUpdateAction(Application * owner, int id_teacher, int * room_scores);
 	~TeacherLectureRoomUpdateAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	int			m_id;
+	int 	  * m_scores;
 };
 
 class TeacherPlanningRoomUpdateAction : public Action {

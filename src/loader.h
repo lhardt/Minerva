@@ -68,6 +68,7 @@ bool update_room_basic_data(FILE * console_out, sqlite3* db, int room_id, Room *
 bool update_room_availability(FILE * console_out, sqlite3* db, int room_id, int * availability, School * school);
 bool update_subject_basic_data(FILE * console_out, sqlite3 * db, int subj_id, Subject * subject, School * school);
 bool update_teacher_basic_data(FILE * console_out, sqlite3 * db, Teacher * teacher, School * school);
+bool update_class_basic_data(FILE * console_out, sqlite3 * db, Class * klass, School * school);
 bool update_class_max_per_day_subjectgroup(FILE * console_out, sqlite3 * db, int class_id, int id_group, int max);
 bool update_subject_group_name(FILE * console_out, sqlite3 * db, int sgr_id, char * new_name);
 bool update_subject_group_members(FILE * console_out, sqlite3 * db, int sgr_id, int * members, School * school);
@@ -79,6 +80,7 @@ bool update_teacher_assignment_score(FILE * console_out, sqlite3 * db, int teach
 bool update_teacher_meeting_fixation(FILE * console_out, sqlite3 * db, int teacher_id, bool * fixed, School * school);
 bool update_teacher_day_max_per(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school);
 bool update_teacher_twin_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * twinning);
+bool update_teacher_lecture_room_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * preferences, School * school);
 
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);

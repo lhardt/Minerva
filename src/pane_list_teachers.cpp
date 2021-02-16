@@ -73,6 +73,7 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	teaches_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 	teaches_grid->SetColLabel(0, m_owner->m_lang->str_teaches);
  	ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
+	lec_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	lec_rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
@@ -132,6 +133,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_teaches->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelTeaches, this);
 	m_days->GetSaveButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnSaveDays, this);
 	m_days->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelDays, this);
+	m_lecture_rooms->GetSaveButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnSaveLectureRoom, this);
+	m_lecture_rooms->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelLectureRoom, this);
 	m_planning_twinning->GetSaveButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnSavePlannningTwinning, this);
 	m_planning_twinning->GetCancelButton()->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelPlannningTwinning, this);
 	m_teachers_list->GetList()->Bind(wxEVT_LISTBOX, &ListTeachersPane::OnSelectionChanged, this);
@@ -263,6 +266,46 @@ void ListTeachersPane::OnCancelPlannningTwinning(wxCommandEvent & evt){
 	}
 }
 
+
+void ListTeachersPane::OnSaveLectureRoom(wxCommandEvent & evt){
+	School * school = m_owner->m_school;
+	ChoiceGrid * grid = m_lecture_rooms->GetGrid();
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		bool success = false;
+		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		Teacher * t = find_teacher_by_id(school, teacher_id);
+		int * scores = (int*) calloc(school->n_rooms + 1, sizeof(int));
+		scores[school->n_rooms] = -1;
+
+		for(int i = 0; i < school->n_rooms; ++i){
+			int cell_state = grid->GetCellState(i,0);
+			scores[i] = cell_state == -1 ? 0 : cell_state;
+		}
+
+		Action * act = new TeacherLectureRoomUpdateAction(m_owner, teacher_id, scores);
+		success = m_owner->Do(act);
+
+		if(success){
+			evt.Skip();
+		}
+	}
+}
+void ListTeachersPane::OnCancelLectureRoom(wxCommandEvent & evt){
+	School * school = m_owner->m_school;
+	ChoiceGrid * grid = m_lecture_rooms->GetGrid();
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		Teacher * t = find_teacher_by_id(school, teacher_id);
+		LMH_ASSERT(t->lecture_room_scores != NULL);
+		for(int i = 0; i < school->n_rooms; ++i){
+			grid->SetCellState(i,0, t->lecture_room_scores[i]);
+		}
+
+		evt.Skip();
+	}
+}
 
 
 void ListTeachersPane::ShowData(){
@@ -412,6 +455,7 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		ChoiceGrid * teaches_grid = m_teaches->GetGrid();
 		ChoiceGrid * twinning_grid = m_planning_twinning->GetGrid();
+		ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
 		wxGrid * days_grid = m_days->GetGrid();
 		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
 		Teacher * t = find_teacher_by_id(school, teacher_id);
@@ -445,6 +489,11 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		for(int i = 0; i < school->n_days; ++i){
 			days_grid->SetCellValue(i,0, wxString::Format("%d", t->day_max_meetings[i]));
 		}
+
+		for(int i = 0; i < school->n_rooms; ++i){
+			lec_rooms_grid->SetCellState(i,0, t->lecture_room_scores[i]);
+		}
+
 		FitInside();
 	}
 }

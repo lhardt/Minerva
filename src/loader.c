@@ -585,6 +585,9 @@ const char * const CREATE_TABLE_TEACHER_ROOM =
 const char * const UPSERT_TABLE_TEACHER_ROOM =
 			("INSERT INTO TeacherRoom(id_teacher, id_room, score_lecture, score_planning) VALUES (?1,?2,?3,?4) "
 			 "ON CONFLICT (id_teacher, id_room) DO UPDATE SET (score_lecture, score_planning)=(?3,?4)");
+const char * const UPSERT_TEACHER_SCORE_LECTURE =
+			("INSERT INTO TeacherRoom(id_teacher, id_room, score_lecture) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_teacher, id_room) DO UPDATE SET (score_lecture)=(?3)");
 const char * const LASTID_TABLE_TEACHER_ROOM =
 			("SELECT id FROM TeacherRoom WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TABLE_TEACHER_ROOM_BY_TEACHER_ID =
@@ -1295,7 +1298,7 @@ static bool insert_or_update_room_scores(FILE * console_out, sqlite3 * db, const
 /**
  * Insert/Update function for table TeacherRoom.
  */
-static bool insert_or_update_teacher_room_scores(FILE * console_out, sqlite3 * db, const Teacher * teacher, const School * const school, bool is_update){
+static bool insert_or_update_teacher_room_scores(FILE * console_out, sqlite3 * db, const Teacher * teacher, const School * const school){
 	int i = 0, errc;
 	sqlite3_stmt * stmt;
 
@@ -1373,7 +1376,7 @@ static bool insert_or_delete_subordination(FILE * console_out, sqlite3 * db, con
 /**
  * Insert/Update function for table TeacherAttendance.
  */
-static bool insert_or_update_teacher_period_scores(FILE * console_out, sqlite3 * db, Teacher * teacher, School * school, bool is_update){
+static bool insert_or_update_teacher_period_scores(FILE * console_out, sqlite3 * db, Teacher * teacher, School * school){
 	int i, errc;
 	sqlite3_stmt * stmt;
 
@@ -1450,7 +1453,7 @@ bool insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, Scho
 /**
  * General Insert/Update function for the table TeacherDay.
  */
-static bool insert_or_update_teacher_day_scores(FILE * console_out, sqlite3 * db, Teacher * t, School  * school, bool is_update){
+static bool insert_or_update_teacher_day_scores(FILE * console_out, sqlite3 * db, Teacher * t, School  * school){
 	int i, errc;
 	sqlite3_stmt * stmt;
 
@@ -1537,13 +1540,13 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 		}
 	}
 	if(teacher->lecture_room_scores != NULL || teacher->planning_room_scores != NULL){
-		insert_or_update_teacher_room_scores(console_out, db, teacher, school, false);
+		insert_or_update_teacher_room_scores(console_out, db, teacher, school);
 	}
 	if(teacher->day_max_meetings != NULL || teacher->day_scores != NULL){
-		insert_or_update_teacher_day_scores(console_out, db, teacher, school, false);
+		insert_or_update_teacher_day_scores(console_out, db, teacher, school);
 	}
 	if(teacher->lecture_period_scores != NULL || teacher->planning_period_scores){
-		insert_or_update_teacher_period_scores(console_out, db, teacher, school, false);
+		insert_or_update_teacher_period_scores(console_out, db, teacher, school);
 	}
 	if(teacher->planning_twin_scores != NULL){
 		insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHER_TWIN_PREFERENCE, teacher->id, teacher->planning_twin_scores);
@@ -1568,7 +1571,7 @@ bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * 
 	return true;
 }
 
-bool insert_or_update_class_subject_group(FILE * console_out, sqlite3 * db, Class * class, School * school, bool is_update){
+bool insert_or_update_class_subject_group(FILE * console_out, sqlite3 * db, Class * class, School * school){
 	int i, errc;
 	sqlite3_stmt * stmt;
 
@@ -1646,20 +1649,20 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 		insert_or_update_room_scores(console_out, db, UPSERT_TABLE_CLASS_ROOM, class->id, class->room_scores, school);
 	}
 	if(class->max_per_day_subject_group != NULL){
-		insert_or_update_class_subject_group(console_out, db, class, school, true);
+		insert_or_update_class_subject_group(console_out, db, class, school);
 	}
 	return class->id;
 }
 
 /* NOTE: Shallow UPDATE. For deeper updates, update each table manually. */
-int update_class(FILE * console_out, sqlite3 * db, Class * class, School * school){
+bool update_class_basic_data(FILE * console_out, sqlite3 * db, Class * class, School * school){
 	sqlite3_stmt * stmt;
 	int errc;
 
 	LMH_ASSERT(db != NULL && class != NULL && school != NULL);
 
 	errc = sqlite3_prepare(db,UPDATE_TABLE_CLASS, -1, &stmt, NULL);
-	CERTIFY_ERRC_SQLITE_OK(-1);
+	CERTIFY_ERRC_SQLITE_OK(false);
 	sqlite3_bind_text(stmt, 1, class->name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_text(stmt, 2, class->short_name, -1, SQLITE_TRANSIENT);
 	sqlite3_bind_int(stmt, 3, class->size);
@@ -1671,10 +1674,10 @@ int update_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 	sqlite3_bind_int(stmt, 9, class->id);
 
 	errc = sqlite3_step(stmt);
-	CERTIFY_ERRC_SQLITE_DONE(-1);
+	CERTIFY_ERRC_SQLITE_DONE(false);
 	sqlite3_exec(db, LASTID_TABLE_CLASS, get_id_callback, &(class->id), NULL);
 	sqlite3_finalize(stmt);
-	return class->id;
+	return true;
 }
 
 /* TODO test. */
@@ -2248,6 +2251,7 @@ static bool select_teacher_room_scores(FILE * console_out, sqlite3* db, Teacher 
 	teacher->lecture_room_scores = calloc(school->n_rooms+1, sizeof(int));
 	while(errc == SQLITE_ROW){
 		i_room = get_room_index_by_id(school, sqlite3_column_int(stmt,2));
+		LMH_ASSERT(i_room >= 0 && i_room < school->n_rooms);
 		teacher->lecture_room_scores[i_room] = sqlite3_column_int(stmt,3);
 		teacher->planning_room_scores[i_room] = sqlite3_column_int(stmt,4);
 		errc = sqlite3_step(stmt);
@@ -3520,7 +3524,6 @@ bool update_teacher_day_max_per(FILE * console_out, sqlite3 * db, int id_teacher
 	errc = sqlite3_prepare_v2(db, UPDATE_TEACHER_DAY_MAX_PER, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 	for(int i = 0; i < school->n_days; ++i){
-		printf("Executing statement as %d %d %d\n", id_teacher, school->day_ids[i], max_per[i]);
 		sqlite3_bind_int(stmt, 1, id_teacher);
 		sqlite3_bind_int(stmt, 2, school->day_ids[i]);
 		sqlite3_bind_int(stmt, 3, max_per[i]);
@@ -3534,4 +3537,25 @@ bool update_teacher_day_max_per(FILE * console_out, sqlite3 * db, int id_teacher
 
 bool update_teacher_twin_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * twinning){
 	return insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHER_TWIN_PREFERENCE, id_teacher, twinning);
+}
+
+
+bool update_teacher_lecture_room_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && id_teacher > 0);
+	sqlite3_stmt * stmt;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, UPSERT_TEACHER_SCORE_LECTURE, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < school->n_rooms; ++i){
+		sqlite3_bind_int(stmt, 1, id_teacher);
+		sqlite3_bind_int(stmt, 2, school->rooms[i].id);
+		sqlite3_bind_int(stmt, 3, scores[i]);
+		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	sqlite3_finalize(stmt);
+	return true;
+
 }
