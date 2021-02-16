@@ -1309,6 +1309,37 @@ wxString TeacherLectureRoomUpdateAction::Describe(){
 }
 
 /*********************************************************/
+/*            TeacherPlanningRoomUpdateAction            */
+/*********************************************************/
+
+TeacherPlanningRoomUpdateAction::TeacherPlanningRoomUpdateAction(Application * owner, int id_teacher, int * room_scores) : Action(owner){
+	m_id = id_teacher;
+	m_scores = room_scores;
+}
+TeacherPlanningRoomUpdateAction::~TeacherPlanningRoomUpdateAction(){
+	free(m_scores);
+}
+bool TeacherPlanningRoomUpdateAction::Do(){
+	Teacher * t = find_teacher_by_id(m_owner->m_school, m_id);
+	LMH_ASSERT(t != NULL);
+	if(update_teacher_planning_room_preference(m_owner->std_out, m_owner->m_database, m_id, m_scores, m_owner->m_school)){
+		int * tmp = t->planning_room_scores;
+		t->planning_room_scores = m_scores;
+		m_scores = tmp;
+		LMH_ASSERT(tmp != NULL);
+		return true;
+	}
+	return false;
+}
+bool TeacherPlanningRoomUpdateAction::Undo(){
+	return Do();
+}
+wxString TeacherPlanningRoomUpdateAction::Describe(){
+	return wxT("TeacherPlanningRoomUpdateAction");
+}
+
+
+/*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/
 

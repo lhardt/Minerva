@@ -378,18 +378,13 @@ wxGridCellAttr * ChoiceGridTable::GetAttr(int row, int col, wxGridCellAttr::wxAt
 	int value = values[col * n_rows + row];
 	wxColor text_color  = wxColor(0,0,0);
 	wxColor back_color;
-	printf("Getting attr.");
 	if(value >= 0 && value_colors.size() > value){
 		back_color  = value_colors[value];
-		printf(" propercolor %d ", value);
 	} else if(value == -1){
 		back_color = wxColor(240,240,240);
-		printf(" lightgrey ");
 	} else {
 		back_color = wxColor(255,0,0);
-		printf(" red ");
 	}
-	printf("\n");
 	wxFont font = GetView()->GetFont();
 	return new wxGridCellAttr(text_color, back_color, font, wxAlignment::wxALIGN_CENTRE, wxAlignment::wxALIGN_CENTRE );
 }
@@ -505,17 +500,12 @@ void ChoiceGrid::SetCellState(int i_row, int i_col, int state){
 		((ChoiceGridTable*)GetTable())->SetState(i_row, i_col, state);
 	}
 	ForceRefresh();
-	// AutoSizeColumns();
-	// SetSize(GetBestSize());
-	// ForceRefresh();
 }
 
 void ChoiceGrid::SetCellNextState(int i_row, int i_col){
 	if(i_col < GetNumberCols() && i_row < GetNumberRows()){
 		((ChoiceGridTable*)GetTable())->SetNextState(i_row, i_col);
 	}
-	// AutoSizeColumns();
-	// SetSize(GetBestSize());
 	ForceRefresh();
 }
 
@@ -523,14 +513,11 @@ void ChoiceGrid::SetCellNextState(int i_row, int i_col){
 void ChoiceGrid::SetAllCellsState(int state){
 	((ChoiceGridTable*)GetTable())->SetTableState(state);
 	wxWindowUpdateLocker noUpdates(this);
-	// AutoSizeColumns();
-	// SetSize(GetBestSize());
 	ForceRefresh();
 }
 
 void ChoiceGrid::SetAllActiveCellsState(int state){
 	((ChoiceGridTable*)GetTable())->SetTableActiveState(state);
-	// Refresh();
 	ForceRefresh();
 }
 

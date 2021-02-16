@@ -585,9 +585,12 @@ const char * const CREATE_TABLE_TEACHER_ROOM =
 const char * const UPSERT_TABLE_TEACHER_ROOM =
 			("INSERT INTO TeacherRoom(id_teacher, id_room, score_lecture, score_planning) VALUES (?1,?2,?3,?4) "
 			 "ON CONFLICT (id_teacher, id_room) DO UPDATE SET (score_lecture, score_planning)=(?3,?4)");
-const char * const UPSERT_TEACHER_SCORE_LECTURE =
+const char * const UPSERT_TEACHER_SCORE_ROOM_LECTURE =
 			("INSERT INTO TeacherRoom(id_teacher, id_room, score_lecture) VALUES (?1,?2,?3) "
 			 "ON CONFLICT (id_teacher, id_room) DO UPDATE SET (score_lecture)=(?3)");
+const char * const UPSERT_TEACHER_SCORE_ROOM_PLANNING =
+			("INSERT INTO TeacherRoom(id_teacher, id_room, score_planning) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_teacher, id_room) DO UPDATE SET (score_planning)=(?3)");
 const char * const LASTID_TABLE_TEACHER_ROOM =
 			("SELECT id FROM TeacherRoom WHERE rowid = last_insert_rowid()");
 const char * const SELECT_TABLE_TEACHER_ROOM_BY_TEACHER_ID =
@@ -3539,23 +3542,10 @@ bool update_teacher_twin_preference(FILE * console_out, sqlite3 * db, int id_tea
 	return insert_or_update_twin_scores(console_out, db, UPSERT_TABLE_TEACHER_TWIN_PREFERENCE, id_teacher, twinning);
 }
 
-
 bool update_teacher_lecture_room_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school){
-	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && id_teacher > 0);
-	sqlite3_stmt * stmt;
-	int errc;
+	return insert_or_update_room_scores(console_out, db, UPSERT_TEACHER_SCORE_ROOM_LECTURE, id_teacher, scores, school);
+}
 
-	errc = sqlite3_prepare_v2(db, UPSERT_TEACHER_SCORE_LECTURE, -1, &stmt, NULL);
-	CERTIFY_ERRC_SQLITE_OK(false);
-	for(int i = 0; i < school->n_rooms; ++i){
-		sqlite3_bind_int(stmt, 1, id_teacher);
-		sqlite3_bind_int(stmt, 2, school->rooms[i].id);
-		sqlite3_bind_int(stmt, 3, scores[i]);
-		errc = sqlite3_step(stmt);
-		sqlite3_reset(stmt);
-		CERTIFY_ERRC_SQLITE_DONE(false);
-	}
-	sqlite3_finalize(stmt);
-	return true;
-
+bool update_teacher_planning_room_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school){
+	return insert_or_update_room_scores(console_out, db, UPSERT_TEACHER_SCORE_ROOM_PLANNING, id_teacher, scores, school);
 }

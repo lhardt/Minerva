@@ -322,11 +322,14 @@ private:
 
 class TeacherPlanningRoomUpdateAction : public Action {
 public:
-	TeacherPlanningRoomUpdateAction(Application * owner);
+	TeacherPlanningRoomUpdateAction(Application * owner, int id_teacher, int * room_scores);
 	~TeacherPlanningRoomUpdateAction();
 	bool Do();
 	bool Undo();
 	wxString Describe();
+private:
+	int			m_id;
+	int		  * m_scores;
 };
 
 class ActionManager{
