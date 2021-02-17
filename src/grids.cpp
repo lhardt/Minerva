@@ -415,6 +415,8 @@ ChoiceGrid::ChoiceGrid(Application * owner, wxWindow * parent, wxWindowID id, wx
 	// SetSelectionMode(0);
 	SetTable(new ChoiceGridTable(1,1));
 	EnableEditing(false);
+
+	m_cell_width = 0;
 }
 ChoiceGrid::~ChoiceGrid(){
 
@@ -528,28 +530,30 @@ int ChoiceGrid::GetCellState(int i_row, int i_col){
 int  ChoiceGrid::AddState(wxString name, wxColor color){
 	int ret_val = ((ChoiceGridTable*)GetTable())->AddState(name,color);
 	int n_states = ((ChoiceGridTable*)GetTable())->GetNumberStates();
-	if(n_states > 0){
-		int max_width = 0;
-		// cell 0,0 is used as ruler here
-		int dummy_old_state = GetCellState(0,0);
-		for(int i = 0; i < n_states; ++i){
-			SetCellState(0,0,i);
-			AutoSizeColumn(0);
-			int width = GetColSize(0);
-			max_width = (max_width > width)? max_width : width;
-		}
-		if(max_width > 0){
-			SetDefaultColSize(max_width, true);
-		}
-		m_cell_width = max_width;
-		SetCellState(0,0,dummy_old_state);
+	// cell 0,0 is used as ruler here
+	int dummy_old_state = GetCellState(0,0);
+	// Cosidering the added state size.
+	SetCellState(0,0,n_states-1);
+	AutoSizeColumn(0);
+	int width = GetColSize(0);
+	m_cell_width = (m_cell_width > width)? m_cell_width : width;
+	if(m_cell_width > 0){
+		SetDefaultColSize(m_cell_width, true);
 	}
+	SetCellState(0,0,dummy_old_state);
 	return ret_val;
 }
 
 void ChoiceGrid::SetColLabel(int i_col, wxString name){
 	ChoiceGridTable * table = (ChoiceGridTable *) GetTable();
 	table->SetColLabelValue(i_col, name);
+	AutoSizeColLabelSize(i_col);
+	int width = GetColSize(i_col);
+	m_cell_width = (m_cell_width > width)? m_cell_width : width;
+	if(width < m_cell_width){
+		printf("m_cell_width is %d\n", m_cell_width);
+		SetColSize(i_col, m_cell_width);
+	}
 }
 void ChoiceGrid::SetRowLabel(int i_row, wxString name){
 	ChoiceGridTable * table = (ChoiceGridTable *) GetTable();
