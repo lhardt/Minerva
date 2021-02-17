@@ -35,6 +35,7 @@ AddClassGroupPane::AddClassGroupPane(Application * owner, wxWindow * parent, wxP
 		grid_table->SetRowLabelValue(i, row_name);
 	}
 	m_subjects_grid->SetTable(grid_table, true);
+	m_subjects_grid->SetLabelBackgroundColour( wxColor(255,255,255) );
 
 	m_classes_grid->SetColLabel(0, m_owner->m_lang->str_belongs);
 	for(i = 0; i < school->n_classes; ++i){

@@ -85,6 +85,7 @@ void ListSubjectsPane::OnEditButtonClicked(wxCommandEvent & ev){
 			Subject update = (Subject){
 				.id = subj_id,
 				.name = copy_wx_string(m_name_text->GetValue()),
+				/* They need to be alloc'd separately */
 				.short_name = copy_wx_string(m_name_text->GetValue()),
 			};
 			SubjectBasicDataUpdateAction * act = new SubjectBasicDataUpdateAction(m_owner, update);
@@ -92,6 +93,7 @@ void ListSubjectsPane::OnEditButtonClicked(wxCommandEvent & ev){
 				m_name_text->Disable();
 				m_cancel_btn->Hide();
 				m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+				m_subjects_list->GetList()->SetString(i_select, m_name_text->GetValue());
 			} else {
 				printf("No Success");
 			}

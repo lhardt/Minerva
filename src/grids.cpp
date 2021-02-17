@@ -551,7 +551,6 @@ void ChoiceGrid::SetColLabel(int i_col, wxString name){
 	int width = GetColSize(i_col);
 	m_cell_width = (m_cell_width > width)? m_cell_width : width;
 	if(width < m_cell_width){
-		printf("m_cell_width is %d\n", m_cell_width);
 		SetColSize(i_col, m_cell_width);
 	}
 }
