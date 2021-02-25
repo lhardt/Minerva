@@ -504,7 +504,9 @@ const char * const CREATE_TABLE_TEACHER_SUBORDINATION =
 				"UNIQUE (id_sub, id_sup)"
 			")");
 const char * const INSERT_TABLE_TEACHER_SUBORDINATION =
-			("INSERT INTO TeacherSubordination(id_sup, id_sub) VALUES (?,?)");
+			// TODO: maybe there's a better statement that encompasses both insert/delete
+			// and does not need these redundancies.
+			("INSERT INTO TeacherSubordination(id_sup, id_sub) VALUES (?,?) ON CONFLICT (id_sup, id_sub) IGNORE");
 /* NOTE: there is no reason to update this table. Only delete and add accordingly */
 const char * const LASTID_TEACHER_SUBORDINATION =
 			("SELECT id FROM TeacherSubordination where rowid = last_insert_rowid()");
@@ -514,6 +516,8 @@ const char * const DELETE_TEACHER_SUBORDINATION_BY_SUP_ID =
 			("DELETE FROM TeacherSubordination WHERE id_sup = ?");
 const char * const DELETE_TEACHER_SUBORDINATION_BY_SUB_ID =
 			("DELETE FROM TeacherSubordination WHERE id_sub = ?");
+const char * const DELETE_TEACHER_SUBORDINATION_BY_SUB_SUP_ID =
+			("DELETE FROM TeacherSubordination WHERE id_sub = ? AND id_sup = ? ON CONFLICT (id_sup, id_sub) IGNORE");
 const char * const DELETE_TEACHER_SUBORDINATION_BY_SCHOOL_ID =
 			/* Selecting id_sup is sufficient and equivalent to selecting id_sub*/
 			("DELETE FROM TeacherSubordination WHERE EXISTS("
@@ -1536,11 +1540,7 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 	if(teacher->subordinates != NULL){
 		/* NOTE: Frankly, rebooting it all is unecessarily expensive... but works. */
 		exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SUP_ID, teacher->id);
-		for(i = 0; i < school->n_teachers; ++i){
-			if(teacher->subordinates[i]){
-				insert_or_delete_subordination(console_out, db, INSERT_TABLE_TEACHER_SUBORDINATION, teacher->id, school->teachers[i].id);
-			}
-		}
+		update_teacher_subordination(console_out, db, INSERT_TABLE_TEACHER_SUBORDINATION, teacher->id, teacher->subordinates);
 	}
 	if(teacher->lecture_room_scores != NULL || teacher->planning_room_scores != NULL){
 		insert_or_update_teacher_room_scores(console_out, db, teacher, school);
@@ -3548,4 +3548,27 @@ bool update_teacher_lecture_room_preference(FILE * console_out, sqlite3 * db, in
 
 bool update_teacher_planning_room_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school){
 	return insert_or_update_room_scores(console_out, db, UPSERT_TEACHER_SCORE_ROOM_PLANNING, id_teacher, scores, school);
+}
+
+bool update_teacher_subordination(FILE * console_out, sqlite3 * db, int id_teacher, int * subordinates, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && subordinates != NULL && school != NULL && id_teacher > 0);
+	sqlite3_stmt * stmt_delete, * stmt_insert;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, INSERT_TABLE_TEACHER_SUBORDINATION, -1, &stmt_insert, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	errc = sqlite3_prepare_v2(db, DELETE_TEACHER_SUBORDINATION_BY_SUB_SUP_ID, -1, &stmt_delete, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+
+	for(int i = 0; i < school->n_teachers; ++i){
+		sqlite3_stmt * stmt = subordinates[i] ? stmt_insert : stmt_delete;
+		sqlite3_bind_int(stmt, 1, id_teacher);
+		sqlite3_bind_int(stmt, 2, school->teachers[i].id);
+		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	sqlite3_finalize(stmt_delete);
+	sqlite3_finalize(stmt_insert);
+	return true;
 }

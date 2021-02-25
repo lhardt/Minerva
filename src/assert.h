@@ -18,7 +18,8 @@
 
 #ifdef  LMH_DEBUG
 #	define LMH_RAISE( m ) do{ printf("Assertion Error (F: %s, L: %d, E: %s);\n", __FILE__, __LINE__, m); }while(0)
-#	define LMH_ASSERT( c ) do{if(!(c)){LMH_RAISE("Assertion Failed");}}while(0)
+#	define LMH_ASSERT( c ) do{if(!(c)){LMH_RAISE("Assertion " #c);}}while(0)
+#	define LMH_TODO( ) do{printf("To Do! (F: %s, L: %d, f: %s);\n", __FILE__, __LINE__, __func__);}while(0)
 #else /* LMH_DEBUG */
 #	define LMH_RAISE( m ) do{}while(0)
 #	define LMH_ASSERT( c ) do{}while(0)

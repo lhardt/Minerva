@@ -926,6 +926,7 @@ TeacherInsertAction::~TeacherInsertAction(){
 	}
 }
 bool TeacherInsertAction::Do(){
+	LMH_TODO();
 	// TODO : MAKE WORK WITH SUBORDINATES
 	if(m_teaches != NULL){
 		for(int i = 0; m_teaches[i].teacher != NULL; ++i){
@@ -944,6 +945,7 @@ bool TeacherInsertAction::Do(){
 	return false;
 }
 bool TeacherInsertAction::Undo(){
+	LMH_TODO();
 	// TODO : MAKE WORK WITH SUBORDINATES
 	if(remove_teacher(stdout, m_owner->m_database, m_teacher.id)){
 
@@ -983,6 +985,7 @@ TeacherDeleteAction::TeacherDeleteAction(Application * owner, int id) : Action(o
 }
 
 bool TeacherDeleteAction::Do(){
+	LMH_TODO();
 	// TODO : MAKE WORK WITH SUBORDINATES
 	School * school = m_owner->m_school;
 	if(remove_teacher(stdout, m_owner->m_database, m_teacher.id)){
@@ -1036,13 +1039,12 @@ bool TeacherDeleteAction::Undo(){
 	if(id != -1){
 		bool success = true;
 		int i_teacher = school_teacher_add(school, &m_teacher);
-
-		// TODO!!!
-
+		/* t->subordinates and assignments are already cared by in insert_teacher. */
 		// don't need to do anything with this one.
 		// already inserted by the insert_teacher & school_teacher_add funcs
 		free(m_teaches);
 
+		LMH_TODO();
 		// success &= update_teacher_meeting_score(stdout, m_owner->m_database, id, m_meeting_pref, school);
 		// WTF
 		// success &= update_teacher_meeting_fixation(stdout, m_owner->m_database, id, m_set_on_meetings, school);
@@ -1336,6 +1338,35 @@ bool TeacherPlanningRoomUpdateAction::Undo(){
 }
 wxString TeacherPlanningRoomUpdateAction::Describe(){
 	return wxT("TeacherPlanningRoomUpdateAction");
+}
+
+/*********************************************************/
+/*            TeacherSubordinationUpdateAction           */
+/*********************************************************/
+TeacherSubordinationUpdateAction::TeacherSubordinationUpdateAction(Application * owner, int id_teacher, int * subordinates) : Action(owner){
+	m_id = id_teacher;
+	m_subordinates = subordinates;
+}
+TeacherSubordinationUpdateAction::~TeacherSubordinationUpdateAction(){
+	free(m_subordinates);
+}
+bool TeacherSubordinationUpdateAction::Do(){
+	School * school = m_owner->m_school;
+	Teacher * t = find_teacher_by_id(school,m_id);
+	if(update_teacher_subordination(m_owner->std_out, m_owner->m_database, t->id, m_subordinates, school)){
+		LMH_TODO();
+		int * tmp = t->subordinates;
+		t->subordinates = m_subordinates;
+		m_subordinates = tmp;
+		return true;
+	}
+	return false;
+}
+bool TeacherSubordinationUpdateAction::Undo(){
+	return Do();
+}
+wxString TeacherSubordinationUpdateAction::Describe(){
+	return wxT("TeacherSubordinationUpdateAction");
 }
 
 

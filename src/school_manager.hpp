@@ -332,6 +332,18 @@ private:
 	int		  * m_scores;
 };
 
+class TeacherSubordinationUpdateAction : public Action {
+public:
+	TeacherSubordinationUpdateAction(Application * owner, int id_teacher, int * subordinates);
+	~TeacherSubordinationUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	int			m_id;
+	int		  * m_subordinates;
+};
+
 class ActionManager{
 public:
 	Application * m_owner;
