@@ -72,7 +72,6 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 	School * school = m_owner->m_school;
 	int i, i_subject, n_members = 0, j;
 	int n_total_periods = 0, n_subjects = 0;
-
 	for(i_subject = 0; i_subject < school->n_subjects; ++i_subject){
 		long this_class_n_per = 0;
 		bool is_number = m_subjects_grid->GetCellValue(i_subject,0).ToLong(&this_class_n_per);
@@ -153,23 +152,21 @@ void AddClassGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 			}
 		}
 		/* TODO  populate * rooms; */
-		bool success = insert_class(stdout, m_owner->m_database, &c, school, -1);
-		if(success){
-			int i_class = school->n_classes;
-			school_class_add(school, &c);
-			if(c.assignments){
-				Meeting * meetings = create_meeting_list_for_class(school, &c);
-				insert_meetings_list(stdout, m_owner->m_database, meetings, school);
-				school_meeting_list_add_and_bind(school, i_class, meetings);
+		if(can_insert_class(school, &c)){
+			Action * act = new ClassInsertAction(m_owner, c);
+			bool success = m_owner->Do(act);
+			if(success){
+				m_classes_grid->AppendRows(1);
+				m_classes_grid->SetRowLabel(school->n_classes-1, wxString::FromUTF8(c.name));
+				ClearInsertedData();
+				m_err_msg->SetLabel(m_owner->m_lang->str_success);
+			} else {
+				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 			}
-			m_classes_grid->InsertRows(school->n_classes);
-			m_classes_grid->SetRowLabel(school->n_classes-1, wxString::FromUTF8(c.name));
-			ClearInsertedData();
-			m_err_msg->SetLabel(m_owner->m_lang->str_success);
-			m_owner->NotifyNewUnsavedData();
 		} else {
-			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			m_err_msg->SetLabel(m_owner->m_lang->str_repeated_name_error);
 		}
+		// TODO: check if something needs free
 		free(alist);
 	}
 }

@@ -1,6 +1,7 @@
 #include "gui.hpp"
 
 extern "C" {
+	#include "assert.h"
 	#include "loader.h"
 	#include "util.h"
 };
@@ -78,12 +79,15 @@ void AddSubjectGroupPane::OnCreateButtonClicked(wxCommandEvent & evt){
 			}
 		}
 		SubjectGroupInsertAction * act = new SubjectGroupInsertAction(m_owner, name, members);
-		bool success = m_owner->Do(act);
-		if(success){
-			m_err_msg->SetLabel(m_owner->m_lang->str_success);
-			ClearInsertedData();
+		if(can_insert_subject_group(school, name, members)){
+			if(m_owner->Do(act)){
+				m_err_msg->SetLabel(m_owner->m_lang->str_success);
+				ClearInsertedData();
+			} else {
+				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			}
 		} else {
-			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			m_err_msg->SetLabel(m_owner->m_lang->str_repeated_name_error);
 		}
 	} else {
 		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);

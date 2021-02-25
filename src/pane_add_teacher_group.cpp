@@ -1,6 +1,7 @@
 #include "gui.hpp"
 
 extern "C" {
+	#include "assert.h"
 	#include "loader.h"
 	#include "util.h"
 };
@@ -177,15 +178,20 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 				++i_teaches;
 			}
 		}
-		bool success = insert_teacher(stdout, m_owner->m_database, &group, school, -1);
-		if(success){
-			school_teacher_add(school, &group);
 
-			AddTeacherGroupPane::ClearInsertedData();
-			m_err_msg->SetLabel(m_owner->m_lang->str_success);
-			m_owner->NotifyNewUnsavedData();
+		if(can_insert_teacher(school, &group)){
+			Action * act = new TeacherInsertAction(m_owner, group);
+			bool success = m_owner->Do(act);
+			if(success){
+				m_teachers_grid->AppendRows(1);
+				m_teachers_grid->SetRowLabel(school->n_teachers-1, wxString::FromUTF8(group.name));
+				ClearInsertedData();
+				m_err_msg->SetLabel(m_owner->m_lang->str_success);
+			} else {
+				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			}
 		} else {
-			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			m_err_msg->SetLabel(m_owner->m_lang->str_repeated_name_error);
 		}
 	} else {
 		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);

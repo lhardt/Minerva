@@ -258,6 +258,7 @@ const Language LANG_POR = {
 	.str_participation_in_class_groups=L"Participação em grupos de turmas",
 	.str_max_periods_per_day_subject_group=L"Nº máximo de períodos por dia por grupo de disciplinas",
 	.str_members=L"Membros",
+	.str_repeated_name_error=L"Este nome já está sendo usado.",
 };
 
 const Language LANG_ENG = {
@@ -504,6 +505,7 @@ const Language LANG_ENG = {
 	.str_participation_in_class_groups=L"Participation in class groups",
 	.str_max_periods_per_day_subject_group=L"Max periods per day for each subject group",
 	.str_members=L"Members",
+	.str_repeated_name_error=L"This name has already been used.",
 };
 
 const Language LANG_SPA = {
@@ -734,12 +736,13 @@ const Language LANG_SPA = {
 	.str_selection=L"",
 	.str_clear=L"",
 	.str_selection_and_search=L"",
-	.str_member=L"",
+	.str_member=L"Membro",
 	.str_periods_school_open=L"",
 	.str_subjects_required_by_the_class=L"",
 	.str_participation_in_class_groups=L"",
 	.str_max_periods_per_day_subject_group=L"",
 	.str_members=L"Membros",
+	.str_repeated_name_error=L"El mismo nombre ja está en el banco. (?)",
 };
 
 const Language LANG_DEU = {
@@ -975,4 +978,5 @@ const Language LANG_DEU = {
 	.str_participation_in_class_groups=L"",
 	.str_max_periods_per_day_subject_group=L"",
 	.str_members=L"",
+	.str_repeated_name_error=L"Diese Name wurde bereits verwendet",
 };

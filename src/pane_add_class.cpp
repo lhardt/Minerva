@@ -47,6 +47,7 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	}
 	m_subjects_grid->SetTable(subjects_grid_table, true);
 	m_subjects_grid->AutoSizeColumn(0, true);
+	m_subjects_grid->SetLabelBackgroundColour( wxColor(255,255,255) );
 
 
 	for(i = 0; i < school->n_periods_per_day; ++i){
@@ -156,27 +157,27 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		}
 		c.subordinates = nullptr;
 
-		bool success = insert_class(stdout, m_owner->m_database, &c, school, -1) >= 0;
-		if(success){
-			int i_class = school->n_classes;
-			school_class_add(school, &c);
-			if(c.assignments){
-				Meeting * meetings = create_meeting_list_for_class(school, &c);
-				print_meeting_list(stdout, meetings);
-				insert_meetings_list(stdout, m_owner->m_database, meetings, school);
-				school_meeting_list_add_and_bind(school, i_class, meetings);
+		bool success = false;
+		Action * act = new ClassInsertAction(m_owner, c);
+		if(can_insert_class(school, &c)){
+			bool success =  m_owner->Do(act);
+			if(success){
+				m_err_msg->SetLabel(m_owner->m_lang->str_success);
+				ClearInsertedData();
+				// TODO Does the action take ownership over c.assignments?
+			} else {
+				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
 			}
-			m_err_msg->SetLabel(m_owner->m_lang->str_success);
-
-			ClearInsertedData();
-			m_owner->NotifyNewUnsavedData();
 		} else {
+			m_err_msg->SetLabel(m_owner->m_lang->str_repeated_name_error);
+		}
+		// FREEING
+		if(n_needs > 0){
+			free(alist);
+		}
+		if(! success){
 			free(c.name);
 			free(c.short_name);
-			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
-		}
-		if(alist != NULL){
-			free(alist);
 		}
 	} else {
 		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);

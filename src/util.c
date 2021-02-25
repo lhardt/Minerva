@@ -507,6 +507,7 @@ bool displace_teachers(School * school, Teacher * target,  int start, int n_teac
 			target[new_start + i] = school->teachers[start + i];
 		}
 	}
+	return true;
 }
 
 /*********************************************************/
@@ -1213,6 +1214,54 @@ int 			get_teaches_index_by_id(School * school, int id){
 /*                 ADD AND REMOVE Functions              */
 /*********************************************************/
 
+bool can_insert_class(School * school, Class * c){
+	LMH_ASSERT(school != NULL && c != NULL);
+	for(int i = 0; i < school->n_classes; ++i){
+		if(0 == strcmp(c->name, school->classes[i].name)){
+			return false;
+		}
+	}
+	return true;
+}
+bool can_insert_room(School * school, Room * r){
+	LMH_ASSERT(school != NULL && r != NULL);
+	for(int i = 0; i < school->n_rooms; ++i){
+		if(0 == strcmp(r->name, school->rooms[i].name)){
+			return false;
+		}
+	}
+	return true;
+}
+bool can_insert_teacher(School * school, Teacher * t){
+	LMH_ASSERT(school != NULL && t != NULL);
+	for(int i = 0; i < school->n_teachers; ++i){
+		if(0 == strcmp(t->name, school->teachers[i].name)){
+			return false;
+		}
+	}
+	return true;
+}
+bool can_insert_subject(School * school, Subject * s){
+	LMH_ASSERT(school != NULL && s != NULL);
+	for(int i = 0; i < school->n_subjects; ++i){
+		if(0 == strcmp(s->name, school->subjects[i].name)){
+			return false;
+		}
+	}
+	return true;
+}
+bool can_insert_subject_group(School * school, char * name, int * members){
+	// It does not care about members because two subjectgroups can have the same members,
+	// for example, none, so that they can be altered later.
+	LMH_ASSERT(school != NULL && name != NULL);
+	for(int i = 0; i < school->n_subject_groups; ++i){
+		if(0 == strcmp(name, school->subject_group_names[i])){
+			return false;
+		}
+	}
+	return true;
+}
+
 bool can_remove_class(School * school, int id){
 	for(int i = 0; i < school->n_solutions; ++i){
 		Meeting * m_list = school->solutions[i].meetings;
@@ -1422,7 +1471,7 @@ int school_teaches_add(School * school, Teaches * teaches, bool alter_teacher_te
 	++school->n_teaches;
 	return pos;
 }
-void school_class_add(School * school, Class * c){
+int school_class_add(School * school, Class * c){
 	int pos = 0;
 	LMH_ASSERT(school != NULL && c != NULL);
 	if(school->classes == NULL || school->n_classes == 0){
@@ -1471,9 +1520,13 @@ void school_class_add(School * school, Class * c){
 	if(c->assignments){
 		school_class_assignments_add(school, c);
 	}
+
+	LMH_TODO(); // call  create_meeting_list_for_class  and  school_meeting_list_add_and_bind;
+
 	++school->n_classes;
+	return pos;
 }
-void school_subject_add(School * school, const Subject * const subject){
+int school_subject_add(School * school, const Subject * const subject){
 	int pos = 0;
 	LMH_ASSERT(school != NULL && subject != NULL);
 	if(school->subjects == NULL || school->n_subjects == 0){
@@ -1511,8 +1564,9 @@ void school_subject_add(School * school, const Subject * const subject){
 		}
 	}
 	school->n_subjects++;
+	return pos;
 }
-void school_room_add(School * school, const Room * const room){
+int school_room_add(School * school, const Room * const room){
 	int i, pos = 0;
 	LMH_ASSERT(school != NULL && room != NULL);
 	if(school->n_rooms == 0){
@@ -1562,6 +1616,7 @@ void school_room_add(School * school, const Room * const room){
 	}
 
 	school->n_rooms++;
+	return pos;
 }
 int school_subjectgroup_add(School * school, const char * const name, int id){
 	/* TODO realloc class->in_groups */

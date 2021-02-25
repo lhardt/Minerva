@@ -1,6 +1,7 @@
 #include "gui.hpp"
 
 extern "C" {
+	#include "assert.h"
 	#include "loader.h"
 	#include "util.h"
 };
@@ -140,13 +141,17 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.lecture_period_scores[school->n_periods] = -1;
 		t.planning_period_scores[school->n_periods] = -1;
 
-		TeacherInsertAction * act = new TeacherInsertAction(m_owner, t);
-		bool inserted = m_owner->Do(act);
-		if(inserted){
-			m_err_msg->SetLabel(m_owner->m_lang->str_success);
-			ClearInsertedData();
+		if(can_insert_teacher(school, &t)){
+			TeacherInsertAction * act = new TeacherInsertAction(m_owner, t);
+			bool inserted = m_owner->Do(act);
+			if(inserted){
+				m_err_msg->SetLabel(m_owner->m_lang->str_success);
+				ClearInsertedData();
+			} else {
+				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			}
 		} else {
-			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			m_err_msg->SetLabel(m_owner->m_lang->str_repeated_name_error);
 		}
 		if(n_subjects > 0){
 			free(teaches_vals);

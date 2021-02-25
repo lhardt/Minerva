@@ -344,6 +344,18 @@ private:
 	int		  * m_subordinates;
 };
 
+class ClassInsertAction : public Action {
+public:
+	ClassInsertAction(Application * owner, Class _class);
+	~ClassInsertAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	Class		m_class;
+	ActionState m_state;
+};
+
 class ActionManager{
 public:
 	Application * m_owner;

@@ -1,6 +1,7 @@
 #include "gui.hpp"
 
 extern "C" {
+	#include "assert.h"
 	#include "loader.h"
 	#include "util.h"
 };
@@ -44,18 +45,16 @@ void AddSubjectPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		subject.short_name = copy_wx_string(m_name_text->GetValue());
 		subject.in_groups = NULL;
 
-		SubjectInsertAction * act = new SubjectInsertAction(m_owner, subject);
-		if(m_owner->Do(act)){
-
-		// }
-		// int id = insert_subject(stdout, m_owner->m_database, &subject, m_owner->m_school, -1);
-		// if(id != -1){
-		// 	school_subject_add(m_owner->m_school, &subject);
-			m_err_msg->SetLabel(m_owner->m_lang->str_success);
-			// m_owner->NotifyNewUnsavedData();
-			ClearInsertedData();
+		if(can_insert_subject(m_owner->m_school, &subject)){
+			SubjectInsertAction * act = new SubjectInsertAction(m_owner, subject);
+			if(m_owner->Do(act)){
+				m_err_msg->SetLabel(m_owner->m_lang->str_success);
+				ClearInsertedData();
+			} else {
+				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			}
 		} else {
-			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			m_err_msg->SetLabel(m_owner->m_lang->str_repeated_name_error);
 		}
 	} else {
 		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);

@@ -105,6 +105,13 @@ Assignment * 	find_assignment_by_id(School * school, int id);
 /*                 ADD AND REMOVE Functions              */
 /*********************************************************/
 
+// TODO
+bool can_insert_class(School * school, Class * c);
+bool can_insert_room(School * school, Room * r);
+bool can_insert_teacher(School * school, Teacher * t);
+bool can_insert_subject(School * school, Subject * s);
+bool can_insert_subject_group(School * school, char * name, int * members);
+
 bool can_remove_class(School * school, int id);
 bool can_remove_room(School * school, int id);
 bool can_remove_teacher(School * school, int id);
@@ -117,9 +124,9 @@ void remove_from_int_list(int * list, int i_remove);
 
 int school_teacher_add(School * school, const Teacher * const teacher);
 int school_teaches_add(School * school, Teaches * teaches, bool alter_teacher_teaches_list);
-void school_class_add(School * school, Class * c);
-void school_subject_add(School * school, const Subject * const subject);
-void school_room_add(School * school, const Room * const room);
+int school_class_add(School * school, Class * c);
+int school_subject_add(School * school, const Subject * const subject);
+int school_room_add(School * school, const Room * const room);
 // TODO needed? void school_meeting_add(School * school, Meeting * meet);
 int school_subjectgroup_add(School * school, const char * const name, int id);
 void school_solution_add(School * school, const Solution * const sol);

@@ -1369,11 +1369,42 @@ wxString TeacherSubordinationUpdateAction::Describe(){
 	return wxT("TeacherSubordinationUpdateAction");
 }
 
+/*********************************************************/
+/*                   ClassInsertAction                   */
+/*********************************************************/
+ClassInsertAction::ClassInsertAction(Application * owner, Class _class) : Action(owner){
+	m_class = _class;
+	m_class.id = 0;
+}
+ClassInsertAction::~ClassInsertAction(){
+	if(m_state == state_UNDONE){
+		free_class(&m_class);
+	}
+}
+bool ClassInsertAction::Do(){
+	if(insert_class(m_owner->std_out, m_owner->m_database, &m_class, m_owner->m_school, -1)){
+		school_class_add(m_owner->m_school, &m_class);
+		m_state = state_DONE;
+		return true;
+	}
+	return false;
+}
+bool ClassInsertAction::Undo(){
+	if(remove_class(m_owner->std_out, m_owner->m_database, m_class.id)){
+		school_class_remove(m_owner->m_school, get_class_index_by_id(m_owner->m_school, m_class.id), false);
+		m_state = state_UNDONE;
+		m_class.id = 0;
+	}
+	return false;
+}
+wxString ClassInsertAction::Describe(){
+	return wxT("ClassInsertAction");
+}
+// 	int			m_class;
 
 /*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/
-
 bool ActionManager::Do(Action* act) {
 	if(act->Do()){
 		m_undo_list.push_back(act);

@@ -4,6 +4,7 @@
 #include <wx/combobox.h>
 
 extern "C" {
+	#include "assert.h"
 	#include "types.h"
 	#include "loader.h"
 	#include "util.h"
@@ -95,10 +96,15 @@ void AddRoomPane::OnCreateButtonClicked(wxCommandEvent & ev){
 		}
 		room.availability[school->n_periods] = -1;
 		RoomInsertAction * act = new RoomInsertAction(m_owner, room);
-		if(m_owner->Do(act)){
-			ClearInsertedData();
+		if(can_insert_room(school, &room)){
+			if(m_owner->Do(act)){
+				ClearInsertedData();
+				m_err_msg->SetLabel(m_owner->m_lang->str_success);
+			} else {
+				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			}
 		} else {
-			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			m_err_msg->SetLabel(m_owner->m_lang->str_repeated_name_error);
 		}
 	} else {
 		m_err_msg->SetLabel(m_owner->m_lang->str_fill_the_form_correctly);
