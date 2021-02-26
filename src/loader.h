@@ -83,6 +83,8 @@ bool update_teacher_twin_preference(FILE * console_out, sqlite3 * db, int id_tea
 bool update_teacher_lecture_room_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school);
 bool update_teacher_planning_room_preference(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school);
 bool update_teacher_subordination(FILE * console_out, sqlite3 * db, int id_teacher, int * subordinates, School * school);
+bool update_teacher_lecture_periods(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school);
+bool update_teacher_planning_periods(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school);
 
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);

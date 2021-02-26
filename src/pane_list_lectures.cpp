@@ -21,9 +21,9 @@ ListLecturesPane::ListLecturesPane(Application * owner, wxWindow * parent, wxPoi
 	ScoreGridPane * m_periods = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	ScoreGridPane * m_teachers = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	ScoreGridPane * m_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
-	notebook->InsertPage(0, m_periods, m_owner->m_lang->str_periods);
-	notebook->InsertPage(1, m_teachers, m_owner->m_lang->str_teachers);
-	notebook->InsertPage(2, m_rooms, m_owner->m_lang->str_rooms);
+	notebook->AddPage(m_periods, m_owner->m_lang->str_periods);
+	notebook->AddPage(m_teachers, m_owner->m_lang->str_teachers);
+	notebook->AddPage(m_rooms, m_owner->m_lang->str_rooms);
 
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);

@@ -672,7 +672,8 @@ class ListTeachersPane : public wxScrolledWindow {
 	wxCheckBox			* m_planning_needs_room_text;
 	wxCheckBox			* m_active_text;
 	wxCheckBox			* m_dependency_text;
-	ScoreGridPane		* m_periods;
+	ScoreGridPane		* m_planning_periods;
+	ScoreGridPane		* m_lecture_periods;
 	ScoreGridPane		* m_teaches;
 	PosIntGridPane		* m_days;
 	ScoreGridPane		* m_planning_rooms;
@@ -684,6 +685,10 @@ class ListTeachersPane : public wxScrolledWindow {
 
 	Application * m_owner;
 
+	void OnSavePlanningPeriods(wxCommandEvent &);
+	void OnCancelPlanningPeriods(wxCommandEvent &);
+	void OnSaveLecturePeriods(wxCommandEvent &);
+	void OnCancelLecturePeriods(wxCommandEvent &);
 	void OnSaveTeaches(wxCommandEvent &);
 	void OnCancelTeaches(wxCommandEvent &);
 	void OnSaveDays(wxCommandEvent &);

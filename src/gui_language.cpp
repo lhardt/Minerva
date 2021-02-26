@@ -259,6 +259,8 @@ const Language LANG_POR = {
 	.str_max_periods_per_day_subject_group=L"Nº máximo de períodos por dia por grupo de disciplinas",
 	.str_members=L"Membros",
 	.str_repeated_name_error=L"Este nome já está sendo usado.",
+	.str_planning_periods=L"Períodos / Planejamento",
+	.str_lecture_periods=L"Períodos / Aula",
 };
 
 const Language LANG_ENG = {
@@ -506,6 +508,8 @@ const Language LANG_ENG = {
 	.str_max_periods_per_day_subject_group=L"Max periods per day for each subject group",
 	.str_members=L"Members",
 	.str_repeated_name_error=L"This name has already been used.",
+	.str_planning_periods=L"Periods / Planning",
+	.str_lecture_periods=L"Periods / Lecture",
 };
 
 const Language LANG_SPA = {
@@ -743,6 +747,8 @@ const Language LANG_SPA = {
 	.str_max_periods_per_day_subject_group=L"",
 	.str_members=L"Membros",
 	.str_repeated_name_error=L"El mismo nombre ja está en el banco. (?)",
+	.str_planning_periods=L"",
+	.str_lecture_periods=L"",
 };
 
 const Language LANG_DEU = {
@@ -979,4 +985,6 @@ const Language LANG_DEU = {
 	.str_max_periods_per_day_subject_group=L"",
 	.str_members=L"",
 	.str_repeated_name_error=L"Diese Name wurde bereits verwendet",
+	.str_planning_periods=L"",
+	.str_lecture_periods=L"",
 };

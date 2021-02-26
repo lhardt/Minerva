@@ -25,8 +25,8 @@ ListPlanningTimesPane::ListPlanningTimesPane(Application * owner, wxWindow * par
 	wxNotebook * notebook = new wxNotebook(this, wxID_ANY);
 	m_periods = new ScoreGridPane(m_owner, notebook, wxID_ANY);
 	m_rooms = new ScoreGridPane(m_owner, notebook, wxID_ANY);
-	notebook->InsertPage(0, m_periods, m_owner->m_lang->str_periods);
-	notebook->InsertPage(1, m_rooms, m_owner->m_lang->str_rooms);
+	notebook->AddPage(m_periods, m_owner->m_lang->str_periods);
+	notebook->AddPage(m_rooms, m_owner->m_lang->str_rooms);
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * left_sz = new wxBoxSizer(wxVERTICAL);

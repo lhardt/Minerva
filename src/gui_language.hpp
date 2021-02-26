@@ -256,8 +256,10 @@ typedef struct Language {
 	const wchar_t * const str_participation_in_class_groups;
 	const wchar_t * const str_max_periods_per_day_subject_group;
 	const wchar_t * const str_members;
-
 	const wchar_t * const str_repeated_name_error;
+
+	const wchar_t * const str_planning_periods;
+	const wchar_t * const str_lecture_periods;
 } Language;
 
 const extern Language LANG_POR;

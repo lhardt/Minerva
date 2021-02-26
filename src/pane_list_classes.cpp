@@ -77,11 +77,11 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	description_sizer->Add(delete_btn, 0, wxEXPAND);
 	description_sizer->Add(m_err_msg, 0, wxEXPAND);
 
-	notebook->InsertPage(0, m_periods, m_owner->m_lang->str_availability);
-	notebook->InsertPage(1, m_assignments, m_owner->m_lang->str_subjects);
-	notebook->InsertPage(2, m_rooms, m_owner->m_lang->str_rooms);
-	notebook->InsertPage(3, m_groups, m_owner->m_lang->str_subject_groups);
-	notebook->InsertPage(4, m_superclasses, m_owner->m_lang->str_group);
+	notebook->AddPage(m_periods, m_owner->m_lang->str_availability);
+	notebook->AddPage(m_assignments, m_owner->m_lang->str_subjects);
+	notebook->AddPage(m_rooms, m_owner->m_lang->str_rooms);
+	notebook->AddPage(m_groups, m_owner->m_lang->str_subject_groups);
+	notebook->AddPage(m_superclasses, m_owner->m_lang->str_group);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);

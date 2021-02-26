@@ -1281,6 +1281,65 @@ wxString TeacherTwinningUpdateAction::Describe(){
 }
 
 /*********************************************************/
+/*          TeacherPlanningPeriodsUpdateAction           */
+/*********************************************************/
+TeacherPlanningPeriodsUpdateAction::TeacherPlanningPeriodsUpdateAction(Application * owner, int id_teacher, int * scores) : Action(owner){
+	m_id = id_teacher;
+	m_scores = scores;
+}
+TeacherPlanningPeriodsUpdateAction::~TeacherPlanningPeriodsUpdateAction(){
+	free(m_scores);
+}
+bool TeacherPlanningPeriodsUpdateAction::Do(){
+	School * school = m_owner->m_school;
+	if(update_teacher_planning_periods(m_owner->std_out, m_owner->m_database, m_id, m_scores, school)){
+		Teacher * t = find_teacher_by_id(m_owner->m_school, m_id);
+		LMH_ASSERT(t != NULL);
+		int * tmp = t->planning_period_scores;
+		t->planning_period_scores = m_scores;
+		m_scores = tmp;
+		return true;
+	}
+	return false;
+}
+bool TeacherPlanningPeriodsUpdateAction::Undo(){
+	return Do();
+}
+wxString TeacherPlanningPeriodsUpdateAction::Describe(){
+	return wxT("TeacherPlanningPeriodsUpdateAction");
+}
+
+
+/*********************************************************/
+/*          TeacherLecturePeriodsUpdateAction           */
+/*********************************************************/
+TeacherLecturePeriodsUpdateAction::TeacherLecturePeriodsUpdateAction(Application * owner, int id_teacher, int * scores) : Action(owner){
+	m_id = id_teacher;
+	m_scores = scores;
+}
+TeacherLecturePeriodsUpdateAction::~TeacherLecturePeriodsUpdateAction(){
+	free(m_scores);
+}
+bool TeacherLecturePeriodsUpdateAction::Do(){
+	School * school = m_owner->m_school;
+	if(update_teacher_lecture_periods(m_owner->std_out, m_owner->m_database, m_id, m_scores, school)){
+		Teacher * t = find_teacher_by_id(m_owner->m_school, m_id);
+		LMH_ASSERT(t != NULL);
+		int * tmp = t->lecture_period_scores;
+		t->lecture_period_scores = m_scores;
+		m_scores = tmp;
+		return true;
+	}
+	return false;
+}
+bool TeacherLecturePeriodsUpdateAction::Undo(){
+	return Do();
+}
+wxString TeacherLecturePeriodsUpdateAction::Describe(){
+	return wxT("TeacherLecturePeriodsUpdateAction");
+}
+
+/*********************************************************/
 /*             TeacherLectureRoomUpdateAction            */
 /*********************************************************/
 
@@ -1400,7 +1459,6 @@ bool ClassInsertAction::Undo(){
 wxString ClassInsertAction::Describe(){
 	return wxT("ClassInsertAction");
 }
-// 	int			m_class;
 
 /*********************************************************/
 /*                     ActionManager                     */

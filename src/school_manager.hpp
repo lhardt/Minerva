@@ -272,6 +272,18 @@ private:
 	Teacher m_teacher;
 };
 
+class TeacherLecturePeriodUpdateAction : public Action {
+public:
+	TeacherLecturePeriodUpdateAction(Application * owner, int id_teacher, int * scores);
+	~TeacherLecturePeriodUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	int		m_id;
+	int   * m_scores;
+};
+
 class TeacherSubjectsUpdateAction : public Action {
 public:
 	TeacherSubjectsUpdateAction(Application * owner, int id_teacher, int * subjects);
@@ -282,6 +294,30 @@ public:
 private:
 	int 	m_id;
 	int *	m_subjects;
+};
+
+class TeacherPlanningPeriodsUpdateAction : public Action {
+public:
+	TeacherPlanningPeriodsUpdateAction(Application * owner, int id_teacher, int * scores);
+	~TeacherPlanningPeriodsUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	int 		m_id;
+	int   	  * m_scores;
+};
+
+class TeacherLecturePeriodsUpdateAction : public Action {
+public:
+	TeacherLecturePeriodsUpdateAction(Application * owner, int id_teacher, int * scores);
+	~TeacherLecturePeriodsUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	int 		m_id;
+	int   	  * m_scores;
 };
 
 class TeacherDaysUpdateAction : public Action {

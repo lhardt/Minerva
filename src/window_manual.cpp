@@ -12,14 +12,14 @@ ManualWindow::ManualWindow(Application * owner) : wxFrame(nullptr, wxID_ANY, own
 	SetFont(*m_owner->m_text_font);
 	m_notebook = new wxNotebook(this, wxID_ANY);
 
-	m_notebook->InsertPage(0, PopulateSchoolWindow(), wxT("Geral"));
-	m_notebook->InsertPage(1, PopulateRoomsWindow(), wxT("Salas"));
-	m_notebook->InsertPage(2, PopulateSubjectsWindow(), wxT("Disciplinas"));
-	m_notebook->InsertPage(3, PopulateTeachersWindow(), wxT("Professores"));
-	m_notebook->InsertPage(4, PopulateClassesWindow(), wxT("Turmas"));
-	m_notebook->InsertPage(5, PopulateLecturesWindow(), wxT("Aulas"));
-	m_notebook->InsertPage(6, PopulateTimetableWindow(), wxT("Horário"));
-	m_notebook->InsertPage(7, PopulateSoftwareWindow(), wxT("Software"));
+	m_notebook->AddPage(PopulateSchoolWindow(), wxT("Geral"));
+	m_notebook->AddPage(PopulateRoomsWindow(), wxT("Salas"));
+	m_notebook->AddPage(PopulateSubjectsWindow(), wxT("Disciplinas"));
+	m_notebook->AddPage(PopulateTeachersWindow(), wxT("Professores"));
+	m_notebook->AddPage(PopulateClassesWindow(), wxT("Turmas"));
+	m_notebook->AddPage(PopulateLecturesWindow(), wxT("Aulas"));
+	m_notebook->AddPage(PopulateTimetableWindow(), wxT("Horário"));
+	m_notebook->AddPage(PopulateSoftwareWindow(), wxT("Software"));
 
 	this->Refresh();
 }

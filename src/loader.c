@@ -525,7 +525,7 @@ const char * const DELETE_TEACHER_SUBORDINATION_BY_SCHOOL_ID =
 					"AND Teacher.id_school=? "
 			")");
 
-const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
+const char * const CREATE_TABLE_TEACHER_ATTENDANCE = // TODO: rename to Availability. More reflective of its use.
 			("CREATE TABLE IF NOT EXISTS TeacherAttendance("
 				"id						integer primary key autoincrement not null,"
 				"id_teacher				integer,"
@@ -539,6 +539,12 @@ const char * const CREATE_TABLE_TEACHER_ATTENDANCE =
 const char * const UPSERT_TABLE_TEACHER_ATTENDANCE =
 			("INSERT INTO TeacherAttendance(id_teacher, id_period, score_lecture, score_planning) VALUES (?1,?2,?3,?4) "
 			 "ON CONFLICT (id_teacher, id_period) DO UPDATE SET (score_lecture, score_planning) = (?3,?4)");
+const char * const UPSERT_TEACHER_LECTURE_ATTENDANCE =
+			("INSERT INTO TeacherAttendance(id_teacher, id_period, score_lecture) VALUES (?1,?2,?3) "
+			"ON CONFLICT (id_teacher, id_period) DO UPDATE SET (score_lecture) = (?3)");
+const char * const UPSERT_TEACHER_PLANNING_ATTENDANCE =
+			("INSERT INTO TeacherAttendance(id_teacher, id_period, score_planning) VALUES (?1,?2,?3) "
+			 "ON CONFLICT (id_teacher, id_period) DO UPDATE SET (score_planning) = (?3)");
 const char * const LASTID_TEACHER_ATTENDANCE =
 			("SELECT id FROM TeacherAttendance where rowid = last_insert_rowid()");
 const char * const SELECT_TEACHER_ATTENDANCE_BY_TEACHER_ID =
@@ -3571,4 +3577,11 @@ bool update_teacher_subordination(FILE * console_out, sqlite3 * db, int id_teach
 	sqlite3_finalize(stmt_delete);
 	sqlite3_finalize(stmt_insert);
 	return true;
+}
+
+bool update_teacher_lecture_periods(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school){
+	return insert_or_update_period_scores(console_out,db, UPSERT_TEACHER_LECTURE_ATTENDANCE, id_teacher, scores, school);
+}
+bool update_teacher_planning_periods(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school){
+	return insert_or_update_period_scores(console_out,db, UPSERT_TEACHER_PLANNING_ATTENDANCE, id_teacher, scores, school);
 }
