@@ -82,6 +82,10 @@ wxButton * ScoreGridPane::GetSaveButton(){
 	return m_save_btn;
 }
 
+int	* ScoreGridPane::GetValues(LinearizationPreference preference){
+	return ((ChoiceGridTable*)GetGrid()->GetTable())->GetValues(preference);
+}
+
 ScoreGridPane::~ScoreGridPane(){
 
 }
@@ -124,6 +128,10 @@ PosIntGridPane::PosIntGridPane(Application * owner,
 
 	m_edit_btn->Bind(wxEVT_BUTTON, &PosIntGridPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &PosIntGridPane::OnCancelButtonClicked, this);
+}
+
+int	* PosIntGridPane::GetValues(LinearizationPreference preference){
+	return ((PosIntGridTable*)GetGrid()->GetTable())->GetValues(preference);
 }
 
 PosIntGridPane::PosIntGridPane(Application * owner,

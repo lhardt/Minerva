@@ -392,6 +392,18 @@ private:
 	ActionState m_state;
 };
 
+class ClassAvailabilityUpdateAction : public Action {
+public:
+	ClassAvailabilityUpdateAction(Application * owner, int class_id, int * scores);
+	~ClassAvailabilityUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	int			m_id;
+	int 	  * m_scores;
+};
+
 class ActionManager{
 public:
 	Application * m_owner;

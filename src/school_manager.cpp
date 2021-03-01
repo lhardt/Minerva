@@ -1461,6 +1461,35 @@ wxString ClassInsertAction::Describe(){
 }
 
 /*********************************************************/
+/*             ClassAvailabilityUpdateAction             */
+/*********************************************************/
+ClassAvailabilityUpdateAction::ClassAvailabilityUpdateAction(Application * owner, int class_id, int * scores) : Action(owner){
+	m_id = class_id;
+	m_scores = scores;
+}
+ClassAvailabilityUpdateAction::~ClassAvailabilityUpdateAction(){
+	free(m_scores);
+}
+bool ClassAvailabilityUpdateAction::Do(){
+	School * school = m_owner->m_school;
+	if(update_class_periods(m_owner->std_out, m_owner->m_database, m_id, m_scores, school)){
+		int class_i = get_class_index_by_id(school, m_id);
+		int * tmp = school->classes[class_i].period_scores;
+		school->classes[class_i].period_scores = m_scores;
+		m_scores = tmp;
+		return true;
+	}
+	return false;
+}
+bool ClassAvailabilityUpdateAction::Undo(){
+	return Do();
+}
+wxString ClassAvailabilityUpdateAction::Describe(){
+	return wxT("ClassAvailabilityUpdateAction");
+}
+
+
+/*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/
 bool ActionManager::Do(Action* act) {

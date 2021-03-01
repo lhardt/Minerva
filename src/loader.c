@@ -3585,3 +3585,7 @@ bool update_teacher_lecture_periods(FILE * console_out, sqlite3 * db, int id_tea
 bool update_teacher_planning_periods(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school){
 	return insert_or_update_period_scores(console_out,db, UPSERT_TEACHER_PLANNING_ATTENDANCE, id_teacher, scores, school);
 }
+
+bool update_class_periods(FILE * console_out, sqlite3 * db, int id_class, int * scores, School * school){
+	return insert_or_update_period_scores(console_out,db, UPSERT_TABLE_CLASS_ATTENDANCE, id_class, scores, school);
+}

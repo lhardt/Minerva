@@ -69,6 +69,7 @@ bool PosIntGridTable::DeleteCols(size_t pos, size_t n_del_cols) {
 	wxGridTableMessage pop(this, wxGRIDTABLE_NOTIFY_COLS_DELETED, n_cols, n_del_cols);
 	view->ProcessTableMessage(pop);
 	view->EndBatch();
+	return true;
 }
 bool PosIntGridTable::DeleteRows(size_t pos, size_t n_del_rows) {
 	n_rows -= n_del_rows;
@@ -111,6 +112,17 @@ wxString PosIntGridTable::GetValue( int row, int col ){
 	} else {
 		return wxT("");
 	}
+}
+int * PosIntGridTable::GetValues(LinearizationPreference pref){
+	int total_sz = n_rows * n_cols;
+	int * ret_values = (int*) calloc(total_sz + 1, sizeof(int));
+	for(int i = 0; i < total_sz; ++i){
+		ret_values[i] = pref == ROWS_FIRST ? values[i] :
+		 			pref == COLS_FIRST ? values[(i % n_cols) * n_rows +  i / n_cols] :
+					-365;
+	}
+	ret_values[total_sz] = -1;
+	return ret_values;
 }
 void PosIntGridTable::SetValue( int row, int col, const wxString& value ){
 	long long_val = -1L;
@@ -349,6 +361,17 @@ wxString ChoiceGridTable::GetValue( int row, int col ){
 	} else {
 		return wxT("");
 	}
+}
+int * ChoiceGridTable::GetValues(LinearizationPreference pref){
+	int total_sz = n_rows * n_cols;
+	int * ret_values = (int*) calloc(total_sz + 1, sizeof(int));
+	ret_values[total_sz] = -1;
+	for(int i = 0; i < total_sz; ++i){
+		ret_values[i] = pref == ROWS_FIRST ? values[i] :
+					pref == COLS_FIRST ? values[(i % n_cols) * n_rows +  i / n_cols] :
+					-365;
+	}
+	return ret_values;
 }
 int ChoiceGridTable::GetState( int row, int col ){
 	if(row >= 0 && col >= 0 && row < n_rows && col < n_cols){

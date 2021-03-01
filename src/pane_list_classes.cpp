@@ -2,6 +2,8 @@
 
 #include <wx/spinctrl.h>
 
+#include <iostream>
+
 extern "C" {
 	#include "loader.h"
 	#include "util.h"
@@ -35,7 +37,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_basic_cancel_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
 	m_basic_edit_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_edit);
 	m_periods = new ScoreGridPane(m_owner,notebook, wxID_ANY);
-	m_superclasses = new ScoreGridPane(m_owner,notebook, wxID_ANY);
+	m_class_groups = new ScoreGridPane(m_owner,notebook, wxID_ANY);
 	m_rooms = new ScoreGridPane(m_owner,notebook, wxID_ANY);
 	wxString subject_col_name = m_owner->m_lang->str_periods;
 	m_assignments = new PosIntGridPane(m_owner, notebook, school->n_subjects, wxID_ANY, wxDefaultPosition, wxDefaultSize, subject_col_name);
@@ -81,7 +83,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	notebook->AddPage(m_assignments, m_owner->m_lang->str_subjects);
 	notebook->AddPage(m_rooms, m_owner->m_lang->str_rooms);
 	notebook->AddPage(m_groups, m_owner->m_lang->str_subject_groups);
-	notebook->AddPage(m_superclasses, m_owner->m_lang->str_group);
+	notebook->AddPage(m_class_groups, m_owner->m_lang->str_group);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -89,6 +91,16 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
 
+	m_periods->GetSaveButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnSavePeriods, this);
+	m_periods->GetCancelButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelPeriods, this);
+	m_assignments->GetSaveButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnSaveSubjects, this);
+	m_assignments->GetCancelButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelSubjects, this);
+	m_rooms->GetSaveButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnSaveRooms, this);
+	m_rooms->GetCancelButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelRooms, this);
+	m_groups->GetSaveButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnSaveGroups, this);
+	m_groups->GetCancelButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelGroups, this);
+	m_class_groups->GetSaveButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnSaveClassGroups, this);
+	m_class_groups->GetCancelButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnSaveClassGroups, this);
 	m_basic_edit_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnEditButtonClicked, this);
 	m_basic_cancel_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnRemoveButtonClicked, this);
@@ -96,7 +108,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	Bind(DATA_CHANGE_EVENT, &ListClassesPane::OnDataChange, this);
 
 
-	m_superclasses->SetLabel(m_owner->m_lang->str_participation_in_class_groups);
+	m_class_groups->SetLabel(m_owner->m_lang->str_participation_in_class_groups);
 	m_groups->SetLabel(m_owner->m_lang->str_max_periods_per_day_subject_group);
 	m_rooms->SetLabel(m_owner->m_lang->str_room_preference);
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
@@ -105,8 +117,8 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	// AVAILABILITY PANE CODE
 	m_periods->SetLabel(m_owner->m_lang->str_class_availability);
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
-	periods_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	periods_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
+	periods_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	periods_grid->SetDefaultColumnLabel(m_owner->m_lang->str_day);
 	periods_grid->SetDefaultRowLabel(m_owner->m_lang->str_period);
 
@@ -170,21 +182,9 @@ void ListClassesPane::OnDataChange(wxNotifyEvent &){
 	ShowData();
 }
 
-
-
 void ListClassesPane::OnCancelButtonClicked(wxCommandEvent & ev){
-	m_name_text->Disable();
-	m_active_text->Disable();
-	m_size_text->Disable();
-	m_entry_period_text->Disable();
-	m_exit_period_text->Disable();
-	m_free_periods_text->Disable();
-	m_basic_cancel_btn->Hide();
-	m_basic_edit_btn->SetLabel(m_owner->m_lang->str_edit);
-}
-
-void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
-	if(m_basic_cancel_btn->IsShown()){
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
 		m_name_text->Disable();
 		m_active_text->Disable();
 		m_size_text->Disable();
@@ -193,15 +193,31 @@ void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
 		m_free_periods_text->Disable();
 		m_basic_cancel_btn->Hide();
 		m_basic_edit_btn->SetLabel(m_owner->m_lang->str_edit);
-	} else {
-		m_name_text->Enable();
-		m_active_text->Enable();
-		m_size_text->Enable();
-		m_entry_period_text->Enable();
-		m_exit_period_text->Enable();
-		m_free_periods_text->Enable();
-		m_basic_cancel_btn->Show();
-		m_basic_edit_btn->SetLabel(m_owner->m_lang->str_save);
+	}
+}
+
+void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		if(m_basic_cancel_btn->IsShown()){
+			m_name_text->Disable();
+			m_active_text->Disable();
+			m_size_text->Disable();
+			m_entry_period_text->Disable();
+			m_exit_period_text->Disable();
+			m_free_periods_text->Disable();
+			m_basic_cancel_btn->Hide();
+			m_basic_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+		} else {
+			m_name_text->Enable();
+			m_active_text->Enable();
+			m_size_text->Enable();
+			m_entry_period_text->Enable();
+			m_exit_period_text->Enable();
+			m_free_periods_text->Enable();
+			m_basic_cancel_btn->Show();
+			m_basic_edit_btn->SetLabel(m_owner->m_lang->str_save);
+		}
 	}
 }
 
@@ -211,7 +227,7 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
-		Class * c = find_class_by_id(school, class_id); // &school->classes[m_classes_list->GetSelection()];
+		Class * c = find_class_by_id(school, class_id);
 		m_name_text->SetValue(wxString::FromUTF8(c->name));
 		m_size_text->SetValue(c->size);
 		m_free_periods_text->SetValue(c->can_have_free_periods_flag);
@@ -229,7 +245,7 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		}
 		for(i = 0; i < school->n_periods; ++i){
 			if(school->periods[i]){
-				m_periods->GetGrid()->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day,c->period_scores[i] > 0 ? 0:1);
+				m_periods->GetGrid()->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day,c->period_scores[i] > 0 ? 1:0);
 			}
 		}
 		if(c->max_per_day_subject_group){
@@ -262,7 +278,7 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 				m_entry_period_text->SetLabel(wxT(""));
 				m_exit_period_text->SetLabel(wxT(""));
 				m_subjects_text->SetLabel(wxT(""));
-				m_periods->GetGrid()->SetAllCellsState(0);
+				m_periods->GetGrid()->SetAllCellsState(1);
 
 				m_owner->NotifyNewUnsavedData();
 			} else {
@@ -272,6 +288,111 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 		   wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("(TODO lang) Error! Could not remove, because it is in a timetable already"), m_owner->m_lang->str_error, wxOK);
 		   dialog->ShowModal();
 		}
+	}
+}
+
+void ListClassesPane::OnSavePeriods(wxCommandEvent & evt){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		ChoiceGrid * periods_grid = m_periods->GetGrid();
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		int * scores = m_periods->GetValues();
+		printf("Int list was ");
+		print_int_list(stdout, scores);
+		std::cout << std::endl;
+
+		Action * act = new ClassAvailabilityUpdateAction(m_owner, class_id, scores);
+		if(m_owner->Do(act)){
+			evt.Skip();
+		} else {
+			printf("Action was not done\n");
+		}
+	}
+}
+void ListClassesPane::OnCancelPeriods(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id);
+	}
+}
+
+void ListClassesPane::OnSaveSubjects(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id);
+
+	}
+}
+void ListClassesPane::OnCancelSubjects(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id);
+
+	}
+}
+
+void ListClassesPane::OnSaveRooms(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id);
+
+	}
+}
+
+void ListClassesPane::OnCancelRooms(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id);
+
+	}
+}
+
+void ListClassesPane::OnSaveGroups(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id);
+
+	}
+}
+void ListClassesPane::OnCancelGroups(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id);
+
+	}
+}
+
+void ListClassesPane::OnSaveClassGroups(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id);
+
+	}
+}
+void ListClassesPane::OnCancelClassGroups(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_classes_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		Class * c = find_class_by_id(school, class_id);
+
 	}
 }
 

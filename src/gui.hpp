@@ -71,6 +71,17 @@ private:
 	Application * m_owner;
 };
 
+/* In what order the values of a table will be handed */
+typedef enum LinearizationPreference{
+	/*  0 3 6 *
+	 *  1 4 7 *
+	 *  2 5 8 */
+	ROWS_FIRST,
+	/*  0 1 2 *
+	 *  3 4 5 *
+	 *  6 7 8 */
+	COLS_FIRST
+} LinearizationPreference;
 /* Grid table that only accepts positive integers. */
 class PosIntGridTable : public wxGridTableBase {
  public:
@@ -90,6 +101,7 @@ class PosIntGridTable : public wxGridTableBase {
 	void SetRowLabelValue(int row, const wxString & str) override;
 	wxString GetColLabelValue(int col) override;
 	wxString GetRowLabelValue(int row) override;
+	int	* GetValues(LinearizationPreference preference = ROWS_FIRST);
  private:
 	int n_rows;
 	int n_cols;
@@ -120,6 +132,7 @@ class ChoiceGridTable : public wxGridTableBase {
 	void SetTableState(int state);
 	void SetTableActiveState(int state);
 	int  GetNumberStates();
+	int	* GetValues(LinearizationPreference preference = ROWS_FIRST);
 	/* N rows / N cols */
 	int GetNumberRows() override;
 	int GetNumberCols() override;
@@ -220,6 +233,7 @@ class ScoreGridPane : public wxScrolledWindow {
 	wxButton 	* GetSaveButton();
 	wxButton 	* GetCancelButton();
 	ChoiceGrid  * GetGrid();
+	int			* GetValues(LinearizationPreference preference = ROWS_FIRST);
 	void 		  SetLabel(wxString label);
 	void 		  SetEditing(bool editing = true);
  private:
@@ -256,7 +270,7 @@ class PosIntGridPane : public wxScrolledWindow {
 	wxButton 	* GetEditButton();
 	wxButton 	* GetSaveButton();
 	wxGrid 		* GetGrid();
-	int		 	* GetValues();
+	int		 	* GetValues(LinearizationPreference pref = ROWS_FIRST);
 	void	 	  SetValues(int * values);
 	void		  SetCellValue(int row, int col, int val);
 	void 		  SetEditing(bool editing = true);
@@ -726,7 +740,7 @@ class ListClassesPane : public wxScrolledWindow {
 	ScoreGridPane  		* m_rooms;
 	PosIntGridPane 		* m_assignments;
 	PosIntGridPane 		* m_groups;
-	ScoreGridPane  		* m_superclasses;
+	ScoreGridPane  		* m_class_groups;
 	wxButton 	   		* m_basic_edit_btn;
 	wxButton	   		* m_basic_cancel_btn;
 	Application    		* m_owner;
@@ -736,6 +750,16 @@ class ListClassesPane : public wxScrolledWindow {
 	void OnCancelButtonClicked(wxCommandEvent &);
 	void OnRemoveButtonClicked(wxCommandEvent &);
 	void OnDataChange(wxNotifyEvent &);
+	void OnSavePeriods(wxCommandEvent &);
+	void OnCancelPeriods(wxCommandEvent &);
+	void OnSaveSubjects(wxCommandEvent &);
+	void OnCancelSubjects(wxCommandEvent &);
+	void OnSaveRooms(wxCommandEvent &);
+	void OnCancelRooms(wxCommandEvent &);
+	void OnSaveGroups(wxCommandEvent &);
+	void OnCancelGroups(wxCommandEvent &);
+	void OnSaveClassGroups(wxCommandEvent &);
+	void OnCancelClassGroups(wxCommandEvent &);
 	void ShowData();
 };
 
