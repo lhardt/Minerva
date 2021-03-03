@@ -40,7 +40,7 @@ int insert_class(FILE * console_out, sqlite3* db, Class * c, School * school, in
 int insert_teacher(FILE * console_out, sqlite3* db, Teacher * t, School * school, int optional_id);
 // int insert_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school, int optional_id);
 bool insert_or_update_teaches(FILE * console_out, sqlite3* db, Teaches * t, School * school);
-bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * assignment, School * school);
+bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * assignment, School * school, bool update);
 int insert_room(FILE * console_out, sqlite3* db, Room * room, School * school, int optional_id);
 // int insert_meeting(FILE * console_out, sqlite3* db, Meeting * meet, School * school, int optional_id);
 bool insert_meetings_list(FILE * console_out, sqlite3* db, Meeting * meetings, School * school);
@@ -58,6 +58,7 @@ bool remove_subject(FILE * console_out, sqlite3* db, int id);
 bool remove_subject_group(FILE * console_out, sqlite3* db, int id);
 bool remove_school(FILE * console_out, sqlite3* db, int id);
 bool remove_solution(FILE * console_out, sqlite3* db, int id);
+bool remove_assignment_by_class_id_subject_id(FILE * console_out, sqlite3* db, int id_class, int id_subject);
 
 bool update_school_name(FILE * console_out, sqlite3 * db, int id, char * name);
 bool update_school_period_scores(FILE * console_out, sqlite3 * db, int n_periods, int * period_ids, int * scores);
@@ -86,6 +87,9 @@ bool update_teacher_subordination(FILE * console_out, sqlite3 * db, int id_teach
 bool update_teacher_lecture_periods(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school);
 bool update_teacher_planning_periods(FILE * console_out, sqlite3 * db, int id_teacher, int * scores, School * school);
 bool update_class_periods(FILE * console_out, sqlite3 * db, int id_class, int * scores, School * school);
+bool update_assignment_amount(FILE * console_out, sqlite3 * db, int id_assignment, int new_amount);
+bool update_assignment_teacher_score(FILE * console_out, sqlite3 * db, int id_assignment, int * scores, School * school);
+
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);
 

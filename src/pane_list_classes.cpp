@@ -7,6 +7,7 @@
 extern "C" {
 	#include "loader.h"
 	#include "util.h"
+	#include "assert.h"
 };
 
 ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
@@ -253,7 +254,14 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 				m_groups->GetGrid()->SetCellValue(i,0, wxString::Format("%d", c->max_per_day_subject_group[i]));
 			}
 		}
+
+		printf("School has now %d assignments\n", school->n_assignments);
+		for(int i = 0; i < school->n_assignments; ++i){
+			printf("Assignment i has %x class addr and %x subj addr\n", school->assignments[i].m_class, school->assignments[i].subject);
+
+		}
 	}
+
 }
 
 void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
@@ -298,15 +306,10 @@ void ListClassesPane::OnSavePeriods(wxCommandEvent & evt){
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
 		int * scores = m_periods->GetValues();
-		printf("Int list was ");
-		print_int_list(stdout, scores);
-		std::cout << std::endl;
 
 		Action * act = new ClassAvailabilityUpdateAction(m_owner, class_id, scores);
 		if(m_owner->Do(act)){
 			evt.Skip();
-		} else {
-			printf("Action was not done\n");
 		}
 	}
 }
@@ -314,18 +317,86 @@ void ListClassesPane::OnCancelPeriods(wxCommandEvent &){
 	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
+		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
 		Class * c = find_class_by_id(school, class_id);
+		for(int i = 0; i < school->n_periods; ++i){
+			if(school->periods[i]){
+				periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, c->period_scores[i]);
+			}
+		}
 	}
 }
 
-void ListClassesPane::OnSaveSubjects(wxCommandEvent &){
+void ListClassesPane::OnSaveSubjects(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
 		Class * c = find_class_by_id(school, class_id);
 
+		LMH_ASSERT(c != NULL);
+		LMH_ASSERT(class_id > 0);
+
+		int n_assignments = 0;
+		int * subject_amount = m_assignments->GetValues();
+		for(int i = 0; i < school->n_subjects; ++i){
+			LMH_ASSERT(subject_amount[i] >= 0);
+			if(subject_amount[i] > 0){
+				++n_assignments;
+			}
+		}
+		Assignment * assignments = (Assignment*) calloc(n_assignments, sizeof(Assignment));
+		int i_assign = 0;
+		for(int i = 0; i < school->n_subjects; ++i){
+			if(subject_amount[i] > 0){
+				assignments[i_assign] = {
+					.id=0,
+					.subject=&school->subjects[i],
+					.m_class=c,
+					.amount=subject_amount[i],
+					.max_per_day=school->n_periods_per_day,
+					.possible_teachers=NULL, /* Negative-terminated score list*/
+				};
+				Assignment * old_assignment = find_assignment_by_class_subj_id(school, class_id, school->subjects[i].id);
+				if(old_assignment != NULL){
+					assignments[i_assign].max_per_day = old_assignment->max_per_day;
+					if(old_assignment != NULL){
+						printf("Old possible teachers: ");
+						print_int_list(stdout, old_assignment->possible_teachers);
+						printf("\n");
+						assignments[i_assign].possible_teachers = int_list_copy(old_assignment->possible_teachers);
+					}
+				}
+
+				if(assignments[i_assign].possible_teachers == NULL){
+					assignments[i_assign].possible_teachers = (int*)calloc(school->n_teachers + 1, sizeof(int));
+					assignments[i_assign].possible_teachers[school->n_teachers] = -1;
+					for(int j = 0; j < school->n_teachers; ++j){
+						Teaches * t = find_teaches_by_teacher_subj_id(school, school->teachers[j].id, school->subjects[i].id);
+						if(t != NULL){
+							LMH_ASSERT(t->score > 0);
+							assignments[i_assign].possible_teachers[j] = t->score;
+						}
+					}
+				}
+				++i_assign;
+			}
+		}
+
+		printf("Class id is %d, List of assignments (%d):\n", c->id, n_assignments);
+		for(int i = 0; i < n_assignments; ++i){
+			printf("Assignment with amount %d idclass %d and idsubj %d. tscores %x\n", assignments[i].amount, assignments[i].m_class->id, assignments[i].subject->id, assignments[i].possible_teachers);
+		}
+
+		LMH_ASSERT(n_assignments == i_assign);
+
+		Action * act = new ClassAssignmentsUpdateAction(m_owner, c->id, n_assignments, assignments);
+
+		bool success = m_owner->Do(act);
+		if(success){
+			evt.Skip();
+		}
 	}
 }
 void ListClassesPane::OnCancelSubjects(wxCommandEvent &){

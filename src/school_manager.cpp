@@ -608,7 +608,7 @@ bool SubjectDeleteAction::Undo(){
 		}
 		if(n_assignments > 0){
 			for(int i = 0; i < n_assignments; ++i){
-				bool success = insert_or_update_assignment(stdout, m_owner->m_database, &m_assignments[i], school);
+				bool success = insert_or_update_assignment(stdout, m_owner->m_database, &m_assignments[i], school, false);
 				LMH_ASSERT(success);
 			}
 			if(school->assignments == NULL || school->n_assignments == 0){
@@ -1488,6 +1488,109 @@ wxString ClassAvailabilityUpdateAction::Describe(){
 	return wxT("ClassAvailabilityUpdateAction");
 }
 
+ClassAssignmentsUpdateAction::ClassAssignmentsUpdateAction(Application * owner, int class_id, int n_assignments, Assignment* assignments) : Action(owner){
+	School * school = owner->m_school;
+
+	m_id = class_id;
+	m_n_assignments = n_assignments;
+	m_assignments = assignments;
+
+	// We cannot reference m_assignments[i].subject because the list in School may be realloc'd.
+	m_subject_ids = (int*) calloc(n_assignments + 1, sizeof(int));
+	m_class_ids = (int*) calloc(n_assignments + 1, sizeof(int));
+	for(int i = 0; i < n_assignments; ++i){
+		m_subject_ids[i] = m_assignments[i].subject->id;
+		m_class_ids[i] = m_assignments[i].m_class->id;
+	}
+}
+ClassAssignmentsUpdateAction::~ClassAssignmentsUpdateAction(){
+	free(m_subject_ids);
+	free(m_class_ids);
+	// TODO. Deleting some of the assignments may cause dangling pointers. Maybe.
+}
+bool ClassAssignmentsUpdateAction::Do(){
+	School * school = m_owner->m_school;
+	bool db_success = true;
+
+	// Calculate how many assignments will be substituted or deleted (because of the undo func)
+	int n_old_assignments = 0;
+	Assignment * new_m_assignments;
+	int * new_subject_ids = NULL;
+	int * new_class_ids = NULL;
+	for(int i = 0; i < school->n_assignments; ++i){
+		if(school->assignments[i].m_class->id == m_id){
+			++n_old_assignments;
+		}
+	}
+	if(n_old_assignments > 0){
+		int i_new_m_assignments = 0;
+
+		new_m_assignments = (Assignment *) calloc(n_old_assignments, sizeof(Assignment));
+		new_subject_ids = (int *) calloc(n_old_assignments + 1, sizeof(int));
+		new_subject_ids[n_old_assignments] = -1;
+		new_class_ids = (int*) calloc(n_old_assignments + 1, sizeof(int));
+		new_class_ids[n_old_assignments] = -1;
+
+
+		for(int i = 0; i < school->n_assignments; ++i){
+			if(school->assignments[i].m_class->id == m_id){
+				new_m_assignments[i_new_m_assignments] = school->assignments[i];
+				new_subject_ids[i_new_m_assignments] = get_subject_index_by_id(school, new_m_assignments[i_new_m_assignments].subject->id);
+				new_class_ids[i_new_m_assignments] = get_class_index_by_id(school, new_m_assignments[i_new_m_assignments].m_class->id);
+
+				++i_new_m_assignments;
+			}
+		}
+	}
+
+	for(int i = 0; i < school->n_subjects; ++i){
+		int i_new_assignment = -1;
+		for(int j = 0; j < m_n_assignments; ++j){
+			if(m_subject_ids[j] == school->subjects[i].id){
+				LMH_ASSERT(school->subjects[i].id != 0);
+				i_new_assignment = j;
+				break;
+			}
+		}
+		if(i_new_assignment == -1){
+			int i_old_assignment = get_assignment_index_by_class_subj_id(school, m_id, school->subjects[i].id);
+			if(i_old_assignment > 0){
+				db_success &= remove_assignment_by_class_id_subject_id(m_owner->std_out, m_owner->m_database, m_id, school->subjects[i].id);
+				school_assignment_remove(school, i_old_assignment, false);
+			}
+		} else {
+			Assignment * old_assignment = find_assignment_by_class_subj_id(school, m_id, school->subjects[i].id);
+			LMH_ASSERT(db_success);
+			if(old_assignment != NULL){
+				m_assignments[i_new_assignment].id = old_assignment->id;
+				db_success &= insert_or_update_assignment(m_owner->std_out, m_owner->m_database, &m_assignments[i_new_assignment], school, true);
+				*old_assignment = m_assignments[i_new_assignment];
+			} else {
+				db_success &= insert_or_update_assignment(m_owner->std_out, m_owner->m_database, &m_assignments[i_new_assignment], school, false);
+				school_assignment_add(school, &m_assignments[i_new_assignment]);
+			}
+		}
+	}
+	if(db_success){
+		// Shallow free. Only the list, not the values
+		free(m_assignments);
+		m_assignments = new_m_assignments;
+		m_n_assignments = n_old_assignments;
+		// bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * assignment, School * school){
+
+		printf("Returning true\n");
+		return true;
+	}
+	printf("Returning false\n");
+	return false;
+}
+bool ClassAssignmentsUpdateAction::Undo(){
+	LMH_TODO();
+	return Do();
+}
+wxString ClassAssignmentsUpdateAction::Describe(){
+	return wxT("ClassAssignmentsUpdateAction");
+}
 
 /*********************************************************/
 /*                     ActionManager                     */

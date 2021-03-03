@@ -90,6 +90,8 @@ int 			get_subject_group_index_by_id(School * school, int id);
 int 			get_solution_index_by_id(School * school, int id);
 int 			get_teaches_index_by_teacher_subj_id(School * school, int id_teacher, int id_subj);
 int 			get_teaches_index_by_id(School * school, int id);
+int				get_assignment_index_by_id(School * school, int id);
+int				get_assignment_index_by_class_subj_id(School * school, int id_class, int id_subj);
 Room * 			find_room_by_id(School * school, int id);
 Class * 		find_class_by_id(School * school, int id);
 Teacher * 		find_teacher_by_id(School * school, int id);
@@ -121,6 +123,7 @@ bool can_remove_subject(School * school, int id);
 void add_zeroes_to_score_list(int ** list_ptr, int n_old, int n_new);
 void add_zero_to_score_list_at(int ** list_ptr, int n_old, int at);
 void remove_from_int_list(int * list, int i_remove);
+void remove_from_ptr_list(void ** list, int i_remove);
 
 int school_teacher_add(School * school, const Teacher * const teacher);
 int school_teaches_add(School * school, Teaches * teaches, bool alter_teacher_teaches_list);
@@ -139,6 +142,11 @@ void school_room_remove(School * school, int room_i, bool must_delete);
 void school_meeting_remove(School * school, int meeting_i);
 void school_subjectgroup_remove(School * school, int i, bool must_delete);
 void school_solution_remove(School * school, int solution_i, bool must_delete);
+
+int school_class_assignments_add(School * school, Class * c);
+void school_assignment_add(School * school, Assignment * assignment);
+void school_assignment_remove(School * school, int assignment_i, bool must_delete);
+
 /* XXX: using must_delete = false and not storing the meetings associated will result in memory leakage */
 
 void school_init_meeting_list(School * school);

@@ -356,13 +356,17 @@ const char * const CREATE_TABLE_CLASS_SUBJECT =
 const char * const UPSERT_TABLE_CLASS_SUBJECT =
 			("INSERT INTO ClassSubject(amount, max_per_per_day, id_class, id_subject) VALUES (?1,?2,?3,?4) "
 			 "ON CONFLICT (id_class, id_subject) DO UPDATE SET (amount, max_per_per_day, id_class, id_subject) = (?1,?2,?3,?4)");
+const char * const UPSERT_CLASS_SUBJECT_AMOUNT_BY_ID =
+ 			("INSERT INTO ClassSubject(amount) VALUES (?1) WHERE id=?2 ");
 const char * const LASTID_TABLE_CLASS_SUBJECT =
 			("SELECT id FROM ClassSubject where rowid = last_insert_rowid()");
 const char * const SELECT_CLASS_SUBJECT_BY_CLASS_ID =
 			("SELECT * FROM ClassSubject WHERE id_class = ? ORDER BY id_class");
 const char * const SELECT_CLASS_SUBJECT_BY_SCHOOL_ID =
 			("SELECT * FROM ClassSubject INNER JOIN Class ON Class.id = ClassSubject.id_class "
-				"AND Class.id_school = ? ORDER BY id_class");
+				"AND Class.id_school = ? ORDER BY ClassSubject.id");
+const char * const DELETE_CLASS_SUBJECT_BY_CLASS_ID_SUBJECT_ID =
+			("DELETE FROM ClassSubject WHERE id_class = ? AND  id_subject = ?");
 const char * const DELETE_CLASS_SUBJECT_BY_CLASS_ID =
 			("DELETE FROM ClassSubject WHERE id_class = ?");
 const char * const DELETE_CLASS_SUBJECT_BY_SUBJECT_ID =
@@ -1113,53 +1117,6 @@ const char * const DELETE_PLANNING_SOLUTION_BY_SCHOOL_ID =
 /*                   UTILITY FUNCTIONS                   */
 /*********************************************************/
 
-static bool exec_and_check(sqlite3 * db, const char * const sql, int id){
-	sqlite3_stmt * stmt;
-	int errc = 0;
-	bool retc = true;
-
-	errc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-	if(errc == SQLITE_OK){
-		sqlite3_bind_int(stmt,1,id);
-		errc = sqlite3_step(stmt);
-		if(errc != SQLITE_DONE){
-			printf("Could not execute SQL %s. %d %s.\n", sql, errc, sqlite3_errmsg(db));
-			retc = false;
-		}
-		sqlite3_finalize(stmt);
-	} else {
-		printf("Could not execute SQL %s. %d %s.\n", sql, errc, sqlite3_errmsg(db));
-		retc = false;
-	}
-
-	return retc;
-}
-
-/**
-* SQLite Callback to get the id of a newly inserted row.
-*
-* Parameters related to SQL.
-* @param id_field_ptr: the pointer at which the id data will be written
-*/
-static int get_id_callback(void* id_field_ptr,int no_columns,char** text_columns,char** name_columns){
-	if(no_columns == 1 && id_field_ptr != NULL){
-		*((int *)id_field_ptr) = strtol(text_columns[0], NULL,10);
-		return 0;
-	}
-	printf("CALLBACK FUNCTION MISUSE!");
-	return -1;
-}
-
-
-static char * copy_sqlite_string(sqlite3_stmt * stmt, int col_i){
-	char * str;
-	sqlite3_column_text(stmt,col_i); /* Defines the type to utf8 */
-	int sz = (sqlite3_column_bytes(stmt,col_i));
-	str = calloc(sz + 1, sizeof(char));
-	strncpy(str, (const char *)sqlite3_column_text(stmt,col_i), sz);
-	return str;
-}
-
 #define CERTIFY_ERRC_SQLITE_OK(ret_val) do{ \
 			if(errc != SQLITE_OK){ \
 				fprintf(console_out, "SQLite errc wasn't OK at function %s line %d. %d %s\n", __func__, __LINE__, errc, sqlite3_errmsg(db)); \
@@ -1180,6 +1137,42 @@ static char * copy_sqlite_string(sqlite3_stmt * stmt, int col_i){
 				return ret_val; \
 			} \
 		}while(0)
+
+static bool exec_and_check(FILE * console_out, sqlite3 * db, const char * const sql, int id){
+	sqlite3_stmt * stmt;
+	int errc = 0;
+	errc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	sqlite3_bind_int(stmt,1,id);
+	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_DONE(false);
+	sqlite3_finalize(stmt);
+	return true;
+}
+
+/**
+* SQLite Callback to get the id of a newly inserted row.
+*
+* Parameters related to SQL.
+* @param id_field_ptr: the pointer at which the id data will be written
+*/
+static int get_id_callback(void* id_field_ptr,int no_columns,char** text_columns,char** name_columns){
+	if(no_columns == 1 && id_field_ptr != NULL){
+		*((int *)id_field_ptr) = strtol(text_columns[0], NULL,10);
+		return 0;
+	}
+	printf("CALLBACK FUNCTION MISUSE!");
+	return -1;
+}
+
+static char * copy_sqlite_string(sqlite3_stmt * stmt, int col_i){
+	char * str;
+	sqlite3_column_text(stmt,col_i); /* Defines the type to utf8 */
+	int sz = (sqlite3_column_bytes(stmt,col_i));
+	str = calloc(sz + 1, sizeof(char));
+	strncpy(str, (const char *)sqlite3_column_text(stmt,col_i), sz);
+	return str;
+}
 
 /*********************************************************/
 /*                 CREATE TABLE FUNCTIONS                */
@@ -1545,8 +1538,8 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 	}
 	if(teacher->subordinates != NULL){
 		/* NOTE: Frankly, rebooting it all is unecessarily expensive... but works. */
-		exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SUP_ID, teacher->id);
-		update_teacher_subordination(console_out, db, INSERT_TABLE_TEACHER_SUBORDINATION, teacher->id, teacher->subordinates);
+		exec_and_check(console_out, db, DELETE_TEACHER_SUBORDINATION_BY_SUP_ID, teacher->id);
+		update_teacher_subordination(console_out, db, teacher->id, teacher->subordinates, school);
 	}
 	if(teacher->lecture_room_scores != NULL || teacher->planning_room_scores != NULL){
 		insert_or_update_teacher_room_scores(console_out, db, teacher, school);
@@ -1563,7 +1556,7 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 	return teacher->id;
 }
 
-bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * assignment, School * school){
+bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * assignment, School * school, bool update){
 	int errc;
 	sqlite3_stmt * stmt;
 
@@ -1576,8 +1569,13 @@ bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * 
 	errc = sqlite3_step(stmt);
 	sqlite3_finalize(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(false);
-	sqlite3_exec(db, LASTID_TABLE_CLASS_SUBJECT, get_id_callback, &(assignment->id), NULL);
-	return true;
+	if(!update){
+		printf("Inserting and calling callback.\n");
+		sqlite3_exec(db, LASTID_TABLE_CLASS_SUBJECT, get_id_callback, &(assignment->id), NULL);
+	}
+	printf("Assignment now has id %d\n", assignment->id);
+	bool res = update_assignment_teacher_score(console_out, db, assignment->id, assignment->possible_teachers, school);
+	return res;
 }
 
 bool insert_or_update_class_subject_group(FILE * console_out, sqlite3 * db, Class * class, School * school){
@@ -1643,7 +1641,7 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 	insert_or_update_period_scores(console_out, db, UPSERT_TABLE_CLASS_ATTENDANCE, class->id, class->period_scores, school);
 	if(class->assignments != NULL){
 		for(i = 0;class->assignments[i] != NULL; ++i){
-			insert_or_update_assignment(console_out, db, class->assignments[i], school);
+			insert_or_update_assignment(console_out, db, class->assignments[i], school, false);
 		}
 		printf("Upserted %d assignments\n", i);
 	}
@@ -1832,9 +1830,9 @@ bool insert_meetings_list(FILE * console_out, sqlite3 * db, Meeting * meetings, 
 			if(meetings[i].possible_rooms != NULL){
 				insert_or_update_room_scores(console_out, db, UPSERT_TABLE_LECTURE_POSSIBLE_ROOM, meetings[i].id, meetings[i].possible_rooms, school);
 			}
-			if(meetings[i].possible_teachers != NULL){
-				insert_or_update_teacher_scores(console_out, db, UPSERT_TABLE_POSSIBLE_TEACHER, meetings[i].id, meetings[i].possible_teachers, school);
-			}
+			// if(meetings[i].possible_teachers != NULL){
+			// 	insert_or_update_teacher_scores(console_out, db, UPSERT_TABLE_POSSIBLE_TEACHER, meetings[i].id, meetings[i].possible_teachers, school);
+			// }
 		} else if(meetings[i].type == meet_PLANNING){
 			if (meetings[i].possible_periods != NULL){
 				insert_or_update_period_scores(console_out, db, UPSERT_TABLE_PLANNING_PERIOD, meetings[i].id, meetings[i].possible_periods, school);
@@ -1893,9 +1891,9 @@ static bool insert_all_meetings(FILE * console_out, sqlite3* db, School * school
 			if(school->meetings[i].possible_rooms != NULL){
 				insert_or_update_room_scores(console_out, db, UPSERT_TABLE_LECTURE_POSSIBLE_ROOM, school->meetings[i].id, school->meetings[i].possible_rooms, school);
 			}
-			if(school->meetings[i].possible_teachers != NULL){
-				insert_or_update_teacher_scores(console_out, db, UPSERT_TABLE_POSSIBLE_TEACHER, school->meetings[i].id, school->meetings[i].possible_teachers, school);
-			}
+			// if(school->meetings[i].possible_teachers != NULL){
+			// 	insert_or_update_teacher_scores(console_out, db, UPSERT_TABLE_POSSIBLE_TEACHER, school->meetings[i].id, school->meetings[i].possible_teachers, school);
+			// }
 		} else if(school->meetings[i].type == meet_PLANNING){
 			if (school->meetings[i].possible_periods != NULL){
 				insert_or_update_period_scores(console_out, db, UPSERT_TABLE_PLANNING_PERIOD, school->meetings[i].id, school->meetings[i].possible_periods, school);
@@ -2625,32 +2623,28 @@ static Assignment * select_all_assignments_by_school_id(FILE * console_out, sqli
 	return assignments;
 }
 
-static int * select_all_class_subordination_by_class_id(FILE * console_out, sqlite3* db, Class * class, School * school){
-	int errc, i, subid;
+static int * select_all_class_subordination_by_class_id(FILE * console_out, sqlite3* db, Class * c, School * school){
+	int errc, subid;
 	sqlite3_stmt * stmt;
 
 	errc = sqlite3_prepare_v2(db, SELECT_CLASS_SUBORDINATION_BY_SUP_ID, -1, &stmt, NULL);
-	if(errc != SQLITE_OK){
-		fprintf(console_out, "Could not prepare select classub. %d %s", errc, sqlite3_errmsg(db));
-		return NULL;
-	}
-	sqlite3_bind_int(stmt,1, class->id);
+	CERTIFY_ERRC_SQLITE_OK(NULL);
+	sqlite3_bind_int(stmt,1,c->id);
 	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(NULL);
 	if(errc == SQLITE_ROW){
-		class->subordinates = calloc(school->n_classes + 1, sizeof(int));
-		class->subordinates[school->n_classes] = -1;
+		c->subordinates = calloc(1+ school->n_classes, sizeof(int));
+		c->subordinates[school->n_classes] = -1;
 		while(errc == SQLITE_ROW){
-			subid = sqlite3_column_int(stmt,1);
-			for(i = 0; i < school->n_classes; ++i){
-				if(subid == school->classes[i].id){
-					class->subordinates[i] = 1;
-				}
+			int i_sub = get_class_index_by_id(school, sqlite3_column_int(stmt,1));
+			if(i_sub >= 0){
+				c->subordinates[i_sub] = 1;
 			}
-
 			errc = sqlite3_step(stmt);
 		}
 	}
-	return class->subordinates;
+	sqlite3_finalize(stmt);
+	return c->subordinates;
 }
 
 static int * select_class_subject_group(FILE * console_out, sqlite3* db, int class_id, School * school){
@@ -3129,133 +3123,145 @@ bool load_backup(sqlite3* memory_db, const char * const filename){
 /* NOTE for logical deletes, try updates; 				 */
 
 bool remove_solution(FILE * console_out, sqlite3* db, int id){
-	return  !exec_and_check(db, DELETE_PLANNING_SOLUTION_BY_SOLUTION_ID, id)? false:
-			!exec_and_check(db, DELETE_LECTURE_SOLUTION_BY_SOLUTION_ID, id)? false:
-			!exec_and_check(db, DELETE_SOLUTION_BY_ID, id)? false:
+	return  !exec_and_check(console_out, db, DELETE_PLANNING_SOLUTION_BY_SOLUTION_ID, id)? false:
+			!exec_and_check(console_out, db, DELETE_LECTURE_SOLUTION_BY_SOLUTION_ID, id)? false:
+			!exec_and_check(console_out, db, DELETE_SOLUTION_BY_ID, id)? false:
 			true;
 }
 
 bool remove_room(FILE * console_out, sqlite3* db, int id){
-	return	!exec_and_check(db, UNSET_LECTURE_SOLUTION_ROOM_BY_ROOM_ID, id)?false:
-			!exec_and_check(db, UNSET_PLANNING_SOLUTION_ROOM_ID, id)?false:
-			!exec_and_check(db, DELETE_PLANNING_ROOM_BY_ROOM_ID, id)?false:
-			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_ROOM_BY_ROOM_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_ROOM_BY_ROOM_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_ROOM_BY_ROOM_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_ROOM_BY_ROOM_ID, id)?false:
-			!exec_and_check(db, DELETE_ROOM_AVAILABILITY_BY_ROOM_ID, id)?false:
-			!exec_and_check(db, DELETE_ROOM_BY_ID, id)?false:
+	return	!exec_and_check(console_out, db, UNSET_LECTURE_SOLUTION_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(console_out, db, UNSET_PLANNING_SOLUTION_ROOM_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_PLANNING_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_LECTURE_POSSIBLE_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_ROOM_BY_ROOM_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_ROOM_AVAILABILITY_BY_ROOM_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_ROOM_BY_ID, id)?false:
 			true;
 }
 
 bool remove_subject(FILE * console_out, sqlite3* db, int id){
-	return  !exec_and_check(db,DELETE_LECTURE_SOLUTION_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_LECTURE_POSSIBLE_PERIOD_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_LECTURE_POSSIBLE_ROOM_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_POSSIBLE_TEACHER_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_LECTURE_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_TEACHES_TWIN_PREFERENCE_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_TEACHES_PERIOD_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_TEACHES_ROOM_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_TEACHES_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_CLASS_SUBJECT_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID, id)?false:
-			!exec_and_check(db,DELETE_SUBJECT_BY_ID, id)?false:
+	return  !exec_and_check(console_out, db,DELETE_LECTURE_SOLUTION_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_LECTURE_POSSIBLE_PERIOD_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_LECTURE_POSSIBLE_ROOM_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_POSSIBLE_TEACHER_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_LECTURE_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_TEACHES_TWIN_PREFERENCE_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_TEACHES_PERIOD_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_TEACHES_ROOM_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_TEACHES_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_CLASS_SUBJECT_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_SUBJECT_IN_GROUP_BY_SUBJECT_ID, id)?false:
+			!exec_and_check(console_out, db,DELETE_SUBJECT_BY_ID, id)?false:
 			true;
 }
 
 bool remove_subject_group(FILE * console_out, sqlite3* db, int id){
-	return  !exec_and_check(db, DELETE_CLASS_SUBJECT_GROUP_BY_GROUP_ID, id)?false:
-			!exec_and_check(db, DELETE_SUBJECT_IN_GROUP_BY_GROUP_ID, id)?false:
-			!exec_and_check(db, DELETE_SUBJECT_GROUP_BY_ID, id)?false:
+	return  !exec_and_check(console_out, db, DELETE_CLASS_SUBJECT_GROUP_BY_GROUP_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_SUBJECT_IN_GROUP_BY_GROUP_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_SUBJECT_GROUP_BY_ID, id)?false:
 			true;
 }
 
 bool remove_teacher(FILE * console_out, sqlite3* db, int id) {
-	return	!exec_and_check(db, DELETE_PLANNING_SOLUTION_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_PLANNING_ROOM_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_PLANNING_PERIOD_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_PLANNING_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, UNSET_LECTURE_TEACHER_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_POSSIBLE_TEACHER_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_PERIOD_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_ROOM_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_ROOM_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_ATTENDANCE_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SUB_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SUP_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_DAY_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_BY_ID, id)?false:
+	return	!exec_and_check(console_out, db, DELETE_PLANNING_SOLUTION_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_PLANNING_ROOM_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_PLANNING_PERIOD_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_PLANNING_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, UNSET_LECTURE_TEACHER_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_POSSIBLE_TEACHER_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_PERIOD_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_ROOM_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_ROOM_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_ATTENDANCE_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_SUBORDINATION_BY_SUB_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_SUBORDINATION_BY_SUP_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_DAY_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_BY_ID, id)?false:
 			true;
-			// !exec_and_check(db, UNSET_MEETING_SOLUTION_TEACHER_BY_TEACHER_ID, id)?false:
+			// !exec_and_check(console_out, db, UNSET_MEETING_SOLUTION_TEACHER_BY_TEACHER_ID, id)?false:
 }
 
 /* TODO Check. */
 bool remove_teaches(FILE * console_out, sqlite3* db, int id){
-	return	!exec_and_check(db, DELETE_TEACHES_PERIOD_BY_TEACHES_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHES_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_PERIOD_BY_TEACHES_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_ROOM_BY_TEACHES_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_BY_ID, id)?false:
+	return	!exec_and_check(console_out, db, DELETE_TEACHES_PERIOD_BY_TEACHES_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHES_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_PERIOD_BY_TEACHES_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_ROOM_BY_TEACHES_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_BY_ID, id)?false:
 			true;
 }
 
 bool remove_class(FILE * console_out, sqlite3* db, int id) {
-	return  !exec_and_check(db, DELETE_LECTURE_SOLUTION_BY_CLASS_ID, id)?false:
-			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_PERIOD_BY_CLASS_ID, id)?false:
-			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_ROOM_BY_CLASS_ID, id)?false:
-			!exec_and_check(db, DELETE_POSSIBLE_TEACHER_BY_CLASS_ID, id)?false:
-			!exec_and_check(db, DELETE_LECTURE_BY_CLASS_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_SUBJECT_GROUP_BY_CLASS_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_SUBJECT_BY_CLASS_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_ROOM_BY_CLASS_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_SUBORDINATION_BY_SUB_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_SUBORDINATION_BY_SUP_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_ATTENDANCE_BY_CLASS_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_BY_ID, id)?false:
+	return  !exec_and_check(console_out, db, DELETE_LECTURE_SOLUTION_BY_CLASS_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_LECTURE_POSSIBLE_PERIOD_BY_CLASS_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_LECTURE_POSSIBLE_ROOM_BY_CLASS_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_POSSIBLE_TEACHER_BY_CLASS_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_LECTURE_BY_CLASS_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_SUBJECT_GROUP_BY_CLASS_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_SUBJECT_BY_CLASS_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_ROOM_BY_CLASS_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_SUBORDINATION_BY_SUB_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_SUBORDINATION_BY_SUP_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_ATTENDANCE_BY_CLASS_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_BY_ID, id)?false:
 			true;
 }
 
 bool remove_school(FILE * console_out, sqlite3 * db, int id){
-	return	!exec_and_check(db, DELETE_PLANNING_SOLUTION_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_PLANNING_ROOM_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_PLANNING_PERIOD_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_PLANNING_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_LECTURE_SOLUTION_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_PERIOD_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_LECTURE_POSSIBLE_ROOM_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_POSSIBLE_TEACHER_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_LECTURE_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_SOLUTION_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_PERIOD_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_ROOM_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_ROOM_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_TWIN_PREFERENCE_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_ATTENDANCE_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_SUBORDINATION_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHES_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_DAY_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_TEACHER_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_SUBJECT_GROUP_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_SUBJECT_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_SUBJECT_IN_GROUP_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_SUBJECT_GROUP_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_SUBJECT_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_ROOM_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_SUBORDINATION_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_ATTENDANCE_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_CLASS_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_ROOM_AVAILABILITY_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_ROOM_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_PERIOD_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_DAY_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_DAILY_PERIOD_BY_SCHOOL_ID, id)?false:
-			!exec_and_check(db, DELETE_SCHOOL_BY_ID, id)?false:
+	return	!exec_and_check(console_out, db, DELETE_PLANNING_SOLUTION_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_PLANNING_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_PLANNING_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_PLANNING_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_LECTURE_SOLUTION_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_LECTURE_POSSIBLE_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_LECTURE_POSSIBLE_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_POSSIBLE_TEACHER_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_LECTURE_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_SOLUTION_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_TWIN_PREFERENCE_BY_TEACHER_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_TWIN_PREFERENCE_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_ATTENDANCE_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_SUBORDINATION_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHES_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_DAY_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_TEACHER_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_SUBJECT_GROUP_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_SUBJECT_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_SUBJECT_IN_GROUP_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_SUBJECT_GROUP_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_SUBJECT_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_SUBORDINATION_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_ATTENDANCE_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_CLASS_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_ROOM_AVAILABILITY_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_ROOM_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_DAY_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_DAILY_PERIOD_BY_SCHOOL_ID, id)?false:
+			!exec_and_check(console_out, db, DELETE_SCHOOL_BY_ID, id)?false:
 			true;
+}
+bool remove_assignment_by_class_id_subject_id(FILE * console_out, sqlite3* db, int id_class, int id_subject){
+	sqlite3_stmt * stmt;
+	int errc = 0;
+	errc = sqlite3_prepare_v2(db, DELETE_CLASS_SUBJECT_BY_CLASS_ID_SUBJECT_ID, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	sqlite3_bind_int(stmt,1,id_class);
+	sqlite3_bind_int(stmt,2,id_subject);
+	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_DONE(false);
+	sqlite3_finalize(stmt);
+	return true;
 }
 
 /*********************************************************/
@@ -3481,6 +3487,25 @@ bool update_room_meeting_score(FILE * console_out, sqlite3 * db, int room_id, in
 	sqlite3_finalize(stmt_lec);
 	return true;
 }
+bool update_assignment_teacher_score(FILE * console_out, sqlite3 * db, int id_assignment, int * scores, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && id_assignment > 0);
+	sqlite3_stmt * stmt;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_POSSIBLE_TEACHER, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+	for(int i = 0; i < school->n_teachers; ++i){
+		//id_classsubject, id_teacher, score
+		sqlite3_bind_int(stmt, 1, id_assignment);
+		sqlite3_bind_int(stmt, 2, school->teachers[i].id);
+		sqlite3_bind_int(stmt, 3, scores[i]);
+		errc = sqlite3_step(stmt);
+		sqlite3_reset(stmt);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+	}
+	sqlite3_finalize(stmt);
+	return true;
+}
 bool update_teacher_assignment_score(FILE * console_out, sqlite3 * db, int teacher_id, int * scores, School * school){
 	LMH_ASSERT(console_out != NULL && db != NULL && scores != NULL && school != NULL && teacher_id > 0);
 	sqlite3_stmt * stmt;
@@ -3588,4 +3613,20 @@ bool update_teacher_planning_periods(FILE * console_out, sqlite3 * db, int id_te
 
 bool update_class_periods(FILE * console_out, sqlite3 * db, int id_class, int * scores, School * school){
 	return insert_or_update_period_scores(console_out,db, UPSERT_TABLE_CLASS_ATTENDANCE, id_class, scores, school);
+}
+
+bool update_assignment_amount(FILE * console_out, sqlite3 * db, int id_assignment, int new_amount){
+	LMH_ASSERT(console_out != NULL && db != NULL && id_assignment > 0 && new_amount > 0);
+	sqlite3_stmt * stmt;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, UPSERT_CLASS_SUBJECT_AMOUNT_BY_ID, -1, &stmt, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+
+	sqlite3_bind_int(stmt, 1, new_amount);
+	sqlite3_bind_int(stmt, 2, id_assignment);
+	errc = sqlite3_step(stmt);
+	CERTIFY_ERRC_SQLITE_DONE(false);
+	sqlite3_finalize(stmt);
+	return true;
 }

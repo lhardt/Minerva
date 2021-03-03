@@ -404,6 +404,26 @@ private:
 	int 	  * m_scores;
 };
 
+class ClassAssignmentsUpdateAction : public Action {
+public:
+	ClassAssignmentsUpdateAction(Application * owner, int class_id, int n_assignments, Assignment* assignments);
+	~ClassAssignmentsUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	int			m_id;
+	int			m_n_assignments;
+
+	// Warning: the following members cannot be used here, becausse this pointers may change along the reallocs.
+	// 		m_assignments.subject;
+	// 		m_assignments.m_class;
+	Assignment * m_assignments;
+	// Therefore we use an alternative;
+	int		   * m_subject_ids;
+	int		   * m_class_ids;
+};
+
 class ActionManager{
 public:
 	Application * m_owner;
