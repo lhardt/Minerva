@@ -16,6 +16,17 @@
 
 #include "decisions.h"
 
+/* GET TEACHER SUBJECT SCORE
+ *		Returns the score of teaches for every teacher for this subject.
+ *
+ *	Development status:
+ *
+ *	TODO:
+ *
+ * */
+int * get_teacher_subject_score(const School * school, int id_subject);
+
+
 /* ROOT CONSISTENCY CHECK
  *		Tries to detect problems before the timetable generation.
  *		Returns true if the test passed.
@@ -121,7 +132,7 @@ bool detect_class_circular_subordination(const School * const school);
  * Development Status:
  * 		Implemented, not tested.
  */
-int count_required_meetings(School * school, Class * class, Subject * subject);
+int count_required_meetings(School * school, Class * _class, Subject * subject);
 
 /* PERIOD OVERFLOW RULE:
  *

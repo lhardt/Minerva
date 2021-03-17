@@ -510,7 +510,7 @@ const char * const CREATE_TABLE_TEACHER_SUBORDINATION =
 const char * const INSERT_TABLE_TEACHER_SUBORDINATION =
 			// TODO: maybe there's a better statement that encompasses both insert/delete
 			// and does not need these redundancies.
-			("INSERT INTO TeacherSubordination(id_sup, id_sub) VALUES (?,?) ON CONFLICT (id_sup, id_sub) IGNORE");
+			("INSERT OR IGNORE INTO TeacherSubordination(id_sup, id_sub) VALUES (?,?)");
 /* NOTE: there is no reason to update this table. Only delete and add accordingly */
 const char * const LASTID_TEACHER_SUBORDINATION =
 			("SELECT id FROM TeacherSubordination where rowid = last_insert_rowid()");
@@ -520,8 +520,8 @@ const char * const DELETE_TEACHER_SUBORDINATION_BY_SUP_ID =
 			("DELETE FROM TeacherSubordination WHERE id_sup = ?");
 const char * const DELETE_TEACHER_SUBORDINATION_BY_SUB_ID =
 			("DELETE FROM TeacherSubordination WHERE id_sub = ?");
-const char * const DELETE_TEACHER_SUBORDINATION_BY_SUB_SUP_ID =
-			("DELETE FROM TeacherSubordination WHERE id_sub = ? AND id_sup = ? ON CONFLICT (id_sup, id_sub) IGNORE");
+const char * const DELETE_TEACHER_SUBORDINATION_BY_SUP_SUB_ID =
+			("DELETE FROM TeacherSubordination WHERE id_sup = ? AND id_sub = ?");
 const char * const DELETE_TEACHER_SUBORDINATION_BY_SCHOOL_ID =
 			/* Selecting id_sup is sufficient and equivalent to selecting id_sub*/
 			("DELETE FROM TeacherSubordination WHERE EXISTS("
@@ -1537,8 +1537,6 @@ int insert_teacher(FILE * console_out, sqlite3 * db, Teacher * teacher, School *
 		}
 	}
 	if(teacher->subordinates != NULL){
-		/* NOTE: Frankly, rebooting it all is unecessarily expensive... but works. */
-		exec_and_check(console_out, db, DELETE_TEACHER_SUBORDINATION_BY_SUP_ID, teacher->id);
 		update_teacher_subordination(console_out, db, teacher->id, teacher->subordinates, school);
 	}
 	if(teacher->lecture_room_scores != NULL || teacher->planning_room_scores != NULL){
@@ -3588,7 +3586,7 @@ bool update_teacher_subordination(FILE * console_out, sqlite3 * db, int id_teach
 
 	errc = sqlite3_prepare_v2(db, INSERT_TABLE_TEACHER_SUBORDINATION, -1, &stmt_insert, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
-	errc = sqlite3_prepare_v2(db, DELETE_TEACHER_SUBORDINATION_BY_SUB_SUP_ID, -1, &stmt_delete, NULL);
+	errc = sqlite3_prepare_v2(db, DELETE_TEACHER_SUBORDINATION_BY_SUP_SUB_ID, -1, &stmt_delete, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
 
 	for(int i = 0; i < school->n_teachers; ++i){

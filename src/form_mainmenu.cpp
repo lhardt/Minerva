@@ -24,6 +24,8 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 		SetIcon(wxICON(aaaaaaaa));
 	#endif
 
+	Maximize(true);
+
 	wxString wnd_title;
 	wnd_title << owner->m_lang->str_minerva_school_timetables << " - " << wxString::FromUTF8(m_owner->m_school->name);
 	SetTitle(wnd_title);
@@ -41,20 +43,20 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 		m_owner->m_lang->str_subjects,
 		m_owner->m_lang->str_teachers,
 		m_owner->m_lang->str_classes,
-		m_owner->m_lang->str_events,
 		m_owner->m_lang->str_timetable
+		// m_owner->m_lang->str_events,
 	};
 	const wchar_t * const smenu_names[7][7] = {
 		{m_owner->m_lang->str_data, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
-		{m_owner->m_lang->str_view, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, /* m_owner->m_lang->str_check,*/ m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, /* m_owner->m_lang->str_check,*/ m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, /* m_owner->m_lang->str_check,*/ m_owner->m_lang->str_help, NULL},
+		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, /* m_owner->m_lang->str_check,*/ m_owner->m_lang->str_help, NULL},
 		{m_owner->m_lang->str_view, m_owner->m_lang->str_add, m_owner->m_lang->str_help, NULL}
+		// {m_owner->m_lang->str_view, m_owner->m_lang->str_check, m_owner->m_lang->str_help, NULL},
 	};
 
-	for(int i = 0; i < 7; ++i){
+	for(int i = 0; i < 6; ++i){
 		m_ribbon_pages[i] = new wxRibbonPage(m_ribbon, wxID_ANY, (menu_names[i]));
 		for(int j = 0; smenu_names[i][j] != NULL; ++j){
 			m_rib_bbars[i][j] = new wxRibbonButtonBar(new wxRibbonPanel(m_ribbon_pages[i], wxID_ANY, smenu_names[i][j], wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxRIBBON_PANEL_NO_AUTO_MINIMISE));
@@ -97,36 +99,36 @@ MainMenuForm::MainMenuForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, wx
 	/* SALAS E CARACTERISTICAS DE SALAS */
 	m_rib_bbars[1][0]->AddButton(ID_VIEW_ROOMS, m_owner->m_lang->str_list_rooms, image_list);
 	m_rib_bbars[1][1]->AddButton(ID_ADD_ROOM, m_owner->m_lang->str_add_room, image_add);
-	m_rib_bbars[1][2]->AddButton(ID_CHECK_ALL_ROOMS, m_owner->m_lang->str_check_all, image_check);
-	m_rib_bbars[1][3]->AddButton(ID_OPEN_ROOMS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
+	// m_rib_bbars[1][2]->AddButton(ID_CHECK_ALL_ROOMS, m_owner->m_lang->str_check_all, image_check);
+	m_rib_bbars[1][2]->AddButton(ID_OPEN_ROOMS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 	/* DISCIPLINAS */
 	m_rib_bbars[2][0]->AddButton(ID_VIEW_SUBJECTS, m_owner->m_lang->str_list_subjects, image_list);
 	m_rib_bbars[2][0]->AddButton(ID_VIEW_SUBJECT_GROUPS, m_owner->m_lang->str_list_subject_groups, image_list);
 	m_rib_bbars[2][1]->AddButton(ID_ADD_SUBJECT, m_owner->m_lang->str_add_subject, image_add);
 	m_rib_bbars[2][1]->AddButton(ID_ADD_SUBJECT_GROUP, m_owner->m_lang->str_add_subject_group, image_add);
-	m_rib_bbars[2][2]->AddButton(ID_CHECK_ALL_SUBJECTS, m_owner->m_lang->str_check_all, image_check);
-	m_rib_bbars[2][3]->AddButton(ID_OPEN_SUBJECTS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
+	// m_rib_bbars[2][2]->AddButton(ID_CHECK_ALL_SUBJECTS, m_owner->m_lang->str_check_all, image_check);
+	m_rib_bbars[2][2]->AddButton(ID_OPEN_SUBJECTS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 	/* PROFESSORES */
 	m_rib_bbars[3][0]->AddButton(ID_VIEW_TEACHERS, m_owner->m_lang->str_list_teachers_and_their_groups, image_list);
 	m_rib_bbars[3][1]->AddButton(ID_ADD_TEACHER, m_owner->m_lang->str_add_teacher, image_add);
 	m_rib_bbars[3][1]->AddButton(ID_ADD_TEACHER_GROUP, m_owner->m_lang->str_add_teacher_group, image_add);
-	m_rib_bbars[3][2]->AddButton(ID_CHECK_ALL_TEACHERS, m_owner->m_lang->str_check_all, image_check);
-	m_rib_bbars[3][3]->AddButton(ID_OPEN_TEACHERS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
+	// m_rib_bbars[3][2]->AddButton(ID_CHECK_ALL_TEACHERS, m_owner->m_lang->str_check_all, image_check);
+	m_rib_bbars[3][2]->AddButton(ID_OPEN_TEACHERS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 	/* TURMAS */
 	m_rib_bbars[4][0]->AddButton(ID_VIEW_CLASSES, m_owner->m_lang->str_list_classes_and_their_groups, image_list);
 	m_rib_bbars[4][1]->AddButton(ID_ADD_CLASS, m_owner->m_lang->str_add_class, image_add);
 	m_rib_bbars[4][1]->AddButton(ID_ADD_CLASS_GROUP, m_owner->m_lang->str_add_class_group, image_add);
-	m_rib_bbars[4][2]->AddButton(ID_CHECK_ALL_CLASSES, m_owner->m_lang->str_check_all, image_check);
-	m_rib_bbars[4][3]->AddButton(ID_OPEN_CLASSES_MANUAL, m_owner->m_lang->str_open_manual, image_help);
-	/* AULAS */
-	m_rib_bbars[5][0]->AddButton(ID_VIEW_LECTURES, m_owner->m_lang->str_list_lectures_by_class, image_list);
-	m_rib_bbars[5][0]->AddButton(ID_VIEW_PLANNING_TIMES, m_owner->m_lang->str_list_planning_times, image_list);
-	m_rib_bbars[5][1]->AddButton(ID_CHECK_ALL_EVENTS, m_owner->m_lang->str_check_all, image_check);
-	m_rib_bbars[5][2]->AddButton(ID_OPEN_EVENTS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
+	// m_rib_bbars[4][2]->AddButton(ID_CHECK_ALL_CLASSES, m_owner->m_lang->str_check_all, image_check);
+	m_rib_bbars[4][2]->AddButton(ID_OPEN_CLASSES_MANUAL, m_owner->m_lang->str_open_manual, image_help);
+	// /* AULAS */
+	// m_rib_bbars[5][0]->AddButton(ID_VIEW_LECTURES, m_owner->m_lang->str_list_lectures_by_class, image_list);
+	// m_rib_bbars[5][0]->AddButton(ID_VIEW_PLANNING_TIMES, m_owner->m_lang->str_list_planning_times, image_list);
+	// m_rib_bbars[5][1]->AddButton(ID_CHECK_ALL_EVENTS, m_owner->m_lang->str_check_all, image_check);
+	// m_rib_bbars[5][2]->AddButton(ID_OPEN_EVENTS_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 	/* HORÁRIO */
-	m_rib_bbars[6][0]->AddButton(ID_LIST_TIMETABLES, m_owner->m_lang->str_generated_timetables, image_list);
-	m_rib_bbars[6][1]->AddButton(ID_GENERATE_TIMETABLE, m_owner->m_lang->str_generate_timetable, image_build);
-	m_rib_bbars[6][2]->AddButton(ID_OPEN_TIMETABLE_MANUAL, m_owner->m_lang->str_open_manual, image_help);
+	m_rib_bbars[5][0]->AddButton(ID_LIST_TIMETABLES, m_owner->m_lang->str_generated_timetables, image_list);
+	m_rib_bbars[5][1]->AddButton(ID_GENERATE_TIMETABLE, m_owner->m_lang->str_generate_timetable, image_build);
+	m_rib_bbars[5][2]->AddButton(ID_OPEN_TIMETABLE_MANUAL, m_owner->m_lang->str_open_manual, image_help);
 	m_ribbon->Realize();
 
 	m_center_pane = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);

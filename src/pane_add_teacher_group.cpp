@@ -112,6 +112,7 @@ void AddTeacherGroupPane::OnAddGroupButtonClicked(wxCommandEvent & ev){
 		for(i = 0; i < school->n_teachers; ++i){
 			if(m_teachers_grid->GetCellState(i,0) > 0){
 				Teacher * teacher = &school->teachers[i];
+				printf("Group subordinats %d is 1\n", i);
 				group.subordinates[i] = 1;
 				if(added_ctr == 0){
 					group.max_meetings_per_class_per_day = teacher->max_meetings_per_class_per_day;

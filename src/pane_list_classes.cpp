@@ -8,6 +8,7 @@ extern "C" {
 	#include "loader.h"
 	#include "util.h"
 	#include "assert.h"
+	#include "logic.h"
 };
 
 ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){

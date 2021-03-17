@@ -7,6 +7,28 @@
 #include "maths.h"
 #include "util.h"
 
+/* GET TEACHER SUBJECT SCORE
+ *		Returns the score of teaches for every teacher for this subject.
+ *
+ *	Development status:
+ *
+ *	TODO:
+ *
+ * */
+int * get_teacher_subject_score(const School * school, int id_subject){
+	LMH_ASSERT(school != NULL && id_subject >= 0);
+	int * list = calloc(school->n_teachers + 1, sizeof(int));
+	for(int i = 0; i < school->n_teaches; ++i){
+		if(school->teaches[i].subject->id == id_subject){
+			int i_teacher = get_teacher_index_by_id(school, school->teaches[i].teacher->id);
+			LMH_ASSERT(i_teacher >= 0);
+			LMH_ASSERT(list[i_teacher] == 0);
+			list[i_teacher] = school->teaches[i].score;
+		}
+	}
+	return list;
+}
+
 /* DETECT TEACHER CIRCULAR SUBORDINATION
  *		Tries to detect if some teacher subordinates itself, which is illegal.
  *

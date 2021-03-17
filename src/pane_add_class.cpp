@@ -5,6 +5,7 @@
 extern "C" {
 	#include "loader.h"
 	#include "util.h"
+	#include "logic.h"
 };
 
 AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) : wxScrolledWindow(parent, wxID_ANY, pos, wxSize(600,400), wxSIMPLE_BORDER){
@@ -147,11 +148,12 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 					alist[i_need].subject = &school->subjects[i_subject];
 					alist[i_need].amount = (int) n_per;
 					alist[i_need].m_class = &c;
+					alist[i_need].max_per_day = school->n_periods_per_day;
+					alist[i_need].possible_teachers = get_teacher_subject_score(school, school->subjects[i_subject].id);
 					++i_need;
 				}
 			}
-			alist[i_need].subject = NULL;
-			alist[i_need].amount = -1;
+			c.assignments[n_needs] = NULL;
 		} else {
 			c.assignments = nullptr;
 		}
