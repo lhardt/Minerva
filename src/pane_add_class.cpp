@@ -160,8 +160,8 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.subordinates = nullptr;
 
 		bool success = false;
-		Action * act = new ClassInsertAction(m_owner, c);
 		if(can_insert_class(school, &c)){
+			Action * act = new ClassInsertAction(m_owner, c);
 			bool success =  m_owner->Do(act);
 			if(success){
 				m_err_msg->SetLabel(m_owner->m_lang->str_success);

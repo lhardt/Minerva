@@ -144,7 +144,7 @@ void school_subjectgroup_remove(School * school, int i, bool must_delete);
 void school_solution_remove(School * school, int solution_i, bool must_delete);
 
 int school_class_assignments_add(School * school, Class * c);
-void school_assignment_add(School * school, Assignment * assignment);
+void school_assignment_add(School * school, Assignment * assignment, bool add_to_class_assignments);
 void school_assignment_remove(School * school, int assignment_i, bool must_delete);
 
 /* XXX: using must_delete = false and not storing the meetings associated will result in memory leakage */

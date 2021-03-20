@@ -1553,12 +1553,15 @@ int school_class_add(School * school, Class * c){
 		}
 	}
 	if(c->assignments){
-		for(int i = 0; c->assignments[i] != NULL; ++i){
-			school_assignment_add(school, c->assignments[i]);
-		}
-		// school_class_assignments_add(school, c);
-	}
+		printf("Inside add address was %x %x %x\n", c, c->assignments, c->assignments[0]->m_class);
 
+		int i = 0;
+		for(i = 0; c->assignments[i] != NULL; ++i){
+			school_assignment_add(school, c->assignments[i], false);
+			if(i > 3) break;
+		}
+		printf("Gone up to %d\n", i);
+	}
 	LMH_TODO(); // call  create_meeting_list_for_class  and  school_meeting_list_add_and_bind;
 
 	++school->n_classes;
@@ -1962,7 +1965,7 @@ void school_solution_remove(School * school, int i_solution, bool must_delete){
 	--school->n_solutions;
 }
 
-void school_assignment_add(School * school, Assignment * assignment){
+void school_assignment_add(School * school, Assignment * assignment, bool add_to_class_assignments){
 	LMH_ASSERT(school != NULL && assignment != NULL && assignment->id > 0);
 
 	if(school->assignments == NULL){
@@ -1996,13 +1999,14 @@ void school_assignment_add(School * school, Assignment * assignment){
 
 	school->assignments[pos] = *assignment;
 
-	// Adds to class.assignments
-	Class * c = assignment->m_class;
-	int sz_c_assignments = 0;
-	for(sz_c_assignments = 0; c->assignments[sz_c_assignments] != NULL; ++sz_c_assignments){ }
-	c->assignments = realloc(c->assignments, (sz_c_assignments + 2) * sizeof(Assignment*));
-	c->assignments[sz_c_assignments] = &school->assignments[pos];
-	c->assignments[sz_c_assignments+1] = NULL;
+	if(add_to_class_assignments){
+		Class * c = assignment->m_class;
+		int sz_c_assignments = 0;
+		for(sz_c_assignments = 0; c->assignments[sz_c_assignments] != NULL; ++sz_c_assignments){ }
+		c->assignments = realloc(c->assignments, (sz_c_assignments + 2) * sizeof(Assignment*));
+		c->assignments[sz_c_assignments] = &school->assignments[pos];
+		c->assignments[sz_c_assignments+1] = NULL;
+	}
 
 	++ school->n_assignments;
 }

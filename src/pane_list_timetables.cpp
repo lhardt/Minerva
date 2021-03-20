@@ -225,6 +225,10 @@ void ListTimetablesPane::ShowData(){
 		m_timetables_list->AddItem(school->solutions[i].id, wxString::FromUTF8(school->solutions[i].name));
 	}
 
+	m_teachers->GridRemake(school->n_periods_per_day, school->n_days);
+	m_rooms->GridRemake(school->n_periods_per_day, school->n_days);
+	m_classes->GridRemake(school->n_periods_per_day, school->n_days);
+
 	/* Rooms Code */
 	/* Teachers Code */
 	for(int i = 0; i < school->n_classes; ++i){

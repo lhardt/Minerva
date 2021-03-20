@@ -1636,9 +1636,12 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 	sqlite3_exec(db, LASTID_TABLE_CLASS, get_id_callback, &(class->id), NULL);
 	sqlite3_finalize(stmt);
 
+	printf("At this time, id was %d\n", class->id);
+
 	insert_or_update_period_scores(console_out, db, UPSERT_TABLE_CLASS_ATTENDANCE, class->id, class->period_scores, school);
 	if(class->assignments != NULL){
 		for(i = 0;class->assignments[i] != NULL; ++i){
+			LMH_ASSERT(class->assignments[i]->m_class == class);
 			insert_or_update_assignment(console_out, db, class->assignments[i], school, false);
 		}
 		printf("Upserted %d assignments\n", i);
@@ -1933,7 +1936,8 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 	int i_inserted = 0;
 	for(i = 0; i < sol->n_meetings; ++i){
 		if(sol->meetings[i].type == meet_LECTURE){
-			LMH_ASSERT(school->meetings != NULL && school->period_ids != NULL && sol->meetings[i].teacher != NULL && sol->meetings[i].room != NULL);
+			LMH_ASSERT(school->meetings != NULL);
+			LMH_ASSERT(school->period_ids != NULL && sol->meetings[i].teacher != NULL && sol->meetings[i].room != NULL);
 			sqlite3_bind_int(stmt, 1, school->meetings[i].id);
 			sqlite3_bind_int(stmt, 2, sol->id);
 			sqlite3_bind_int(stmt, 3, school->period_ids[ sol->meetings[i].period ]);

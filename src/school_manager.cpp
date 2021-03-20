@@ -915,6 +915,10 @@ TeacherInsertAction::TeacherInsertAction(Application * owner, Teacher t) : Actio
 	m_teacher = t;
 	m_teacher.id = -1;
 	m_teaches = NULL;
+
+	for(int i = 0; m_teacher.teaches[i] != NULL; ++i){
+		m_teacher.teaches[i]->teacher = &m_teacher;
+	}
 }
 TeacherInsertAction::~TeacherInsertAction(){
 	if(m_state == state_UNDONE){
@@ -1434,6 +1438,11 @@ wxString TeacherSubordinationUpdateAction::Describe(){
 ClassInsertAction::ClassInsertAction(Application * owner, Class _class) : Action(owner){
 	m_class = _class;
 	m_class.id = 0;
+	int i ;
+	for(i = 0; m_class.assignments[i] != NULL; ++i){
+		m_class.assignments[i]->m_class = &m_class;
+	}
+	printf("Stopped at %d\n", i);
 }
 ClassInsertAction::~ClassInsertAction(){
 	if(m_state == state_UNDONE){
@@ -1567,7 +1576,7 @@ bool ClassAssignmentsUpdateAction::Do(){
 				*old_assignment = m_assignments[i_new_assignment];
 			} else {
 				db_success &= insert_or_update_assignment(m_owner->std_out, m_owner->m_database, &m_assignments[i_new_assignment], school, false);
-				school_assignment_add(school, &m_assignments[i_new_assignment]);
+				school_assignment_add(school, &m_assignments[i_new_assignment], true);
 			}
 		}
 	}

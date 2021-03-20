@@ -101,11 +101,16 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.planning_needs_room = false;
 		t.active = true;
 		t.subordinates = NULL;
-		t.lecture_room_scores = NULL;
-		t.planning_room_scores = NULL;
+		t.lecture_room_scores = (int*) calloc(school->n_rooms + 1, sizeof(int));
+		t.planning_room_scores = (int*) calloc(school->n_rooms + 1, sizeof(int));
 		t.day_max_meetings = (int*) calloc(school->n_days + 1, sizeof(int));
 		t.day_scores = (int*) calloc(school->n_days + 1, sizeof(int));
 		t.planning_twin_scores = NULL;
+
+		for(int i = 0; i < school->n_rooms; ++i){
+			t.lecture_room_scores[i] = 1;
+			t.planning_room_scores[i] = 1;
+		}
 
 		for(int i = 0; i < school->n_days; ++i){
 			t.day_max_meetings[i] = school->n_periods_per_day;
