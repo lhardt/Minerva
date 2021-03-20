@@ -135,7 +135,7 @@ void ListTimetablesPane::OnClassSelectionChaged(wxCommandEvent &){
 		int class_id = ((IntClientData*)m_class_picker->GetClientObject(m_class_picker->GetSelection()))->m_value;
 		Solution * sol = find_solution_by_id(m_owner->m_school, solution_id);
 
-		m_classes->SetAllCellsState(school->n_subjects);
+		m_classes->SetAllCellsState(-1);
 		for(int i = 0; i < sol->n_meetings; ++i){
 			if(class_id == sol->meetings[i].m_class->id && sol->meetings[i].type == meet_LECTURE){
 				int period = sol->meetings[i].period;
@@ -154,7 +154,7 @@ void ListTimetablesPane::OnTeacherSelectionChaged(wxCommandEvent &){
 		int teacher_id = ((IntClientData*)m_teacher_picker->GetClientObject(m_teacher_picker->GetSelection()))->m_value;
 		Solution * sol = find_solution_by_id(m_owner->m_school, solution_id);
 
-		m_teachers->SetAllCellsState(school->n_classes + 1);
+		m_teachers->SetAllCellsState(-1);
 		for(int i = 0; i < sol->n_meetings; ++i){
 			int period = sol->meetings[i].period;
 			if(teacher_id == sol->meetings[i].teacher->id){
@@ -179,7 +179,7 @@ void ListTimetablesPane::OnRoomSelectionChaged(wxCommandEvent &){
 		int room_id = ((IntClientData*)m_room_picker->GetClientObject(m_room_picker->GetSelection()))->m_value;
 		Solution * sol = find_solution_by_id(m_owner->m_school, solution_id);
 
-		m_rooms->SetAllCellsState(school->n_classes + 1);
+		m_rooms->SetAllCellsState(-1);
 		for(int i = 0; i < sol->n_meetings; ++i){
 			int period = sol->meetings[i].period;
 			if(room_id == sol->meetings[i].room->id){
@@ -264,9 +264,9 @@ void ListTimetablesPane::ShowData(){
 	m_teachers->SetCanUserClick(false);
 	m_classes->SetCanUserClick(false);
 	m_rooms->SetCanUserClick(false);
-	m_rooms->SetAllCellsState(school->n_classes + 1);
-	m_teachers->SetAllCellsState(school->n_classes);
-	m_classes->SetAllCellsState(school->n_subjects);
+	m_rooms->SetAllCellsState(-1);
+	m_teachers->SetAllCellsState(-1);
+	m_classes->SetAllCellsState(-1);
 
 	for(int i = 0; i < school->n_classes; ++i){
 		m_class_picker->Append(wxString::FromUTF8(school->classes[i].name), new IntClientData(school->classes[i].id));

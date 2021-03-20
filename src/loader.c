@@ -1938,7 +1938,9 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 		if(sol->meetings[i].type == meet_LECTURE){
 			LMH_ASSERT(school->meetings != NULL);
 			LMH_ASSERT(school->period_ids != NULL && sol->meetings[i].teacher != NULL && sol->meetings[i].room != NULL);
-			sqlite3_bind_int(stmt, 1, school->meetings[i].id);
+			LMH_TODO(); // Fazer com que school->meetings tenha dados antes de criar solutions
+			// sqlite3_bind_int(stmt, 1, school->meetings[i].id);
+			
 			sqlite3_bind_int(stmt, 2, sol->id);
 			sqlite3_bind_int(stmt, 3, school->period_ids[ sol->meetings[i].period ]);
 			sqlite3_bind_int(stmt, 4, sol->meetings[i].teacher->id);
