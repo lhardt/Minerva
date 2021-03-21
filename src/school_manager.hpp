@@ -424,6 +424,17 @@ private:
 	int		   * m_class_ids;
 };
 
+class ClassBasicDataUpdateAction : public Action {
+public:
+	ClassBasicDataUpdateAction(Application * owner, int id, Class c);
+	~ClassBasicDataUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	Class m_class;
+};
+
 class ClassRoomsUpdateAction : public Action {
 public:
 	ClassRoomsUpdateAction(Application * owner, int id_class, int * scores);
@@ -434,6 +445,18 @@ public:
 private:
 	int			m_id;
 	int		  * m_scores;
+};
+
+class ClassSubjectGroupsUpdateAction : public Action {
+public:
+	ClassSubjectGroupsUpdateAction(Application * owner, int id_class, int * max);
+	~ClassSubjectGroupsUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	int			m_id;
+	int       * m_max;
 };
 
 class ActionManager{

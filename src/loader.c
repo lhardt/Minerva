@@ -1568,30 +1568,26 @@ bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * 
 	sqlite3_finalize(stmt);
 	CERTIFY_ERRC_SQLITE_DONE(false);
 	if(!update){
-		printf("Inserting and calling callback.\n");
 		sqlite3_exec(db, LASTID_TABLE_CLASS_SUBJECT, get_id_callback, &(assignment->id), NULL);
 	}
-	printf("Assignment now has id %d\n", assignment->id);
 	bool res = update_assignment_teacher_score(console_out, db, assignment->id, assignment->possible_teachers, school);
 	return res;
 }
 
-bool insert_or_update_class_subject_group(FILE * console_out, sqlite3 * db, Class * class, School * school){
+bool update_class_subject_group(FILE * console_out, sqlite3 * db, int id, int * max, School * school){
 	int i, errc;
 	sqlite3_stmt * stmt;
 
-	LMH_ASSERT(db != NULL && class != NULL && school != NULL);
+	LMH_ASSERT(db != NULL && id > 0 && max != NULL && school != NULL);
 
 	errc = sqlite3_prepare_v2(db, UPSERT_TABLE_CLASS_SUBJECT_GROUP, -1, &stmt, NULL);
 	CERTIFY_ERRC_SQLITE_OK(false);
-	for(i = 0; i < school->n_subject_groups && class->max_per_day_subject_group[i] >= 0; ++i){
-		// TODO: Testar
-		sqlite3_bind_int(stmt,1, class->id);
+	for(i = 0; i < school->n_subject_groups && max[i] >= 0; ++i){
+		sqlite3_bind_int(stmt,1, id);
 		sqlite3_bind_int(stmt,2, school->subject_group_ids[i]);
-		sqlite3_bind_int(stmt,3, class->max_per_day_subject_group[i]);
+		sqlite3_bind_int(stmt,3, max[i]);
 		errc = sqlite3_step(stmt);
-		CERTIFY_ERRC_SQLITE_DONE(stmt);
-		// id_class, id_group, max_per_day
+		CERTIFY_ERRC_SQLITE_DONE(false);
 	}
 
 	return true;
@@ -1657,7 +1653,7 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 		insert_or_update_room_scores(console_out, db, UPSERT_TABLE_CLASS_ROOM, class->id, class->room_scores, school);
 	}
 	if(class->max_per_day_subject_group != NULL){
-		insert_or_update_class_subject_group(console_out, db, class, school);
+		update_class_subject_group(console_out, db, class->id, class->max_per_day_subject_group, school);
 	}
 	return class->id;
 }
@@ -2719,8 +2715,6 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 	for(i = 0; i < n; ++i){
 		classes[i].period_scores = select_period_scores(console_out, db, SELECT_CLASS_ATTENDANCE_BY_CLASS_ID, classes[i].id, school);
 		classes[i].room_scores = select_room_scores(console_out, db, SELECT_CLASS_ROOM_BY_CLASS_ID, classes[i].id, school);
-		printf("Class %s has room scores ", classes[i].name);
-		print_int_list(stdout, classes[i].room_scores);
 		select_all_class_subordination_by_class_id(console_out, db, &classes[i], school);
 		classes[i].max_per_day_subject_group = select_class_subject_group(console_out, db, classes[i].id,school);
 		/* The assignments are linked later, in link_assignments. Otherwise we would

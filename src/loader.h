@@ -90,6 +90,7 @@ bool update_class_periods(FILE * console_out, sqlite3 * db, int id_class, int * 
 bool update_assignment_amount(FILE * console_out, sqlite3 * db, int id_assignment, int new_amount);
 bool update_assignment_teacher_score(FILE * console_out, sqlite3 * db, int id_assignment, int * scores, School * school);
 bool update_class_room_score(FILE * console_out, sqlite3 * db, int class_id, int * scores,  School * school);
+bool update_class_subject_group(FILE * console_out, sqlite3 * db, int id, int * max, School * school);
 
 char** select_all_school_names(FILE * console_out, sqlite3* db, int ** ids);
 School * select_school_by_id(FILE * console_out, sqlite3* db, int id);

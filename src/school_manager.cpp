@@ -1470,6 +1470,55 @@ wxString ClassInsertAction::Describe(){
 }
 
 /*********************************************************/
+/*               ClassBasicDataUpdateAction              */
+/*********************************************************/
+ClassBasicDataUpdateAction::ClassBasicDataUpdateAction(Application * owner, int id, Class c) : Action(owner){
+	m_class = c;
+	m_class.id = id; // Stricly redundant, but forces the caller to input an id.
+}
+ClassBasicDataUpdateAction::~ClassBasicDataUpdateAction(){
+	free(m_class.name);
+	free(m_class.short_name);
+}
+bool ClassBasicDataUpdateAction::Do(){
+	if(update_class_basic_data(m_owner->std_out, m_owner->m_database, &m_class, m_owner->m_school)){
+		Class * sch_class = find_class_by_id(m_owner->m_school, m_class.id);
+		Class tmp = (Class){
+			.name = sch_class->name,
+			.short_name = sch_class->short_name,
+			.size = sch_class->size,
+			.maximal_entry_period = sch_class->maximal_entry_period,
+			.minimal_exit_period = sch_class->minimal_exit_period,
+			.can_have_free_periods_flag = sch_class->can_have_free_periods_flag,
+			.active = sch_class->active
+		};
+
+		sch_class->name = m_class.name;
+		sch_class->short_name = m_class.short_name;
+		sch_class->size = m_class.size;
+		sch_class->maximal_entry_period = m_class.maximal_entry_period;
+		sch_class->minimal_exit_period = m_class.minimal_exit_period;
+		sch_class->can_have_free_periods_flag = m_class.can_have_free_periods_flag;
+		sch_class->active = m_class.active;
+
+		m_class.name = tmp.name;
+		m_class.short_name = tmp.short_name;
+		m_class.size = tmp.size;
+		m_class.maximal_entry_period = tmp.maximal_entry_period;
+		m_class.minimal_exit_period = tmp.minimal_exit_period;
+		m_class.can_have_free_periods_flag = tmp.can_have_free_periods_flag;
+		m_class.active = tmp.active;
+	}
+}
+bool ClassBasicDataUpdateAction::Undo(){
+	return Do();
+}
+wxString ClassBasicDataUpdateAction::Describe(){
+	return wxT("ClassBasicDataUpdateAction");
+}
+
+
+/*********************************************************/
 /*             ClassAvailabilityUpdateAction             */
 /*********************************************************/
 ClassAvailabilityUpdateAction::ClassAvailabilityUpdateAction(Application * owner, int class_id, int * scores) : Action(owner){
@@ -1585,12 +1634,9 @@ bool ClassAssignmentsUpdateAction::Do(){
 		free(m_assignments);
 		m_assignments = new_m_assignments;
 		m_n_assignments = n_old_assignments;
-		// bool insert_or_update_assignment(FILE * console_out, sqlite3 * db, Assignment * assignment, School * school){
 
-		printf("Returning true\n");
 		return true;
 	}
-	printf("Returning false\n");
 	return false;
 }
 bool ClassAssignmentsUpdateAction::Undo(){
@@ -1601,11 +1647,44 @@ wxString ClassAssignmentsUpdateAction::Describe(){
 	return wxT("ClassAssignmentsUpdateAction");
 }
 
+/*********************************************************/
+/*            ClassSubjectGroupsUpdateAction             */
+/*********************************************************/
+ClassSubjectGroupsUpdateAction::ClassSubjectGroupsUpdateAction(Application * owner, int id_class, int * max) : Action(owner){
+	LMH_ASSERT(owner != NULL && id_class > 0 && max != NULL);
+	m_id = id_class;
+	m_max = max;
+}
+ClassSubjectGroupsUpdateAction::~ClassSubjectGroupsUpdateAction(){
+	free(m_max);
+}
+bool ClassSubjectGroupsUpdateAction::Do(){
+	School * school = m_owner->m_school;
+	if(update_class_subject_group(m_owner->std_out, m_owner->m_database, m_id, m_max, m_owner->m_school)){
+		Class * c = find_class_by_id(m_owner->m_school, m_id);
+		LMH_ASSERT(c != NULL);
 
+		int * tmp = c->max_per_day_subject_group;
+		c->max_per_day_subject_group = m_max;
+		m_max = tmp;
+
+		if(m_max == NULL){
+			m_max = (int *) calloc(school->n_subject_groups + 1, sizeof(int));
+			m_max[school->n_subject_groups] = -1;
+		}
+	}
+}
+bool ClassSubjectGroupsUpdateAction::Undo(){
+	return Do();
+}
+wxString ClassSubjectGroupsUpdateAction::Describe(){
+	return wxT("ClassSubjectGroupsUpdateAction");
+}
 
 /*********************************************************/
 /*                ClassRoomsUpdateAction                 */
 /*********************************************************/
+
 ClassRoomsUpdateAction::ClassRoomsUpdateAction(Application * owner, int id_class, int * scores) : Action(owner) {
 	m_id = id_class;
 	m_scores = scores;
