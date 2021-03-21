@@ -1601,6 +1601,38 @@ wxString ClassAssignmentsUpdateAction::Describe(){
 	return wxT("ClassAssignmentsUpdateAction");
 }
 
+
+
+/*********************************************************/
+/*                ClassRoomsUpdateAction                 */
+/*********************************************************/
+ClassRoomsUpdateAction::ClassRoomsUpdateAction(Application * owner, int id_class, int * scores) : Action(owner) {
+	m_id = id_class;
+	m_scores = scores;
+}
+ClassRoomsUpdateAction::~ClassRoomsUpdateAction(){
+	free(m_scores);
+}
+bool ClassRoomsUpdateAction::Do(){
+	if(update_class_room_score(m_owner->std_out, m_owner->m_database, m_id, m_scores,  m_owner->m_school)){
+		Class * c = find_class_by_id(m_owner->m_school, m_id);
+		if(c == NULL) return false;
+
+		int * tmp = c->room_scores;
+		c->room_scores = m_scores;
+		m_scores = tmp;
+		return true;
+	}
+	return false;
+}
+bool ClassRoomsUpdateAction::Undo(){
+	return Do();
+}
+wxString ClassRoomsUpdateAction::Describe(){
+	return wxT("ClassRoomsUpdateAction");
+}
+
+
 /*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/

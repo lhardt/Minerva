@@ -116,6 +116,8 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
 	rooms_grid->GridRemake(1, school->n_rooms);
 	rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
+	rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
+	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	// AVAILABILITY PANE CODE
 	m_periods->SetLabel(m_owner->m_lang->str_class_availability);
 	ChoiceGrid * periods_grid = m_periods->GetGrid();
@@ -242,27 +244,27 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		if(c->assignments != NULL){
 			for(i = 0; i < school->n_assignments && c->assignments[i] != NULL; ++i){
 				int i_subject = get_subject_index_by_id(school, c->assignments[i]->subject->id);
-				m_assignments->GetGrid()->SetCellValue(i_subject,0,wxString::Format("%d",c->assignments[i]->amount));
+				m_assignments->SetCellValue(i_subject,0,c->assignments[i]->amount);
 			}
 		}
 		for(i = 0; i < school->n_periods; ++i){
+			ChoiceGrid * periods_grid = m_periods->GetGrid();
 			if(school->periods[i]){
-				m_periods->GetGrid()->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day,c->period_scores[i] > 0 ? 1:0);
+				periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day,c->period_scores[i] > 0 ? 1:0);
 			}
 		}
 		if(c->max_per_day_subject_group){
 			for(i = 0; i < school->n_subject_groups; ++i){
-				m_groups->GetGrid()->SetCellValue(i,0, wxString::Format("%d", c->max_per_day_subject_group[i]));
+				m_groups->SetCellValue(i,0,c->max_per_day_subject_group[i]);
 			}
 		}
-
-		printf("School has now %d assignments\n", school->n_assignments);
-		for(int i = 0; i < school->n_assignments; ++i){
-			printf("Assignment i has %x class addr and %x subj addr\n", school->assignments[i].m_class, school->assignments[i].subject);
-
+		if(c->room_scores){
+			ChoiceGrid * rooms_grid = m_rooms->GetGrid();
+			for(i = 0; i < school->n_rooms; ++i){
+				rooms_grid->SetCellState(i, 0, c->room_scores[i]);
+			}
 		}
 	}
-
 }
 
 void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){

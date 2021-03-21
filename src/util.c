@@ -1553,14 +1553,11 @@ int school_class_add(School * school, Class * c){
 		}
 	}
 	if(c->assignments){
-		printf("Inside add address was %x %x %x\n", c, c->assignments, c->assignments[0]->m_class);
-
 		int i = 0;
 		for(i = 0; c->assignments[i] != NULL; ++i){
+			c->assignments[i]->m_class = & school->classes[ pos ];
 			school_assignment_add(school, c->assignments[i], false);
-			if(i > 3) break;
 		}
-		printf("Gone up to %d\n", i);
 	}
 	LMH_TODO(); // call  create_meeting_list_for_class  and  school_meeting_list_add_and_bind;
 

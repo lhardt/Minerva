@@ -424,6 +424,17 @@ private:
 	int		   * m_class_ids;
 };
 
+class ClassRoomsUpdateAction : public Action {
+	ClassRoomsUpdateAction(Application * owner, int id_class, int * scores);
+	~ClassRoomsUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	int			m_id;
+	int		  * m_scores;
+};
+
 class ActionManager{
 public:
 	Application * m_owner;

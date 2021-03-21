@@ -1940,7 +1940,7 @@ int insert_solution(FILE * console_out, sqlite3 * db, School * school, Solution 
 			LMH_ASSERT(school->period_ids != NULL && sol->meetings[i].teacher != NULL && sol->meetings[i].room != NULL);
 			LMH_TODO(); // Fazer com que school->meetings tenha dados antes de criar solutions
 			// sqlite3_bind_int(stmt, 1, school->meetings[i].id);
-			
+
 			sqlite3_bind_int(stmt, 2, sol->id);
 			sqlite3_bind_int(stmt, 3, school->period_ids[ sol->meetings[i].period ]);
 			sqlite3_bind_int(stmt, 4, sol->meetings[i].teacher->id);
@@ -2235,8 +2235,8 @@ static int * select_room_scores(FILE * console_out, sqlite3* db, const char * co
 	scores = calloc(school->n_rooms + 1, sizeof(int));
 	scores[school->n_rooms] = -1;
 	while(errc == SQLITE_ROW){
-		i_room = get_room_index_by_id(school, sqlite3_column_int(stmt,1));
-		scores[i_room] = sqlite3_column_int(stmt,2);
+		i_room = get_room_index_by_id(school, sqlite3_column_int(stmt,2));
+		scores[i_room] = sqlite3_column_int(stmt,3);
 		errc = sqlite3_step(stmt);
 		++i;
 	}
@@ -2719,6 +2719,8 @@ static Class * select_all_classes_by_school_id(FILE * console_out, sqlite3* db, 
 	for(i = 0; i < n; ++i){
 		classes[i].period_scores = select_period_scores(console_out, db, SELECT_CLASS_ATTENDANCE_BY_CLASS_ID, classes[i].id, school);
 		classes[i].room_scores = select_room_scores(console_out, db, SELECT_CLASS_ROOM_BY_CLASS_ID, classes[i].id, school);
+		printf("Class %s has room scores ", classes[i].name);
+		print_int_list(stdout, classes[i].room_scores);
 		select_all_class_subordination_by_class_id(console_out, db, &classes[i], school);
 		classes[i].max_per_day_subject_group = select_class_subject_group(console_out, db, classes[i].id,school);
 		/* The assignments are linked later, in link_assignments. Otherwise we would
@@ -3633,4 +3635,8 @@ bool update_assignment_amount(FILE * console_out, sqlite3 * db, int id_assignmen
 	CERTIFY_ERRC_SQLITE_DONE(false);
 	sqlite3_finalize(stmt);
 	return true;
+}
+
+bool update_class_room_score(FILE * console_out, sqlite3 * db, int class_id, int * scores,  School * school){
+	return insert_or_update_room_scores(console_out, db, UPSERT_TABLE_CLASS_ROOM, class_id, scores, school);
 }

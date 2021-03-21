@@ -122,12 +122,17 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			c.period_scores[i] = state >= 0? state:0; /* State -1 is for blocked cells */
 		}
 		c.period_scores[school->n_periods] = -1;
-		c.room_scores = nullptr;
+		c.room_scores = (int *) calloc(school->n_rooms + 1, sizeof(int));
 		c.can_have_free_periods_flag = m_free_periods_checkbox->GetValue();
 		c.maximal_entry_period = m_entry_text->GetSelection();
 		c.minimal_exit_period = m_exit_text->GetSelection();
 		c.max_per_day_subject_group = NULL;
 		c.active = true;
+
+		for(int i = 0; i < school->n_rooms; ++i){
+			c.room_scores[i] = 1;
+		}
+		c.room_scores[school->n_rooms] = -1;
 
 		n_needs = 0;
 		for(i = 0; i < school->n_subjects; ++i){
