@@ -412,13 +412,29 @@ void ListClassesPane::OnCancelSubjects(wxCommandEvent &){
 	}
 }
 
-void ListClassesPane::OnSaveRooms(wxCommandEvent &){
+void ListClassesPane::OnSaveRooms(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
-		Class * c = find_class_by_id(school, class_id);
 
+		int * scores = (int*) calloc(school->n_rooms + 1, sizeof(int));
+		ChoiceGrid *rooms_grid = m_rooms->GetGrid();
+		for(int i = 0; i < school->n_rooms; ++i){
+			scores[i] = rooms_grid->GetCellState(i,0);
+			if(scores[i] == -1){
+				scores[i] = 0;
+			}
+		}
+		scores[school->n_rooms] = -1;
+
+		Action * act = new ClassRoomsUpdateAction(m_owner, class_id, scores);
+
+		if(m_owner->Do(act)){
+			evt.Skip();
+		} else {
+			free(scores);
+		}
 	}
 }
 
@@ -429,6 +445,15 @@ void ListClassesPane::OnCancelRooms(wxCommandEvent &){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
 		Class * c = find_class_by_id(school, class_id);
 
+		ChoiceGrid * rooms_grid = m_rooms->GetGrid();
+		if(c->room_scores != NULL){
+			for(int i = 0; i < school->n_rooms; ++i){
+				rooms_grid->SetCellState(i, 0,c->room_scores[i]);
+			}
+		} else {
+
+			rooms_grid->SetAllCellsState(0);
+		}
 	}
 }
 

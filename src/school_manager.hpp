@@ -425,6 +425,7 @@ private:
 };
 
 class ClassRoomsUpdateAction : public Action {
+public:
 	ClassRoomsUpdateAction(Application * owner, int id_class, int * scores);
 	~ClassRoomsUpdateAction();
 	bool Do();
