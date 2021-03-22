@@ -55,14 +55,16 @@ ListRoomsPane::ListRoomsPane(Application * owner, wxWindow * parent, wxPoint pos
 	fields_sz->Add(m_cancel_btn, 1, wxEXPAND);
 	fields_sz->Add(m_edit_btn, 1, wxEXPAND);
 
+	wxSizer * actions_sz = new wxStaticBoxSizer(wxHORIZONTAL, this, m_owner->m_lang->str_actions);
+	actions_sz->Add(delete_btn, 0, wxALL, 5);
+
 	fields_wrap->Add(fields_sz, 0, wxEXPAND | wxALL, 10);
 	desc_sz->Add(fields_wrap, 0, wxEXPAND | wxBOTTOM, 5);
-	desc_sz->Add(notebook, 0, wxEXPAND | wxBOTTOM, 5);
-	desc_sz->AddStretchSpacer();
-	desc_sz->Add(delete_btn, 0, wxEXPAND |wxBOTTOM, 5);
+	desc_sz->Add(notebook, 1, wxEXPAND | wxBOTTOM, 5);
+	desc_sz->Add(actions_sz, 0, wxEXPAND | wxBOTTOM, 5);
 
 	sizer->Add(m_rooms_list, 0, wxEXPAND|wxALL, 15);
-	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
+	sizer->Add(desc_sz, 1, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -101,7 +103,12 @@ void ListRoomsPane::ShowData(){
 	m_rooms_list->Clear();
 	if(school->n_rooms > 0){
 		for(i = 0; i < school->n_rooms; ++i){
-			m_rooms_list->AddItem(school->rooms[i].id, wxString::FromUTF8(school->rooms[i].name));
+			wxString str = wxString::FromUTF8(school->rooms[i].name);
+			if(school->rooms[i].active){
+				m_rooms_list->AddItem(school->rooms[i].id, str);
+			} else {
+				m_rooms_list->AddItem(school->rooms[i].id, wxString::Format("(%s) %s", m_owner->m_lang->str_inactive, str));
+			}
 		}
 	}
 	m_periods->GetGrid()->SetAllActiveCellsState(1);
@@ -210,7 +217,7 @@ void ListRoomsPane::OnDeleteButtonClicked(wxCommandEvent &){
 				printf("Não foi possível apagar.");
 			}
 		} else {
-			wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("(TODO lang) Error! Could not remove, because it is in a timetable already"), m_owner->m_lang->str_error, wxOK);
+			wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_couldnt_delete_because_timetable, m_owner->m_lang->str_error, wxOK);
 			dialog->ShowModal();
 		}
 	}

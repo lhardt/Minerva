@@ -23,6 +23,7 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 	wxSizer * fields_sz= new wxGridSizer(4,5,5);
 	wxSizer * fields_wrap= new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
+	wxSizer * actions_sz = new wxStaticBoxSizer(wxHORIZONTAL, this, m_owner->m_lang->str_actions);
 	fields_sz->Add(name_label, 0, wxALIGN_BOTTOM);
 	fields_sz->Add(m_name_text, 1, wxEXPAND);
 	fields_sz->AddStretchSpacer();
@@ -32,12 +33,13 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	fields_sz->Add(m_cancel_btn, 1, wxEXPAND);
 	fields_sz->Add(m_edit_btn, 1, wxEXPAND);
 	fields_wrap->Add(fields_sz, 1, wxALL | wxEXPAND, 5);
+	actions_sz->Add(delete_btn, 0, wxALL, 5);
 	desc_sz->Add(fields_wrap, 0, wxEXPAND | wxBOTTOM , 5);
 	desc_sz->AddStretchSpacer();
-	desc_sz->Add(delete_btn, 0,  wxEXPAND);
+	desc_sz->Add(actions_sz, 0,  wxEXPAND);
 
 	sizer->Add(m_subjects_list, 0, wxEXPAND|wxALL, 15);
-	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
+	sizer->Add(desc_sz, 1, wxALL | wxRIGHT | wxTOP | wxBOTTOM, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
@@ -130,7 +132,7 @@ void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){
 				printf("Não foi possível.\n");
 			}
 		} else {
-			wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("(TODO lang) Error! Could not remove, because it is in a timetable already"), m_owner->m_lang->str_error, wxOK);
+			wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_couldnt_delete_because_timetable, m_owner->m_lang->str_error, wxOK);
 			dialog->ShowModal();
 		}
 	}

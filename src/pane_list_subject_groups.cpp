@@ -39,21 +39,23 @@ ListSubjectGroupsPane::ListSubjectGroupsPane(Application * owner, wxWindow * par
 	fields_sz->Add(m_edit_btn, 0, wxEXPAND);
 	fields_wrap->Add(fields_sz, 1, wxEXPAND | wxALL, 5);
 
+	wxSizer * actions_sz = new wxStaticBoxSizer(wxHORIZONTAL, this, m_owner->m_lang->str_actions);
+	actions_sz->Add(delete_btn, 0, wxALL, 5);
+
 	wxSizer * desc_sz = new wxBoxSizer(wxVERTICAL);
 	desc_sz->Add(fields_wrap, 0, wxEXPAND | wxBOTTOM, 5);
 	desc_sz->Add(notebook, 1, wxEXPAND | wxBOTTOM, 5);
-	desc_sz->Add(delete_btn, 0, wxEXPAND);
+	desc_sz->Add(actions_sz, 0,  wxEXPAND);
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->Add(m_groups_list, 0, wxEXPAND|wxALL, 15);
-	sizer->Add(desc_sz, 1, wxEXPAND|wxALL, 15);
+	sizer->Add(desc_sz, 1, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
 	ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_ALWAYS);
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
-
 
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectGroupsPane::OnCancelButtonClicked, this);

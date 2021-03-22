@@ -17,21 +17,18 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	school = m_owner->m_school;
 	SetBackgroundColour(wxColour(250,250,250));
 
-	wxNotebook  * notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	wxNotebook  * notebook = new wxNotebook(this, wxID_ANY);
 	wxStaticText * name_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * size_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_size);
 	wxStaticText * free_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_free_periods);
 	wxStaticText * entry_period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_entry_period);
 	wxStaticText * exit_period_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_exit_period);
 	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
-	wxStaticText * composite_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_is_superclass);
-	wxStaticText * m_err_msg = new wxStaticText(this, wxID_ANY, wxT(""));
 	m_classes_list = new SearchableListPane(m_owner, this, wxID_ANY, wxDefaultPosition, wxSize(230,250));
 	m_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1));
-	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize);
+	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_size_text = new wxSpinCtrl(this, wxID_ANY);
 	m_free_periods_text = new wxCheckBox(this, wxID_ANY, wxT(""));
-	m_composite_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_entry_period_text = new wxChoice(this, wxID_ANY);
 	m_exit_period_text = new wxChoice(this, wxID_ANY);
 	m_subjects_text = new wxStaticText(this, wxID_ANY, wxT(""));
@@ -45,19 +42,17 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_assignments = new PosIntGridPane(m_owner, notebook, school->n_subjects, wxID_ANY, wxDefaultPosition, wxDefaultSize, subject_col_name);
 	wxString sgroup_col_name = m_owner->m_lang->str_max_number_of_periods_per_day;
 	m_groups = new PosIntGridPane(m_owner, notebook, school->n_subject_groups, wxID_ANY, wxDefaultPosition, wxDefaultSize, sgroup_col_name);
-
-	m_err_msg->SetFont(*m_owner->m_small_font);
-
 	/* Sizers */
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxSizer * btn_sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxSizer * description_sizer = new wxBoxSizer(wxVERTICAL);
 	wxSizer * box_field_sizer = new wxStaticBoxSizer(wxVERTICAL, this, m_owner->m_lang->str_basic_data);
 	wxSizer * fields_sizer = new wxFlexGridSizer(4,5,5);
+	wxSizer * actions_sizer = new wxStaticBoxSizer(wxHORIZONTAL, this, m_owner->m_lang->str_actions);
 
 	sizer->Add(m_classes_list, 0, wxEXPAND|wxALL, 15);
-	sizer->Add(description_sizer, 1, wxEXPAND|wxALL, 15);
+	sizer->Add(description_sizer, 1, wxALL | wxTOP | wxBOTTOM | wxRIGHT, 15);
 
+	actions_sizer->Add(delete_btn, 0, wxALL, 5);
 	fields_sizer->Add(name_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sizer->Add(m_name_text, 0, wxEXPAND);
 	fields_sizer->Add(size_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
@@ -70,16 +65,14 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	fields_sizer->Add(m_free_periods_text, 0, wxEXPAND);
 	fields_sizer->Add(active_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sizer->Add(m_active_text, 0, wxEXPAND);
-	fields_sizer->Add(composite_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sizer->Add(m_composite_text, 0, wxEXPAND);
+	fields_sizer->AddStretchSpacer();
+	fields_sizer->AddStretchSpacer();
 	fields_sizer->Add(m_basic_cancel_btn, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sizer->Add(m_basic_edit_btn, 0, wxEXPAND);
 	box_field_sizer->Add(fields_sizer, 0, wxALL, 5);
 	description_sizer->Add(box_field_sizer, 0, wxEXPAND | wxBOTTOM, 15);
 	description_sizer->Add(notebook, 1, wxEXPAND | wxBOTTOM, 15);
-	description_sizer->Add(btn_sizer, 0, wxEXPAND);
-	description_sizer->Add(delete_btn, 0, wxEXPAND);
-	description_sizer->Add(m_err_msg, 0, wxEXPAND);
+	description_sizer->Add(actions_sizer, 0, wxEXPAND);
 
 	notebook->AddPage(m_periods, m_owner->m_lang->str_availability);
 	notebook->AddPage(m_assignments, m_owner->m_lang->str_subjects);
@@ -140,7 +133,12 @@ void ListClassesPane::ShowData(){
 
 	m_classes_list->Clear();
 	for(i = 0; i < school->n_classes; ++i){
-		m_classes_list->AddItem(school->classes[i].id,wxString::FromUTF8(school->classes[i].name));
+		wxString str = wxString::FromUTF8(school->classes[i].name);
+		if(school->classes[i].active){
+			m_classes_list->AddItem(school->classes[i].id, str);
+		} else {
+			m_classes_list->AddItem(school->classes[i].id, wxString::Format("(%s) %s", m_owner->m_lang->str_inactive, str));
+		}
 	}
 
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
@@ -355,7 +353,7 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 				printf("Não foi possível deletar.\n");
 			}
 		} else {
-		   wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("(TODO lang) Error! Could not remove, because it is in a timetable already"), m_owner->m_lang->str_error, wxOK);
+		   wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_couldnt_delete_because_timetable, m_owner->m_lang->str_error, wxOK);
 		   dialog->ShowModal();
 		}
 	}

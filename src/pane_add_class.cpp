@@ -126,8 +126,12 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 		c.can_have_free_periods_flag = m_free_periods_checkbox->GetValue();
 		c.maximal_entry_period = m_entry_text->GetSelection();
 		c.minimal_exit_period = m_exit_text->GetSelection();
-		c.max_per_day_subject_group = NULL;
+		c.max_per_day_subject_group = (int*) calloc(school->n_subject_groups+1, sizeof(int));
 		c.active = true;
+
+		for(int i = 0; i < school->n_subject_groups;++i){
+			c.max_per_day_subject_group[i] = school->n_periods_per_day;
+		}
 
 		for(int i = 0; i < school->n_rooms; ++i){
 			c.room_scores[i] = 1;

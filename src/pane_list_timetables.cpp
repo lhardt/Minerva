@@ -77,13 +77,13 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 	basic_container->Add(basic_sizer, 1, wxEXPAND | wxALL, 5);
 
 	wxSizer * content_sizer = new wxBoxSizer(wxVERTICAL);
-	content_sizer->Add(basic_container, 0, wxEXPAND | wxBOTTOM | wxEXPAND, 5);
-	content_sizer->Add(notebook, 1, wxEXPAND |  wxBOTTOM | wxEXPAND, 5);
-	content_sizer->Add(actions_sizer, 0, wxEXPAND |  wxBOTTOM | wxEXPAND, 5);
+	content_sizer->Add(basic_container, 0, wxBOTTOM | wxEXPAND, 5);
+	content_sizer->Add(notebook, 1, wxBOTTOM | wxEXPAND, 5);
+	content_sizer->Add(actions_sizer, 0, wxEXPAND, 5);
 
 	wxSizer * sizer = new wxBoxSizer(wxHORIZONTAL);
-	sizer->Add(m_timetables_list, 0, wxALL | wxEXPAND, 10);
-	sizer->Add(content_sizer, 1, wxALL | wxEXPAND, 10);
+	sizer->Add(m_timetables_list, 0, wxALL | wxEXPAND, 15);
+	sizer->Add(content_sizer, 1, wxEXPAND | wxBOTTOM | wxTOP | wxRIGHT, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);

@@ -126,9 +126,12 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 
 	fields_wrap->Add(fields_sz, 1, wxEXPAND|wxALL, 5);
 
+	wxSizer * actions_sizer = new wxStaticBoxSizer(wxHORIZONTAL, this, m_owner->m_lang->str_actions);
+	actions_sizer->Add(delete_btn, 0, wxALL, 5);
+
 	desc_sz->Add(fields_wrap, 0,wxEXPAND);
 	desc_sz->Add(notebook, 1, wxEXPAND);
-	desc_sz->Add(delete_btn, 0, wxEXPAND);
+	desc_sz->Add(actions_sizer, 0, wxEXPAND);
 
 	sizer->Add(m_teachers_list, 0, wxEXPAND|wxALL, 15);
 	sizer->Add(desc_sz, 1, wxEXPAND | wxTOP | wxRIGHT | wxBOTTOM, 15);
@@ -506,7 +509,7 @@ void ListTeachersPane::OnDeleteButtonClicked(wxCommandEvent &) {
 				dialog->ShowModal();
 			}
 		} else {
-			wxMessageDialog * dialog = new wxMessageDialog(nullptr, wxT("(TODO lang) Error! Could not remove, because it is in a timetable already"), m_owner->m_lang->str_error, wxOK);
+			wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_couldnt_delete_because_timetable, m_owner->m_lang->str_error, wxOK);
 			dialog->ShowModal();
 		}
 	}
@@ -534,6 +537,7 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 		m_max_ppcpd_text->SetValue(t->max_meetings_per_class_per_day);
 		m_planning_periods_text->SetValue(t->num_planning_periods);
 		m_planning_needs_room_text->SetValue(t->planning_needs_room);
+		m_active_text->SetValue(t->active);
 		if(t->teaches != NULL){
 			for(int i = 0; t->teaches[i] != NULL; ++i){
 				int subj_i = get_subject_index_by_id(school, t->teaches[i]->subject->id);
@@ -606,7 +610,6 @@ void ListTeachersPane::ShowData(){
 	}
 	twinning_grid->GridRemake(1, school->n_periods_per_day);
 
-
 	for(i = 0; i < school->n_periods; ++i){
 		lecture_periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? 1 : ChoiceGrid::CELL_STATE_LOCKED);
 		planning_periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day, school->periods[i] ? 1 : ChoiceGrid::CELL_STATE_LOCKED);
@@ -614,11 +617,14 @@ void ListTeachersPane::ShowData(){
 
 	m_teachers_list->Clear();
 	for(i = 0; i < school->n_teachers; ++i){
+		wxString str = wxString::FromUTF8(school->teachers[i].name);
 		if(school->teachers[i].subordinates && (find_first_positive(school->teachers[i].subordinates) >= 0)){
-			m_teachers_list->AddItem(school->teachers[i].id, wxString::Format("(%s) %s", m_owner->m_lang->str_group, wxString::FromUTF8(school->teachers[i].name)));
-		} else {
-			m_teachers_list->AddItem(school->teachers[i].id, wxString::FromUTF8(school->teachers[i].name));
+			str = wxString::Format("(%s) %s", m_owner->m_lang->str_group, str);
 		}
+		if(! school->teachers[i].active){
+			str = wxString::Format("(%s) %s", m_owner->m_lang->str_inactive, str);
+		}
+		m_teachers_list->AddItem(school->teachers[i].id, str);
 	}
 }
 
