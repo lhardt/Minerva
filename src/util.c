@@ -1521,6 +1521,7 @@ int school_class_add(School * school, Class * c){
 	for(int i = school->n_classes; i > pos; --i){
 		school->classes[i] = school->classes[i-1];
 	}
+	printf("adding a class %d with name %s \n", c->id, c->name);
 	school->classes[ pos ] = *c;
 
 	/* As the classes after pos moved, we need to 'repoint' every reference to any of them. */

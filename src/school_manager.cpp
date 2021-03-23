@@ -1713,6 +1713,52 @@ wxString ClassRoomsUpdateAction::Describe(){
 
 
 /*********************************************************/
+/*               ClassInGroupsUpdateAction               */
+/*********************************************************/
+ClassInGroupsUpdateAction::ClassInGroupsUpdateAction(Application * owner, int id_class, int * in_groups) : Action(owner){
+	LMH_ASSERT(owner != NULL && id_class > 0 && in_groups != NULL);
+	m_id = id_class;
+	m_in_groups = in_groups;
+}
+ClassInGroupsUpdateAction::~ClassInGroupsUpdateAction(){
+	free(m_in_groups);
+}
+bool ClassInGroupsUpdateAction::Do(){
+	if(update_class_subordinated(m_owner->std_out, m_owner->m_database, m_id, m_in_groups, m_owner->m_school)){
+		School * school = m_owner->m_school;
+
+		int c_index = get_class_index_by_id(school, m_id);
+		LMH_ASSERT(c_index != NULL);
+
+		for(int i = 0; i < school->n_classes; ++i){
+			if(i == c_index){
+				continue;
+			}
+
+			int * sublist = school->classes[i].subordinates;
+			if(sublist != NULL){
+				int tmp = sublist[c_index];
+				sublist[c_index] = m_in_groups[i];
+				m_in_groups[i] = tmp;
+			} else if(m_in_groups[i] > 0){
+				// Has to create that list to populate with this member;
+				school->classes[i].subordinates = (int*) calloc(school->n_classes+1, sizeof(int));
+				school->classes[i].subordinates[c_index] = 1;
+				m_in_groups[i] = 0;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+bool ClassInGroupsUpdateAction::Undo(){
+	return Do();
+}
+wxString ClassInGroupsUpdateAction::Describe(){
+	return wxT("ClassInGroupsUpdateAction");
+}
+
+/*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/
 bool ActionManager::Do(Action* act) {

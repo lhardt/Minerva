@@ -7,6 +7,7 @@
 extern "C" {
 	#include "loader.h"
 	#include "util.h"
+	#include "maths.h"
 	#include "assert.h"
 	#include "logic.h"
 };
@@ -134,11 +135,23 @@ void ListClassesPane::ShowData(){
 	m_classes_list->Clear();
 	for(i = 0; i < school->n_classes; ++i){
 		wxString str = wxString::FromUTF8(school->classes[i].name);
-		if(school->classes[i].active){
-			m_classes_list->AddItem(school->classes[i].id, str);
-		} else {
-			m_classes_list->AddItem(school->classes[i].id, wxString::Format("(%s) %s", m_owner->m_lang->str_inactive, str));
+		if(! school->classes[i].active){
+			str = wxString::Format("(%s) %s", m_owner->m_lang->str_inactive, str);
 		}
+		bool has_sub = false;
+		// TODO: ugly.
+		if(school->classes[i].subordinates != NULL){
+			for(int j = 0; j < school->n_classes && school->classes[i].subordinates[j] >= 0; ++j){
+				if(school->classes[i].subordinates[j] > 0){
+					has_sub = true;
+					break;
+				}
+			}
+		}
+		if(has_sub){
+			str = wxString::Format("(%s) %s", m_owner->m_lang->str_group, str);
+		}
+		m_classes_list->AddItem(school->classes[i].id, str);
 	}
 
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
@@ -270,6 +283,10 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
 		int class_i = get_class_index_by_id(school, class_id);
 		Class * c = &school->classes[class_i];
+
+		printf("on adding, c.name is (%x) %s\n", c->name, c->name);
+
+
 		m_name_text->SetValue(wxString::FromUTF8(c->name));
 		m_size_text->SetValue(c->size);
 		m_free_periods_text->SetValue(c->can_have_free_periods_flag);
@@ -279,10 +296,15 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		m_entry_period_text->SetSelection(c->maximal_entry_period);
 		m_exit_period_text->SetSelection(c->minimal_exit_period);
 		m_subjects_text->SetLabel(wxString::FromUTF8(""));
-		if(c->assignments != NULL){
-			for(i = 0; i < school->n_assignments && c->assignments[i] != NULL; ++i){
-				int i_subject = get_subject_index_by_id(school, c->assignments[i]->subject->id);
-				m_assignments->SetCellValue(i_subject,0,c->assignments[i]->amount);
+		for(int i = 0; i < school->n_subjects; ++i){
+			m_assignments->SetCellValue(i,0,0);
+		}
+		for(int i = 0; i < school->n_assignments; ++i){
+			Assignment * assignment = &school->assignments[i];
+			if(assignment->m_class->id == class_id){
+				int i_subj = get_subject_index_by_id(school, assignment->subject->id);
+				LMH_ASSERT(i_subj >= 0);
+				m_assignments->SetCellValue(i_subj,0, assignment->amount);
 			}
 		}
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
@@ -373,7 +395,7 @@ void ListClassesPane::OnSavePeriods(wxCommandEvent & evt){
 		}
 	}
 }
-void ListClassesPane::OnCancelPeriods(wxCommandEvent &){
+void ListClassesPane::OnCancelPeriods(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
@@ -386,6 +408,7 @@ void ListClassesPane::OnCancelPeriods(wxCommandEvent &){
 			}
 		}
 	}
+	evt.Skip();
 }
 
 void ListClassesPane::OnSaveSubjects(wxCommandEvent & evt){
@@ -422,9 +445,6 @@ void ListClassesPane::OnSaveSubjects(wxCommandEvent & evt){
 				if(old_assignment != NULL){
 					assignments[i_assign].max_per_day = old_assignment->max_per_day;
 					if(old_assignment != NULL){
-						printf("Old possible teachers: ");
-						print_int_list(stdout, old_assignment->possible_teachers);
-						printf("\n");
 						assignments[i_assign].possible_teachers = int_list_copy(old_assignment->possible_teachers);
 					}
 				}
@@ -443,12 +463,6 @@ void ListClassesPane::OnSaveSubjects(wxCommandEvent & evt){
 				++i_assign;
 			}
 		}
-
-		printf("Class id is %d, List of assignments (%d):\n", c->id, n_assignments);
-		for(int i = 0; i < n_assignments; ++i){
-			printf("Assignment with amount %d idclass %d and idsubj %d. tscores %x\n", assignments[i].amount, assignments[i].m_class->id, assignments[i].subject->id, assignments[i].possible_teachers);
-		}
-
 		LMH_ASSERT(n_assignments == i_assign);
 
 		Action * act = new ClassAssignmentsUpdateAction(m_owner, c->id, n_assignments, assignments);
@@ -459,14 +473,26 @@ void ListClassesPane::OnSaveSubjects(wxCommandEvent & evt){
 		}
 	}
 }
-void ListClassesPane::OnCancelSubjects(wxCommandEvent &){
+void ListClassesPane::OnCancelSubjects(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
 		Class * c = find_class_by_id(school, class_id);
 
+		for(int i = 0; i < school->n_subjects; ++i){
+			m_assignments->SetCellValue(i,0,0);
+		}
+		for(int i = 0; i < school->n_assignments; ++i){
+			Assignment * assignment = &school->assignments[i];
+			if(assignment->m_class->id == class_id){
+				int i_subj = get_subject_index_by_id(school, assignment->subject->id);
+				LMH_ASSERT(i_subj >= 0);
+				m_assignments->SetCellValue(i_subj,0, assignment->amount);
+			}
+		}
 	}
+	evt.Skip();
 }
 
 void ListClassesPane::OnSaveRooms(wxCommandEvent & evt){
@@ -495,7 +521,7 @@ void ListClassesPane::OnSaveRooms(wxCommandEvent & evt){
 	}
 }
 
-void ListClassesPane::OnCancelRooms(wxCommandEvent &){
+void ListClassesPane::OnCancelRooms(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
@@ -511,6 +537,7 @@ void ListClassesPane::OnCancelRooms(wxCommandEvent &){
 			rooms_grid->SetAllCellsState(0);
 		}
 	}
+	evt.Skip();
 }
 
 void ListClassesPane::OnSaveGroups(wxCommandEvent & evt){
@@ -528,24 +555,44 @@ void ListClassesPane::OnSaveGroups(wxCommandEvent & evt){
 		}
 	}
 }
-void ListClassesPane::OnCancelGroups(wxCommandEvent &){
+void ListClassesPane::OnCancelGroups(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
 		Class * c = find_class_by_id(school, class_id);
 
+		if(c->max_per_day_subject_group){
+			for(int i = 0; i < school->n_subject_groups; ++i){
+				m_groups->SetCellValue(i,0, c->max_per_day_subject_group[i]);
+			}
+		} else {
+			for(int i = 0; i < school->n_subject_groups; ++i){
+				m_groups->SetCellValue(i,0, 0);
+			}
+		}
 	}
+	evt.Skip();
 }
 
-void ListClassesPane::OnSaveClassGroups(wxCommandEvent &){
+void ListClassesPane::OnSaveClassGroups(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
-		Class * c = find_class_by_id(school, class_id);
 
+		int * in_groups = m_class_groups->GetValues();
+		for(int i = 0; i < school->n_classes; ++i){
+			if(in_groups[i] == -1)
+			 	in_groups[i] = 0;
+		}
+
+		Action * act = new ClassInGroupsUpdateAction(m_owner, class_id, in_groups);
+		if(m_owner->Do(act)){
+			evt.Skip();
+		}
 	}
+
 }
 void ListClassesPane::OnCancelClassGroups(wxCommandEvent &){
 	School * school = m_owner->m_school;

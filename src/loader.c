@@ -225,7 +225,7 @@ const char * const CREATE_TABLE_CLASS_SUBORDINATION =
 				"UNIQUE (id_sup, id_sub)"
 			")");
 const char * const INSERT_TABLE_CLASS_SUBORDINATION =
-			("INSERT INTO ClassSubordination(id_sup, id_sub) VALUES(?,?)");
+			("INSERT OR IGNORE INTO ClassSubordination(id_sup, id_sub) VALUES(?,?)");
 /* NOTE: there is no reason to update this table. Only delete and add accordingly */
 const char * const LASTID_TABLE_CLASS_SUBORDINATION =
 			("SELECT id FROM ClassSubordination where rowid = last_insert_rowid()");
@@ -235,6 +235,8 @@ const char * const DELETE_CLASS_SUBORDINATION_BY_SUP_ID =
 			("DELETE FROM ClassSubordination WHERE id_sup = ?");
 const char * const DELETE_CLASS_SUBORDINATION_BY_SUB_ID =
 			("DELETE FROM ClassSubordination WHERE id_sub = ?");
+const char * const DELETE_CLASS_SUBORDINATION_BY_SUP_SUB_ID =
+			("DELETE FROM ClassSubordination WHERE id_sup=? AND id_sub = ?");
 const char * const DELETE_CLASS_SUBORDINATION_BY_SCHOOL_ID =
 			/* Deleting by supid is enough, and equivalent to by subid */
 			("DELETE FROM ClassSubordination WHERE EXISTS ("
@@ -2429,13 +2431,14 @@ static int * select_class_subordinates(FILE * console_out, sqlite3 * db, Class *
 	errc = sqlite3_step(stmt);
 	CERTIFY_ERRC_SQLITE_ROW_OR_DONE(NULL);
 	if(errc == SQLITE_ROW) {
-		c->subordinates = calloc(1+ school->n_teachers, sizeof(int));
+		c->subordinates = calloc(1+ school->n_classes, sizeof(int));
 		while(errc == SQLITE_ROW){
 			i_sub = get_class_index_by_id(school, sqlite3_column_int(stmt,1));
 			c->subordinates[i_sub] = 1;
 			errc = sqlite3_step(stmt);
 			++i;
 		}
+		c->subordinates[school->n_classes] = -1;
 	}
 	return c->subordinates;
 }
@@ -2636,7 +2639,7 @@ static int * select_all_class_subordination_by_class_id(FILE * console_out, sqli
 		c->subordinates = calloc(1+ school->n_classes, sizeof(int));
 		c->subordinates[school->n_classes] = -1;
 		while(errc == SQLITE_ROW){
-			int i_sub = get_class_index_by_id(school, sqlite3_column_int(stmt,1));
+			int i_sub = get_class_index_by_id(school, sqlite3_column_int(stmt,2));
 			if(i_sub >= 0){
 				c->subordinates[i_sub] = 1;
 			}
@@ -3633,4 +3636,30 @@ bool update_assignment_amount(FILE * console_out, sqlite3 * db, int id_assignmen
 
 bool update_class_room_score(FILE * console_out, sqlite3 * db, int class_id, int * scores,  School * school){
 	return insert_or_update_room_scores(console_out, db, UPSERT_TABLE_CLASS_ROOM, class_id, scores, school);
+}
+
+bool update_class_subordinated(FILE * console_out, sqlite3* db, int class_id, int * subordinated, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && class_id > 0 && subordinated != NULL);
+	sqlite3_stmt * stmt_insert, * stmt_delete, * stmt_exec;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, INSERT_TABLE_CLASS_SUBORDINATION, -1, &stmt_insert, NULL);
+	errc = sqlite3_prepare_v2(db, DELETE_CLASS_SUBORDINATION_BY_SUP_SUB_ID, -1, &stmt_delete, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+
+	for(int i = 0; i < school->n_classes && subordinated[i] >= 0; ++i){
+		if(school->classes[i].id == class_id) continue;
+
+		stmt_exec = subordinated[i] ? stmt_insert : stmt_delete;
+
+		sqlite3_bind_int(stmt_exec, 1, school->classes[i].id);
+		sqlite3_bind_int(stmt_exec, 2, class_id);
+
+		errc = sqlite3_step(stmt_exec);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+		sqlite3_reset(stmt_exec);
+	}
+	sqlite3_finalize(stmt_insert);
+	sqlite3_finalize(stmt_delete);
+	return true;
 }

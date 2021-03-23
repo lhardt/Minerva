@@ -459,6 +459,18 @@ private:
 	int       * m_max;
 };
 
+class ClassInGroupsUpdateAction : public Action {
+public:
+	ClassInGroupsUpdateAction(Application * owner, int id_class, int * in_groups);
+	~ClassInGroupsUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	int			m_id;
+	int       * m_in_groups;
+};
+
 class ActionManager{
 public:
 	Application * m_owner;
