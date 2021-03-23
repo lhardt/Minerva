@@ -114,7 +114,6 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			&& (m_exit_text->GetSelection() != wxNOT_FOUND)){
 		Class c;
 		c.name = copy_wx_string(m_name_text->GetValue());
-		printf("on adding, c.name is (%x) %s\n", c.name, c.name);
 		c.short_name = copy_wx_string(m_name_text->GetValue());
 		c.size = m_size_text->GetValue();
 		c.period_scores = (int *) calloc(school->n_periods + 1, sizeof(int));
@@ -188,7 +187,6 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 			free(alist);
 		}
 		if(! success){
-			printf("IS DELETING THE NAME.\n");
 			free(c.name);
 			free(c.short_name);
 		}

@@ -1759,6 +1759,78 @@ wxString ClassInGroupsUpdateAction::Describe(){
 }
 
 /*********************************************************/
+/*                   ClassDeleteAction                   */
+/*********************************************************/
+
+ClassDeleteAction::ClassDeleteAction(Application * owner, int id_class) : Action(owner){
+	LMH_ASSERT(can_remove_class(m_owner->m_school, id_class));
+	Class * c = find_class_by_id(m_owner->m_school, id_class);
+	LMH_ASSERT(c != NULL);
+	m_class = *c;
+
+}
+
+ClassDeleteAction::~ClassDeleteAction(){
+	free(m_subj_ids);
+	free(m_assignments);
+	free(m_sub_to);
+}
+bool ClassDeleteAction::Do(){
+	if(remove_class(m_owner->std_out, m_owner->m_database, m_class.id)){
+		School * school = m_owner->m_school;
+
+		int i_class = get_class_index_by_id(school, m_class.id);
+
+
+		int n_asg = 0;
+		for(int i = 0; m_class.assignments != NULL && m_class.assignments[i] != NULL; ++i){
+			++n_asg;
+		}
+
+		m_assignments = (Assignment *) calloc(n_asg+1, sizeof(Assignment));
+		m_subj_ids = (int*) calloc(n_asg + 1, sizeof(int));
+		m_sub_to = (int*) calloc(school->n_classes + 1, sizeof(int));
+		m_sub_to[school->n_classes] = -1;
+
+		int k = 0;
+		for(int i = 0; m_class.assignments != NULL && m_class.assignments[i] != NULL; ++i){
+			m_assignments[k] = * m_class.assignments[i];
+			m_subj_ids[k] = m_assignments[k].subject->id;
+			m_class.assignments[k] = &m_assignments[k];
+			++k;
+		}
+
+		for(int i = 0; i < school->n_classes; ++i){
+			if(school->classes[i].subordinates != NULL &&
+			   school->classes[i].subordinates[i_class] > 0){
+				m_sub_to[i] = 1;
+			}
+		}
+		school_class_remove(m_owner->m_school, i_class, false);
+		return true;
+	}
+	return false;
+}
+bool ClassDeleteAction::Undo(){
+
+	for(int i = 0; m_subj_ids[i] > 0; ++i){
+		m_assignments[i].subject = find_subject_by_id(m_owner->m_school, m_subj_ids[i]);
+		LMH_ASSERT(m_assignments[i].subject != NULL);
+	}
+
+	if(insert_class(m_owner->std_out, m_owner->m_database, &m_class, m_owner->m_school, m_class.id)
+	&& update_class_subordinated(m_owner->std_out, m_owner->m_database, m_class.id, m_sub_to, m_owner->m_school)){
+		school_class_add(m_owner->m_school, &m_class);
+
+		return true;
+	}
+	return false;
+}
+wxString ClassDeleteAction::Describe(){
+	return wxT("ClassDeleteAction");
+}
+
+/*********************************************************/
 /*                     ActionManager                     */
 /*********************************************************/
 bool ActionManager::Do(Action* act) {

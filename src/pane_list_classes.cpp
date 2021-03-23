@@ -284,9 +284,6 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		int class_i = get_class_index_by_id(school, class_id);
 		Class * c = &school->classes[class_i];
 
-		printf("on adding, c.name is (%x) %s\n", c->name, c->name);
-
-
 		m_name_text->SetValue(wxString::FromUTF8(c->name));
 		m_size_text->SetValue(c->size);
 		m_free_periods_text->SetValue(c->can_have_free_periods_flag);
@@ -318,7 +315,6 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 				m_groups->SetCellValue(i,0,c->max_per_day_subject_group[i]);
 			}
 		} else {
-			printf("Does not have. %d \n", c->id);
 			for(i = 0; i < school->n_subject_groups; ++i){
 				m_groups->SetCellValue(i,0,0);
 			}
@@ -356,10 +352,11 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 		int del_i = get_class_index_by_id(school, del_id);
 		bool can_delete = can_remove_class(school, del_id);
 		if(can_delete){
-			success = remove_class(stdout, m_owner->m_database, del_id);
-			if(success) {
+			Action * act = new ClassDeleteAction(m_owner, del_id);
+			// success = remove_class(stdout, m_owner->m_database, del_id);
+			if(m_owner->Do(act)) {
 				/* TODO: substitute for an Action*/
-				school_class_remove(school, del_i, true);
+				// school_class_remove(school, del_i, true);
 				m_classes_list->RemoveItem(del_id);
 
 				m_name_text->SetLabel(wxT(""));
@@ -370,7 +367,7 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 				m_subjects_text->SetLabel(wxT(""));
 				m_periods->GetGrid()->SetAllCellsState(1);
 
-				m_owner->NotifyNewUnsavedData();
+				// m_owner->NotifyNewUnsavedData();
 			} else {
 				printf("Não foi possível deletar.\n");
 			}

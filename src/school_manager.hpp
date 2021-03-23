@@ -421,7 +421,7 @@ private:
 	Assignment * m_assignments;
 	// Therefore we use an alternative;
 	int		   * m_subject_ids;
-	int		   * m_class_ids;
+	int		   * m_class_ids; // TODO: TOTALLY REDUNDANT. m_class_ids[x] will(should) always be m_id.
 };
 
 class ClassBasicDataUpdateAction : public Action {
@@ -469,6 +469,20 @@ public:
 private:
 	int			m_id;
 	int       * m_in_groups;
+};
+
+class ClassDeleteAction : public Action {
+public:
+	ClassDeleteAction(Application * owner, int id_class);
+	~ClassDeleteAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	Class m_class;
+	Assignment * m_assignments;
+	int * m_subj_ids; // Ids of the subjects that compose m_Assignments, since the pointers can change with realloc
+	int * m_sub_to; // This class is subordinated to what other classes?
 };
 
 class ActionManager{

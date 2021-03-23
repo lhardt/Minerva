@@ -1634,15 +1634,12 @@ int insert_class(FILE * console_out, sqlite3 * db, Class * class, School * schoo
 	sqlite3_exec(db, LASTID_TABLE_CLASS, get_id_callback, &(class->id), NULL);
 	sqlite3_finalize(stmt);
 
-	printf("At this time, id was %d\n", class->id);
-
 	insert_or_update_period_scores(console_out, db, UPSERT_TABLE_CLASS_ATTENDANCE, class->id, class->period_scores, school);
 	if(class->assignments != NULL){
 		for(i = 0;class->assignments[i] != NULL; ++i){
 			LMH_ASSERT(class->assignments[i]->m_class == class);
 			insert_or_update_assignment(console_out, db, class->assignments[i], school, false);
 		}
-		printf("Upserted %d assignments\n", i);
 	}
 	if(class->subordinates != NULL){
 		for(i = 0; i < school->n_classes; ++i){
