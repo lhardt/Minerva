@@ -518,7 +518,7 @@ bool elim_search_fixed_meeting(const School * const school, DecisionNode * node)
 *		and vice-versa.
 *
 * Development Status:
-*		Implemented.
+*		Implemented, trivially tested
 */
 bool room_period_elimination(const School * const school, DecisionNode * node, int affected_i){
 	int i_per = 0, i_room = 0;
@@ -550,9 +550,7 @@ bool room_period_elimination(const School * const school, DecisionNode * node, i
 	} else if(met->period >= 0){
 		for(i_room = 0; i_room < school->n_rooms && met->possible_rooms[i_room] >= 0; ++i_room){
 			met->possible_rooms[i_room] *= school->rooms[i_room].availability[ met->period ];
-			printf("PossibleRooms[%d]=%d\t", i_room, met->possible_rooms[i_room]);
 		}
-		printf("\n");
 	}
 	return change;
 }
@@ -562,13 +560,13 @@ bool room_period_elimination(const School * const school, DecisionNode * node, i
 *		and vice-versa
 *
 * Development Status:
-*
+*		Implemented, trivially tested
 */
 bool teacher_period_elimination(const School * const school, DecisionNode * node, int affected_i){
 	Meeting * met = NULL;
 	bool change = false;
 
-	LMH_ASSERT(school != NULL && node != NULL);
+	LMH_ASSERT(school != NULL && node != NULL && affected_i >= 0);
 
 	met = &node->conclusion[affected_i];
 	if(met->teacher != NULL){
@@ -598,6 +596,49 @@ bool teacher_period_elimination(const School * const school, DecisionNode * node
 	return change;
 }
 
+/* TEACHER ROOM ELIMINATION
+*		Tries to exclude rooms based on the preferences of the chosen teacher.
+*		and vice-versa
+*
+* Development Status:
+*	Implemented
+*/
+bool teacher_room_elimination(const School * const school, DecisionNode * node, int affected_i){
+	Meeting * met = NULL;
+	bool change = false;
+	LMH_ASSERT(school != NULL && node != NULL && affected_i >= 0);
+
+	met = &node->conclusion[affected_i];
+	if(met->teacher != NULL){
+		LMH_ASSERT(met->teacher->lecture_room_scores != NULL);
+
+		if(met->room != NULL){
+			int i_this_room = get_room_index_by_id(school, met->room->id);
+			if(met->teacher->lecture_room_scores[i_this_room] == 0){
+				node->is_consistent = false;
+				change = true;
+			}
+		} else {
+			for(int i_room = 0; i_room < school->n_rooms; ++i_room){
+				if(met->teacher->lecture_room_scores[i_room] == 0 && met->possible_rooms[i_room] > 0){
+					change = true;
+					met->possible_rooms[i_room] = 0;
+				}
+			}
+		}
+	} else if(met->room != NULL){
+		int i_this_room = get_room_index_by_id(school, met->room->id);
+		for(int i_teacher = 0; i_teacher < school->n_teachers; ++i_teacher){
+			if(school->teachers[i_teacher].lecture_room_scores[i_this_room] == 0 && met->possible_rooms[i_this_room] > 0){
+				met->possible_rooms[i_this_room] = 0;
+				change = true;
+			}
+		}
+	}
+
+	return change;
+}
+
 /* ELIM FIXED MEETING
  *		Fixes a meeting that has only one possibility
  *
@@ -618,6 +659,9 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 	}
 	if(node->conclusion[fix_meet_i].teacher != NULL){
 		teacher_period_elimination(school, node, fix_meet_i);
+	}
+	if(node->conclusion[fix_meet_i].teacher != NULL || node->conclusion[fix_meet_i].room != NULL){
+		teacher_room_elimination(school, node, fix_meet_i);
 	}
 
 	for(i_meet = 0; node->conclusion[i_meet].m_class != NULL; i_meet++){
@@ -758,15 +802,11 @@ bool root_elimination(const School * const school, DecisionNode * node){
 		change |= elim_search_fixed_meeting(school,node);
 		for(int i = 0; i < node->owner->n_meetings; ++i){
 			change |= elim_fixed_meeting(school, node, i);
-			if(meetings[i].period >= 0 || meetings[i].room != NULL){
-				change |= room_period_elimination(school, node, i);
-			}
-			if(meetings[i].period >= 0 || meetings[i].teacher != NULL){
-				change |= teacher_period_elimination(school, node, i);
-			}
+			change |= teacher_room_elimination(school, node, i);
+			change |= room_period_elimination(school, node, i);
+			change |= teacher_period_elimination(school, node, i);
 		}
 	}while(change == true && node->is_consistent);
-	// teacher_period_elimination()
 	return true;
 }
 
@@ -808,6 +848,7 @@ bool new_node_elimination(const School * const school, DecisionNode * node){
 	elim_fixed_meeting(school, node, node->affected_meeting_index);
 	room_period_elimination(school, node, node->affected_meeting_index);
 	teacher_period_elimination(school, node, node->affected_meeting_index);
+	teacher_room_elimination(school, node, node->affected_meeting_index);
 	do{
 		change = false;
 		change  |= elim_search_fixed_meeting(school,node);

@@ -1051,7 +1051,7 @@ Room * find_room_by_id(School * school, int id){
 	return NULL;
 }
 int get_room_index_by_id(School * school, int id){
-	int i;
+	int i; LMH_ASSERT(id >= 0);
 
 	for(i = 0; i < school->n_rooms; ++i){
 		if(school->rooms[i].id == id){
@@ -1555,7 +1555,8 @@ int school_class_add(School * school, Class * c){
 		int i = 0;
 		for(i = 0; c->assignments[i] != NULL; ++i){
 			c->assignments[i]->m_class = & school->classes[ pos ];
-			school_assignment_add(school, c->assignments[i], false);
+			int asg_new_i = school_assignment_add(school, c->assignments[i], false);
+			c->assignments[i] = &school->assignments[ asg_new_i ];
 		}
 	}
 	LMH_TODO(); // call  create_meeting_list_for_class  and  school_meeting_list_add_and_bind;
@@ -1961,7 +1962,7 @@ void school_solution_remove(School * school, int i_solution, bool must_delete){
 	--school->n_solutions;
 }
 
-void school_assignment_add(School * school, Assignment * assignment, bool add_to_class_assignments){
+int school_assignment_add(School * school, Assignment * assignment, bool add_to_class_assignments){
 	LMH_ASSERT(school != NULL && assignment != NULL && assignment->id > 0);
 
 	if(school->assignments == NULL){
@@ -2005,6 +2006,8 @@ void school_assignment_add(School * school, Assignment * assignment, bool add_to
 	}
 
 	++ school->n_assignments;
+
+	return pos;
 }
 void school_assignment_remove(School * school, int i_assignment, bool must_delete){
 	LMH_ASSERT(school != NULL && i_assignment >= 0 && i_assignment < school->n_assignments);

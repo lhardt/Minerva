@@ -111,7 +111,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	cgroups_grid->SetColLabel(0,m_owner->m_lang->str_belongs);
 	ChoiceGrid * rooms_grid = m_rooms->GetGrid();
 	rooms_grid->GridRemake(1, school->n_rooms);
-	rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
+	rooms_grid->SetColLabel(0,m_owner->m_lang->str_availability);
 	rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	// AVAILABILITY PANE CODE

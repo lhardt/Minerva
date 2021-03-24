@@ -50,11 +50,12 @@ int* make_possible_room_list(School * school, Meeting * meeting){
 	Room * room;
 
 	int * list = calloc(school->n_rooms + 1, sizeof(int));
-
+	Class * c = meeting->m_class;
 	for(i_room = 0; i_room < school->n_rooms; i_room++){
 		room = &(school->rooms[i_room]);
-		if(room->size >= meeting->m_class->size){
-			list[i_room] = 1;
+		LMH_ASSERT(c->room_scores != NULL);
+		if(room->size >= c->size){
+			list[i_room] = c->room_scores[i_room];
 		}
 		i_list++;
 	}

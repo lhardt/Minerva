@@ -83,7 +83,6 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	teaches_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 	teaches_grid->SetColLabel(0, m_owner->m_lang->str_teaches);
  	ChoiceGrid * lec_rooms_grid = m_lecture_rooms->GetGrid();
-	lec_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	lec_rooms_grid->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	lec_rooms_grid->SetColLabel(0,m_owner->m_lang->str_name);
@@ -370,6 +369,7 @@ void ListTeachersPane::OnSavePlanningPeriods(wxCommandEvent & evt){
 		for(int i = 0; i < school->n_periods; ++i){
 			scores[i] = grid->GetCellState(i % school->n_periods_per_day,i / school->n_periods_per_day);
 		}
+		scores[school->n_periods] = -1;
 
 		Action * act = new TeacherPlanningPeriodsUpdateAction(m_owner, teacher_id, scores);
 		success = m_owner->Do(act);
