@@ -22,7 +22,6 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	wxStaticText * planning_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_number_of_planning_periods);
 	wxStaticText * planning_needs_room_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_planning_needs_room);
 	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
-	wxStaticText * dependency_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_dependency);
 	wxNotebook   * notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	/* DAYS CODE */
@@ -56,7 +55,6 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_planning_periods_text = new wxSpinCtrl(this, wxID_ANY, wxT(""));
 	m_planning_needs_room_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_active_text = new wxCheckBox(this, wxID_ANY, wxT(""));
-	m_dependency_text = new wxCheckBox(this, wxID_ANY, wxT(""));
 	m_edit_btn = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit, wxDefaultPosition, wxSize(200,30));
 	m_cancel_btn = new wxButton(this, wxID_ANY,m_owner->m_lang->str_cancel, wxDefaultPosition, wxSize(200,30));
 
@@ -127,8 +125,8 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	// fields_sz->Add(m_planning_needs_room_text, 0, wxEXPAND);
 	fields_sz->Add(active_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_active_text, 0, wxEXPAND);
-	fields_sz->Add(dependency_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_dependency_text, 0, wxEXPAND);
+	fields_sz->AddStretchSpacer();
+	fields_sz->AddStretchSpacer();
 	fields_sz->Add(m_cancel_btn, 0, wxEXPAND);
 	fields_sz->Add(m_edit_btn, 0, wxEXPAND);
 
@@ -175,7 +173,6 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnEditButtonClicked, this);
 	m_cancel_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListTeachersPane::OnDeleteButtonClicked, this);
-	m_dependency_text->Bind(wxEVT_CHECKBOX, &ListTeachersPane::OnDependencyButtonClicked,this);
 	Bind(DATA_CHANGE_EVENT, &ListTeachersPane::OnDataChange, this);
 
 
@@ -188,8 +185,6 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	m_planning_periods_text->Disable();
 	m_planning_needs_room_text->Disable();
 	m_active_text->Disable();
-	m_dependency_text->Disable();
-
 	ShowData();
 }
 
@@ -527,7 +522,6 @@ void ListTeachersPane::OnEditButtonClicked(wxCommandEvent &) {
 			m_planning_periods_text->Disable();
 			m_planning_needs_room_text->Disable();
 			m_active_text->Disable();
-			m_dependency_text->Disable();
 		} else {
 			printf("Failure");
 		}
@@ -542,16 +536,31 @@ void ListTeachersPane::OnEditButtonClicked(wxCommandEvent &) {
 		m_planning_periods_text->Enable();
 		m_planning_needs_room_text->Enable();
 		m_active_text->Enable();
-		m_dependency_text->Enable();
 	}
 }
 void ListTeachersPane::OnCancelButtonClicked(wxCommandEvent &){
+	School * school = m_owner->m_school;
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int teacher_id = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		Teacher * t = find_teacher_by_id(school, teacher_id);
+		m_name_text->SetValue(t->name);
+		m_max_days_text->SetValue(t->max_days);
+		m_max_periods_text->SetValue(t->max_meetings);
+		m_max_ppd_text->SetValue(t->max_meetings_per_day);
+		m_max_ppcpd_text->SetValue(t->max_meetings_per_class_per_day);
+		m_planning_periods_text->SetValue(t->num_planning_periods);
+		m_active_text->SetValue(t->active);
+	}
+
+
 	m_cancel_btn->Hide();
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	m_name_text->Disable();
 	m_max_days_text->Disable();
 	m_max_periods_text->Disable();
 	m_max_ppd_text->Disable();
+	m_max_ppcpd_text->Disable();
 	m_planning_periods_text->Disable();
 	m_active_text->Disable();
 }
@@ -648,14 +657,6 @@ void ListTeachersPane::OnSelectionChanged(wxCommandEvent &) {
 	}
 }
 
-void ListTeachersPane::OnDependencyButtonClicked(wxCommandEvent &){
-	if(m_dependency_text->GetValue()){
-		m_groups->Show();
-	} else {
-		m_groups->Hide();
-	}
-	Layout();
-}
 
 void ListTeachersPane::ShowData(){
 	int i;

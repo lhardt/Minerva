@@ -48,7 +48,7 @@ ListSubjectsPane::ListSubjectsPane(Application * owner, wxWindow * parent, wxPoi
 	Layout();
 
 	m_edit_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnEditButtonClicked, this);
-	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnEditButtonClicked, this);
+	m_cancel_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListSubjectsPane::OnDeleteButtonClicked, this);
 	m_subjects_list->GetList()->Bind(wxEVT_LISTBOX, &ListSubjectsPane::OnSelectionChanged, this);
 	Bind(DATA_CHANGE_EVENT, &ListSubjectsPane::OnDataChange, this);
@@ -108,9 +108,18 @@ void ListSubjectsPane::OnEditButtonClicked(wxCommandEvent & ev){
 }
 
 void ListSubjectsPane::OnCancelButtonClicked(wxCommandEvent & ev){
-	m_name_text->Enable();
-	m_cancel_btn->Show();
-	m_edit_btn->SetLabel(m_owner->m_lang->str_save);
+	School * school = m_owner->m_school;
+	int i_select = m_subjects_list->GetList()->GetSelection();
+	if(i_select != wxNOT_FOUND){
+		int subject_id = ((IntClientData*) m_subjects_list->GetList()->GetClientObject(i_select))->m_value;
+		int subj_i = get_subject_index_by_id(school, subject_id);
+
+		m_name_text->SetValue(wxString::FromUTF8(school->subjects[subj_i].name));
+	}
+
+	m_name_text->Disable();
+	m_cancel_btn->Hide();
+	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 }
 
 void ListSubjectsPane::OnDeleteButtonClicked(wxCommandEvent & ev){

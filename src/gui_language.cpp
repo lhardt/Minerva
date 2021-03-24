@@ -280,6 +280,7 @@ const Language LANG_POR = {
 	.str_panedesc_add_class_group=L"Grupos de turmas podem ser adicionados quando turmas têm aulas em conjunto.",
 	.str_panedesc_list_timetables=L"Aqui podem ser visualizadas ou excluídas as grades horárias já geradas.",
 	.str_panedesc_gen_timetable=L"Aqui podem ser geradas novas grades horárias. O processo pode demorar alguns minutos!",
+	.str_error_exit_before_entry=L"A turma não pode sair antes de entrar na escola!",
 };
 
 const Language LANG_ENG = {
@@ -548,7 +549,7 @@ const Language LANG_ENG = {
 	.str_panedesc_add_class_group=L"When classes have lessons together, class groups may be useful",
 	.str_panedesc_list_timetables=L"Here all the previously generated timetables may be viewed.",
 	.str_panedesc_gen_timetable=L"Here new timetables may be generated. The process can take some minutes.",
-
+	.str_error_exit_before_entry=L"The class cannot leave before entering the school!",
 };
 
 const Language LANG_SPA = {
@@ -807,6 +808,7 @@ const Language LANG_SPA = {
 	.str_panedesc_add_class_group=L"",
 	.str_panedesc_list_timetables=L"",
 	.str_panedesc_gen_timetable=L"",
+	.str_error_exit_before_entry=L"!",
 };
 
 const Language LANG_DEU = {
@@ -1064,4 +1066,5 @@ const Language LANG_DEU = {
 	.str_panedesc_add_class_group=L"",
 	.str_panedesc_list_timetables=L"",
 	.str_panedesc_gen_timetable=L"",
+	.str_error_exit_before_entry=L"!",
 };

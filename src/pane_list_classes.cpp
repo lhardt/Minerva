@@ -210,6 +210,20 @@ void ListClassesPane::OnDataChange(wxNotifyEvent &){
 void ListClassesPane::OnCancelButtonClicked(wxCommandEvent & ev){
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
+		School * school = m_owner->m_school;
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		int class_i = get_class_index_by_id(school, class_id);
+
+		LMH_ASSERT(class_id > 0 && class_i >= 0);
+		Class * c = & school->classes[class_i];
+		
+		m_name_text->SetValue(c->name);
+		m_active_text->SetValue(c->active);
+		m_size_text->SetValue(c->size);
+		m_entry_period_text->SetSelection(c->maximal_entry_period);
+		m_exit_period_text->SetSelection(c->minimal_exit_period);
+		m_free_periods_text->SetValue(c->can_have_free_periods_flag);
+
 		m_name_text->Disable();
 		m_active_text->Disable();
 		m_size_text->Disable();
@@ -225,9 +239,17 @@ void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
 	int i_select = m_classes_list->GetList()->GetSelection();
 	School * school = m_owner->m_school;
 	if(i_select != wxNOT_FOUND){
+		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
+		int class_i = get_class_index_by_id(school, class_id);
+		LMH_ASSERT(class_i >= 0);
+
 		if(m_basic_cancel_btn->IsShown()){
-			int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
-			Class * old_class = find_class_by_id(school, class_id);
+			if(m_entry_period_text->GetSelection() > m_exit_period_text->GetSelection()){
+				wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_error_exit_before_entry, m_owner->m_lang->str_error, wxOK);
+				dialog->ShowModal();
+				return;
+			}
+			Class * old_class = & school->classes[class_i];
 			Class c = (Class){
 				.name = copy_wx_string(m_name_text->GetValue()),
 				.short_name = copy_wx_string(m_name_text->GetValue()),
@@ -275,6 +297,7 @@ void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
 				}
 			}
 		} else {
+
 			m_name_text->Enable();
 			m_active_text->Enable();
 			m_size_text->Enable();
@@ -300,8 +323,8 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		m_size_text->SetValue(c->size);
 		m_free_periods_text->SetValue(c->can_have_free_periods_flag);
 		m_active_text->SetValue(c->active);
-		m_free_periods_text->SetLabel(c->can_have_free_periods_flag? m_owner->m_lang->str_yes : m_owner->m_lang->str_no );
-		m_active_text->SetLabel(c->active? m_owner->m_lang->str_yes : m_owner->m_lang->str_no );
+		m_free_periods_text->SetLabel(wxT(""));
+		m_active_text->SetLabel(wxT(""));
 		m_entry_period_text->SetSelection(c->maximal_entry_period);
 		m_exit_period_text->SetSelection(c->minimal_exit_period);
 		m_subjects_text->SetLabel(wxString::FromUTF8(""));

@@ -57,6 +57,9 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	}
 	m_free_periods_checkbox->SetFont(*m_owner->m_small_font);
 
+	m_entry_text->SetSelection(0);
+	m_exit_text->SetSelection(school->n_periods_per_day - 1);
+
 	m_periods->AddState(m_owner->m_lang->str_class_unavailable, wxColor(255,200,200));
 	m_periods->AddState(m_owner->m_lang->str_class_available, wxColor(200,200,255));
 	m_periods->SetDefaultColumnLabel(m_owner->m_lang->str_day);
@@ -110,7 +113,11 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 	int i, i_subject, i_need, n_needs;
 	Assignment * alist = NULL;
 	School * school = m_owner->m_school;
-	if((!m_name_text->GetValue().IsEmpty()) && (m_size_text->GetValue() > 0)  && (m_entry_text->GetSelection() != wxNOT_FOUND)
+
+	if(m_entry_text->GetSelection() > m_exit_text->GetSelection()){
+		wxMessageDialog * dialog = new wxMessageDialog(nullptr, m_owner->m_lang->str_error_exit_before_entry, m_owner->m_lang->str_error, wxOK);
+		dialog->ShowModal();
+	} else if((!m_name_text->GetValue().IsEmpty()) && (m_size_text->GetValue() > 0)  && (m_entry_text->GetSelection() != wxNOT_FOUND)
 			&& (m_exit_text->GetSelection() != wxNOT_FOUND)){
 		Class c;
 		c.name = copy_wx_string(m_name_text->GetValue());
