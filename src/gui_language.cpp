@@ -263,6 +263,8 @@ const Language LANG_POR = {
 	.str_lecture_periods=L"Períodos / Aula",
 	.str_inactive=L"Inativo",
 	.str_couldnt_delete_because_timetable=L"Não foi possível remover, pois já há uma grade horária com isto.",
+	.str_max_per_class_per_day=L"Max per. por turma por dia",
+	.str_planning_needs_room=L"Planejamento em Sala?",
 };
 
 const Language LANG_ENG = {
@@ -514,6 +516,8 @@ const Language LANG_ENG = {
 	.str_lecture_periods=L"Periods / Lecture",
 	.str_inactive=L"Inactive",
 	.str_couldnt_delete_because_timetable=L"Couldn't delete, because there is a timetable with this item",
+	.str_max_per_class_per_day=L"Max per. by class by day",
+	.str_planning_needs_room=L"Planning needs room?",
 };
 
 const Language LANG_SPA = {
@@ -755,6 +759,8 @@ const Language LANG_SPA = {
 	.str_lecture_periods=L"",
 	.str_inactive=L"",
 	.str_couldnt_delete_because_timetable=L"",
+	.str_max_per_class_per_day=L"x",
+	.str_planning_needs_room=L"x",
 };
 
 const Language LANG_DEU = {
@@ -995,4 +1001,6 @@ const Language LANG_DEU = {
 	.str_lecture_periods=L"",
 	.str_inactive=L"",
 	.str_couldnt_delete_because_timetable=L"",
+	.str_max_per_class_per_day=L"x",
+	.str_planning_needs_room=L"?",
 };

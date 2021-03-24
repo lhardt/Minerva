@@ -64,8 +64,9 @@ ListTimetablesPane::ListTimetablesPane(Application * owner, wxWindow * parent, w
 	notebook->AddPage(room_pane, m_owner->m_lang->str_rooms);
 
 	wxSizer * actions_sizer = new wxStaticBoxSizer(wxHORIZONTAL, this, m_owner->m_lang->str_actions);
-	actions_sizer->Add(export_btn, 0, wxALL, 5);
 	actions_sizer->Add(delete_btn, 0, wxALL, 5);
+	actions_sizer->Add(export_btn, 0, wxALL, 5);
+	export_btn->Hide();
 
 	wxSizer * basic_sizer = new wxFlexGridSizer(4,5,5);
 	basic_sizer->Add(name_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);

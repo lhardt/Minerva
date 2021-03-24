@@ -18,9 +18,9 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	wxStaticText * max_days_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_days);
 	wxStaticText * max_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods);
 	wxStaticText * max_ppd_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_number_of_periods_per_day);
-	wxStaticText * max_ppcpd_label = new wxStaticText(this, wxID_ANY, wxT("MAX PPCPD"));
+	wxStaticText * max_ppcpd_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_max_per_class_per_day);
 	wxStaticText * planning_periods_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_number_of_planning_periods);
-	wxStaticText * planning_needs_room_label = new wxStaticText(this, wxID_ANY, wxT("Planning needs room"));
+	wxStaticText * planning_needs_room_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_planning_needs_room);
 	wxStaticText * active_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_active);
 	wxStaticText * dependency_label = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_dependency);
 	wxNotebook   * notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
@@ -112,16 +112,21 @@ ListTeachersPane::ListTeachersPane(Application * owner, wxWindow * parent, wxPoi
 	fields_sz->Add(m_max_ppd_text, 0, wxEXPAND);
 	fields_sz->Add(max_ppcpd_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_max_ppcpd_text, 0, wxEXPAND);
-	fields_sz->Add(planning_periods_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_planning_periods_text, 0, wxEXPAND);
-	fields_sz->Add(planning_needs_room_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
-	fields_sz->Add(m_planning_needs_room_text, 0, wxEXPAND);
+	// fields_sz->Add(planning_periods_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
+	// fields_sz->Add(m_planning_periods_text, 0, wxEXPAND);
+	// fields_sz->Add(planning_needs_room_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
+	// fields_sz->Add(m_planning_needs_room_text, 0, wxEXPAND);
 	fields_sz->Add(active_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_active_text, 0, wxEXPAND);
 	fields_sz->Add(dependency_label, 0, wxALIGN_BOTTOM | wxRIGHT, 10);
 	fields_sz->Add(m_dependency_text, 0, wxEXPAND);
 	fields_sz->Add(m_cancel_btn, 0, wxEXPAND);
 	fields_sz->Add(m_edit_btn, 0, wxEXPAND);
+
+	planning_periods_label->Hide();
+	m_planning_periods_text->Hide();
+	planning_needs_room_label->Hide();
+	m_planning_needs_room_text->Hide();
 
 	fields_wrap->Add(fields_sz, 1, wxEXPAND|wxALL, 5);
 

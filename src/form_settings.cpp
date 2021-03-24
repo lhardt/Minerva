@@ -16,9 +16,9 @@ SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 	pane->SetBackgroundColour(wxColour(255,255,255));
 
 	wxArrayString lang_names;
-	lang_names.Add(wxT("Deutsch"));
+	// lang_names.Add(wxT("Deutsch"));
 	lang_names.Add(wxT("English"));
-	lang_names.Add(wxT("Español"));
+	// lang_names.Add(wxT("Español"));
 	lang_names.Add(wxT("Português"));
 
 	wxStaticText * lang_label = new wxStaticText(pane, wxID_ANY, m_owner->m_lang->str_language, wxDefaultPosition, wxSize(300,20));
@@ -76,14 +76,20 @@ SettingsForm::SettingsForm(Application * owner)  : wxFrame(nullptr, wxID_ANY, ow
 		}
 	}
 
-	if(m_owner->m_lang == &LANG_DEU){
+	// if(m_owner->m_lang == &LANG_DEU){
+	// 	m_lang_choice->SetSelection(0);
+	// } else if(m_owner->m_lang == &LANG_ENG){
+	// 	m_lang_choice->SetSelection(1);
+	// } else if(m_owner->m_lang == &LANG_SPA){
+	// 	m_lang_choice->SetSelection(2);
+	// } else if(m_owner->m_lang == &LANG_POR){
+	// 	m_lang_choice->SetSelection(3);
+	// }
+
+	if(m_owner->m_lang == &LANG_ENG){
 		m_lang_choice->SetSelection(0);
-	} else if(m_owner->m_lang == &LANG_ENG){
-		m_lang_choice->SetSelection(1);
-	} else if(m_owner->m_lang == &LANG_SPA){
-		m_lang_choice->SetSelection(2);
 	} else if(m_owner->m_lang == &LANG_POR){
-		m_lang_choice->SetSelection(3);
+		m_lang_choice->SetSelection(1);
 	}
 
 	if(m_owner->m_lang == NULL){
@@ -96,18 +102,19 @@ void SettingsForm::OnSaveButtonClicked(wxCommandEvent& evt){
 	if(m_lang_choice->GetSelection() != wxNOT_FOUND){
 		switch(m_lang_choice->GetSelection()){
 			case 0: {
-				m_owner->m_lang = &LANG_DEU;
-				break;
-			}
-			case 1: {
+			// 	m_owner->m_lang = &LANG_DEU;
+			// 	break;
+			// }
+			// case 1: {
 				m_owner->m_lang = &LANG_ENG;
 				break;
 			}
-			case 2: {
-				m_owner->m_lang = &LANG_SPA;
-				break;
-			}
-			case 3: {
+			case 1: {
+			// case 2: {
+			// 	m_owner->m_lang = &LANG_SPA;
+			// 	break;
+			// }
+			// case 3: {
 				m_owner->m_lang = &LANG_POR;
 				break;
 			}
