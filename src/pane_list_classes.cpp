@@ -261,6 +261,18 @@ void ListClassesPane::OnEditButtonClicked(wxCommandEvent & ev){
 				m_free_periods_text->Disable();
 				m_basic_cancel_btn->Hide();
 				m_basic_edit_btn->SetLabel(m_owner->m_lang->str_edit);
+
+				ChoiceGrid * periods_grid = m_periods->GetGrid();
+				for(int i = 0; i < school->n_periods; ++i){
+					if(school->periods[i]){
+						int per_of_day = i % school->n_periods_per_day;
+						int state = old_class->period_scores[i] > 0 ? 1:0;
+						if(per_of_day < c.maximal_entry_period || per_of_day > c.minimal_exit_period){
+							state = -1;
+						}
+						periods_grid->SetCellState(per_of_day, i / school->n_periods_per_day, state);
+					}
+				}
 			}
 		} else {
 			m_name_text->Enable();
@@ -307,7 +319,13 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		for(i = 0; i < school->n_periods; ++i){
 			if(school->periods[i]){
-				periods_grid->SetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day,c->period_scores[i] > 0 ? 1:0);
+				int per_of_day = i % school->n_periods_per_day;
+				int state = c->period_scores[i] > 0 ? 1:0;
+				if(per_of_day < c->maximal_entry_period || per_of_day > c->minimal_exit_period){
+					state = -1;
+				}
+
+				periods_grid->SetCellState(per_of_day, i / school->n_periods_per_day, state);
 			}
 		}
 		if(c->max_per_day_subject_group){
@@ -385,6 +403,10 @@ void ListClassesPane::OnSavePeriods(wxCommandEvent & evt){
 		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
 		int * scores = m_periods->GetValues();
+		for(int i = 0; i < school->n_periods; ++i){
+			if(scores[i] == -1)
+				scores[i] = 0;
+		}
 
 		Action * act = new ClassAvailabilityUpdateAction(m_owner, class_id, scores);
 		if(m_owner->Do(act)){
