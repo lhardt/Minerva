@@ -711,6 +711,8 @@ class ListTeachersPane : public wxScrolledWindow {
 	void OnCancelPlannningTwinning(wxCommandEvent &);
 	void OnSaveLectureRoom(wxCommandEvent &);
 	void OnCancelLectureRoom(wxCommandEvent &);
+	void OnSaveGroups(wxCommandEvent &);
+	void OnCancelGroups(wxCommandEvent &);
 	void OnSavePlanningRoom(wxCommandEvent &);
 	void OnCancelPlanningRoom(wxCommandEvent &);
 	void OnEditButtonClicked(wxCommandEvent &);

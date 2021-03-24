@@ -33,20 +33,18 @@ AddTeacherGroupPane::AddTeacherGroupPane(Application * owner, wxWindow * parent,
 	m_subjects_grid->AddState(m_owner->m_lang->str_no, wxColor(255,200,200));
 	m_subjects_grid->AddState(m_owner->m_lang->str_yes, wxColor(200,200,255));
 
-	wxString col_name = wxT("");
 	for(i = 0; i < school->n_teachers; ++i){
 		wxString row_name = wxString::FromUTF8(school->teachers[i].name);
 		m_teachers_grid->SetRowLabel(i, row_name);
 	}
-	m_teachers_grid->SetColLabel(0, col_name);
+	m_teachers_grid->SetColLabel(0, m_owner->m_lang->str_belongs);
 	m_teachers_grid->GridRemake(1, school->n_teachers);
 
-	col_name = wxT("");
 	for(i = 0; i < school->n_subjects; ++i){
 		wxString row_name = wxString::FromUTF8(school->subjects[i].name);
 		m_subjects_grid->SetRowLabel(i, row_name);
 	}
-	m_subjects_grid->SetColLabel(0, col_name);
+	m_subjects_grid->SetColLabel(0, m_owner->m_lang->str_teaches);
 	m_subjects_grid->GridRemake(1, school->n_subjects);
 
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);

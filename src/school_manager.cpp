@@ -1432,6 +1432,57 @@ wxString TeacherSubordinationUpdateAction::Describe(){
 	return wxT("TeacherSubordinationUpdateAction");
 }
 
+
+/*********************************************************/
+/*              TeacherInGroupsUpdateAction              */
+/*********************************************************/
+TeacherInGroupsUpdateAction::TeacherInGroupsUpdateAction(Application * owner, int id_teacher, int * in_groups) : Action(owner){
+	m_id = id_teacher;
+	m_in_groups = in_groups;
+}
+TeacherInGroupsUpdateAction::~TeacherInGroupsUpdateAction(){
+	free(m_in_groups);
+}
+bool TeacherInGroupsUpdateAction::Do(){
+	LMH_ASSERT(m_in_groups != NULL && m_id > 0);
+	if(update_teacher_subordinated(m_owner->std_out, m_owner->m_database, m_id, m_in_groups, m_owner->m_school)){
+		School * school = m_owner->m_school;
+
+		int t_index = get_teacher_index_by_id(school, m_id);
+		LMH_ASSERT(t_index != NULL);
+
+		for(int i = 0; i < school->n_teachers; ++i){
+			if(i == t_index){
+				continue;
+			}
+
+			int * sublist = school->teachers[i].subordinates;
+			if(sublist != NULL){
+				int tmp = sublist[t_index];
+				sublist[t_index] = m_in_groups[i];
+				m_in_groups[i] = tmp;
+			} else if(m_in_groups[i] > 0){
+				// Has to create that list to populate with this member;
+				school->teachers[i].subordinates = (int*) calloc(school->n_teachers+1, sizeof(int));
+				school->teachers[i].subordinates[t_index] = 1;
+				school->teachers[i].subordinates[school->n_teachers] = -1;
+				m_in_groups[i] = 0;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+bool TeacherInGroupsUpdateAction::Undo(){
+	return Do();
+}
+wxString TeacherInGroupsUpdateAction::Describe(){
+	return wxT("TeacherInGroupsUpdateAction");
+}
+// int		m_id;
+// int   * m_in_groups;
+
+
 /*********************************************************/
 /*                   ClassInsertAction                   */
 /*********************************************************/
@@ -1744,6 +1795,7 @@ bool ClassInGroupsUpdateAction::Do(){
 				// Has to create that list to populate with this member;
 				school->classes[i].subordinates = (int*) calloc(school->n_classes+1, sizeof(int));
 				school->classes[i].subordinates[c_index] = 1;
+				school->classes[i].subordinates[school->n_classes] = -1;
 				m_in_groups[i] = 0;
 			}
 		}

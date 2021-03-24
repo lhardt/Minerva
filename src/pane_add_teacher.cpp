@@ -121,8 +121,8 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.lecture_room_scores[school->n_rooms] = -1;
 		t.planning_room_scores[school->n_rooms] = -1;
 
+		t.teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*));
 		if(n_subjects > 0){
-			t.teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*));
 			teaches_vals = (Teaches*)calloc(n_subjects + 1, sizeof(Teaches));
 			int i_teaches = 0;
 			for(i_subject = 0; i_subject < school->n_subjects; ++i_subject){
@@ -137,8 +137,6 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 				}
 			}
 			t.teaches[i_teaches] = NULL;
-		} else {
-			t.teaches = NULL;
 		}
 		t.lecture_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
 		t.planning_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));

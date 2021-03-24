@@ -380,6 +380,19 @@ private:
 	int		  * m_subordinates;
 };
 
+class TeacherInGroupsUpdateAction : public Action {
+public:
+	TeacherInGroupsUpdateAction(Application * owner, int id_teacher, int * in_groups);
+	~TeacherInGroupsUpdateAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+
+private:
+	int		m_id;
+	int   * m_in_groups;
+};
+
 class ClassInsertAction : public Action {
 public:
 	ClassInsertAction(Application * owner, Class _class);

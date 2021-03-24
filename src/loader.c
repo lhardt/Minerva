@@ -3660,3 +3660,29 @@ bool update_class_subordinated(FILE * console_out, sqlite3* db, int class_id, in
 	sqlite3_finalize(stmt_delete);
 	return true;
 }
+
+bool update_teacher_subordinated(FILE * console_out, sqlite3* db, int teacher_id, int * subordinated, School * school){
+	LMH_ASSERT(console_out != NULL && db != NULL && teacher_id > 0 && subordinated != NULL);
+	sqlite3_stmt * stmt_insert, * stmt_delete, * stmt_exec;
+	int errc;
+
+	errc = sqlite3_prepare_v2(db, INSERT_TABLE_TEACHER_SUBORDINATION, -1, &stmt_insert, NULL);
+	errc = sqlite3_prepare_v2(db, DELETE_TEACHER_SUBORDINATION_BY_SUP_SUB_ID, -1, &stmt_delete, NULL);
+	CERTIFY_ERRC_SQLITE_OK(false);
+
+	for(int i = 0; i < school->n_teachers && subordinated[i] >= 0; ++i){
+		if(school->teachers[i].id == teacher_id) continue;
+
+		stmt_exec = subordinated[i] ? stmt_insert : stmt_delete;
+
+		sqlite3_bind_int(stmt_exec, 1, school->teachers[i].id);
+		sqlite3_bind_int(stmt_exec, 2, teacher_id);
+
+		errc = sqlite3_step(stmt_exec);
+		CERTIFY_ERRC_SQLITE_DONE(false);
+		sqlite3_reset(stmt_exec);
+	}
+	sqlite3_finalize(stmt_insert);
+	sqlite3_finalize(stmt_delete);
+	return true;
+}
