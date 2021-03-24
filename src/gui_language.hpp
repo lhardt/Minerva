@@ -263,6 +263,22 @@ typedef struct Language {
 	const wchar_t * const str_couldnt_delete_because_timetable;
 	const wchar_t * const str_max_per_class_per_day;
 	const wchar_t * const str_planning_needs_room;
+
+	const wchar_t * const str_panedesc_school;
+	const wchar_t * const str_panedesc_add_room;
+	const wchar_t * const str_panedesc_list_rooms;
+	const wchar_t * const str_panedesc_list_subjects;
+	const wchar_t * const str_panedesc_list_subject_groups;
+	const wchar_t * const str_panedesc_add_subject;
+	const wchar_t * const str_panedesc_add_subject_group;
+	const wchar_t * const str_panedesc_list_teachers;
+	const wchar_t * const str_panedesc_add_teacher;
+	const wchar_t * const str_panedesc_add_teacher_group;
+	const wchar_t * const str_panedesc_list_classes;
+	const wchar_t * const str_panedesc_add_class;
+	const wchar_t * const str_panedesc_add_class_group;
+	const wchar_t * const str_panedesc_list_timetables;
+	const wchar_t * const str_panedesc_gen_timetable;
 } Language;
 
 const extern Language LANG_POR;

@@ -343,20 +343,21 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		case ID_SCHOOL_DATA: {
 			pane_to_open = new DescSchoolPane(m_owner, m_center_pane, wxPoint(100,15));
 			title = m_owner->m_lang->str_school_details;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_school;
+			//
 			break;
 		}
 		/* Room */
 		case ID_ADD_ROOM: {
 			pane_to_open = new AddRoomPane(m_owner, m_center_pane, wxPoint(100,15));
 			title = m_owner->m_lang->str_add_room;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_add_room;
 			break;
 		}
 		case ID_VIEW_ROOMS:{
 			pane_to_open = new ListRoomsPane(m_owner, m_center_pane, wxPoint(100,15));
 			title = m_owner->m_lang->str_list_of_rooms;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_list_rooms;
 			break;
 		}
 		case ID_CHECK_ALL_ROOMS:{
@@ -365,25 +366,25 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Subject */
 		case ID_ADD_SUBJECT:{
 			title = m_owner->m_lang->str_add_subject;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_add_subject;
 			pane_to_open = new AddSubjectPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_ADD_SUBJECT_GROUP:{
 			title = m_owner->m_lang->str_add_subject_group;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_add_subject_group;
 			pane_to_open = new AddSubjectGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_SUBJECTS:{
 			title = m_owner->m_lang->str_list_of_subjects;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_list_subjects;
 			pane_to_open = new ListSubjectsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_SUBJECT_GROUPS:{
 			title = m_owner->m_lang->str_list_of_subject_groups;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_list_subject_groups;
 			pane_to_open =new ListSubjectGroupsPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
@@ -394,19 +395,19 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Teacher */
 		case ID_ADD_TEACHER:{
 			title = m_owner->m_lang->str_add_teacher;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_add_teacher;
 			pane_to_open = new AddTeacherPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_ADD_TEACHER_GROUP:{
 			title = m_owner->m_lang->str_add_teacher_group;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_add_teacher_group;
 			pane_to_open = new AddTeacherGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_TEACHERS:{
 			title = m_owner->m_lang->str_list_of_teachers_and_their_groups;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_list_teachers;
 			pane_to_open = new ListTeachersPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
@@ -417,19 +418,19 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Class */
 		case ID_ADD_CLASS:{
 			title = m_owner->m_lang->str_add_class;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_add_class;
 			pane_to_open = new AddClassPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_ADD_CLASS_GROUP:{
 			title = m_owner->m_lang->str_add_class_group;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_add_class_group;
 			pane_to_open = new AddClassGroupPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_VIEW_CLASSES:{
 			title = m_owner->m_lang->str_list_of_classes_and_their_groups;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_list_classes;
 			pane_to_open = new ListClassesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
@@ -457,13 +458,13 @@ void MainMenuForm::OnMenuItemClicked(wxCommandEvent & ev){
 		/* Timetable */
 		case ID_LIST_TIMETABLES:{
 			title = m_owner->m_lang->str_generated_timetables;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_list_timetables;
 			pane_to_open = new ListTimetablesPane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}
 		case ID_GENERATE_TIMETABLE:{
 			title = m_owner->m_lang->str_generate_timetable;
-			detail = m_owner->m_lang->str_lorem;
+			detail = m_owner->m_lang->str_panedesc_gen_timetable;
 			pane_to_open = new GenerateTimetablePane(m_owner, m_center_pane, wxPoint(100,15));
 			break;
 		}

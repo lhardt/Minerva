@@ -96,7 +96,7 @@ ListClassesPane::ListClassesPane(Application * owner, wxWindow * parent, wxPoint
 	m_groups->GetSaveButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnSaveGroups, this);
 	m_groups->GetCancelButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelGroups, this);
 	m_class_groups->GetSaveButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnSaveClassGroups, this);
-	m_class_groups->GetCancelButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnSaveClassGroups, this);
+	m_class_groups->GetCancelButton()->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelClassGroups, this);
 	m_basic_edit_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnEditButtonClicked, this);
 	m_basic_cancel_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnCancelButtonClicked, this);
 	delete_btn->Bind(wxEVT_BUTTON, &ListClassesPane::OnRemoveButtonClicked, this);
@@ -361,20 +361,15 @@ void ListClassesPane::OnSelectionChanged(wxCommandEvent & ev){
 }
 
 void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
-	bool success = false;
 	School * school = m_owner->m_school;
 
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int del_id =  ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
-		int del_i = get_class_index_by_id(school, del_id);
 		bool can_delete = can_remove_class(school, del_id);
 		if(can_delete){
 			Action * act = new ClassDeleteAction(m_owner, del_id);
-			// success = remove_class(stdout, m_owner->m_database, del_id);
 			if(m_owner->Do(act)) {
-				/* TODO: substitute for an Action*/
-				// school_class_remove(school, del_i, true);
 				m_classes_list->RemoveItem(del_id);
 
 				m_name_text->SetLabel(wxT(""));
@@ -384,8 +379,6 @@ void ListClassesPane::OnRemoveButtonClicked(wxCommandEvent & ev){
 				m_exit_period_text->SetLabel(wxT(""));
 				m_subjects_text->SetLabel(wxT(""));
 				m_periods->GetGrid()->SetAllCellsState(1);
-
-				// m_owner->NotifyNewUnsavedData();
 			} else {
 				printf("Não foi possível deletar.\n");
 			}
@@ -400,7 +393,6 @@ void ListClassesPane::OnSavePeriods(wxCommandEvent & evt){
 	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
-		ChoiceGrid * periods_grid = m_periods->GetGrid();
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
 		int * scores = m_periods->GetValues();
 		for(int i = 0; i < school->n_periods; ++i){
@@ -497,7 +489,6 @@ void ListClassesPane::OnCancelSubjects(wxCommandEvent & evt){
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
-		Class * c = find_class_by_id(school, class_id);
 
 		for(int i = 0; i < school->n_subjects; ++i){
 			m_assignments->SetCellValue(i,0,0);
@@ -560,11 +551,9 @@ void ListClassesPane::OnCancelRooms(wxCommandEvent & evt){
 }
 
 void ListClassesPane::OnSaveGroups(wxCommandEvent & evt){
-	School * school = m_owner->m_school;
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
-		Class * c = find_class_by_id(school, class_id);
 
 		int * max = m_groups->GetValues();
 		Action * act = new ClassSubjectGroupsUpdateAction(m_owner, class_id, max);
@@ -618,8 +607,20 @@ void ListClassesPane::OnCancelClassGroups(wxCommandEvent &){
 	int i_select = m_classes_list->GetList()->GetSelection();
 	if(i_select != wxNOT_FOUND){
 		int class_id = ((IntClientData*)m_classes_list->GetList()->GetClientObject(i_select))->m_value;
-		Class * c = find_class_by_id(school, class_id);
+		int class_i = get_class_index_by_id(school, class_id);
 
+		LMH_ASSERT(class_id > 0 && class_i >= 0);
+
+		ChoiceGrid * cgroups_grid = m_class_groups->GetGrid();
+
+		for(int i = 0; i < school->n_classes; ++i){
+			if(school->classes[i].subordinates != NULL
+				&& school->classes[i].subordinates[class_i] > 0){
+				cgroups_grid->SetCellState(i,0, 1);
+			} else {
+				cgroups_grid->SetCellState(i,0, 0);
+			}
+		}
 	}
 }
 

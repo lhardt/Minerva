@@ -145,9 +145,9 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 				++n_needs;
 			}
 		}
+		c.assignments = (Assignment**) calloc(n_needs + 1, sizeof(Assignment*));
 		if(n_needs > 0){
 			i_need = 0;
-			c.assignments = (Assignment**) calloc(n_needs + 1, sizeof(Assignment*));
 			alist = (Assignment *) calloc(n_needs+1, sizeof(Assignment));
 
 			for(i_subject = 0; i_subject < school->n_subjects; ++i_subject){
@@ -163,8 +163,6 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 				}
 			}
 			c.assignments[n_needs] = NULL;
-		} else {
-			c.assignments = nullptr;
 		}
 		c.subordinates = nullptr;
 
