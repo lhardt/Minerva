@@ -352,7 +352,7 @@ int count_required_meetings(School * school,Class * class,Subject * subject){
 
 	if(school->classes != NULL && school->n_classes > 0){
 		for(i_class = 0; i_class < school->n_classes; ++i_class){
-			if( (class == NULL) != (&school->classes[i_class] == class) ){
+			if( ((class == NULL) != (&school->classes[i_class] == class)) && school->classes[i_class].active){
 				for(i_need = 0; school->classes[i_class].assignments[i_need] != NULL; ++i_need){
 					if((subject == NULL) != (school->classes[i_class].assignments[i_need]->subject == subject)){
 						count += school->classes[i_class].assignments[i_need]->amount;

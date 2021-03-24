@@ -35,7 +35,7 @@ int * make_possible_teacher_list(School * school, Meeting * meeting){
 	for(i_teacher = 0; i_teacher < school->n_teachers; i_teacher++){
 		teacher = &(school->teachers[i_teacher]);
 		for(i_teaches = 0; teacher->teaches[i_teaches] != NULL; i_teaches++){
-			if(teacher->teaches[i_teaches]->subject == meeting->subject){
+			if(teacher->teaches[i_teaches]->subject == meeting->subject && teacher->active){
 				scores[i_teacher] = teacher->teaches[i_teaches]->score;
 				printf("Setting score of %d to meeting (subj: %s) with teacher %s (i_teacher %d)\n", scores[i_teacher], meeting->subject->name, teacher->name, i_teacher);
 			}
@@ -54,7 +54,7 @@ int* make_possible_room_list(School * school, Meeting * meeting){
 	for(i_room = 0; i_room < school->n_rooms; i_room++){
 		room = &(school->rooms[i_room]);
 		LMH_ASSERT(c->room_scores != NULL);
-		if(room->size >= c->size){
+		if(room->size >= c->size && room->active){
 			list[i_room] = c->room_scores[i_room];
 		}
 		i_list++;
@@ -108,19 +108,21 @@ DecisionTree * init_decision_tree(School * school){
 
 	for(i_class = 0; i_class < school->n_classes; i_class++){
 		class = &(school->classes[i_class]);
-		for(i_need = 0; class->assignments[i_need] != NULL; i_need++){
-			for(i_quant = 0; i_quant < class->assignments[i_need]->amount; i_quant++){
-				conclusion[i_meet].type = meet_LECTURE;
-				conclusion[i_meet].m_class = class;
-				conclusion[i_meet].subject = class->assignments[i_need]->subject;
-				conclusion[i_meet].teacher = NULL;
-				conclusion[i_meet].room = NULL;
-				conclusion[i_meet].period = -1;
+		if(class->active){
+			for(i_need = 0; class->assignments[i_need] != NULL; i_need++){
+				for(i_quant = 0; i_quant < class->assignments[i_need]->amount; i_quant++){
+					conclusion[i_meet].type = meet_LECTURE;
+					conclusion[i_meet].m_class = class;
+					conclusion[i_meet].subject = class->assignments[i_need]->subject;
+					conclusion[i_meet].teacher = NULL;
+					conclusion[i_meet].room = NULL;
+					conclusion[i_meet].period = -1;
 
-				conclusion[i_meet].possible_teachers = make_possible_teacher_list(school,&conclusion[i_meet]);
-				conclusion[i_meet].possible_rooms = make_possible_room_list(school, &conclusion[i_meet]);
-				conclusion[i_meet].possible_periods = make_possible_period_list(school,&conclusion[i_meet]);
-				i_meet++;
+					conclusion[i_meet].possible_teachers = make_possible_teacher_list(school,&conclusion[i_meet]);
+					conclusion[i_meet].possible_rooms = make_possible_room_list(school, &conclusion[i_meet]);
+					conclusion[i_meet].possible_periods = make_possible_period_list(school,&conclusion[i_meet]);
+					i_meet++;
+				}
 			}
 		}
 	}
