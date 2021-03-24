@@ -189,12 +189,11 @@ DecisionNode * make_decision(const School * const school, DecisionNode * parent)
 				break;
 			}
 		}
-		child->is_consistent = new_node_elimination(school, child);
+		new_node_elimination(school, child);
 		child->score = new_node_evaluation(school, child);
 	} else {
 		printf("Was final. No can do. Parent isfinal %d, Parent isConsistent %d\n", parent->is_final, parent->is_consistent);
 	}
-	// sleep(1);
 	return child;
 }
 
@@ -204,9 +203,15 @@ DecisionNode * dfs_timetable_create(const School * const school , DecisionNode* 
 	curr = start;
 	next = NULL;
 	int i = 0;
+
+	root_elimination(school, start);
+	start->is_final = is_node_final(school, start);
+	start->is_consistent = !is_node_inconsistent(school, start);
+
 	while(curr != NULL && i < 100 && !curr->is_final){
 		next = make_decision(school, curr);
-
+		printf("======================= %2d ======================\n", i);
+		print_meeting_list(stdout,next->conclusion);
 		if(next == NULL || !curr->is_consistent){
 			curr = curr->parent;
 		} else {

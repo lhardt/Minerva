@@ -278,12 +278,12 @@ bool elim_general_super_room(School * school, DecisionNode * node);
 bool elim_super_room_daily(School * school, DecisionNode * node, int day);
 
 /* ROOM PERIOD ELIMINATION
- *		Tries to excluded periods based on room disponibiliy
+ *		Tries to excluded periods based on room availability
  *		and vice-versa.
  *
  * Development Status:
  *		Implemented.
  */
-bool room_period_elimination(const School * const school, DecisionNode * node);
+bool room_period_elimination(const School * const school, DecisionNode * node, int i_meeting);
 
 #endif /* LOGIC_H */

@@ -139,7 +139,7 @@ void ListTimetablesPane::OnClassSelectionChaged(wxCommandEvent &){
 		for(int i = 0; i < sol->n_meetings; ++i){
 			if(class_id == sol->meetings[i].m_class->id && sol->meetings[i].type == meet_LECTURE){
 				int period = sol->meetings[i].period;
-				int teacher_i = get_teacher_index_by_id(school, sol->meetings[i].teacher->id);
+				int teacher_i = get_subject_index_by_id(school, sol->meetings[i].subject->id);
 				m_classes->SetCellState(period % m_owner->m_school->n_periods_per_day, period / m_owner->m_school->n_periods_per_day, teacher_i);
 			}
 		}

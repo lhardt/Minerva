@@ -98,6 +98,7 @@ bool score_possible_children(const School * const school, DecisionNode * parent)
 	// TODO use weights. (ex. 3*max_room).
 	if(max_period <= 0 && max_room <= 0 && max_teacher <= 0){
 		printf("nowhere to go %d %d %d \n", max_period, max_room, max_teacher);
+		print_meeting_list(stdout, parent->conclusion);
 		return false;
 	}
 	if(max_period >= max_room && max_period >= max_teacher){

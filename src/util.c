@@ -1033,8 +1033,6 @@ void print_school(FILE * out, const School * const s){
 		fprintf(out, "\tn_rooms:	 	 	 %d\n", s->n_rooms);
 		fprintf(out, "\tn_teaches: 	 	 %d\n", s->n_teaches);
 		fprintf(out, "\tn_subj_groups: 	 %d\n", s->n_subject_groups);
-
-		// printf("\t\t")
 	}
 }
 

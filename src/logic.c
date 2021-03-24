@@ -513,6 +513,91 @@ bool elim_search_fixed_meeting(const School * const school, DecisionNode * node)
 	return change;
 }
 
+/* ROOM PERIOD ELIMINATION
+*		Tries to exclude periods based on room availability
+*		and vice-versa.
+*
+* Development Status:
+*		Implemented.
+*/
+bool room_period_elimination(const School * const school, DecisionNode * node, int affected_i){
+	int i_per = 0, i_room = 0;
+	Meeting * met = NULL;
+	bool change = false;
+
+	LMH_ASSERT(school != NULL && node != NULL && affected_i >= 0);
+
+	met = &node->conclusion[affected_i];
+	if(met->room != NULL){
+		if(met->period >= 0){
+			if(met->room->availability[met->period] == 0){
+				// Theoretically, the program blocks tihs possibility by hindsight.
+				node->is_consistent = false;
+				change = true;
+				printf("Here1.\n");
+				print_meeting_list(stdout, node->conclusion);
+			}
+		} else {
+			for(i_per = 0; met->possible_periods[i_per] >= 0; ++i_per){
+				// TODO make this a consistent standard among other eliminations.
+				int tmp = met->possible_periods[i_per] * met->room->availability[i_per];
+				if(tmp != met->possible_periods[i_per]){
+					met->possible_periods[i_per] = tmp;
+					change = true;
+				}
+			}
+		}
+	} else if(met->period >= 0){
+		for(i_room = 0; i_room < school->n_rooms && met->possible_rooms[i_room] >= 0; ++i_room){
+			met->possible_rooms[i_room] *= school->rooms[i_room].availability[ met->period ];
+			printf("PossibleRooms[%d]=%d\t", i_room, met->possible_rooms[i_room]);
+		}
+		printf("\n");
+	}
+	return change;
+}
+
+/* TEACHER PERIOD ELIMINATION
+*		Tries to exclude periods based on those of the teacher chosen.
+*		and vice-versa
+*
+* Development Status:
+*
+*/
+bool teacher_period_elimination(const School * const school, DecisionNode * node, int affected_i){
+	Meeting * met = NULL;
+	bool change = false;
+
+	LMH_ASSERT(school != NULL && node != NULL);
+
+	met = &node->conclusion[affected_i];
+	if(met->teacher != NULL){
+		if(met->period >= 0 && met->teacher->lecture_period_scores[ met->period ] == 0){
+			node->is_consistent = false;
+			printf("Here2.");
+			return true;
+		}
+		int * tperiods = met->teacher->lecture_period_scores;
+		for(int i = 0; i < school->n_periods; ++i){
+			int tmp = (tperiods[i] > 0 ? 1 : 0) * met->possible_periods[i];
+			if(met->possible_periods[i] != tmp){
+				change = true;
+				met->possible_periods[i] = tmp;
+			}
+		}
+	} else if(met->period >= 0){
+		for(int i = 0; i < school->n_teachers; ++i){
+			if(school->teachers[i].lecture_period_scores[ met->period ] == 0){
+				if(met->possible_teachers[i] != 0){
+					met->possible_teachers[i] = 0;
+					change = true;
+				}
+			}
+		}
+	}
+	return change;
+}
+
 /* ELIM FIXED MEETING
  *		Fixes a meeting that has only one possibility
  *
@@ -527,6 +612,13 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 
 	Meeting * fixed = &node->conclusion[fix_meet_i];
 	Meeting * meeting;
+
+	if(node->conclusion[fix_meet_i].room != NULL){
+		room_period_elimination(school, node, fix_meet_i);
+	}
+	if(node->conclusion[fix_meet_i].teacher != NULL){
+		teacher_period_elimination(school, node, fix_meet_i);
+	}
 
 	for(i_meet = 0; node->conclusion[i_meet].m_class != NULL; i_meet++){
 		if(i_meet == fix_meet_i){
@@ -572,8 +664,11 @@ bool elim_fixed_meeting(const School * const school, DecisionNode * node, const 
 				&& meeting->subject == fixed->subject
 				&& meeting->room == NULL
 				&& fixed->room != NULL){
-			meeting->room = fixed->room;
-			change = true;
+			if(meeting->room != fixed->room){
+				meeting->room = fixed->room;
+				change = true;
+				room_period_elimination(school, node, i_meet);
+			}
 		}
 		/* Rule 6. No super/subordinate of T can lecture at P. */
 		if(fixed->teacher != NULL
@@ -644,53 +739,6 @@ bool elim_general_super_room(School * school, DecisionNode * node){
 	return change;
 }
 
-/* ROOM PERIOD ELIMINATION
- *		Tries to excluded periods based on room disponibiliy
- *		and vice-versa.
- *
- * Development Status:
- *		Implemented.
- */
-bool room_period_elimination(const School * const school, DecisionNode * node){
-	int i_per = 0, i_room = 0;
-	Meeting * met = NULL;
-	bool change = false;
-
-
-	LMH_ASSERT(node != NULL);
-
-	met = &node->conclusion[node->affected_meeting_index];
-	if(node->type == NODE_ROOM){
-		if(met->period >= 0){
-			if(met->m_class->period_scores[met->period] == 0){
-				// Selected a period that the class does not support.
-				// Theoretically, no nodes made by the program blocks
-				// tihs possibility by hindsight. But handmade, ...
-				node->is_consistent = false;
-				change = true;
-			}
-		} else {
-			for(i_per = 0; met->possible_periods[i_per] >= 0; ++i_per){
-				// TODO make this a consistent standard among other eliminations.
-				met->possible_periods[i_per] *= met->room->availability[i_per];
-				change = true;
-			}
-		}
-	} else if(node->type == NODE_PERIOD){
-		if(met->room != NULL){
-			if(met->room->availability[ met->period ] == 0){
-				node->is_consistent = false;
-				change = true;
-			}
-		} else {
-			for(i_room = 0; met->possible_rooms[i_room] >= 0; ++i_room){
-				met->possible_rooms[i_room] *= school->rooms[i_room].availability[i_per];
-			}
-		}
-	}
-	return change;
-}
-
 /* ROOT ELIMINATION
  * 		Blackbox functions for eliminating possibilities, for the initial
  *		node created.
@@ -700,8 +748,25 @@ bool room_period_elimination(const School * const school, DecisionNode * node){
  */
 bool root_elimination(const School * const school, DecisionNode * node){
 	LMH_ASSERT(school != NULL && node != NULL);
+	printf("=======================================ROOT ELIMINATION .\n");
 	/* TODO expand to encompass more restrictions */
-	elim_analogous_ordering(school,node);
+	bool change = false;
+	do {
+		Meeting * meetings = node->conclusion;
+		change = false;
+		change |= elim_analogous_ordering(school,node);
+		change |= elim_search_fixed_meeting(school,node);
+		for(int i = 0; i < node->owner->n_meetings; ++i){
+			change |= elim_fixed_meeting(school, node, i);
+			if(meetings[i].period >= 0 || meetings[i].room != NULL){
+				change |= room_period_elimination(school, node, i);
+			}
+			if(meetings[i].period >= 0 || meetings[i].teacher != NULL){
+				change |= teacher_period_elimination(school, node, i);
+			}
+		}
+	}while(change == true && node->is_consistent);
+	// teacher_period_elimination()
 	return true;
 }
 
@@ -737,13 +802,14 @@ bool new_node_elimination(const School * const school, DecisionNode * node){
 			break;
 		}
 	}
-
-	room_period_elimination(school, node);
-
+	// Theese alter the scores, therefore don't fix anything.
+	// Any fixation must be accompanied by a call to elim_fixed_meeting
+	printf("Fixed meetign is %d\n", node->affected_meeting_index);
+	elim_fixed_meeting(school, node, node->affected_meeting_index);
+	room_period_elimination(school, node, node->affected_meeting_index);
+	teacher_period_elimination(school, node, node->affected_meeting_index);
 	do{
 		change = false;
-		/* TODO: basic elimination. Improve over time. */
-		change |= elim_fixed_meeting(school,node, node->affected_meeting_index);
 		change  |= elim_search_fixed_meeting(school,node);
 
 		changed |= change;
