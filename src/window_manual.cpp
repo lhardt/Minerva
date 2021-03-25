@@ -17,7 +17,7 @@ ManualWindow::ManualWindow(Application * owner) : wxFrame(nullptr, wxID_ANY, own
 	m_notebook->AddPage(PopulateSubjectsWindow(), wxT("Disciplinas"));
 	m_notebook->AddPage(PopulateTeachersWindow(), wxT("Professores"));
 	m_notebook->AddPage(PopulateClassesWindow(), wxT("Turmas"));
-	m_notebook->AddPage(PopulateLecturesWindow(), wxT("Aulas"));
+	// m_notebook->AddPage(PopulateLecturesWindow(), wxT("Aulas"));
 	m_notebook->AddPage(PopulateTimetableWindow(), wxT("Horário"));
 	m_notebook->AddPage(PopulateSoftwareWindow(), wxT("Software"));
 
@@ -32,11 +32,13 @@ wxWindow * ManualWindow::PopulateSchoolWindow(){
 	text->WriteText(wxT("Por Onde Começar\n"));
 	text->EndBold();
 	text->BeginAlignment(wxTEXT_ALIGNMENT_LEFT );
-	text->WriteText(wxT("Gostaríamos mais uma vez de estar testando essa novidade. Todo feedback nos é importante.\n\n"
-				"Para usar este programa, é importante notar que todos os dados são salvos automaticamente. "
-				"No entanto, ainda não criamos uma função de desfazer. Há uma variedade de outras funções que não operam ainda.\n\n"
-				"Por ser uma versão preliminar, o programa que você está usando serve mais para ser julgado (incluindo dar dicas, fazer reclamações, etc) "
-				"do que realmente para fazer o horário. Ainda assim, a geração do horário está disponível e, a princípio, deve dar um resultado válido."
+	text->WriteText(wxT("Agradecemos por você estar testando este programa. Todo feedback é importante para nós.\n\n"
+				"A criação de uma nova escola pode ser feita da tela inicial no botão CRIAR. Os dados dela poderão ser alterados "
+				"posteriormente no menu DETALHES DA ESCOLA. Para editar valores, primeiro clique no botão EDITAR abaixo, altere e aperte em SALVAR.\n\n"
+				"Dias podem ter nomes, como 'Seg', 'Ter' ou 'Qua', assim como os períodos diários, ex: 10:00, 11:00, 12:00, etc.\n\n"
+
+				"Para desfazer alguma ação feita, pode-se clicar no botão DESFAZER na parte inferior da tela. Para cada mudança que deve ser salva, "
+				"clique no botão SALVAR, ao lado. Para refazer uma ação desfeita, pode-se apertar no botão REFAZER."
 			));
 	return text;
 }
@@ -49,9 +51,8 @@ wxWindow * ManualWindow::PopulateRoomsWindow(){
 	text->EndBold();
 	text->BeginAlignment(wxTEXT_ALIGNMENT_LEFT );
 	text->WriteText(wxT("A primeira coisa a se fazer, agora que já temos a escola, é inserir as salas.\n\n "
-				"Algumas salas podem ser diferentes das outras e é aí que entram as características. Por exemplo, se algumas salas são laboratório, "
-				"outras são ginásio, vale a pena inserir essas características no sistema. Elas serão úteis mais tarde, na inserção de aulas."
-				"Uma aula pode exigir uma característica (como um professor de química poderia exigir um laboratório)."
+				"Salas têm capacicades medidas em número de alunos. Então uma turma de 30 alunos não poderia ter aulas em uma sala de capacidade 20."
+				"\n\n Elas podem ser removidas ou editadas no menu LISTAR SALAS, e adicionadas no menu ADICIONAR SALA."
 			));
 	return text;
 }
@@ -63,10 +64,10 @@ wxWindow * ManualWindow::PopulateSubjectsWindow(){
 	text->WriteText(wxT("Disciplinas e seus Grupos\n"));
 	text->EndBold();
 	text->BeginAlignment(wxTEXT_ALIGNMENT_LEFT );
-	text->WriteText(wxT("Disciplinas, no papel, são coisas muito simples: somente seu nome.\n\n "
-				"No entanto, alguns professores podem preferir dar aula de química só nos laboratórios, ou só nos primeiros períodos. "
-				"Futuramente, essas configurações poderão ser feitas mais adiante, na aba \"Aulas\", pois cada professor "
-				"poderia decidir sobre se usará um laboratório ou não. \n\n"
+	text->WriteText(wxT("Disciplinas .\n\n "
+				"É com disciplinas que dizemos ao programa quais aulas uma turma precisa, e com quais professores essas aulas podem acontecer. "
+				"Para editá-las ou removê-las, podemos ir ao menu LISTAR DISCIPLINAS. Adicionamos mais disciplinas no menu Adicionar Disciplina.\n\n"
+				"Grupos de disciplinas podem ser usados quando uma turma tem um limite de aulas em uma área do conhecimento (ex. Exatas) por dia."
 			));
 	return text;
 }
@@ -75,14 +76,13 @@ wxWindow * ManualWindow::PopulateTeachersWindow(){
 	wxRichTextCtrl * text = new wxRichTextCtrl(m_notebook, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxRE_READONLY);
 	text->BeginAlignment(wxTEXT_ALIGNMENT_CENTRE);
 	text->BeginBold();
-	text->WriteText(wxT("Disciplinas e seus Grupos\n"));
+	text->WriteText(wxT("Professores e seus Grupos\n"));
 	text->EndBold();
 	text->BeginAlignment(wxTEXT_ALIGNMENT_LEFT );
 	text->WriteText(wxT("Professores têm duas características importantíssimas: as disciplinas das quais dão aula e suas disponibilidades.\n\n "
-		"Poderá haver preferência por parte do professor por uma disciplina, mesmo que ele possa ensinar mais de uma"
-		" (por exemplo, um professor que pode dar aula de Matemática e de Física, mas que tenha mais experiência com Física). "
+		"Um professor pode ensinar mais de uma disciplina, e pode definir em quais dias, perídos e salas ele pode frequentar (no menu LISTAR PROFESSORES)."
 		"Além disso, se professores dão aulas em conjunto (como nos casos de História e Geografia), com os dois professores ao mesmo tempo, "
-		"deve ser criado um grupo com esses professores. O grupo, então, é quem ensina a \"disciplina HistoGeo\"."
+		"deve ser criado um grupo com esses professores. O grupo, então, é quem ensina a disciplina Historia E Geografia."
 	));
 	return text;
 }
@@ -93,6 +93,7 @@ wxWindow * ManualWindow::PopulateClassesWindow(){
 	text->BeginBold();
 	text->WriteText(wxT("Turmas e seus Grupos\n"));
 	text->EndBold();
+	text->BeginAlignment(wxTEXT_ALIGNMENT_LEFT );
 	text->WriteText(wxT("As turmas são o último componente obrigatório para a geração do horário.\n\n "
 			"Deve-se informar os períodos em que a turma frequenta a escola, bem como quantos períodos de quais disciplinas a turma necessita."
 			" (por exemplo, uma turma pode precisar de 7 períodos de Matemática e 2 de Física, e não frequenar a escola às Sextas-feiras). "
@@ -108,6 +109,7 @@ wxWindow * ManualWindow::PopulateLecturesWindow(){
 	text->BeginBold();
 	text->WriteText(wxT("Turmas e seus Grupos\n"));
 	text->EndBold();
+	text->BeginAlignment(wxTEXT_ALIGNMENT_LEFT );
 	text->WriteText(wxT("Repare que todas as aulas já são adicionadas na criação das turmas. Esta seção se trata de ajustes finos nas aulas.\n\n"
 			"Para cada aula (encontro entre turma e um professor em um período), há uma lista de possibilidades de períodos, de professores e de salas "
 			"(por exemplo, uma turma pode precisar de 7 períodos de Matemática e 2 de Física, e não frequenar a escola às Sextas-feiras). "
@@ -123,6 +125,7 @@ wxWindow * ManualWindow::PopulateTimetableWindow(){
 	text->BeginBold();
 	text->WriteText(wxT("Geração Final do Horário\n"));
 	text->EndBold();
+	text->BeginAlignment(wxTEXT_ALIGNMENT_LEFT );
 	text->WriteText(wxT("Se tudo correu bem até aqui, deve ser possível gerar o horário, na aba com este nome.\n\n"
 			"Tendo sido gerado com sucesso, o horário estará disponível para visualização. Se, por algum acaso, o horário for ruim, "
 			"será possível deletá-lo para ser gerado novamente. Note que ao gerar o horário duas vezes, o resultado será exatamente o "
@@ -137,11 +140,9 @@ wxWindow * ManualWindow::PopulateSoftwareWindow(){
 	text->BeginBold();
 	text->WriteText(wxT("Sobre o presente Software\n"));
 	text->EndBold();
+	text->BeginAlignment(wxTEXT_ALIGNMENT_LEFT );
 	text->WriteText(wxT("O presente software é parte de um Trabalho de Conclusão de Curso, por Léo Hardt, no IFRS-Canoas.\n\n"
-				"Ele será aprimorado subsequentemente, tendo em vista as novas melhorias que serão necessárias com seu uso. "
-				"Em sua versão atual, é apenas um protótipo. A licença de uso e de distribuição será definida mais tarde.\n\n"
 				"Para compor este programa, foram utilizadas diferentes bibliotecas livres. São elas: SQLite3, wxWidgets. "
-				// TODO TODO
 			));
 	return text;
 }

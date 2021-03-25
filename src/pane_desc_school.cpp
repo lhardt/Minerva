@@ -21,7 +21,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	wxButton 	 * delete_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_delete);
 	m_edit_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_edit);
 	m_cancel_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_cancel);
-	wxButton 	 * duplicate_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_duplicate);
+	// wxButton 	 * duplicate_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_duplicate);
 	m_notebook = new wxNotebook(this, wxID_ANY);
 
 	m_name_text->Disable();
@@ -96,7 +96,7 @@ DescSchoolPane::DescSchoolPane(Application * owner, wxWindow * parent, wxPoint p
 	text_sz->Add(m_edit_button,1,wxEXPAND);
 
 	button_sz->Add(delete_button, 0, wxALL, 15);
-	button_sz->Add(duplicate_button, 0, wxALL, 15);
+	// button_sz->Add(duplicate_button, 0, wxALL, 15);
 
 	SetSizerAndFit(sizer);
 	SetScrollRate(5,5);
