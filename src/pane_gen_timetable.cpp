@@ -47,43 +47,48 @@ void GenerateTimetablePane::OnButtonClicked(wxCommandEvent & ev){
 	int i;
 	School * school = m_owner->m_school;
 	if(!m_tt_name_text->GetValue().IsEmpty()){
-		DecisionTree * tree = init_decision_tree(m_owner->m_school);
-		for(int i = 0; i < school->n_teachers; ++i){
-			print_teacher(stdout, &school->teachers[i]);
-		}
-		print_meeting_list(stdout,tree->start[0].conclusion);
 		m_err_msg->SetLabel(m_owner->m_lang->str_generating);
 
-		Solution gen_solution;
-		gen_solution.name = copy_wx_string(m_tt_name_text->GetValue());
-		gen_solution.desc = copy_wx_string(m_tt_desc_text->GetValue());
-		gen_solution.gen_date = (char *) calloc(21, sizeof(char));
-		gen_solution.meetings = create_timetable(m_owner->m_school);
+		Action * act = new TimetableGenerateAction(m_owner, copy_wx_string(m_tt_name_text->GetValue()), copy_wx_string(m_tt_desc_text->GetValue()));
 
-		time_t rawtime;
-		struct tm * time_info;
-		time(&rawtime);
-		time_info = localtime(&rawtime);
-		strftime(gen_solution.gen_date, 20, "%d/%m/%y, %H:%M", time_info);
+		bool success = m_owner->Do(act);
 
-		if(gen_solution.meetings != nullptr){
-			for(i = 0; gen_solution.meetings[i].type != meet_NULL; ++i){
-				/* Blank counter */
-			}
-			gen_solution.n_meetings = i;
+		// DecisionTree * tree = init_decision_tree(m_owner->m_school);
+		// for(int i = 0; i < school->n_teachers; ++i){
+		// 	print_teacher(stdout, &school->teachers[i]);
+		// }
+		// print_meeting_list(stdout,tree->start[0].conclusion);
 
-			print_meeting_list(stdout,gen_solution.meetings);
-
-			bool success = insert_solution(stdout, m_owner->m_database, school, &gen_solution, -1);
+		// Solution gen_solution;
+		// gen_solution.name = copy_wx_string(m_tt_name_text->GetValue());
+		// gen_solution.desc = copy_wx_string(m_tt_desc_text->GetValue());
+		// gen_solution.gen_date = (char *) calloc(21, sizeof(char));
+		// gen_solution.meetings = create_timetable(m_owner->m_school);
+		//
+		// time_t rawtime;
+		// struct tm * time_info;
+		// time(&rawtime);
+		// time_info = localtime(&rawtime);
+		// strftime(gen_solution.gen_date, 20, "%d/%m/%y, %H:%M", time_info);
+		//
+		// if(gen_solution.meetings != nullptr){
+		// 	for(i = 0; gen_solution.meetings[i].type != meet_NULL; ++i){
+		// 		/* Blank counter */
+		// 	}
+		// 	gen_solution.n_meetings = i;
+		//
+		// 	// print_meeting_list(stdout,gen_solution.meetings);
+		//
+		// 	bool success = insert_solution(stdout, m_owner->m_database, school, &gen_solution, -1);
 			if(success){
-				school_solution_add(school, &gen_solution);
+				// school_solution_add(school, &gen_solution);
 				m_err_msg->SetLabel(m_owner->m_lang->str_success);
-				m_owner->NotifyNewUnsavedData();
+				// m_owner->NotifyNewUnsavedData();
 				m_tt_name_text->SetValue(wxT(""));
-			} else {
-				free_meetings_list(gen_solution.meetings);
-				m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
-			}
+			// } else {
+				// free_meetings_list(gen_solution.meetings);
+				// m_err_msg->SetLabel(m_owner->m_lang->str_could_not_insert_on_db);
+			// }
 		} else {
 			m_err_msg->SetLabel(m_owner->m_lang->str_could_not_generate);
 		}

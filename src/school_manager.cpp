@@ -6,6 +6,7 @@
 extern "C" {
 	#include "assert.h"
 	#include "util.h"
+	#include "solver.h"
 	#include "loader.h"
 };
 
@@ -1832,9 +1833,8 @@ bool ClassDeleteAction::Do(){
 		School * school = m_owner->m_school;
 
 		int i_class = get_class_index_by_id(school, m_class.id);
-
-
 		int n_asg = 0;
+
 		for(int i = 0; m_class.assignments != NULL && m_class.assignments[i] != NULL; ++i){
 			++n_asg;
 		}
@@ -1881,6 +1881,107 @@ bool ClassDeleteAction::Undo(){
 wxString ClassDeleteAction::Describe(){
 	return wxT("ClassDeleteAction");
 }
+
+
+
+/*********************************************************/
+/*                TimetableGenerateAction                */
+/*********************************************************/
+TimetableGenerateAction::TimetableGenerateAction(Application * owner, char * name, char * desc) : Action(owner){
+	LMH_ASSERT(owner != NULL);
+	m_solution.name = name;
+	m_solution.desc = desc;
+	m_solution.meetings = NULL;
+}
+bool TimetableGenerateAction::Do(){
+
+	School * school = m_owner->m_school;
+	if(m_solution.meetings == NULL){
+		int i = 0;
+		DecisionTree * tree = init_decision_tree(m_owner->m_school);
+		m_solution.meetings = create_timetable(m_owner->m_school);
+
+		if(m_solution.meetings != nullptr){
+			m_solution.gen_date = (char *) calloc(21, sizeof(char));
+			time_t rawtime;
+			struct tm * time_info;
+			time(&rawtime);
+			time_info = localtime(&rawtime);
+			strftime(m_solution.gen_date, 20, "%d/%m/%y, %H:%M", time_info);
+
+			for(i = 0; m_solution.meetings[i].type != meet_NULL; ++i){
+				/* Blank counter */
+			}
+			m_solution.n_meetings = i;
+
+			bool success = insert_solution(m_owner->std_out, m_owner->m_database, school, &m_solution, -1);
+			if(success){
+				school_solution_add(school, &m_solution);
+				return true;
+			} else {
+				free_meetings_list(m_solution.meetings);
+			}
+		}
+	} else {
+		bool success = insert_solution(m_owner->std_out, m_owner->m_database, school, &m_solution, -1);
+		if(success){
+			school_solution_add(school, &m_solution);
+			return true;
+		} else {
+			free_meetings_list(m_solution.meetings);
+		}
+	}
+	return false;
+}
+bool TimetableGenerateAction::Undo(){
+	School * school = m_owner->m_school;
+	if(remove_solution(m_owner->std_out, m_owner->m_database, m_solution.id)){
+		int i_solution =  get_solution_index_by_id(school, m_solution.id);
+		school_solution_remove(school, i_solution, false);
+		return true;
+	}
+
+	return false;
+}
+wxString TimetableGenerateAction::Describe(){
+	return wxT("TimetableGenerateAction");
+}
+
+/*********************************************************/
+/*                 TimetableDeleteAction                 */
+/*********************************************************/
+TimetableDeleteAction::TimetableDeleteAction(Application * owner, int id) : Action(owner){
+	LMH_ASSERT(id >= 0);
+	Solution * sol = find_solution_by_id(m_owner->m_school, id);
+	LMH_ASSERT(sol != NULL);
+	m_solution = *sol;
+}
+TimetableDeleteAction::~TimetableDeleteAction(){
+}
+
+bool TimetableDeleteAction::Do(){
+	School * school = m_owner->m_school;
+	if(remove_solution(m_owner->std_out, m_owner->m_database, m_solution.id)){
+		int i_solution =  get_solution_index_by_id(school, m_solution.id);
+		school_solution_remove(school, i_solution, false);
+		return true;
+	}
+	return false;
+}
+bool TimetableDeleteAction::Undo(){
+	School * school = m_owner->m_school;
+	bool success = insert_solution(m_owner->std_out, m_owner->m_database, school, &m_solution, -1);
+	if(success){
+		school_solution_add(school, &m_solution);
+		return true;
+	}
+	return false;
+}
+wxString TimetableDeleteAction::Describe(){
+	return wxT("TimetableDeleteAction");
+}
+// Solution m_solution;
+
 
 /*********************************************************/
 /*                     ActionManager                     */

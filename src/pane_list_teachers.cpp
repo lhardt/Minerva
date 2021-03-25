@@ -552,8 +552,7 @@ void ListTeachersPane::OnCancelButtonClicked(wxCommandEvent &){
 		m_planning_periods_text->SetValue(t->num_planning_periods);
 		m_active_text->SetValue(t->active);
 	}
-
-
+	
 	m_cancel_btn->Hide();
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	m_name_text->Disable();

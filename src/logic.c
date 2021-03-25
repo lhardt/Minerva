@@ -423,6 +423,10 @@ bool is_node_final(const School * const school, const DecisionNode * const node)
 	return true;
 }
 
+bool is_final_node_inconsistent(const School * const school, const DecisionNode * const node){
+	int i = 0;
+}
+
 /* ELIM ANALOGOUS ORDERING
  *		Eliminates possibilities of same period for analogous ordering.
  * 		Meetings are analogous if class == class && subj == subj

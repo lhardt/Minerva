@@ -92,6 +92,7 @@ int 			get_teaches_index_by_teacher_subj_id(School * school, int id_teacher, int
 int 			get_teaches_index_by_id(School * school, int id);
 int				get_assignment_index_by_id(School * school, int id);
 int				get_assignment_index_by_class_subj_id(School * school, int id_class, int id_subj);
+int				get_solution_index_by_id(School * school, int id);
 Room * 			find_room_by_id(School * school, int id);
 Class * 		find_class_by_id(School * school, int id);
 Teacher * 		find_teacher_by_id(School * school, int id);

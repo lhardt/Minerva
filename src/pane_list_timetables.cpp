@@ -114,13 +114,17 @@ void ListTimetablesPane::OnDeleteButtonClicked(wxCommandEvent &){
 	int i_select = m_timetables_list->GetList()->GetSelection() ;
 	if(i_select != wxNOT_FOUND){
 		int id_solution = ((IntClientData*)m_timetables_list->GetList()->GetClientObject(i_select))->m_value;
-		if(remove_solution(stdout, m_owner->m_database, id_solution)){
-			school_solution_remove(m_owner->m_school, get_solution_index_by_id(m_owner->m_school, id_solution), true);
+		Action * act = new TimetableDeleteAction(m_owner, id_solution);
+		if(m_owner->Do(act)){
 			ShowData();
-			m_owner->NotifyNewUnsavedData();
-		} else {
-			printf("Couldn't");
 		}
+		// }
+		// if(remove_solution(stdout, m_owner->m_database, id_solution)){
+			// school_solution_remove(m_owner->m_school, get_solution_index_by_id(m_owner->m_school, id_solution), true);
+		// 	m_owner->NotifyNewUnsavedData();
+		// } else {
+		// 	printf("Couldn't");
+		// }
 	}
 }
 
@@ -230,8 +234,6 @@ void ListTimetablesPane::ShowData(){
 	m_rooms->GridRemake(school->n_periods_per_day, school->n_days);
 	m_classes->GridRemake(school->n_periods_per_day, school->n_days);
 
-	/* Rooms Code */
-	/* Teachers Code */
 	for(int i = 0; i < school->n_classes; ++i){
 		m_teachers->AddState(wxString::FromUTF8(school->classes[i].name), wxColor(255,255,255));
 		m_rooms->AddState(wxString::FromUTF8(school->classes[i].name), wxColor(255,255,255));

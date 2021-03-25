@@ -498,6 +498,27 @@ private:
 	int * m_sub_to; // This class is subordinated to what other classes?
 };
 
+class TimetableGenerateAction : public Action {
+public:
+	TimetableGenerateAction(Application * owner, char * name, char * desc);
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	Solution m_solution;
+};
+
+class TimetableDeleteAction : public Action {
+public:
+	TimetableDeleteAction(Application * owner, int id);
+	~TimetableDeleteAction();
+	bool Do();
+	bool Undo();
+	wxString Describe();
+private:
+	Solution m_solution;
+};
+
 class ActionManager{
 public:
 	Application * m_owner;
