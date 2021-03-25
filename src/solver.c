@@ -213,8 +213,6 @@ DecisionNode * dfs_timetable_create(const School * const school , DecisionNode* 
 
 	while(curr != NULL && i < 100 && !curr->is_final){
 		next = make_decision(school, curr);
-		printf("======================= %2d ======================\n", i);
-		print_meeting_list(stdout,next->conclusion);
 		if(next == NULL || !curr->is_consistent){
 			curr = curr->parent;
 		} else {
