@@ -98,6 +98,7 @@ AddClassPane::AddClassPane(Application * owner, wxWindow * parent, wxPoint pos) 
 	ShowScrollbars(wxSHOW_SB_DEFAULT, wxSHOW_SB_ALWAYS);
 	this->GetSizer()->SetSizeHints(this);
 	Layout();
+	printf("K");
 
 	m_entry_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
 	m_exit_text->Bind(wxEVT_CHOICE, &AddClassPane::OnPeriodChoice, this);
@@ -110,6 +111,7 @@ void AddClassPane::OnDataChange(wxNotifyEvent & evt) {
 }
 
 void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
+	printf("a");
 	int i, i_subject, i_need, n_needs;
 	Assignment * alist = NULL;
 	School * school = m_owner->m_school;
@@ -201,6 +203,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 }
 
 void AddClassPane::ClearInsertedData(){
+	printf("b");
 	School * school = m_owner->m_school;
 	int i = 0;
 	m_name_text->Clear();
@@ -220,6 +223,7 @@ void AddClassPane::ClearInsertedData(){
 }
 
 void AddClassPane::OnPeriodChoice(wxCommandEvent& ev){
+	printf("c");
 	School * school = m_owner->m_school;
 	if(m_entry_text->GetSelection() != wxNOT_FOUND){
 		int new_entry = m_entry_text->GetSelection();

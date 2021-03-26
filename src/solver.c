@@ -135,6 +135,8 @@ DecisionNode * make_decision(const School * const school, DecisionNode * parent)
 	DecisionNode * child = NULL;
 	bool has_children = true;
 
+	printf("Entering make decision.\n");
+
 	if(!parent->is_final && parent->is_consistent){
 		if(parent->children_score == NULL){
 			has_children = score_possible_children(school, parent);

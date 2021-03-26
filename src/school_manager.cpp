@@ -942,8 +942,10 @@ bool TeacherInsertAction::Do(){
 	int res_id = insert_teacher(stdout, m_owner->m_database, &m_teacher, m_owner->m_school, m_teacher.id);
 	if(res_id != -1){
 		school_teacher_add(m_owner->m_school, & m_teacher);
-		free(m_teaches);
-		free(m_subj_ids);
+		if(m_teaches != NULL){
+			free(m_teaches);
+			free(m_subj_ids);
+		}
 		this->m_teaches = NULL;
 		return true;
 	}
