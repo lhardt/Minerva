@@ -136,6 +136,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 					t.teaches[i_teaches]->score = 1;
 					t.teaches[i_teaches]->max_per_day = school->n_periods_per_day;
 					t.teaches[i_teaches]->max_per_class_per_day = school->n_periods_per_day;
+					t.teaches[i_teaches]->period_scores = (int*) calloc(school->n_periods + 1, sizeof(int));
 					t.teaches[i_teaches]->room_scores = (int*) calloc(school->n_rooms + 1, sizeof(int));
 					t.teaches[i_teaches]->twin_scores = (int*) calloc(school->n_periods_per_day + 1, sizeof(int));
 
@@ -147,11 +148,11 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 						t.teaches[i_teaches]->period_scores[i_p] = t.lecture_period_scores[i_p];
 
 					}
-					t.teaches[i_teaches]->period_scores[school->n_rooms] = -1;
+					t.teaches[i_teaches]->period_scores[school->n_periods] = -1;
 					for(int i_p = 0; i_p < school->n_periods_per_day; ++i_p){
 						t.teaches[i_teaches]->twin_scores[i_p] = 1;
 					}
-					t.teaches[i_teaches]->twin_scores[school->n_periods_per_day] = 1;
+					t.teaches[i_teaches]->twin_scores[school->n_periods_per_day] = -1;
 
 					++i_teaches;
 				}
