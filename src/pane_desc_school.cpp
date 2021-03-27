@@ -211,7 +211,7 @@ void DescSchoolPane::OnDailyPeriodNamesSaveButtonClicked(wxCommandEvent & evt) {
 	m_owner->Do(action);
 
 	wxGrid * periods_grid = m_periods->GetGrid();
-	for(i = 0; i < school->n_days; ++i){
+	for(i = 0; i < school->n_periods_per_day; ++i){
 		wxString label = grid->GetCellValue(i,0);
 		periods_grid->SetRowLabelValue(i, label);
 	}

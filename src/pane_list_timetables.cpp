@@ -230,9 +230,9 @@ void ListTimetablesPane::ShowData(){
 		m_timetables_list->AddItem(school->solutions[i].id, wxString::FromUTF8(school->solutions[i].name));
 	}
 
-	m_teachers->GridRemake(school->n_periods_per_day, school->n_days);
-	m_rooms->GridRemake(school->n_periods_per_day, school->n_days);
-	m_classes->GridRemake(school->n_periods_per_day, school->n_days);
+	m_teachers->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
+	m_classes->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
+	m_rooms->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 
 	for(int i = 0; i < school->n_classes; ++i){
 		m_teachers->AddState(wxString::FromUTF8(school->classes[i].name), wxColor(255,255,255));
@@ -261,9 +261,6 @@ void ListTimetablesPane::ShowData(){
 		m_teachers->SetRowLabel(i, wxString::FromUTF8(school->daily_period_names[i]));
 		m_rooms->SetRowLabel(i, wxString::FromUTF8(school->daily_period_names[i]));
 	}
-	m_teachers->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
-	m_classes->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
-	m_rooms->GridRemake(m_owner->m_school->n_days,m_owner->m_school->n_periods_per_day);
 	m_teachers->SetCanUserClick(false);
 	m_classes->SetCanUserClick(false);
 	m_rooms->SetCanUserClick(false);
