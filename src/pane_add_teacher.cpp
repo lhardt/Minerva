@@ -124,6 +124,17 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.planning_room_scores[school->n_rooms] = -1;
 
 		t.teaches = (Teaches**)calloc(n_subjects + 1, sizeof(Teaches*));
+
+		t.lecture_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
+		t.planning_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
+		for(int i = 0; i < school->n_periods; ++i){
+			int state = m_periods_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
+			t.lecture_period_scores[i] = state >= 0? state:0;
+			t.planning_period_scores[i] = t.lecture_period_scores[i];
+		}
+		t.lecture_period_scores[school->n_periods] = -1;
+		t.planning_period_scores[school->n_periods] = -1;
+
 		if(n_subjects > 0){
 			teaches_vals = (Teaches*)calloc(n_subjects + 1, sizeof(Teaches));
 			int i_teaches = 0;
@@ -146,7 +157,6 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 					t.teaches[i_teaches]->room_scores[school->n_rooms] = -1;
 					for(int i_p = 0; i_p < school->n_periods; ++i_p){
 						t.teaches[i_teaches]->period_scores[i_p] = t.lecture_period_scores[i_p];
-
 					}
 					t.teaches[i_teaches]->period_scores[school->n_periods] = -1;
 					for(int i_p = 0; i_p < school->n_periods_per_day; ++i_p){
@@ -159,15 +169,6 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 			}
 			t.teaches[i_teaches] = NULL;
 		}
-		t.lecture_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
-		t.planning_period_scores = (int*)calloc(1 + school->n_periods, sizeof(int));
-		for(int i = 0; i < school->n_periods; ++i){
-			int state = m_periods_grid->GetCellState(i % school->n_periods_per_day, i / school->n_periods_per_day);
-			t.lecture_period_scores[i] = state >= 0? state:0;
-			t.planning_period_scores[i] = t.lecture_period_scores[i];
-		}
-		t.lecture_period_scores[school->n_periods] = -1;
-		t.planning_period_scores[school->n_periods] = -1;
 
 		if(can_insert_teacher(school, &t)){
 			TeacherInsertAction * act = new TeacherInsertAction(m_owner, t);
