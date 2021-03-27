@@ -11,7 +11,7 @@ GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * par
 	this->m_owner = owner;
 	SetBackgroundColour(wxColour(250,250,250));
 
-	wxStaticText * description = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_generate_timetable_text , wxDefaultPosition, wxSize(400, 80));
+	wxStaticText * description = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_generate_timetable_text , wxDefaultPosition, wxSize(400, 50));
 	wxStaticText * tt_name_label = new wxStaticText(this,wxID_ANY, m_owner->m_lang->str_name);
 	wxStaticText * tt_desc_label = new wxStaticText(this,wxID_ANY, m_owner->m_lang->str_description);
 	m_tt_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(250,-1));
@@ -22,7 +22,7 @@ GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * par
 	wxSizer * sizer = new wxBoxSizer(wxVERTICAL);
 
 	sizer->Add(description, 0, wxLEFT | wxRIGHT | wxTOP, 15 );
-	sizer->Add(tt_name_label, 0, wxLEFT | wxRIGHT | wxTOP, 15);
+	sizer->Add(tt_name_label, 0, wxLEFT | wxRIGHT, 15);
 	sizer->Add(m_tt_name_text, 0, wxLEFT | wxBOTTOM, 15 );
 	sizer->Add(tt_desc_label, 0, wxLEFT | wxRIGHT, 15);
 	sizer->Add(m_tt_desc_text, 0, wxLEFT | wxBOTTOM, 15 );
