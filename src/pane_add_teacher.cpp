@@ -100,12 +100,12 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 		t.num_planning_periods = 0;
 		t.planning_needs_room = false;
 		t.active = true;
-		t.subordinates = NULL;
+		t.subordinates = (int*) calloc(school->n_teachers + 1, sizeof(int));
 		t.lecture_room_scores = (int*) calloc(school->n_rooms + 1, sizeof(int));
 		t.planning_room_scores = (int*) calloc(school->n_rooms + 1, sizeof(int));
 		t.day_max_meetings = (int*) calloc(school->n_days + 1, sizeof(int));
 		t.day_scores = (int*) calloc(school->n_days + 1, sizeof(int));
-		t.planning_twin_scores = NULL;
+		t.planning_twin_scores = (int *) calloc(school->n_periods_per_day+1, sizeof(int));
 
 		for(int i = 0; i < school->n_rooms; ++i){
 			t.lecture_room_scores[i] = 1;
@@ -116,6 +116,8 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 			t.day_max_meetings[i] = school->n_periods_per_day;
 			t.day_scores[i] = 1;
 		}
+		t.planning_twin_scores[school->n_periods_per_day] = -1;
+		t.subordinates[school->n_teachers] = -1;
 		t.day_scores[school->n_days] = -1;
 		t.day_max_meetings[school->n_days] = -1;
 		t.lecture_room_scores[school->n_rooms] = -1;
@@ -131,8 +133,26 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 					// the var 't' is temporary and the info will be corrected in the school_teacher_add anyway;
 					// t.teaches[i_teaches]->teacher = &t;
 					t.teaches[i_teaches]->subject = &(school->subjects[i_subject]);
-					int state = m_subjects_grid->GetCellState(i_subject,0);
-					t.teaches[i_teaches]->score = state >= 0? state:0;
+					t.teaches[i_teaches]->score = 1;
+					t.teaches[i_teaches]->max_per_day = school->n_periods_per_day;
+					t.teaches[i_teaches]->max_per_class_per_day = school->n_periods_per_day;
+					t.teaches[i_teaches]->room_scores = (int*) calloc(school->n_rooms - 1, sizeof(int));
+					t.teaches[i_teaches]->twin_scores = (int*) calloc(school->n_periods_per_day + 1, sizeof(int));
+
+					for(int i_r = 0; i_r < school->n_rooms; ++i_r){
+						t.teaches[i_teaches]->room_scores[i_r] = t.lecture_room_scores[i_r];
+					}
+					t.teaches[i_teaches]->room_scores[school->n_rooms] = -1;
+					for(int i_p = 0; i_p < school->n_periods; ++i_p){
+						t.teaches[i_teaches]->period_scores[i_p] = t.lecture_period_scores[i_p];
+
+					}
+					t.teaches[i_teaches]->period_scores[school->n_rooms] = -1;
+					for(int i_p = 0; i_p < school->n_periods_per_day; ++i_p){
+						t.teaches[i_teaches]->twin_scores[i_p] = 1;
+					}
+					t.teaches[i_teaches]->twin_scores[school->n_periods_per_day] = 1;
+
 					++i_teaches;
 				}
 			}

@@ -208,8 +208,27 @@ void ListTeachersPane::OnSaveTeaches(wxCommandEvent & evt){
 		}
 	}
 }
-void ListTeachersPane::OnCancelTeaches(wxCommandEvent &){
+void ListTeachersPane::OnCancelTeaches(wxCommandEvent & evt){
+	int i_select = m_teachers_list->GetList()->GetSelection();
+	School * school = m_owner->m_school;
+	if(i_select != wxNOT_FOUND){
+		int id_teacher = ((IntClientData*)m_teachers_list->GetList()->GetClientObject(i_select))->m_value;
+		LMH_ASSERT(id_teacher > 0);
+		Teacher * t = find_teacher_by_id(school, id_teacher);
 
+		LMH_ASSERT(t != NULL);
+
+		ChoiceGrid * teaches_grid = m_teaches->GetGrid();
+		teaches_grid->SetAllCellsState(0);
+		for(int i  = 0; i < school->n_teaches; ++i){
+			if(school->teaches[i].teacher->id == t->id){
+				int i_subj = get_subject_index_by_id(school, school->teaches[i].subject->id);
+				LMH_ASSERT(i_subj >= 0);
+				teaches_grid->SetCellState(i_subj,0, 1);
+			}
+		}
+	}
+	evt.Skip();
 }
 
 void ListTeachersPane::OnSaveDays(wxCommandEvent & evt){
@@ -552,7 +571,7 @@ void ListTeachersPane::OnCancelButtonClicked(wxCommandEvent &){
 		m_planning_periods_text->SetValue(t->num_planning_periods);
 		m_active_text->SetValue(t->active);
 	}
-	
+
 	m_cancel_btn->Hide();
 	m_edit_btn->SetLabel(m_owner->m_lang->str_edit);
 	m_name_text->Disable();

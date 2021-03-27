@@ -196,6 +196,9 @@ DecisionNode * make_decision(const School * const school, DecisionNode * parent)
 		}
 		new_node_elimination(school, child);
 		child->score = new_node_evaluation(school, child);
+
+		printf("======================== Node %d\n", child->id);
+		print_meeting_list(stdout, child->conclusion);
 	} else {
 		printf("Was final. No can do. Parent isfinal %d, Parent isConsistent %d\n", parent->is_final, parent->is_consistent);
 	}

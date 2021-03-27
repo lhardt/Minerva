@@ -1416,7 +1416,6 @@ int school_teacher_add(School * school, const Teacher * const t){
 			/* Blank. Teachers are ordered by id. */
 		}
 		bool success = realloc_teachers(school, school->n_teachers+1, pos);
-		// **TODO** -- decent memory management.
 		LMH_ASSERT(success);
 	}
 	school->teachers[ pos ] = *t;
@@ -1432,9 +1431,11 @@ int school_teacher_add(School * school, const Teacher * const t){
 	for(int i = 0; i < school->n_assignments; ++i){
 		/* TODO predefine as zero seems inconvenient for the user. */
 		add_zero_to_score_list_at(&(school->assignments[i].possible_teachers), school->n_teachers-1, pos);
+		school->assignments[i].possible_teachers[pos] = 1;
 	}
 	for(int i = 0; i < school->n_meetings; ++i){
 		add_zero_to_score_list_at(&(school->meetings[i].possible_teachers), school->n_teachers-1, pos);
+		school->meetings[i].possible_teachers[pos] = 1;
 	}
 	for(int i = 0; i < school->n_solutions; ++i){
 		Meeting * meetings = school->solutions[i].meetings;
