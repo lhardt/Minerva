@@ -1308,6 +1308,16 @@ bool can_insert_subject_group(School * school, char * name, int * members){
 	return true;
 }
 
+bool can_insert_solution(School * school, char * name){
+	LMH_ASSERT(school != NULL && name != NULL);
+	for(int i = 0; i < school->n_solutions; ++i){
+		if(0 == strcmp(name, school->solutions[i].name)){
+			return false;
+		}
+	}
+	return true;
+}
+
 bool can_remove_class(School * school, int id){
 	for(int i = 0; i < school->n_solutions; ++i){
 		Meeting * m_list = school->solutions[i].meetings;

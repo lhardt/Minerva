@@ -114,6 +114,7 @@ bool can_insert_room(School * school, Room * r);
 bool can_insert_teacher(School * school, Teacher * t);
 bool can_insert_subject(School * school, Subject * s);
 bool can_insert_subject_group(School * school, char * name, int * members);
+bool can_insert_solution(School * school, char * name);
 
 bool can_remove_class(School * school, int id);
 bool can_remove_room(School * school, int id);

@@ -154,6 +154,8 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 				++n_needs;
 			}
 		}
+
+		printf("There are %d needs.\n", n_needs);
 		c.assignments = (Assignment**) calloc(n_needs + 1, sizeof(Assignment*));
 		if(n_needs > 0){
 			i_need = 0;
@@ -164,6 +166,7 @@ void AddClassPane::OnAddClassButtonClicked(wxCommandEvent & ev){
 				if(m_subjects_grid->GetCellValue(i_subject,0).ToLong(&n_per) && n_per > 0){
 					c.assignments[i_need] = &alist[i_need];
 					alist[i_need].subject = &school->subjects[i_subject];
+					printf("%d th is about %s\n", i_need, school->subjects[i_subject].name);
 					alist[i_need].amount = (int) n_per;
 					alist[i_need].m_class = &c;
 					alist[i_need].max_per_day = school->n_periods_per_day;
