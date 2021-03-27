@@ -219,7 +219,7 @@ bool MainMenuForm::OnClose(){
 void MainMenuForm::NotifyNewAction(Action * action){
 	Notification * notification = new Notification(m_owner, this, wxID_ANY, action, wxDefaultPosition, wxDefaultSize);
 	notification->GetTimer()->Bind(wxEVT_TIMER, &MainMenuForm::OnNotificationTimer, this);
-	notification->GetButton()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
+	// notification->GetButton()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
 
 	AddNotification(notification);
 	m_toolbar->EnableTool(ID_SAVE, true);
@@ -230,7 +230,7 @@ void MainMenuForm::NotifyNewAction(Action * action){
 void MainMenuForm::NotifyNewUnsavedData(){
 	Notification * notification = new Notification(m_owner, this, wxID_ANY, m_owner->m_lang->str_success, m_owner->m_lang->str_undo, wxDefaultPosition, wxDefaultSize);
 	notification->GetTimer()->Bind(wxEVT_TIMER, &MainMenuForm::OnNotificationTimer, this);
-	notification->GetButton()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
+	// notification->GetButton()->Bind(wxEVT_HYPERLINK, &MainMenuForm::OnNotificationAction, this);
 
 	AddNotification(notification);
 	m_toolbar->EnableTool(ID_SAVE, true);

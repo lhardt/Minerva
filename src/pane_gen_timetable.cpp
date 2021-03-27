@@ -13,7 +13,7 @@ GenerateTimetablePane::GenerateTimetablePane(Application * owner, wxWindow * par
 
 	wxStaticText * description = new wxStaticText(this, wxID_ANY, m_owner->m_lang->str_generate_timetable_text , wxDefaultPosition, wxSize(400, 80));
 	wxStaticText * tt_name_label = new wxStaticText(this,wxID_ANY, m_owner->m_lang->str_name);
-	wxStaticText * tt_desc_label = new wxStaticText(this,wxID_ANY, wxT("Descrição"));
+	wxStaticText * tt_desc_label = new wxStaticText(this,wxID_ANY, m_owner->m_lang->str_description);
 	m_tt_name_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(250,-1));
 	m_tt_desc_text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(250,200), wxTE_MULTILINE);
 	wxButton * gen_button = new wxButton(this, wxID_ANY, m_owner->m_lang->str_generate, wxDefaultPosition, wxSize(250,-1));

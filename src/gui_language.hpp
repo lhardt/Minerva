@@ -281,6 +281,10 @@ typedef struct Language {
 	const wchar_t * const str_panedesc_gen_timetable;
 
 	const wchar_t * const str_error_exit_before_entry;
+
+	const wchar_t * const str_done;
+	const wchar_t * const str_undone;
+	const wchar_t * const str_description;
 } Language;
 
 const extern Language LANG_POR;

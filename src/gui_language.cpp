@@ -281,6 +281,9 @@ const Language LANG_POR = {
 	.str_panedesc_list_timetables=L"Aqui podem ser visualizadas ou excluídas as grades horárias já geradas.",
 	.str_panedesc_gen_timetable=L"Aqui podem ser geradas novas grades horárias. O processo pode demorar alguns minutos!",
 	.str_error_exit_before_entry=L"A turma não pode sair antes de entrar na escola!",
+	.str_done=L"Feito",
+	.str_undone=L"Desfeito",
+	.str_description=L"Descrição",
 };
 
 const Language LANG_ENG = {
@@ -550,6 +553,9 @@ const Language LANG_ENG = {
 	.str_panedesc_list_timetables=L"Here all the previously generated timetables may be viewed.",
 	.str_panedesc_gen_timetable=L"Here new timetables may be generated. The process can take some minutes.",
 	.str_error_exit_before_entry=L"The class cannot leave before entering the school!",
+	.str_done=L"Done",
+	.str_undone=L"Undone",
+	.str_description=L"Description",
 };
 
 const Language LANG_SPA = {
@@ -809,6 +815,9 @@ const Language LANG_SPA = {
 	.str_panedesc_list_timetables=L"",
 	.str_panedesc_gen_timetable=L"",
 	.str_error_exit_before_entry=L"!",
+	.str_done=L"-",
+	.str_undone=L"-",
+	.str_description=L"-",
 };
 
 const Language LANG_DEU = {
@@ -1067,4 +1076,7 @@ const Language LANG_DEU = {
 	.str_panedesc_list_timetables=L"",
 	.str_panedesc_gen_timetable=L"",
 	.str_error_exit_before_entry=L"!",
+	.str_done=L"-",
+	.str_undone=L"-",
+	.str_description=L"-",
 };
