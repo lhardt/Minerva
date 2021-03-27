@@ -136,7 +136,7 @@ void AddTeacherPane::OnAddTeacherButtonClicked(wxCommandEvent & ev){
 					t.teaches[i_teaches]->score = 1;
 					t.teaches[i_teaches]->max_per_day = school->n_periods_per_day;
 					t.teaches[i_teaches]->max_per_class_per_day = school->n_periods_per_day;
-					t.teaches[i_teaches]->room_scores = (int*) calloc(school->n_rooms - 1, sizeof(int));
+					t.teaches[i_teaches]->room_scores = (int*) calloc(school->n_rooms + 1, sizeof(int));
 					t.teaches[i_teaches]->twin_scores = (int*) calloc(school->n_periods_per_day + 1, sizeof(int));
 
 					for(int i_r = 0; i_r < school->n_rooms; ++i_r){
